@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Http\Controllers\Casemix;
 
@@ -9,6 +9,13 @@ use PaginationLibrary\Pagination;
 
 class InAcbgGrouperController extends Controller
 {
+
+    protected $inacbg;
+
+    public function __construct(Inacbg $inacbg)
+    {
+        $this->inacbg = $inacbg;
+    }
     /**
      * Display List InAcbgGroupper.
      */
@@ -32,5 +39,38 @@ class InAcbgGrouperController extends Controller
             'pagination' => $pagination->getPaginationInfo(),
             'data' => $data,
         ]);
+    }
+
+
+    public function saveNewKlaim(Request $request)
+    {
+
+        // Ambil keynya dari  ENV 
+        $key = env('INACBG_KEY');
+
+
+        $nomor_kartu = $request->input('nomor_kartu') ?? null;
+        $nomor_sep = $request->input('nomor_sep') ?? null;
+        $nomor_rm = $request->input('nomor_rm') ?? null;
+        $nama_pasien = $request->input('nama_pasien') ?? null;
+        $tgl_lahir = $request->input('tgl_lahir') ?? null;
+        $gender = $request->input('gender') ?? null;
+
+        // Structur Payload 
+        $data = [
+            'nomor_kartu' => $nomor_kartu,
+            'nomor_sep' => $nomor_sep,
+            'nomor_rm' => $nomor_rm,
+            'nama_pasien' => $nama_pasien,
+            'tgl_lahir' => $tgl_lahir,
+            'gender' => $gender,
+        ];
+
+
+        // result
+        $results = $this->inacbg->newClaim($data, $key);
+
+        // Kembalikan hasil sebagai JSON response
+        return response()->json($results, 200);
     }
 }
