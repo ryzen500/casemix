@@ -67,10 +67,12 @@ class InAcbgGrouperController extends Controller
         ];
 
 
-        // result
+        // result kirim claim
         $results = $this->inacbg->newClaim($data, $key);
 
         // Kembalikan hasil sebagai JSON response
         return response()->json($results, 200);
     }
+
+    
 }
