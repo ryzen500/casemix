@@ -20,4 +20,15 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-Route::resource('inacbg-groupper', InAcbgGrouperController::class);
+/**
+ * Listing Untuk Casemix API
+ */
+Route::prefix('inacbg')->group(function () {
+
+    // Get
+    Route::get('grouper', [InAcbgGrouperController::class,'index'])->name('inacbg.grouper.index');
+
+    // POST
+    Route::post('grouper', [InAcbgGrouperController::class,'saveNewKlaim'])->name('inacbg.grouper.newClaim');
+
+});

@@ -150,8 +150,8 @@ class Inacbg extends Model
             'nomor_sep' => 'required|string',
             'nomor_rm' => 'required|string',
             'nama_pasien' => 'required|string',
-            'tgl_lahir' => 'required|date',
-            'gender' => 'required|in:male,female',
+            'tgl_lahir' => 'required',
+            'gender' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -172,6 +172,7 @@ class Inacbg extends Model
             // validate The Payload
             $this->validateData($data);
             $payload = $this->preparePayloadNewKlaim($data);
+
             $encryptedPayload = $this->inacbg_encrypt($payload, $key); // Tambahkan parameter $key
 
             $response = $this->sendRequest($encryptedPayload, $key);
@@ -216,7 +217,7 @@ class Inacbg extends Model
     private function sendRequest(string $encryptedPayload, string $key): string
     {
         // Prepare the request URL and headers
-        $url = $this->url; // Assuming $this->url is already set
+        $url = env('INACBG_URL');; // Assuming $this->url is already set on ENV
         $header = array("Content-Type: application/x-www-form-urlencoded");
 
         // Initialize cURL session
