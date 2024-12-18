@@ -69,8 +69,8 @@ class Inacbg extends Model
         }
         /// create initialization vector
         $iv_size = openssl_cipher_iv_length("aes-256-cbc");
-        // $iv = openssl_random_pseudo_bytes($iv_size); // dengan catatan dibawah
-        $iv = random_bytes($iv_size); // dengan catatan dibawah
+        $iv = openssl_random_pseudo_bytes($iv_size); // dengan catatan dibawah
+        // $iv = random_bytes($iv_size); // dengan catatan dibawah
         /// encrypt
         $encrypted = openssl_encrypt($data, "aes-256-cbc", $key, OPENSSL_RAW_DATA, $iv);
         /// create signature, against padding oracle attacks
@@ -129,7 +129,7 @@ class Inacbg extends Model
         $encrypted = mb_substr($decoded, $iv_size + 10, NULL, "8bit");
         /// check signature, against padding oracle attack
         $calc_signature = mb_substr(hash_hmac("sha256", $encrypted, $key, true), 0, 10, "8bit");
-        if (!self::inacbg_compare($signature, $calc_signature)) {
+        if(!$this->inacbg_compare($signature,$calc_signature)) {
             return "SIGNATURE_NOT_MATCH"; /// signature doesn't match
         }
         $decrypted = openssl_decrypt($encrypted, "aes-256-cbc", $key, OPENSSL_RAW_DATA, $iv);
@@ -159,6 +159,26 @@ class Inacbg extends Model
         }
     }
 
+    
+
+
+    /**
+     * Summary of validateDataDiagnosisParameter
+     * @param array $data
+     * @throws \Exception
+     * @return void
+     * Validasi Untuk Data Request Apakah Sudah Valid Atau Tidak
+     */
+    public function validateDataDiagnosisParameter(array $data)
+    {
+        $validator = Validator::make($data, [
+            'keyword' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            throw new Exception(implode(', ', $validator->errors()->all()));
+        }
+    }
     /**
      * Summary of newClaim
      * @param array $data  This is request data 
@@ -176,7 +196,58 @@ class Inacbg extends Model
             $encryptedPayload = $this->inacbg_encrypt($payload, $key); // Tambahkan parameter $key
 
             $response = $this->sendRequest($encryptedPayload, $key);
-            return $this->processResponse($response , $key);
+            return $this->processResponse($response, $key);
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+
+    /**
+     * Summary of updateDataKlaim
+     * @param array $data
+     * @param string $key
+     * @return array
+     * 
+     * This is Function For Update or set data Klaim
+     */
+    public function updateDataKlaim(array $data, string $key): array
+    {
+        try {
+            // validate The Payload
+            $this->validateData($data);
+            $payload = $this->preparePayloadUpdateKlaim($data);
+
+            $encryptedPayload = $this->inacbg_encrypt($payload, $key); // Tambahkan parameter $key
+
+            $response = $this->sendRequest($encryptedPayload, $key);
+            return $this->processResponse($response, $key);
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+
+    public function searchDiagnosa(array $data, string $key){
+        try {
+            // var_dump($key);die;
+            // validate The Payload
+            $this->validateDataDiagnosisParameter($data);
+            $payload = $this->preparePayloadSearchDiagnosa($data);
+            
+            $encryptedPayload = $this->inacbg_encrypt($payload, $key); // Tambahkan parameter $key
+
+            // var_dump($encryptedPayload);die; 
+
+            $response = $this->sendRequest($encryptedPayload, $key);
+
+            return $this->processResponse($response, $key);
         } catch (Exception $e) {
             return [
                 'success' => false,
@@ -206,6 +277,77 @@ class Inacbg extends Model
         ]);
     }
 
+
+    private function preparePayloadUpdateKlaim(array $data): string
+    {
+        return json_encode([
+            'metadata' => ['method' => 'set_claim_data', 'nomor_sep' => $data['nomor_sep'] ?? null],
+            'data' => [
+                'nomor_sep' => $data['nomor_sep'] ?? null,
+                'nomor_kartu' => $data['nomor_kartu'] ?? null,
+                'tgl_masuk' => $data['tgl_masuk'] ?? null,
+                'tgl_pulang' => $data['tgl_pulang'] ?? null,
+                'jenis_rawat' => $data['jenis_rawat'] ?? null,
+                'kelas_rawat' => $data['kelas_rawat'] ?? null,
+                'adl_sub_acute' => $data['adl_sub_acute'] ?? null,
+                'adl_chronic' => $data['adl_chronic'] ?? null,
+                'icu_indikator' => $data['icu_indikator'] ?? null,
+                'icu_los' => $data['icu_los'] ?? null,
+                'ventilator_hour' => $data['ventilator_hour'] ?? null,
+                'upgrade_class_ind' => $data['upgrade_class_ind'] ?? null,
+                'upgrade_class_class' => $data['upgrade_class_class'] ?? null,
+                'upgrade_class_los' => $data['upgrade_class_los'] ?? null,
+                'birth_weight' => $data['birth_weight'] ?? null,
+                'discharge_status' => $data['discharge_status'] ?? null,
+                'diagnosa' => $data['diagnosa'] ?? null,
+                'tarif_rs' => [
+                    'prosedur_non_bedah' => $data['prosedur_non_bedah'] ?? null,
+                    'prosedur_bedah' => $data['prosedur_bedah'] ?? null,
+                    'konsultasi' => $data['konsultasi'] ?? null,
+                    'tenaga_ahli' => $data['tenaga_ahli'] ?? null,
+                    'keperawatan' => $data['keperawatan'] ?? null,
+                    'penunjang' => $data['penunjang'] ?? null,
+                    'radiologi' => $data['radiologi'] ?? null,
+                    'laboratorium' => $data['laboratorium'] ?? null,
+                    'pelayanan_darah' => $data['pelayanan_darah'] ?? null,
+                    'rehabilitasi' => $data['rehabilitasi'] ?? null,
+                    'kamar' => $data['kamar'] ?? null,
+                    'rawat_intensif' => $data['rawat_intensif'] ?? null,
+                    'obat' => $data['obat'] ?? null,
+                    'alkes' => $data['alkes'] ?? null,
+                    'bmhp' => $data['bmhp'] ?? null,
+                    'sewa_alat' => $data['sewa_alat'] ?? null,
+                    
+                ],
+                'tarif_poli_eks' => $data['tarif_poli_eks'] ?? null,
+                'nama_dokter' => $data['nama_dokter'] ?? null,
+                'kode_tarif' => $data['kode_tarif'] ?? null,
+                'payor_id' => $data['payor_id'] ?? null,
+                'payor_cd' => $data['payor_cd'] ?? null,
+                'cob_cd' => $data['cob_cd'] ?? null,
+                'coder_nik' => $data['coder_nik'] ?? null,
+            ],
+        ]);
+    }
+
+
+    /**
+     * Summary of preparePayloadSearchDiagnosa
+     * @param array $data
+     * @return string
+     * For search Diagnosis Payload
+     */
+    private function preparePayloadSearchDiagnosa(array $data): string
+    {
+        // var_dump($data['keyword']);die;
+        return json_encode([
+            'metadata' => ['method' => 'search_diagnosis'],
+            'data' => [
+                'keyword' => $data['keyword'] ?? null,
+            ],
+        ]);
+    }
+
     /**
      * Summary of sendRequest
      * @param string $encryptedPayload
@@ -217,7 +359,8 @@ class Inacbg extends Model
     private function sendRequest(string $encryptedPayload, string $key): string
     {
         // Prepare the request URL and headers
-        $url = env('INACBG_URL');; // Assuming $this->url is already set on ENV
+        $url = env('INACBG_URL');
+        ; // Assuming $this->url is already set on ENV
         $header = array("Content-Type: application/x-www-form-urlencoded");
 
         // Initialize cURL session
@@ -265,14 +408,14 @@ class Inacbg extends Model
      */
     private function processResponse(string $response, string $key): array
     {
-        $decryptedResponse = $this->inacbg_decrypt($response, $key);
-        $decodedResponse = json_decode($decryptedResponse, true);
+        $decodedResponse = json_decode($response, true);
 
+        // var_dump($decodedResponse['response']['data']);die;
         if ($decodedResponse['metadata']['code'] == 200) {
             return [
                 'success' => true,
-                'message' => 'SUKSES',
-                'data' => $decodedResponse['data'] ?? null,
+                'message' => $decodedResponse['response']['message'],
+                'data' => $decodedResponse['response']['data'] ?? null,
             ];
         }
 

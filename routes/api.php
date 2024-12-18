@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Casemix\InAcbgGrouperController;
+use App\Http\Controllers\Casemix\SearchDiagnosaController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -31,4 +32,15 @@ Route::prefix('inacbg')->group(function () {
     // POST
     Route::post('grouper', [InAcbgGrouperController::class,'saveNewKlaim'])->name('inacbg.grouper.newClaim');
 
+});
+
+/**
+ * Core 
+ */
+
+ Route::prefix('feature')->group(function(){
+
+    // Get
+    Route::post('searchDiagnosa', [SearchDiagnosaController::class,'index'])->name('searchDiagnosa');
+ 
 });
