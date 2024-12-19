@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Casemix\InAcbgGrouperController;
 use App\Http\Controllers\Casemix\SearchDiagnosaController;
+use App\Http\Controllers\Auth\LoginController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -24,23 +25,43 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 /**
  * Listing Untuk Casemix API
  */
-Route::prefix('inacbg')->group(function () {
+// Route::prefix('inacbg')->group(function () {
+
+//     // Get
+//     Route::get('grouper', [InAcbgGrouperController::class, 'index'])->name('inacbg.grouper.index');
+
+//     // POST
+//     Route::post('grouper', [InAcbgGrouperController::class, 'saveNewKlaim'])->name('inacbg.grouper.newClaim');
+
+// });
+
+
+Route::group(['prefix' => 'inacbg', 'middleware' => 'auth.jwt'], function () {
+    // Get
+
 
     // Get
-    Route::get('grouper', [InAcbgGrouperController::class,'index'])->name('inacbg.grouper.index');
+    Route::get('grouper', [InAcbgGrouperController::class, 'index'])->name('inacbg.grouper.index');
 
     // POST
-    Route::post('grouper', [InAcbgGrouperController::class,'saveNewKlaim'])->name('inacbg.grouper.newClaim');
+    Route::post('grouper', [InAcbgGrouperController::class, 'saveNewKlaim'])->name('inacbg.grouper.newClaim');
 
 });
+
+
+/**
+ * Authentication
+ */
+Route::post('loginPassword', [LoginController::class, 'verifyPassword'])->name('verifyPassword');
+
 
 /**
  * Core 
  */
 
- Route::prefix('feature')->group(function(){
-
+Route::group(['prefix' => 'feature', 'middleware' => 'auth.jwtt'], function () {
     // Get
-    Route::post('searchDiagnosa', [SearchDiagnosaController::class,'index'])->name('searchDiagnosa');
- 
+
+    Route::post('searchDiagnosa', [SearchDiagnosaController::class, 'index'])->name('searchDiagnosa');
+
 });
