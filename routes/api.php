@@ -26,17 +26,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 /**
  * Listing Untuk Casemix API
  */
-// Route::prefix('inacbg')->group(function () {
-
-//     // Get
-//     Route::get('grouper', [InAcbgGrouperController::class, 'index'])->name('inacbg.grouper.index');
-
-//     // POST
-//     Route::post('grouper', [InAcbgGrouperController::class, 'saveNewKlaim'])->name('inacbg.grouper.newClaim');
-
-// });
-
-
 Route::group(['prefix' => 'inacbg', 'middleware' => 'auth.jwt'], function () {
     // Get
 
@@ -61,8 +50,7 @@ Route::post('loginPassword', [LoginController::class, 'verifyPassword'])->name('
  */
 
 Route::group(['prefix' => 'feature', 'middleware' => 'auth.jwt'], function () {
-    // Get
-
+    //POST 
     Route::post('searchDiagnosa', [SearchDiagnosaController::class, 'index'])->name('searchDiagnosa');
     Route::post('searchProcedural', [SearchProceduralController::class, 'index'])->name('searchProcedural');
 
