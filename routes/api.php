@@ -3,6 +3,7 @@
 use App\Http\Controllers\Casemix\InAcbgGrouperController;
 use App\Http\Controllers\Casemix\SearchDiagnosaController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Casemix\SearchProceduralController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -59,9 +60,10 @@ Route::post('loginPassword', [LoginController::class, 'verifyPassword'])->name('
  * Core 
  */
 
-Route::group(['prefix' => 'feature', 'middleware' => 'auth.jwtt'], function () {
+Route::group(['prefix' => 'feature', 'middleware' => 'auth.jwt'], function () {
     // Get
 
     Route::post('searchDiagnosa', [SearchDiagnosaController::class, 'index'])->name('searchDiagnosa');
+    Route::post('searchProcedural', [SearchProceduralController::class, 'index'])->name('searchProcedural');
 
 });

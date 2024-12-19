@@ -179,6 +179,24 @@ class Inacbg extends Model
             throw new Exception(implode(', ', $validator->errors()->all()));
         }
     }
+
+
+    /**
+     * Summary of validateDataProceduralParameter
+     * @param array $data
+     * @throws \Exception
+     * @return void
+     */
+    public function validateDataProceduralParameter(array $data)
+    {
+        $validator = Validator::make($data, [
+            'keyword' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            throw new Exception(implode(', ', $validator->errors()->all()));
+        }
+    }
     /**
      * Summary of newClaim
      * @param array $data  This is request data 
@@ -234,12 +252,47 @@ class Inacbg extends Model
     }
 
 
+    /**
+     * Summary of searchDiagnosa
+     * @param array $data
+     * @param string $key
+     * @return array
+     */
     public function searchDiagnosa(array $data, string $key){
         try {
             // var_dump($key);die;
             // validate The Payload
             $this->validateDataDiagnosisParameter($data);
             $payload = $this->preparePayloadSearchDiagnosa($data);
+            
+            $encryptedPayload = $this->inacbg_encrypt($payload, $key); // Tambahkan parameter $key
+
+            // var_dump($encryptedPayload);die; 
+
+            $response = $this->sendRequest($encryptedPayload, $key);
+
+            return $this->processResponse($response, $key);
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+
+    /**
+     * Summary of searchProcedural
+     * @param array $data
+     * @param string $key
+     * @return array
+     */
+    public function searchProcedural(array $data, string $key){
+        try {
+            // var_dump($key);die;
+            // validate The Payload
+            $this->validateDataProceduralParameter($data);
+            $payload = $this->preparePayloadSearchProcedural($data);
             
             $encryptedPayload = $this->inacbg_encrypt($payload, $key); // Tambahkan parameter $key
 
@@ -342,6 +395,23 @@ class Inacbg extends Model
         // var_dump($data['keyword']);die;
         return json_encode([
             'metadata' => ['method' => 'search_diagnosis'],
+            'data' => [
+                'keyword' => $data['keyword'] ?? null,
+            ],
+        ]);
+    }
+
+
+    /**
+     * Summary of preparePayloadSearchProcedural
+     * @param array $data
+     * @return string
+     */
+    private function preparePayloadSearchProcedural(array $data): string
+    {
+        // var_dump($data['keyword']);die;
+        return json_encode([
+            'metadata' => ['method' => 'search_procedures'],
             'data' => [
                 'keyword' => $data['keyword'] ?? null,
             ],
