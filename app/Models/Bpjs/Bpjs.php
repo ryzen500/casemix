@@ -170,6 +170,8 @@ class Bpjs extends Model
             'search_nik' => 'Peserta/nik',
             'search_sep' => 'SEP',
             'monitoring_kunjungan' => 'Monitoring/Kunjungan',
+            'monitoring_klaim' => 'Monitoring/Klaim',
+
 
             // Tambahkan endpoint lain sesuai kebutuhan...
         ];
