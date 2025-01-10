@@ -5,13 +5,56 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Services\JWTToken;
 use App\Http\Services\PasswordService;
+use App\Models\LoginPemakaiK;
 use DB;
+use Hash;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
     //
+    public function login(Request $request)
+    {
+        $request->validate([
+            'username' => 'required',
+            'password' => 'required',
+        ]);
 
+        $credentials = [
+            'nama_pemakai' => $request->input('username'),
+            'password' => Hash::make($request->input('password')),
+        ];
+
+        $user = LoginPemakaiK::where('nama_pemakai', $request->input('username'))->first();
+
+        // var_dump($user);die;
+    if ($user) {
+        // Decrypt the stored password
+
+        $passwordService = new PasswordService($request->input('username'));
+        $seckey = env('SECKEY'); // Mengambil dari .env file
+
+        $isVerified = $passwordService->cekPassword3($request->input('password'),$user->katakunci_pemakai, $seckey);
+
+
+        // Compare the decrypted password with the user input
+        // var_dump($isVerified);die;
+
+        if ($isVerified) {
+            // Log the user in
+            Auth::login($user);
+
+            $request->session()->regenerate();
+
+            return redirect()->intended('/dashboard');
+        }
+    }
+
+        return back()->withErrors([
+            'username' => 'The provided credentials do not match our records.',
+        ]);
+    }
     public function verifyPassword(Request $request)
     {
         // Misalnya data dari request atau model pengguna
