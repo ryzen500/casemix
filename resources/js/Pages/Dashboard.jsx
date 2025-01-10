@@ -1,20 +1,47 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 
-export default function Dashboard({ auth }) {
+export default function Dashboard({ auth,total_tarif_rs }) {
     return (
         <AuthenticatedLayout
             user={auth.user}
-            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Dashboard</h2>}
+            total_tarif_rs = {total_tarif_rs.total_tarif_rs}
+            count_total = {total_tarif_rs.count_total}
+
         >
             <Head title="Dashboard" />
 
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div className="p-6 text-gray-900">You're logged in! {auth.user.nama_pemakai}</div>
+            <div className="col-sm-12 p-5">
+                <div className="row">
+                    <div className="col-sm-4">
+                        <div className="card text-white bg-primary mb-3">
+                            <div className="card-header"><center>Total Tarif RS</center></div>
+                            <div className="card-body">
+                                <p className="card-text"><center>{total_tarif_rs.total_tarif_rs}</center></p>
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col-sm-4">
+                        <div className="card text-white bg-primary mb-3">
+                            <div className="card-header"><center>Jumlah Claim</center></div>
+                            <div className="card-body">
+                                <p className="card-text"><center>{total_tarif_rs.count_total}</center></p>
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col-sm-4">
+                        <div className="card text-white bg-primary mb-3">
+                            <div className="card-header"><center>Total Tarif RS</center></div>
+                            <div className="card-body">
+                                <p className="card-text"><center>{total_tarif_rs.total_tarif_rs}</center></p>
+                                
+                            </div>
+                        </div>
                     </div>
                 </div>
+
             </div>
         </AuthenticatedLayout>
     );
