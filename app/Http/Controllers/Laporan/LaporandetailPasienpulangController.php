@@ -11,12 +11,18 @@ class LaporandetailPasienpulangController extends Controller
 {
     //
 
+
+    /**
+     * Summary of index (Listing Laporan Detail PasienPulang)
+     * @param \Illuminate\Http\Request $request
+     * @return mixed
+     */
     public function index(Request $request): mixed
     {
         $currentPage = $request->input('page', 1);
         $itemsPerPage = $request->input('items_per_page', 10);
     
-        // Ambil parameter filter
+        // payload request Filter
         $filters = $request->only([
             'no_pendaftaran', 'carakeluar_id', 'kondisikeluar_id',
             'carabayar_id', 'penjamin_id', 'no_rm', 'nama_pasien',

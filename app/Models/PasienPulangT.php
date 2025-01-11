@@ -130,6 +130,13 @@ class PasienPulangT extends Model
         return $query;
     }
 
+    /**
+     * Summary of getPaginatedData (and Filters)
+     * @param int $limit
+     * @param int $offset
+     * @param array $filters
+     * @return \Illuminate\Support\Collection
+     */
     public static function getPaginatedData(int $limit, int $offset, array $filters = [])
     {
         $query = DB::table('pasienpulang_t')
@@ -167,6 +174,11 @@ class PasienPulangT extends Model
         return $query->offset($offset)->limit($limit)->get();
     }
 
+    /**
+     * Summary of getTotalItems (dynamic With filters)
+     * @param array $filters
+     * @return int
+     */
     public static function getTotalItems(array $filters = []): int
     {
         $query = DB::table('pasienpulang_t')
