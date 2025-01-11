@@ -10,6 +10,7 @@ class LaporandetailPasienpulangController extends Controller
 {
     //
 
+    
     public function index(Request $request):void{
 
         $currentPage = $request->input('page', 1);
