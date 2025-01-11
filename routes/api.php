@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BPJS\Monitoring\MonitoringBPJSController;
+use App\Http\Controllers\BPJS\SearchPeserta\SearchPesertaBPJSController;
 use App\Http\Controllers\Casemix\InAcbgGrouperController;
 use App\Http\Controllers\Casemix\SearchDiagnosaController;
 use App\Http\Controllers\Auth\LoginController;
@@ -54,6 +55,7 @@ Route::group(['prefix' => 'feature', 'middleware' => 'auth.jwt'], function () {
     //POST 
     Route::post('searchDiagnosa', [SearchDiagnosaController::class, 'index'])->name('searchDiagnosa');
     Route::post('searchProcedural', [SearchProceduralController::class, 'index'])->name('searchProcedural');
+    Route::post('searchPesertaBPJS', [SearchPesertaBPJSController::class, 'index'])->name('searchPesertaBPJS');
 
 });
 
