@@ -25,6 +25,98 @@ export default function Authenticated({ user, header, children }) {
                                     Dashboard
                                 </NavLink>
                             </div>
+                            <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                <NavLink href={route('dashboard')} >
+                                    Coding / Grouping
+                                </NavLink>
+                            </div>
+                            <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex items-center ">
+                                <Dropdown>
+                                    <Dropdown.Trigger>
+                                        <span className="inline-flex rounded-md">
+                                            Kirim Data Online
+
+                                            <svg
+                                                className="mt-1 h-4 w-4 items-center"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                viewBox="0 0 20 20"
+                                                fill="currentColor"
+                                            >
+                                                <path
+                                                    fillRule="evenodd"
+                                                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                                    clipRule="evenodd"
+                                                />
+                                            </svg>
+                                        </span>
+                                    </Dropdown.Trigger>
+
+                                    <Dropdown.Content>
+                                        <Dropdown.Link href={route('profile.edit')}>Rawat Jalan</Dropdown.Link>
+                                        <Dropdown.Link href={route('profile.edit')}>Rawat Inap</Dropdown.Link>
+                                        <Dropdown.Link href={route('profile.edit')}>Rawat Jalan & Rawat Inap</Dropdown.Link>
+                                    </Dropdown.Content>
+                                </Dropdown>
+                            </div>
+                            <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex items-center ">
+                                <Dropdown>
+                                    <Dropdown.Trigger>
+                                        <span className="inline-flex rounded-md">
+                                            Pengajuan Klaim
+
+                                            <svg
+                                                className="mt-1 h-4 w-4 items-center"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                viewBox="0 0 20 20"
+                                                fill="currentColor"
+                                            >
+                                                <path
+                                                    fillRule="evenodd"
+                                                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                                    clipRule="evenodd"
+                                                />
+                                            </svg>
+                                        </span>
+                                    </Dropdown.Trigger>
+
+                                    <Dropdown.Content>
+                                        <Dropdown.Link href={route('profile.edit')}>Pengajuan Klaim Covid 19</Dropdown.Link>
+                                        <Dropdown.Link href={route('profile.edit')}>Pengajuan Klaim KIPI</Dropdown.Link>
+                                        <Dropdown.Link href={route('profile.edit')}>Pengajuan Klaim Bayi Baru Lahir</Dropdown.Link>
+                                        <Dropdown.Link href={route('profile.edit')}>Pengajuan Klaim Perpanjangan Masa Rawat</Dropdown.Link>
+                                        <Dropdown.Link href={route('profile.edit')}>Pengajuan Klaim Co-insidense</Dropdown.Link>
+                                        <Dropdown.Link href={route('profile.edit')}>Pengajuan Klaim Jampersal</Dropdown.Link>
+                                        <Dropdown.Link href={route('profile.edit')}>Pengajuan Klaim Jaminan Pemulihan Kesehatan Prioritas</Dropdown.Link>
+
+                                    </Dropdown.Content>
+                                </Dropdown>
+                            </div>
+                            <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex items-center ">
+                                <Dropdown>
+                                    <Dropdown.Trigger>
+                                        <span className="inline-flex rounded-md">
+                                            Laporan
+
+                                            <svg
+                                                className="mt-1 h-4 w-4 items-center"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                viewBox="0 0 20 20"
+                                                fill="currentColor"
+                                            >
+                                                <path
+                                                    fillRule="evenodd"
+                                                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                                    clipRule="evenodd"
+                                                />
+                                            </svg>
+                                        </span>
+                                    </Dropdown.Trigger>
+
+                                    <Dropdown.Content>
+                                        <Dropdown.Link href={route('profile.edit')}>Laporan Claim Individual</Dropdown.Link>
+                                    </Dropdown.Content>
+                                </Dropdown>
+                            </div>
                         </div>
 
                         <div className="hidden sm:flex sm:items-center sm:ms-6">
