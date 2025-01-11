@@ -1,6 +1,7 @@
 <?php
 namespace App\Models\Casemix;
 
+use Carbon\Carbon;
 use Exception;
 use Http;
 use Illuminate\Database\Eloquent\Model;
@@ -11,6 +12,16 @@ class Inacbg extends Model
 {
     protected $table = 'inacbg_t';
 
+    /**
+     * get data from dashboard
+     */
+    public static function getDashboard()
+    {
+        return DB::table('inacbg_t')
+        ->selectRaw('SUM(total_tarif_rs) as total_tarif_rs, SUM(tarifgruper) as tarifgruper, count(total_tarif_rs) as count_total')
+        ->whereBetween('inacbg_tgl', [Carbon::now()->startOfMonth(),  Carbon::now()->endOfMonth()])
+        ->first();
+    }
     /**
      * Hitung total item untuk pagination.
      */
