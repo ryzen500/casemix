@@ -39,6 +39,7 @@ Route::middleware('auth')->group(function () {
 
     // laporan
     Route::get('/laporanSEP', action: [LaporanSEPController::class, 'index'])->name('laporanSEP');
+    Route::get('/getLaporanSEP', action: [LaporanSEPController::class, 'getData'])->name('getLaporanSEP');
 
 });
 
