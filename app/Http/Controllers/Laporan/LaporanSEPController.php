@@ -18,13 +18,13 @@ class LaporanSEPController extends Controller
         $itemsPerPage = $request->input('items_per_page', 10);
 
         // Hitung total data
-        $totalItems = Inacbg::getTotalItems();
+        $totalItems = LaporanresepR::getTotalItems();
 
         // Inisialisasi pagination
         $pagination = new Pagination($totalItems, $itemsPerPage, $currentPage);
 
         // Ambil data berdasarkan pagination
-        $data = Inacbg::getPaginatedData($pagination->getLimit(), $pagination->getOffset());
+        $data = LaporanresepR::getPaginatedData($pagination->getLimit(), $pagination->getOffset());
 
         // Kembalikan response JSON
         // return response()->json([
@@ -43,13 +43,13 @@ class LaporanSEPController extends Controller
         $itemsPerPage = $request->input('items_per_page', 10);
 
         // Hitung total data
-        $totalItems = Inacbg::getTotalItems();
+        $totalItems = LaporanresepR::getTotalItems();
 
         // Inisialisasi pagination
         $pagination = new Pagination($totalItems, $itemsPerPage, $currentPage);
 
         // Ambil data berdasarkan pagination
-        $data = Inacbg::getPaginatedData($pagination->getLimit(), $pagination->getOffset());
+        $data = LaporanresepR::getPaginatedData($pagination->getLimit(), $pagination->getOffset());
         // return $data;
         return response()->json([
             'pagination' => $pagination->getPaginationInfo(),
