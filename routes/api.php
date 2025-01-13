@@ -6,6 +6,7 @@ use App\Http\Controllers\Casemix\InAcbgGrouperController;
 use App\Http\Controllers\Casemix\SearchDiagnosaController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Casemix\SearchProceduralController;
+use App\Http\Controllers\Laporan\laporanBukuRegisterController;
 use App\Http\Controllers\Laporan\LaporandetailPasienpulangController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -58,6 +59,7 @@ Route::group(['prefix' => 'feature', 'middleware' => 'auth.jwt'], function () {
     Route::post('searchProcedural', [SearchProceduralController::class, 'index'])->name('searchProcedural');
     Route::post('searchPesertaBPJS', [SearchPesertaBPJSController::class, 'index'])->name('searchPesertaBPJS');
     Route::post('laporandetail', [LaporandetailPasienpulangController::class, 'index'])->name('laporandetail');
+    Route::post('laporanBukuRegister', [laporanBukuRegisterController::class, 'index'])->name('laporanBukuRegister');
 
 });
 
