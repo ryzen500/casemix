@@ -21,6 +21,5 @@ createInertiaApp({
     },
 });
 if (document.getElementById('datatable')) {
-    console.log
     ReactDOM.render(<LaporanSEP />, document.getElementById('datatable'));
 }
