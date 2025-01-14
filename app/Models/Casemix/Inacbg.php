@@ -18,9 +18,9 @@ class Inacbg extends Model
     public static function getDashboard()
     {
         return DB::table('inacbg_t')
-        ->selectRaw('SUM(total_tarif_rs) as total_tarif_rs, SUM(tarifgruper) as tarifgruper, count(total_tarif_rs) as count_total')
-        ->whereBetween('inacbg_tgl', [Carbon::now()->startOfMonth(),  Carbon::now()->endOfMonth()])
-        ->first();
+            ->selectRaw('SUM(total_tarif_rs) as total_tarif_rs, SUM(tarifgruper) as tarifgruper, count(total_tarif_rs) as count_total')
+            ->whereBetween('inacbg_tgl', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])
+            ->first();
     }
     /**
      * Hitung total item untuk pagination.
@@ -140,7 +140,7 @@ class Inacbg extends Model
         $encrypted = mb_substr($decoded, $iv_size + 10, NULL, "8bit");
         /// check signature, against padding oracle attack
         $calc_signature = mb_substr(hash_hmac("sha256", $encrypted, $key, true), 0, 10, "8bit");
-        if(!$this->inacbg_compare($signature,$calc_signature)) {
+        if (!$this->inacbg_compare($signature, $calc_signature)) {
             return "SIGNATURE_NOT_MATCH"; /// signature doesn't match
         }
         $decrypted = openssl_decrypt($encrypted, "aes-256-cbc", $key, OPENSSL_RAW_DATA, $iv);
@@ -170,7 +170,7 @@ class Inacbg extends Model
         }
     }
 
-    
+
 
 
     /**
@@ -269,13 +269,14 @@ class Inacbg extends Model
      * @param string $key
      * @return array
      */
-    public function searchDiagnosa(array $data, string $key){
+    public function searchDiagnosa(array $data, string $key)
+    {
         try {
             // var_dump($key);die;
             // validate The Payload
             $this->validateDataDiagnosisParameter($data);
             $payload = $this->preparePayloadSearchDiagnosa($data);
-            
+
             $encryptedPayload = $this->inacbg_encrypt($payload, $key); // Tambahkan parameter $key
 
             // var_dump($encryptedPayload);die; 
@@ -298,13 +299,14 @@ class Inacbg extends Model
      * @param string $key
      * @return array
      */
-    public function searchProcedural(array $data, string $key){
+    public function searchProcedural(array $data, string $key)
+    {
         try {
             // var_dump($key);die;
             // validate The Payload
             $this->validateDataProceduralParameter($data);
             $payload = $this->preparePayloadSearchProcedural($data);
-            
+
             $encryptedPayload = $this->inacbg_encrypt($payload, $key); // Tambahkan parameter $key
 
             // var_dump($encryptedPayload);die; 
@@ -381,7 +383,7 @@ class Inacbg extends Model
                     'alkes' => $data['alkes'] ?? null,
                     'bmhp' => $data['bmhp'] ?? null,
                     'sewa_alat' => $data['sewa_alat'] ?? null,
-                    
+
                 ],
                 'tarif_poli_eks' => $data['tarif_poli_eks'] ?? null,
                 'nama_dokter' => $data['nama_dokter'] ?? null,
@@ -505,4 +507,69 @@ class Inacbg extends Model
             'message' => $decodedResponse['metadata']['message'] ?? 'Unknown error',
         ];
     }
+
+
+    public static function reportClaimReceivables(int $limit, int $offset, array $filters = [])
+    {
+        $query = DB::table('inacbg_t')
+            ->select([
+                'inacbg_t.inacbg_id',
+                'inacbg_t.inacbg_nosep AS nosep',
+                DB::raw('DATE(inacbg_t.tglrawat_masuk) AS tglrawat_masuk'),
+                DB::raw('DATE(inacbg_t.tglrawat_keluar) AS tglrawat_keluar'),
+                'inacbg_t.total_tarif_rs',
+                'inacbg_t.tarifgruper',
+                'pendaftaran_t.no_pendaftaran',
+                DB::raw("CASE WHEN sep_t.jnspelayanan = 1 THEN 'RI' ELSE 'RJ' END AS jenispelayanan"),
+                'sep_t.nokartuasuransi',
+                'sep_t.dpjpygmelayani_nama',
+                'pasien_m.nama_pasien',
+                DB::raw("COALESCE(ruangan_m1.ruangan_nama, ruangan_m.ruangan_nama) AS ruangan_nama"),
+                DB::raw("STRING_AGG(DISTINCT CONCAT_WS(',', inasiscmg_t.kode_spesialprosedure, inasiscmg_t.kode_spesialprosthesis, inasiscmg_t.kode_spesialinvestigation, inasiscmg_t.kode_spesialdrug), ',') AS topup"),
+            ])
+            ->join('pendaftaran_t', 'inacbg_t.pendaftaran_id', '=', 'pendaftaran_t.pendaftaran_id')
+            ->join('sep_t', 'sep_t.inacbg_id', '=', 'inacbg_t.inacbg_id')
+            ->join('pasien_m', 'inacbg_t.pasien_id', '=', 'pasien_m.pasien_id')
+            ->leftJoin('ruangan_m', 'ruangan_m.ruangan_id', '=', 'pendaftaran_t.ruangan_id')
+            ->leftJoin('ruangan_m AS ruangan_m1', 'ruangan_m1.ruangan_id', '=', 'pendaftaran_t.ruangan_id')
+            ->leftJoin('inasiscmg_t', 'inacbg_t.inacbg_id', '=', 'inasiscmg_t.inacbg_id')
+            ->groupBy([
+                'inacbg_t.inacbg_id',
+                'pendaftaran_t.no_pendaftaran',
+                'sep_t.jnspelayanan',
+                'sep_t.nokartuasuransi',
+                'sep_t.dpjpygmelayani_nama',
+                'pasien_m.nama_pasien',
+                'ruangan_m.ruangan_nama',
+                'ruangan_m1.ruangan_nama',
+            ]);
+    
+        self::applyFilters($query, $filters);
+    
+        return $query->offset($offset)->limit($limit)->get();
+    }
+    
+    public static function reportCountClaimReceivables(array $filters = [])
+    {
+        $query = DB::table('inacbg_t')
+            ->join('pendaftaran_t', 'inacbg_t.pendaftaran_id', '=', 'pendaftaran_t.pendaftaran_id')
+            ->join('sep_t', 'sep_t.inacbg_id', '=', 'inacbg_t.inacbg_id')
+            ->join('pasien_m', 'inacbg_t.pasien_id', '=', 'pasien_m.pasien_id');
+    
+        self::applyFilters($query, $filters);
+    
+        return $query->count();
+    }
+
+
+    private static function applyFilters($query, array $filters)
+{
+    foreach ($filters as $key => $value) {
+        if (!empty($value)) {
+            $query->where($key, $key === 'nama_pasien' ? 'like' : '=', $key === 'nama_pasien' ? "%$value%" : $value);
+        }
+    }
+}
+
+    
 }

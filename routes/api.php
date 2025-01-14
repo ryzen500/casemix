@@ -58,10 +58,21 @@ Route::group(['prefix' => 'feature', 'middleware' => 'auth.jwt'], function () {
     Route::post('searchDiagnosa', [SearchDiagnosaController::class, 'index'])->name('searchDiagnosa');
     Route::post('searchProcedural', [SearchProceduralController::class, 'index'])->name('searchProcedural');
     Route::post('searchPesertaBPJS', [SearchPesertaBPJSController::class, 'index'])->name('searchPesertaBPJS');
-    Route::post('laporandetail', [LaporandetailPasienpulangController::class, 'index'])->name('laporandetail');
-    Route::post('laporanBukuRegister', [laporanBukuRegisterController::class, 'index'])->name('laporanBukuRegister');
 
 });
+
+/**
+ * 
+ * Routes Grouping for monitoring
+ */
+
+ Route::group(['prefix' => 'feature', 'middleware' => 'auth.jwt'], function () {
+    //POST 
+    Route::post('DetailPasienPulang', [LaporandetailPasienpulangController::class, 'index'])->name('DetailPasienPulang');
+    Route::post('BukuRegister', [laporanBukuRegisterController::class, 'index'])->name('BukuRegister');
+    Route::post('LaporanKlaimPiutang', [InAcbgGrouperController::class, 'listReportClaim'])->name('LaporanKlaimPiutang');
+});
+
 
 
 Route::group(['prefix' => 'monitoring', 'middleware' => 'auth.jwt'], function () {
