@@ -100,5 +100,29 @@ class InAcbgGrouperController extends Controller
         ]);
     }
 
+    public function searchGroupper(Request $request){
+        $currentPage = $request->input('page', 1);
+        $itemsPerPage = $request->input('items_per_page', 10);
+
+
+        // payload request Filter
+        $filters = $request->only([
+            'no_rekam_medik', 'nosep','nama_pasien'
+        ]);
+        // Hitung total data
+        $totalItems = Inacbg::dataListSepCount($filters);
+
+        // Inisialisasi pagination
+        $pagination = new Pagination($totalItems, $itemsPerPage, $currentPage);
+
+        // Ambil data berdasarkan pagination
+        $data = Inacbg::dataListSep($pagination->getLimit(), $pagination->getOffset(), $filters);
+
+        // Kembalikan response JSON
+        return response()->json([
+            'pagination' => $pagination->getPaginationInfo(),
+            'data' => $data,
+        ]);
+    }
     
 }

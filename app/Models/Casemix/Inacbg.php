@@ -543,33 +543,145 @@ class Inacbg extends Model
                 'ruangan_m.ruangan_nama',
                 'ruangan_m1.ruangan_nama',
             ]);
-    
+
         self::applyFilters($query, $filters);
-    
+
         return $query->offset($offset)->limit($limit)->get();
     }
-    
+
     public static function reportCountClaimReceivables(array $filters = [])
     {
         $query = DB::table('inacbg_t')
             ->join('pendaftaran_t', 'inacbg_t.pendaftaran_id', '=', 'pendaftaran_t.pendaftaran_id')
             ->join('sep_t', 'sep_t.inacbg_id', '=', 'inacbg_t.inacbg_id')
             ->join('pasien_m', 'inacbg_t.pasien_id', '=', 'pasien_m.pasien_id');
-    
+
         self::applyFilters($query, $filters);
-    
+
         return $query->count();
     }
 
 
     private static function applyFilters($query, array $filters)
-{
-    foreach ($filters as $key => $value) {
-        if (!empty($value)) {
-            $query->where($key, $key === 'nama_pasien' ? 'like' : '=', $key === 'nama_pasien' ? "%$value%" : $value);
+    {
+        foreach ($filters as $key => $value) {
+            if (!empty($value)) {
+                $query->where($key, $key === 'nama_pasien' ? 'like' : '=', $key === 'nama_pasien' ? "%$value%" : $value);
+            }
         }
     }
-}
 
+    public static function dataListSep(int $limit, int $offset, array $filters = [])
+    {
+        $query1 = DB::table('pendaftaran_t as p')
+            ->join('pasien_m as pa', 'pa.pasien_id', '=', 'p.pasien_id')
+            ->join('sep_t as s', 's.sep_id', '=', 'p.sep_id')
+            ->leftJoin('pasienadmisi_t as pas', 'pas.pasienadmisi_id', '=', 'p.pasienadmisi_id')
+            ->leftJoin('inacbg_t', 'inacbg_t.sep_id', '=', 's.sep_id')
+            ->leftJoin('inasiscbg_t', 'inasiscbg_t.inacbg_id', '=', 'inacbg_t.inacbg_id')
+            ->leftJoin('pegawai_m as pg', 'pg.loginpemakai_id', '=', 'inacbg_t.create_loginpemakai_id')
+            ->leftJoin('asuransipasien_m as ap', 'ap.asuransipasien_id', '=', 'p.asuransipasien_id')
+            ->select(DB::raw('CASE WHEN p.pasienadmisi_id IS NOT NULL THEN pas.tgladmisi ELSE date(p.tgl_pendaftaran)::timestamp without time zone END AS tglmasuk'),
+            DB::raw('CASE WHEN p.pasienadmisi_id IS NOT NULL THEN pas.rencanapulang ELSE date(p.tgl_pendaftaran)::timestamp without time zone END AS tglpulang'),
+            'pa.nama_pasien',
+            's.nosep',
+            DB::raw("'JKN'::text AS jaminan"),
+            DB::raw('CASE WHEN s.jnspelayanan = 2 THEN \'RJ\' WHEN s.jnspelayanan = 1 THEN \'RI\' ELSE \'?\' END AS tipe'),
+            'inasiscbg_t.kodeprosedur as cbg',
+            DB::raw('CASE WHEN inacbg_t.is_finalisasi = true AND inacbg_t.is_terkirim = true THEN \'Terkirim\' WHEN inacbg_t.is_finalisasi = true AND inacbg_t.is_terkirim = false THEN \'Final\' WHEN inacbg_t.is_finalisasi = false AND inacbg_t.is_terkirim = false THEN \'-\' ELSE \'-\' END AS status'),
+            'ap.nopeserta',
+            'pa.tanggal_lahir',
+            DB::raw('concat(DATE_PART(\'year\', age(tanggal_lahir)), \' Tahun\')'),
+            'pg.nama_pegawai');
+    
+        $query2 = DB::table('pendaftaran_t as p')
+            ->join('pasien_m as pa', 'pa.pasien_id', '=', 'p.pasien_id')
+            ->leftJoin('pasienadmisi_t as pas', 'pas.pasienadmisi_id', '=', 'p.pasienadmisi_id')
+            ->join('sep_t as s', 's.sep_id', '=', 'p.sep_id')
+            ->leftJoin('inacbg_t', 'inacbg_t.sep_id', '=', 's.sep_id')
+            ->leftJoin('inasiscbg_t', 'inasiscbg_t.inacbg_id', '=', 'inacbg_t.inacbg_id')
+            ->leftJoin('pegawai_m as pg', 'pg.loginpemakai_id', '=', 'inacbg_t.create_loginpemakai_id')
+            ->leftJoin('asuransipasien_m as ap', 'ap.asuransipasien_id', '=', 'p.asuransipasien_id')
+            ->select(DB::raw('CASE WHEN p.pasienadmisi_id IS NOT NULL THEN pas.tgladmisi ELSE date(p.tgl_pendaftaran)::timestamp without time zone END AS tglmasuk'),
+            DB::raw('CASE WHEN p.pasienadmisi_id IS NOT NULL THEN pas.rencanapulang ELSE date(p.tgl_pendaftaran)::timestamp without time zone END AS tglpulang'),
+            'pa.nama_pasien',
+            's.nosep',
+            DB::raw("'JKN'::text AS jaminan"),
+            DB::raw('CASE WHEN s.jnspelayanan = 2 THEN \'RJ\' WHEN s.jnspelayanan = 1 THEN \'RI\' ELSE \'?\' END AS tipe'),
+            'inasiscbg_t.kodeprosedur as cbg',
+            DB::raw('CASE WHEN inacbg_t.is_finalisasi = true AND inacbg_t.is_terkirim = true THEN \'Terkirim\' WHEN inacbg_t.is_finalisasi = true AND inacbg_t.is_terkirim = false THEN \'Final\' WHEN inacbg_t.is_finalisasi = false AND inacbg_t.is_terkirim = false THEN \'-\' ELSE \'-\' END AS status'),
+            'ap.nopeserta',
+            'pa.tanggal_lahir',
+            DB::raw('concat(DATE_PART(\'year\', age(tanggal_lahir)), \' Tahun\')'),
+            'pg.nama_pegawai');
+    
+        // Terapkan filter pada kedua query
+        self::applyFilters($query1, $filters);
+        self::applyFilters($query2, $filters);
+    
+        // Gabungkan query menggunakan UNION ALL, lalu tambahkan limit dan offset
+        $result = $query1->unionAll($query2)
+            ->limit($limit)
+            ->offset($offset)
+            ->get();
+    
+        return $result;
+    }
+
+
+
+    public static function dataListSepCount(array $filters = [])
+    {
+        $query1 = DB::table('pendaftaran_t as p')
+        ->join('pasien_m as pa', 'pa.pasien_id', '=', 'p.pasien_id')
+        ->join('sep_t as s', 's.sep_id', '=', 'p.sep_id')
+        ->leftJoin('pasienadmisi_t as pas', 'pas.pasienadmisi_id', '=', 'p.pasienadmisi_id')
+        ->leftJoin('inacbg_t', 'inacbg_t.sep_id', '=', 's.sep_id')
+        ->leftJoin('inasiscbg_t', 'inasiscbg_t.inacbg_id', '=', 'inacbg_t.inacbg_id')
+        ->leftJoin('pegawai_m as pg', 'pg.loginpemakai_id', '=', 'inacbg_t.create_loginpemakai_id')
+        ->leftJoin('asuransipasien_m as ap', 'ap.asuransipasien_id', '=', 'p.asuransipasien_id')
+        ->select(DB::raw('CASE WHEN p.pasienadmisi_id IS NOT NULL THEN pas.tgladmisi ELSE date(p.tgl_pendaftaran)::timestamp without time zone END AS tglmasuk'),
+        DB::raw('CASE WHEN p.pasienadmisi_id IS NOT NULL THEN pas.rencanapulang ELSE date(p.tgl_pendaftaran)::timestamp without time zone END AS tglpulang'),
+        'pa.nama_pasien',
+        's.nosep',
+        DB::raw("'JKN'::text AS jaminan"),
+        DB::raw('CASE WHEN s.jnspelayanan = 2 THEN \'RJ\' WHEN s.jnspelayanan = 1 THEN \'RI\' ELSE \'?\' END AS tipe'),
+        'inasiscbg_t.kodeprosedur as cbg',
+        DB::raw('CASE WHEN inacbg_t.is_finalisasi = true AND inacbg_t.is_terkirim = true THEN \'Terkirim\' WHEN inacbg_t.is_finalisasi = true AND inacbg_t.is_terkirim = false THEN \'Final\' WHEN inacbg_t.is_finalisasi = false AND inacbg_t.is_terkirim = false THEN \'-\' ELSE \'-\' END AS status'),
+        'ap.nopeserta',
+        'pa.tanggal_lahir',
+        DB::raw('concat(DATE_PART(\'year\', age(tanggal_lahir)), \' Tahun\')'),
+        'pg.nama_pegawai');
+
+    $query2 = DB::table('pendaftaran_t as p')
+        ->join('pasien_m as pa', 'pa.pasien_id', '=', 'p.pasien_id')
+        ->leftJoin('pasienadmisi_t as pas', 'pas.pasienadmisi_id', '=', 'p.pasienadmisi_id')
+        ->join('sep_t as s', 's.sep_id', '=', 'p.sep_id')
+        ->leftJoin('inacbg_t', 'inacbg_t.sep_id', '=', 's.sep_id')
+        ->leftJoin('inasiscbg_t', 'inasiscbg_t.inacbg_id', '=', 'inacbg_t.inacbg_id')
+        ->leftJoin('pegawai_m as pg', 'pg.loginpemakai_id', '=', 'inacbg_t.create_loginpemakai_id')
+        ->leftJoin('asuransipasien_m as ap', 'ap.asuransipasien_id', '=', 'p.asuransipasien_id')
+        ->select(DB::raw('CASE WHEN p.pasienadmisi_id IS NOT NULL THEN pas.tgladmisi ELSE date(p.tgl_pendaftaran)::timestamp without time zone END AS tglmasuk'),
+        DB::raw('CASE WHEN p.pasienadmisi_id IS NOT NULL THEN pas.rencanapulang ELSE date(p.tgl_pendaftaran)::timestamp without time zone END AS tglpulang'),
+        'pa.nama_pasien',
+        's.nosep',
+        DB::raw("'JKN'::text AS jaminan"),
+        DB::raw('CASE WHEN s.jnspelayanan = 2 THEN \'RJ\' WHEN s.jnspelayanan = 1 THEN \'RI\' ELSE \'?\' END AS tipe'),
+        'inasiscbg_t.kodeprosedur as cbg',
+        DB::raw('CASE WHEN inacbg_t.is_finalisasi = true AND inacbg_t.is_terkirim = true THEN \'Terkirim\' WHEN inacbg_t.is_finalisasi = true AND inacbg_t.is_terkirim = false THEN \'Final\' WHEN inacbg_t.is_finalisasi = false AND inacbg_t.is_terkirim = false THEN \'-\' ELSE \'-\' END AS status'),
+        'ap.nopeserta',
+        'pa.tanggal_lahir',
+        DB::raw('concat(DATE_PART(\'year\', age(tanggal_lahir)), \' Tahun\')'),
+        'pg.nama_pegawai');
+        // Terapkan filter pada kedua query
+        self::applyFilters($query1, $filters);
+        self::applyFilters($query2, $filters);
+    
+        // Hitung total data dari kedua query
+        $resultQ1 = $query1->count();
+        $resultQ2 = $query2->count();
+    
+        return $resultQ1 + $resultQ2;
+    }
     
 }
