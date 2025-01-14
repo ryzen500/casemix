@@ -66,7 +66,7 @@ Route::group(['prefix' => 'feature', 'middleware' => 'auth.jwt'], function () {
  * Routes Grouping for monitoring
  */
 
- Route::group(['prefix' => 'feature', 'middleware' => 'auth.jwt'], function () {
+ Route::group(['prefix' => 'reporting', 'middleware' => 'auth.jwt'], function () {
     //POST 
     Route::post('DetailPasienPulang', [LaporandetailPasienpulangController::class, 'index'])->name('DetailPasienPulang');
     Route::post('BukuRegister', [laporanBukuRegisterController::class, 'index'])->name('BukuRegister');
