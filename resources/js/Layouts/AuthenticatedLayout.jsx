@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import Dropdown from '@/Components/Dropdown';
 import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Link } from '@inertiajs/react';
-
+import Sidebar from '@/Components/Sidebar';
 export default function Authenticated({ user, header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(true);
     const [isSubmenuOpen, setIsSubmenuOpen] = useState(false);
@@ -12,6 +12,40 @@ export default function Authenticated({ user, header, children }) {
     const toggleSubmenu = () => {
         setIsSubmenuOpen(!isSubmenuOpen);
     };
+
+     useEffect(() => {
+        const handleResize = () => {
+          const widthVal = window.innerWidth;
+          if (widthVal < 1200) {
+            setShowingNavigationDropdown(false); // Remove 'active' class if width is less than 1200px
+          } else {
+            setShowingNavigationDropdown(true);  // Add 'active' class if width is 1200px or more
+          }
+
+        };
+        
+        // Set initial state based on window size
+        handleResize();
+    
+        // Add event listener for resize
+        window.addEventListener('resize', handleResize);
+    
+        // Clean up the event listener on component unmount
+        return () => {
+            
+            window.removeEventListener('resize', handleResize);
+            // Perfect Scrollbar Init
+            if(typeof PerfectScrollbar == 'function') {
+                const container = document.querySelector(".sidebar-wrapper");
+                const ps = new PerfectScrollbar(container, {
+                    wheelPropagation: false
+                });
+            }
+            // Scroll into active sidebar
+            document.querySelector('.sidebar-item.active').scrollIntoView(false)
+        };
+      }, []);
+      var menuItems = []
     return (
         <div>
             <div id="sidebar" className={!showingNavigationDropdown ? '' : 'active'}>
@@ -35,56 +69,14 @@ export default function Authenticated({ user, header, children }) {
                             <NavLink href={route('dashboard')} active={route().current('dashboard')}>
                                 <span>Dashboard</span>
                             </NavLink>
-                            <li className="sidebar-item  has-sub">
-                                <a  onClick={toggleSubmenu} className='sidebar-link'>
-                                    <i className="bi bi-stack"></i>
-                                    <span>Components</span>
-                                </a>
-                                <ul  className={isSubmenuOpen  ? 'submenu' : 'submenu active'} >
-                                    <li className="submenu-item ">
-                                        <a href="component-alert.html">Alert</a>
-                                    </li>
-                                    <li className="submenu-item ">
-                                        <a href="component-badge.html">Badge</a>
-                                    </li>
-                                    <li className="submenu-item ">
-                                        <a href="component-breadcrumb.html">Breadcrumb</a>
-                                    </li>
-                                    <li className="submenu-item ">
-                                        <a href="component-button.html">Button</a>
-                                    </li>
-                                    <li className="submenu-item ">
-                                        <a href="component-card.html">Card</a>
-                                    </li>
-                                    <li className="submenu-item ">
-                                        <a href="component-carousel.html">Carousel</a>
-                                    </li>
-                                    <li className="submenu-item ">
-                                        <a href="component-dropdown.html">Dropdown</a>
-                                    </li>
-                                    <li className="submenu-item ">
-                                        <a href="component-list-group.html">List Group</a>
-                                    </li>
-                                    <li className="submenu-item ">
-                                        <a href="component-modal.html">Modal</a>
-                                    </li>
-                                    <li className="submenu-item ">
-                                        <a href="component-navs.html">Navs</a>
-                                    </li>
-                                    <li className="submenu-item ">
-                                        <a href="component-pagination.html">Pagination</a>
-                                    </li>
-                                    <li className="submenu-item ">
-                                        <a href="component-progress.html">Progress</a>
-                                    </li>
-                                    <li className="submenu-item ">
-                                        <a href="component-spinner.html">Spinner</a>
-                                    </li>
-                                    <li className="submenu-item ">
-                                        <a href="component-tooltip.html">Tooltip</a>
-                                    </li>
-                                </ul>
-                            </li>
+                            <Sidebar menuItems=
+                            {[
+                                { id: 1, label: "Laporan", submenu: [{label:"Laporan SEP Peserta (BPJS) ",link:"laporanSEP"},{label:"Laporan detail pasien pulang",link:"a2.html"},{label:"Laporan Buku  Register",link:"a2.html"},{label:"Laporan Data Awal Klaim Piutang",link:"a2.html"}]}
+                            ]}></Sidebar>
+                            <Sidebar menuItems=
+                            {[
+                                { id: 1, label: user.nama_pemakai, submenu: [{label:"Profile ",link:route('profile.edit')},{label:"logout",link:route('logout')}]}
+                            ]}></Sidebar>
                         </ul>
                         <button className="sidebar-toggler btn x"><i data-feather="x"></i></button>
                     </div>
