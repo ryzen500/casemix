@@ -74,5 +74,31 @@ class InAcbgGrouperController extends Controller
         return response()->json($results, 200);
     }
 
+    public function listReportClaim(Request $request) {
+        $currentPage = $request->input('page', 1);
+        $itemsPerPage = $request->input('items_per_page', 10);
+
+
+        // payload request Filter
+        $filters = $request->only([
+            'no_pendaftaran', 'nosep', 'tglrawat_masuk',
+            'jenispelayanan', 'nokartuasuransi','nama_pasien','dpjpygmelayani_nama','ruangan_nama',
+        ]);
+        // Hitung total data
+        $totalItems = Inacbg::reportCountClaimReceivables($filters);
+
+        // Inisialisasi pagination
+        $pagination = new Pagination($totalItems, $itemsPerPage, $currentPage);
+
+        // Ambil data berdasarkan pagination
+        $data = Inacbg::reportClaimReceivables($pagination->getLimit(), $pagination->getOffset(), $filters);
+
+        // Kembalikan response JSON
+        return response()->json([
+            'pagination' => $pagination->getPaginationInfo(),
+            'data' => $data,
+        ]);
+    }
+
     
 }
