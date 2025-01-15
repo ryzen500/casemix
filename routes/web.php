@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Laporan\LaporanSEPController;
 use App\Http\Controllers\ProfileController;
@@ -31,6 +32,9 @@ Route::get('/', function () {
 //     return Inertia::render('Dashboard');
 // })->middleware(['auth'])->name('dashboard');
 
+
+// Route::get('login', [AuthenticatedSessionController::class, 'create'])
+// ->name('login');
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', action: [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
