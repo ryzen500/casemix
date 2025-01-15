@@ -75,7 +75,7 @@ export default function Authenticated({ user, header, children }) {
                             ]}></Sidebar>
                             <Sidebar menuItems=
                             {[
-                                { id: 1, label: user.nama_pemakai, submenu: [{label:"Profile ",link:route('profile.edit')},{label:"logout",link:route('logout')}]}
+                                { id: 1, label: user.nama_pemakai, submenu: [{label:"Profile ",link:route('profile.edit')},{label:"logout",link:route('logout'),method:'post'}]}
                             ]}></Sidebar>
                         </ul>
                         <button className="sidebar-toggler btn x"><i data-feather="x"></i></button>
@@ -101,7 +101,7 @@ export default function Authenticated({ user, header, children }) {
                                         </svg>
                                     </button>
                                 </div>
-                                <div className="col-sm-6" style={{ textAlign: 'right' }}>
+                                {/* <div className="col-sm-6" style={{ textAlign: 'right' }}>
                                     <Dropdown>
                                         <Dropdown.Trigger>
                                             <span className="inline-flex rounded-md">
@@ -135,7 +135,7 @@ export default function Authenticated({ user, header, children }) {
                                             </Dropdown.Link>
                                         </Dropdown.Content>
                                     </Dropdown>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                         
