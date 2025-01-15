@@ -7,11 +7,11 @@ export default class DataTable extends Component {
     this.state = {
       entities: {
         data: [],
-        meta: {
+        pagination: {
           current_page: 1,
           from: 1,
           last_page: 1,
-          per_page: 5,
+          items_per_page: 5,
           to: 1,
           total: 1,
         },
@@ -25,7 +25,7 @@ export default class DataTable extends Component {
   }
 
   fetchEntities() {
-    let fetchUrl = `${this.props.url}/?page=${this.state.current_page}&column=${this.state.sorted_column}&order=${this.state.order}&per_page=${this.state.entities.meta.per_page}`;
+    let fetchUrl = `${this.props.url}/?page=${this.state.current_page}&column=${this.state.sorted_column}&order=${this.state.order}&per_page=${this.state.entities.pagination.items_per_page}`;
     axios.get(fetchUrl)
       .then(response => {
           this.setState({ entities: response.data });
@@ -61,7 +61,7 @@ export default class DataTable extends Component {
   }
 
   componentDidMount() {
-    this.setState({ current_page: this.state.entities.meta.current_page }, () => {this.fetchEntities()});
+    this.setState({ current_page: this.state.entities.pagination.current_page }, () => {this.fetchEntities()});
   }
 
   tableHeads() {

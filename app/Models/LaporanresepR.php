@@ -21,16 +21,19 @@ class LaporanresepR extends Model
         $query = DB::table('sep_t');
 
         // Terapkan filter dinamis
-        foreach ($filters as $key => $value) {
-            if (!empty($value)) {
-                if ($key === 'tgl_sep') {
-                    $query->whereBetween('sep_t.tgl_sep', $value);
-                    // $query->where('sep_t.tgl_sep', 'like', "%$value%");
-                }
-                 else {
-                    $query->where($key, $value);
+        if(count($filters)>0){
+            foreach ($filters as $key => $value) {
+                if (!empty($value)) {
+                    if ($key === 'tgl_sep') {
+                        $query->whereBetween('sep_t.tgl_sep', $value);
+                        // $query->where('sep_t.tgl_sep', 'like', "%$value%");
+                    }
+                     else {
+                        $query->where($key, $value);
+                    }
                 }
             }
+
         }
 
         return $query->count();
@@ -44,16 +47,19 @@ class LaporanresepR extends Model
         $query = DB::table('sep_t');
 
         // Terapkan filter dinamis
-        foreach ($filters as $key => $value) {
-            if (!empty($value)) {
-                if ($key === 'tgl_sep') {
-                    $query->whereBetween('sep_t.tgl_sep', $value);
-                    // $query->where('sep_t.tgl_sep', 'like', "%$value%");
-                }
-                 else {
-                    $query->where($key, $value);
+        if(count($filters)>0){
+            foreach ($filters as $key => $value) {
+                if (!empty($value)) {
+                    if ($key === 'tgl_sep') {
+                        $query->whereBetween('sep_t.tgl_sep', $value);
+                        // $query->where('sep_t.tgl_sep', 'like', "%$value%");
+                    }
+                     else {
+                        $query->where($key, $value);
+                    }
                 }
             }
+
         }
 
         return $query->offset($offset)->limit($limit)->get();
