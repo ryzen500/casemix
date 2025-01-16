@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Casemix\InAcbgGrouperController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Laporan\LaporanSEPController;
 use App\Http\Controllers\ProfileController;
@@ -44,6 +45,8 @@ Route::middleware('auth')->group(function () {
     // laporan
     Route::get('/laporanSEP', action: [LaporanSEPController::class, 'index'])->name('laporanSEP');
     Route::get('/getLaporanSEP', action: [LaporanSEPController::class, 'getData'])->name('getLaporanSEP');
+    Route::get('searchGroupper', [InAcbgGrouperController::class, 'searchGroupper'])->name('searchGroupper');
+    Route::post('getSearchGroupper', [InAcbgGrouperController::class, 'getSearchGroupper'])->name('getSearchGroupper');
 
 });
 
