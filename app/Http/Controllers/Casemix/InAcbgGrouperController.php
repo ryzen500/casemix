@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Casemix;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Casemix\Inacbg;
+use App\Models\PendaftaranT;
 use PaginationLibrary\Pagination;
 use Inertia\Inertia;
 
@@ -178,5 +179,47 @@ class InAcbgGrouperController extends Controller
         //     'data' => $data,
         // ]);
     }
+    public function getSearchGroupperData(Request $request)
+    {
+        $currentPage = $request->input('page', 1);
+        $itemsPerPage = $request->input('items_per_page', 10);
 
+        // dd($request);
+
+        // payload request Filter
+        $filters = [
+            'query' => $request->input('query') ?? null,
+        ];
+        // dd($filters);
+
+        // Hitung total data
+
+        $totalItems = Inacbg::dataListSepCount($filters);
+
+        // Inisialisasi pagination
+        $pagination = new Pagination($totalItems, $itemsPerPage, $currentPage);
+
+        // dd($filters['tanggal_mulai']);
+
+        // Ambil data berdasarkan pagination
+        $data = Inacbg::dataListSep($pagination->getLimit(), $pagination->getOffset(), $filters);
+
+        // Kembalikan response JSON
+        return response()->json([
+            'pagination' => $pagination->getPaginationInfo(),
+            'data' => $data,
+        ]);
+        // return Inertia::render('Grouping/index', [
+        //     'pagination' => $pagination->getPaginationInfo(),
+        //     'data' => $data,
+        // ]);
+    }
+
+    public function searchGroupperPasien($pasien_id)
+    {
+        $model = PendaftaranT::dataListGrouper($pasien_id);
+        return Inertia::render('Grouping/indexPasien', [
+            'model' => $model
+        ]);
+    }
 }
