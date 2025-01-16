@@ -566,72 +566,116 @@ class Inacbg extends Model
     {
         foreach ($filters as $key => $value) {
             if (!empty($value)) {
-                $query->where($key, $key === 'nama_pasien' ? 'like' : '=', $key === 'nama_pasien' ? "%$value%" : $value);
+                // var_dump($value);die;
+                if ($key === 'query') {
+                    $query->where(function($q) use ($value) {
+                        $q->where('nama_pasien', 'like', "%$value%")
+                          ->orWhere('nosep', 'like', "%$value%")
+                          ->orWhere('no_rekam_medik', 'like', "%$value%");
+                    });
+                } else {
+                    $query->where($key, $key === 'nama_pasien' ? 'like' : '=', $key === 'nama_pasien' ? "%$value%" : $value);
+                }
             }
         }
+        
     }
 
     public static function dataListSep(int $limit, int $offset, array $filters = [])
-{
-    $query1 = self::buildBaseQuery();
-    $query2 = self::buildBaseQuery(true);
+    {
 
-    // Penerapan Filters
-    self::applyFilters($query1, $filters);
-    self::applyFilters($query2, $filters);
 
-    // lalu tambahkan limit dan offset
-    return $query1->unionAll($query2)
-        ->limit($limit)
-        ->offset($offset)
-        ->get();
-}
+        $query1 = self::buildBaseQuery();
+        $query2 = self::buildBaseQuery(true);
 
-public static function dataListSepCount(array $filters = [])
-{
-    $query1 = self::buildBaseQuery();
-    $query2 = self::buildBaseQuery(true);
+        // Penerapan Filters
 
-    // Terapkan filter pada kedua query
-    self::applyFilters($query1, $filters);
-    self::applyFilters($query2, $filters);
+        // dd($filters);
+        // var_dump($filters);die;
 
-    // Hitung total data dari kedua query
-    return $query1->count() + $query2->count();
-}
+        if(!empty($filters)){
+            if ($filters['periode'] == 'tanggal_pulang') {
+                $query1->whereBetween('tglpulang', $filters['tanggal_mulai'],$filters['tanggal_selesai']);
+            }else if($filters['periode'] == 'tanggal_masuk'){
+                $query1->whereBetween('tglmasuk', $filters['tanggal_mulai'],$filters['tanggal_selesai']);
 
-private static function buildBaseQuery(bool $isSecondQuery = false)
-{
-    $query = DB::table('pendaftaran_t as p')
-        ->join('pasien_m as pa', 'pa.pasien_id', '=', 'p.pasien_id')
-        ->join('sep_t as s', 's.sep_id', '=', 'p.sep_id')
-        ->leftJoin('pasienadmisi_t as pas', 'pas.pasienadmisi_id', '=', 'p.pasienadmisi_id')
-        ->leftJoin('inacbg_t', 'inacbg_t.sep_id', '=', 's.sep_id')
-        ->leftJoin('inasiscbg_t', 'inasiscbg_t.inacbg_id', '=', 'inacbg_t.inacbg_id')
-        ->leftJoin('pegawai_m as pg', 'pg.loginpemakai_id', '=', 'inacbg_t.create_loginpemakai_id')
-        ->leftJoin('asuransipasien_m as ap', 'ap.asuransipasien_id', '=', 'p.asuransipasien_id')
-        ->select(
-            DB::raw('CASE WHEN p.pasienadmisi_id IS NOT NULL THEN pas.tgladmisi ELSE date(p.tgl_pendaftaran)::timestamp without time zone END AS tglmasuk'),
-            DB::raw('CASE WHEN p.pasienadmisi_id IS NOT NULL THEN pas.rencanapulang ELSE date(p.tgl_pendaftaran)::timestamp without time zone END AS tglpulang'),
-            'pa.nama_pasien',
-            's.nosep',
-            DB::raw("'JKN'::text AS jaminan"),
-            DB::raw("CASE WHEN s.jnspelayanan = 2 THEN 'RJ' WHEN s.jnspelayanan = 1 THEN 'RI' ELSE '?' END AS tipe"),
-            'inasiscbg_t.kodeprosedur as cbg',
-            DB::raw("CASE 
+            }
+        }
+     
+        // self::applyFilters($query1, $filters);
+        // self::applyFilters($query2, $filters);
+
+        // lalu tambahkan limit dan offset
+        return $query1
+            ->limit($limit)
+            ->offset($offset)
+            ->get();
+    }
+
+    public static function dataListSepCount(array $filters = [])
+    {
+        $query1 = self::buildBaseQuery();
+        $query2 = self::buildBaseQuery(true);
+
+        // Terapkan filter pada kedua query
+        // self::applyFilters($query1, $filters);
+        // self::applyFilters($query2, $filters);
+
+        // Hitung total data dari kedua query
+        return $query1->count() + $query2->count();
+    }
+
+    // private static function buildBaseQuery(bool $isSecondQuery = false)
+    // {
+    //     $query = DB::table('pendaftaran_t as p')
+    //         ->leftJoin('pasien_m as pa', 'pa.pasien_id', '=', 'p.pasien_id')
+    //         ->join('sep_t as s', 's.sep_id', '=', 'p.sep_id')         
+    //         ->join('asuransipasien_m as ap', 'ap.asuransipasien_id', '=', 'p.asuransipasien_id')
+    //         ->select(
+    //             'pa.nama_pasien',
+    //             's.nosep',
+    //             'ap.nopeserta',
+    //             'pa.tanggal_lahir',
+    //             DB::raw("concat(DATE_PART('year', age(tanggal_lahir)), ' Tahun')"),
+    //         );
+
+
+    //         dd($query->toSql());
+    //     return $query;
+    // }
+
+    private static function buildBaseQuery(bool $isSecondQuery = false)
+    {
+        $query = DB::table('pendaftaran_t as p')
+            ->join('pasien_m as pa', 'pa.pasien_id', '=', 'p.pasien_id')
+            ->join('sep_t as s', 's.sep_id', '=', 'p.sep_id')
+            ->leftJoin('pasienadmisi_t as pas', 'pas.pasienadmisi_id', '=', 'p.pasienadmisi_id')
+            ->leftJoin('inacbg_t', 'inacbg_t.sep_id', '=', 's.sep_id')
+            ->leftJoin('inasiscbg_t', 'inasiscbg_t.inacbg_id', '=', 'inacbg_t.inacbg_id')
+            ->leftJoin('pegawai_m as pg', 'pg.loginpemakai_id', '=', 'inacbg_t.create_loginpemakai_id')
+            ->leftJoin('asuransipasien_m as ap', 'ap.asuransipasien_id', '=', 'p.asuransipasien_id')
+            ->select(
+                DB::raw('CASE WHEN p.pasienadmisi_id IS NOT NULL THEN pas.tgladmisi ELSE date(p.tgl_pendaftaran)::timestamp without time zone END AS tglmasuk'),
+                DB::raw('CASE WHEN p.pasienadmisi_id IS NOT NULL THEN pas.rencanapulang ELSE date(p.tgl_pendaftaran)::timestamp without time zone END AS tglpulang'),
+                'pa.nama_pasien',
+                's.nosep',
+                DB::raw("'JKN'::text AS jaminan"),
+                DB::raw("CASE WHEN s.jnspelayanan = 2 THEN 'RJ' WHEN s.jnspelayanan = 1 THEN 'RI' ELSE '?' END AS tipe"),
+                'inasiscbg_t.kodeprosedur as cbg',
+                DB::raw("CASE 
                 WHEN inacbg_t.is_finalisasi = true AND inacbg_t.is_terkirim = true THEN 'Terkirim' 
                 WHEN inacbg_t.is_finalisasi = true AND inacbg_t.is_terkirim = false THEN 'Final' 
                 WHEN inacbg_t.is_finalisasi = false AND inacbg_t.is_terkirim = false THEN '-' 
                 ELSE '-' 
             END AS status"),
-            'ap.nopeserta',
-            'pa.tanggal_lahir',
-            DB::raw("concat(DATE_PART('year', age(tanggal_lahir)), ' Tahun')"),
-            'pg.nama_pegawai'
-        );
+                'ap.nopeserta',
+                'pa.tanggal_lahir',
+                DB::raw("concat(DATE_PART('year', age(tanggal_lahir)), ' Tahun')"),
+                'pg.nama_pegawai'
+            );
 
 
-    return $query;
-}
+        return $query;
+    }
 
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Casemix\Inacbg;
 use PaginationLibrary\Pagination;
+use Inertia\Inertia;
 
 class InAcbgGrouperController extends Controller
 {
@@ -74,15 +75,22 @@ class InAcbgGrouperController extends Controller
         return response()->json($results, 200);
     }
 
-    public function listReportClaim(Request $request) {
+    public function listReportClaim(Request $request)
+    {
         $currentPage = $request->input('page', 1);
         $itemsPerPage = $request->input('items_per_page', 10);
 
 
         // payload request Filter
         $filters = $request->only([
-            'no_pendaftaran', 'nosep', 'tglrawat_masuk',
-            'jenispelayanan', 'nokartuasuransi','nama_pasien','dpjpygmelayani_nama','ruangan_nama',
+            'no_pendaftaran',
+            'nosep',
+            'tglrawat_masuk',
+            'jenispelayanan',
+            'nokartuasuransi',
+            'nama_pasien',
+            'dpjpygmelayani_nama',
+            'ruangan_nama',
         ]);
         // Hitung total data
         $totalItems = Inacbg::reportCountClaimReceivables($filters);
@@ -100,14 +108,17 @@ class InAcbgGrouperController extends Controller
         ]);
     }
 
-    public function searchGroupper(Request $request){
+    public function searchGroupper(Request $request)
+    {
         $currentPage = $request->input('page', 1);
         $itemsPerPage = $request->input('items_per_page', 10);
 
 
         // payload request Filter
         $filters = $request->only([
-            'no_rekam_medik', 'nosep','nama_pasien'
+            'no_rekam_medik',
+            'nosep',
+            'nama_pasien'
         ]);
         // Hitung total data
         $totalItems = Inacbg::dataListSepCount($filters);
@@ -119,10 +130,53 @@ class InAcbgGrouperController extends Controller
         $data = Inacbg::dataListSep($pagination->getLimit(), $pagination->getOffset(), $filters);
 
         // Kembalikan response JSON
-        return response()->json([
+        // return response()->json([
+        //     'pagination' => $pagination->getPaginationInfo(),
+        //     'data' => $data,
+        // ]);
+        return Inertia::render('Grouping/index', [
             'pagination' => $pagination->getPaginationInfo(),
             'data' => $data,
         ]);
     }
-    
+
+    public function getSearchGroupper(Request $request)
+    {
+        $currentPage = $request->input('page', 1);
+        $itemsPerPage = $request->input('items_per_page', 10);
+
+        // dd($request);
+
+        // payload request Filter
+        $filters = [
+            'periode' => $request->input('periode') ?? null,
+            'tanggal_mulai' => $request->input('tanggal_mulai') ?? null,
+            'tanggal_selesai' => $request->input('tanggal_selesai') ?? null,
+            'metodePembayaran' => $request->input('metodePembayaran') ?? null
+
+        ];
+
+        // Hitung total data
+
+        $totalItems = Inacbg::dataListSepCount($filters);
+
+        // Inisialisasi pagination
+        $pagination = new Pagination($totalItems, $itemsPerPage, $currentPage);
+
+        // dd($filters['tanggal_mulai']);
+
+        // Ambil data berdasarkan pagination
+        $data = Inacbg::dataListSep($pagination->getLimit(), $pagination->getOffset(), $filters);
+
+        // Kembalikan response JSON
+        return response()->json([
+            'pagination' => $pagination->getPaginationInfo(),
+            'data' => $data,
+        ]);
+        // return Inertia::render('Grouping/index', [
+        //     'pagination' => $pagination->getPaginationInfo(),
+        //     'data' => $data,
+        // ]);
+    }
+
 }

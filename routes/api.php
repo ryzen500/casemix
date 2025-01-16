@@ -58,7 +58,7 @@ Route::group(['prefix' => 'feature', 'middleware' => 'auth.jwt'], function () {
     Route::post('searchDiagnosa', [SearchDiagnosaController::class, 'index'])->name('searchDiagnosa');
     Route::post('searchProcedural', [SearchProceduralController::class, 'index'])->name('searchProcedural');
     Route::post('searchPesertaBPJS', [SearchPesertaBPJSController::class, 'index'])->name('searchPesertaBPJS');
-    Route::post('searchGroupper', [InAcbgGrouperController::class, 'searchGroupper'])->name('searchGroupper');
+    Route::post('getSearchGroupper', [InAcbgGrouperController::class, 'getSearchGroupper'])->name('getSearchGroupper');
 
 });
 
