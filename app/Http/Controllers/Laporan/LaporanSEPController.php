@@ -45,15 +45,17 @@ class LaporanSEPController extends Controller
     {
         $currentPage = $request->input('page', 1);
         $itemsPerPage = $request->input('items_per_page', 10);
-
+        $filters = $request->only([
+            'tgl_sep',
+        ]);
         // Hitung total data
-        $totalItems = LaporanresepR::getTotalItems();
+        $totalItems = LaporanresepR::getTotalItems($filters);
 
         // Inisialisasi pagination
         $pagination = new Pagination($totalItems, $itemsPerPage, $currentPage);
 
         // Ambil data berdasarkan pagination
-        $data = LaporanresepR::getPaginatedData($pagination->getLimit(), $pagination->getOffset());
+        $data = LaporanresepR::getPaginatedData($pagination->getLimit(), $pagination->getOffset(),$filters);
         // return $data;
         return response()->json([
             'pagination' => $pagination->getPaginationInfo(),

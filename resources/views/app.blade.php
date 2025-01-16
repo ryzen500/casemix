@@ -21,7 +21,13 @@
         @vite(['resources/js/app.jsx', "resources/js/Pages/{$page['component']}.jsx"])
         @inertiaHead
 </head>
-
+<style>
+      .p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
+        background: #ecfeff;
+        border-color: #ecfeff;
+        color: #0e7490;
+    }
+</style>
 <body >
     @inertia
 </body>

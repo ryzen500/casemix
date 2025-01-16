@@ -1,11 +1,12 @@
 import './bootstrap';
 import '../css/app.css';
+import 'laravel-datatables-vite';
 
 import { createRoot } from 'react-dom/client';
 import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import LaporanSEP from './Pages/Laporan/LaporanSEP';
-
+import "primereact/resources/themes/lara-light-cyan/theme.css";
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 createInertiaApp({
