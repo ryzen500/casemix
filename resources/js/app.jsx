@@ -7,6 +7,10 @@ import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import LaporanSEP from './Pages/Laporan/LaporanSEP';
 import "primereact/resources/themes/lara-light-cyan/theme.css";
+import 'primereact/resources/themes/saga-blue/theme.css';  // Theme
+import 'primereact/resources/primereact.min.css';         // Core CSS
+import 'primeicons/primeicons.css';                      // Icons
+
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 createInertiaApp({
