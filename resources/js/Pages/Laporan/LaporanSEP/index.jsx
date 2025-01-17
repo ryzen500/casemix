@@ -6,10 +6,10 @@ import { useEffect, useState } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 
-export default function LaporanSEP({ auth,pagination,data }) {
+export default function LaporanSEP({ auth, pagination, data }) {
     const columns = ['No', 'Nama Pasien', 'No. RM', 'No. Pendaftaran', 'No. SEP'];
-        const [users, setUsers] = useState([]);
-        const [paginations, setPaginations] = useState([]);
+    const [users, setUsers] = useState([]);
+    const [paginations, setPaginations] = useState([]);
 
     const [loading, setLoading] = useState(false);
     const [totalRecords, setTotalRecords] = useState(0);
@@ -25,26 +25,26 @@ export default function LaporanSEP({ auth,pagination,data }) {
 
     useEffect(() => {
         loadLazyData();
-      }, [lazyState]);
+    }, [lazyState]);
     const loadLazyData = () => {
         setLoading(true);
 
         if (networkTimeout) {
-        clearTimeout(networkTimeout);
+            clearTimeout(networkTimeout);
         }
         // let fetchUrl = `${route('getLaporanSEP')}/?page=${this.state.current_page}&column=${this.state.sorted_column}&order=${this.state.order}&per_page=${this.state.entities.meta.per_page}`;
 
         //imitate delay of a backend call
         networkTimeout = setTimeout(() => {
 
-            let fetchUrl = `${route('getLaporanSEP')}/?page=${parseInt(lazyState.page+1)}&per_page=${lazyState.rows}`;
-            console.log(parseInt(lazyState.page+1))
+            let fetchUrl = `${route('getLaporanSEP')}/?page=${parseInt(lazyState.page + 1)}&per_page=${lazyState.rows}`;
+            console.log(parseInt(lazyState.page + 1))
             axios.get(fetchUrl).then(
                 (response) => {
                     console.log(response.data.pagination)
                     console.log(lazyState)
                     setUsers(response.data.data); // The actual data from the API
-                    setPaginations(response.data.pagination); 
+                    setPaginations(response.data.pagination);
                     setTotalRecords(response.data.totalRecords);
                     setLoading(false);
                 }
@@ -53,8 +53,8 @@ export default function LaporanSEP({ auth,pagination,data }) {
     };
     const onPage = (event) => {
         setLazyState(event);
-      };
-        // Row number template to show row numbers
+    };
+    // Row number template to show row numbers
     const rowNumberTemplate = (rowData, { rowIndex }) => {
         console.log(rowIndex)
         return <>{rowIndex + 1}</>; // rowIndex is 0-based, so we add 1 to start from 1
@@ -78,25 +78,25 @@ export default function LaporanSEP({ auth,pagination,data }) {
     return (
         <AuthenticatedLayout
             user={auth.user}
-            pagination = {pagination}
-            data = {data}
+            pagination={pagination}
+            data={data}
         >
             <Head title="Dashboard" />
             <div className="col-sm-12 p-5">
                 {/* <DataTable url="/getLaporanSEP" columns={columns} /> */}
                 <Card>
-                    <DataTable 
-                        paginator 
+                    <DataTable
+                        paginator
                         dataKey="idq"
                         first={lazyState.first}
                         rows={paginations.items_per_page}
                         totalRecords={paginations.total_items}
-                        lazy 
-                        value={users} 
+                        lazy
+                        value={users}
                         stripedRows
-                        rowsPerPageOptions={[10, 25, 50]} 
+                        rowsPerPageOptions={[10, 25, 50]}
                         onPage={onPage}
-                        >
+                    >
                         <Column body={rowNumberTemplate} header="No." style={{ width: '50px' }} />
                         <Column field="sep_id" header="Name" ></Column>
                     </DataTable>

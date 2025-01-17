@@ -144,17 +144,19 @@ class InAcbgGrouperController extends Controller
     public function getSearchGroupper(Request $request)
     {
         $currentPage = $request->input('page', 1);
-        $itemsPerPage = $request->input('items_per_page', 10);
+        $itemsPerPage = request()->get('per_page', 10);
 
-        // dd($request);
+        // dd(vars: $itemsPerPage);
 
         // payload request Filter
         $filters = [
             'periode' => $request->input('periode') ?? null,
             'tanggal_mulai' => $request->input('tanggal_mulai') ?? null,
             'tanggal_selesai' => $request->input('tanggal_selesai') ?? null,
-            'metodePembayaran' => $request->input('metodePembayaran') ?? null
-
+            'metodePembayaran' => $request->input('metodePembayaran') ?? null,
+            'kelasRawat'=>$request->input('kelasRawat') ?? null,
+            'status'=> $request->input('statusKlaim') ?? null,
+            'jenisrawat'=>$request->input('jenisrawat') ?? null
         ];
 
         // Hitung total data
