@@ -81,7 +81,7 @@ export default function LaporanSEP({ auth, pagination, data }) {
             pagination={pagination}
             data={data}
         >
-            <Head title="Dashboard" />
+            <Head title="Laporan SEP" />
             <div className="col-sm-12 p-5">
                 {/* <DataTable url="/getLaporanSEP" columns={columns} /> */}
                 <Card>
@@ -97,8 +97,17 @@ export default function LaporanSEP({ auth, pagination, data }) {
                         rowsPerPageOptions={[10, 25, 50]}
                         onPage={onPage}
                     >
-                        <Column body={rowNumberTemplate} header="No." style={{ width: '50px' }} />
-                        <Column field="sep_id" header="Name" ></Column>
+                        <Column body={rowNumberTemplate} header="No." />
+                        <Column field="tglsep" header="Tanggal SEP" ></Column>
+                        <Column field="tglpulang" header="Tanggal Pulang" ></Column>
+                        <Column field="nosep" header="No SEP" ></Column>
+                        <Column field="nokartuasuransi" header="No Kartu" ></Column>
+                        <Column field="kodeinacbg" header="Kode inacbg" ></Column>
+                        <Column field="no_rekam_medik" header="No Rekam Medik" ></Column>
+                        <Column field="nama_pasien" header="Nama Pasien" ></Column>
+                        <Column field="-" header="Biaya Tagihan" ></Column>
+                        <Column field="tarifgruper" header="Biaya Tarif Gruper" ></Column>
+                        <Column field="total_tarif_rs" header="Biaya Tarif RS" ></Column>
                     </DataTable>
                 </Card>
             </div>
