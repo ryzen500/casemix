@@ -44,14 +44,16 @@ class LaporanresepR extends Model
     public static function getPaginatedData(int $limit, int $offset, array $filters)
     {
         
-        $query = DB::table('sep_t');
+        $query = DB::table('sep_t')
+        ->join('inacbg_t', 'sep_t.inacbg_id', '=', 'inacbg_t.inacbg_id')
+        ->join('pasien_m as pa', 'inacbg_t.pasien_id', '=', 'pa.pasien_id');
 
         // Terapkan filter dinamis
         if(count($filters)>0){
             foreach ($filters as $key => $value) {
                 if (!empty($value)) {
                     if ($key === 'tgl_sep') {
-                        $query->whereBetween('sep_t.tgl_sep', $value);
+                        $query->whereBetween('sep_t.tgl_sep', [date('Y-m-01'), date('Y-m-d')]);
                         // $query->where('sep_t.tgl_sep', 'like', "%$value%");
                     }
                      else {

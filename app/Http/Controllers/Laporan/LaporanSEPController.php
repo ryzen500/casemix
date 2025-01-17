@@ -46,7 +46,7 @@ class LaporanSEPController extends Controller
         $currentPage = $request->input('page', 1);
         $itemsPerPage = $request->input('items_per_page', 10);
         $filters = $request->only([
-            'tgl_sep',
+            'tgl_sep','no_sep',
         ]);
         // Hitung total data
         $totalItems = LaporanresepR::getTotalItems($filters);
