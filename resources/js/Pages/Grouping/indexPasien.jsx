@@ -12,13 +12,13 @@ import { InputText } from 'primereact/inputtext';
 import { InputMask } from "primereact/inputmask";
 import Checkbox from '@/Components/Checkbox';
 
-export default function Dashboard({ auth,model,pasien }) {
+export default function Dashboard({ auth, model, pasien }) {
     const [datas, setdatas] = useState([]);
     const [expandedRows, setExpandedRows] = useState(null);
     const [loading, setLoading] = useState(false); // Loading state for expanded row
     const toast = useRef(null);
     useEffect(() => {
-        
+
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const onRowExpand1 = (event) => {
@@ -28,10 +28,10 @@ export default function Dashboard({ auth,model,pasien }) {
         const expandedProduct = event.data;
         // Set loading to true when starting the API request
         setLoading(true);
-        if(expandedProduct.pendaftaran_id==null){
-            toast.current.show({severity:'error', summary: 'Error', detail: 'No SEP belum di sinkron!', life: 3000});
+        if (expandedProduct.pendaftaran_id == null) {
+            toast.current.show({ severity: 'error', summary: 'Error', detail: 'No SEP belum di sinkron!', life: 3000 });
             setExpandedRows(null);
-        }else{
+        } else {
             try {
                 // Fetch detailed data (e.g., reviews) for the expanded row
                 const response = await axios.post('/getGroupperPasien', {
@@ -40,17 +40,17 @@ export default function Dashboard({ auth,model,pasien }) {
                 });
                 // const response = await axios.get(`/getGroupperPasien/${expandedProduct.noSep}`);
                 // setExpandedRowData(response.data); // Store the data
-    
-                if(response.data.model.metaData.code ==200){
+
+                if (response.data.model.metaData.code == 200) {
                     toast.current.show({ severity: 'info', summary: event.data.noSep, detail: event.data.noSep, life: 3000 });
                     console.log(response.data.model.response)
                     setdatas(response.data.model.response);
-                }else{
+                } else {
                     setExpandedRows(null);
-                    toast.current.show({severity:'error', summary: 'Error', detail: response.data.model.metaData.message, life: 3000});
+                    toast.current.show({ severity: 'error', summary: 'Error', detail: response.data.model.metaData.message, life: 3000 });
                 }
-    
-    
+
+
             } catch (error) {
                 console.error('Error fetching expanded row data:', error);
                 setExpandedRows(null); // Optionally, handle error state
@@ -66,7 +66,7 @@ export default function Dashboard({ auth,model,pasien }) {
     };
     const rowExpansionTemplate = (data) => {
         return (
-            
+
             <div className="p-3">
                 {/* Show loading spinner while fetching expanded row data */}
                 {loading ? (
@@ -81,14 +81,14 @@ export default function Dashboard({ auth,model,pasien }) {
                                 <div className="row">
                                     <div className="col-sm-5 ">
                                         <div className="float-end">
-                                            
+
                                             <label htmlFor="ssn" className="font-bold block mb-2">Jaminan / Cara Bayar</label>
                                             JKN
                                         </div>
                                     </div>
                                     <div className="col-sm-2">
                                         <label htmlFor="ssn" className="font-bold block mb-2">No. Peserta</label>
-                                        <InputText  />
+                                        <InputText />
                                     </div>
                                     <div className="col-sm-5">
                                         <div className="float-start">
@@ -98,7 +98,7 @@ export default function Dashboard({ auth,model,pasien }) {
                                     </div>
 
                                 </div>
-                                <table className='table table-bordered' style={{border:' 1px solid black'}}>
+                                <table className='table table-bordered' style={{ border: ' 1px solid black' }}>
                                     <tr>
                                         <td width={"15%"}>
                                             Jenis Rawat
@@ -117,7 +117,7 @@ export default function Dashboard({ auth,model,pasien }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-6">
-                                                        Masuk : 
+                                                        Masuk :
                                                     </div>
                                                     <div className="col-sm-6">
                                                         Pulang :
@@ -155,7 +155,7 @@ export default function Dashboard({ auth,model,pasien }) {
                                         <td colSpan={3}>isian</td>
                                     </tr>
                                 </table>
-                                <table className='table table-bordered' style={{border:' 1px solid black',width:'100%'}}>
+                                <table className='table table-bordered' style={{ border: ' 1px solid black', width: '100%' }}>
                                     <tr>
                                         <td colSpan={3}><p className='text-center'>Tarif Rumah Sakit</p></td>
                                     </tr>
@@ -190,13 +190,115 @@ export default function Dashboard({ auth,model,pasien }) {
                                         <td width={"30%"}>ddd</td>
                                     </tr>
                                 </table>
-                                <div  className='text-center'><Checkbox></Checkbox> Menyatakan benar bahwa data tarif yang tersebut di atas adalah benar sesuai dengan kondisi yang sesungguhnya.</div>
+                                <div className='text-center'><Checkbox></Checkbox> Menyatakan benar bahwa data tarif yang tersebut di atas adalah benar sesuai dengan kondisi yang sesungguhnya.</div>
+
+                                {/*  Hasil Grouping */}
+                                <table className='table table-bordered' style={{ border: ' 1px solid black', width: '100%' }}>
+                                    <tr>
+                                        <td colSpan={4}><p className='text-center'>Hasil Grouper E-Klaim v5 </p></td>
+                                    </tr>
+                                    <tr>
+                                        <td width={"15%"}>Info</td>
+                                        <td width={"35%"} style={{textAlign:'left'}} >-</td>
+                                        <td width={"30%"}></td>
+                                        <td width={"30%"}></td>
+
+                                    </tr>
+                                    <tr>
+                                        <td width={"15%"}>Jenis Rawat</td>
+                                        <td width={"35%"} style={{textAlign:'left'}}>Rawat Jalan Regular </td>
+                                        <td width={"30%"}></td>
+                                        <td width={"30%"}></td>
+
+                                    </tr>
+                                    <tr>
+                                        <td width={"15%"}>Group</td>
+                                        <td width={"35%"} style={{textAlign:'left'}}>PENYAKIT KRONIS KECIL LAIN-LAIN</td>
+                                        <td width={"30%"} style={{textAlign:'center'}}>Q-5-44-0</td>
+                                        <td width={"30%"} style={{textAlign:'right'}}>Rp 0 </td>
+
+                                    </tr>
+                                    <tr>
+                                        <td width={"15%"}>Sub Acute</td>
+                                        <td width={"35%"} style={{textAlign:'left'}}>-</td>
+                                        <td width={"30%"} style={{textAlign:'center'}}>-</td>
+                                        <td width={"30%"} style={{textAlign:'right'}}>Rp 0 </td>
+
+                                    </tr>
+                                    <tr>
+                                        <td width={"15%"}>Chronic</td>
+                                        <td width={"35%"} style={{textAlign:'left'}}>-</td>
+                                        <td width={"30%"} style={{textAlign:'center'}}>-</td>
+                                        <td width={"30%"} style={{textAlign:'right'}}>Rp 0 </td>
+
+                                    </tr>
+                                    <tr>
+                                        <td width={"15%"}>Special Procedure</td>
+                                        <td width={"35%"} style={{textAlign:'left'}}>-</td>
+                                        <td width={"30%"} style={{textAlign:'center'}}>-</td>
+                                        <td width={"30%"} style={{textAlign:'right'}}>Rp 0 </td>
+
+                                    </tr>
+
+                                    <tr>
+                                        <td width={"15%"}>Special Prosthesis</td>
+                                        <td width={"35%"} style={{textAlign:'left'}}>-</td>
+                                        <td width={"30%"} style={{textAlign:'center'}}>-</td>
+                                        <td width={"30%"} style={{textAlign:'right'}}>Rp 0 </td>
+
+                                    </tr>
+
+
+                                    <tr>
+                                        <td width={"15%"}>Special Investigation</td>
+                                        <td width={"35%"} style={{textAlign:'left'}}>-</td>
+                                        <td width={"30%"} style={{textAlign:'center'}}>-</td>
+                                        <td width={"30%"} style={{textAlign:'right'}}>Rp 0 </td>
+
+                                    </tr>
+
+
+                                    <tr>
+                                        <td width={"15%"}>Special Drug</td>
+                                        <td width={"35%"} style={{textAlign:'left'}}>-</td>
+                                        <td width={"30%"} style={{textAlign:'center'}}>-</td>
+                                        <td width={"30%"} style={{textAlign:'right'}}>Rp 0 </td>
+
+                                    </tr>
+
+                                    <tr>
+                                        <td width={"15%"}>Status DC Kemkes</td>
+                                        <td width={"35%"} style={{textAlign:'left'}}>Klaim belum terkirim ke Pusat Data Kementerian Kesehatan</td>
+                                        <td width={"30%"} style={{textAlign:'center'}}></td>
+                                        <td width={"30%"} style={{textAlign:'right'}}>Rp 0 </td>
+
+                                    </tr>
+
+                                    <tr>
+                                        <td width={"15%"}>Status Klaim</td>
+                                        <td width={"35%"} style={{textAlign:'left'}}>-</td>
+                                        <td width={"30%"} style={{textAlign:'center'}}></td>
+                                        <td width={"30%"} style={{textAlign:'right'}}>Rp 0 </td>
+
+                                    </tr>
+
+
+                                    <tr>
+                                        <td width={"15%"}></td>
+                                        <td width={"35%"} style={{textAlign:'left'}}></td>
+                                        <td width={"30%"} style={{textAlign:'center'}}>Total</td>
+                                        <td width={"30%"} style={{textAlign:'right'}}>Rp 0 </td>
+
+                                    </tr>
+
+
+                                </table>
                             </div>
                         </div>
                     )
                 )}
             </div>
-            
+
         );
     };
     const allowExpansion = (rowData) => {
@@ -209,7 +311,7 @@ export default function Dashboard({ auth,model,pasien }) {
         { label: pasien['jeniskelamin'] },
         { label: pasien['tanggal_lahir'] },
 
-    ]; 
+    ];
     const noSepBody = (rowData) => {
         return (
             <div>
@@ -222,20 +324,20 @@ export default function Dashboard({ auth,model,pasien }) {
                 )}
             </div>
         );
-    };   
+    };
     return (
         <AuthenticatedLayout
             user={auth.user}
         >
             <>
-            <div className="card">
-                <BreadCrumb model={items} separatorIcon={'pi pi-ellipsis-h'}  />
-            </div>
+                <div className="card">
+                    <BreadCrumb model={items} separatorIcon={'pi pi-ellipsis-h'} />
+                </div>
                 <Card>
                     <Toast ref={toast} />
                     <DataTable value={model} expandedRows={expandedRows} onRowToggle={(e) => setExpandedRows(e.data)}
-                            onRowExpand={onRowExpand} onRowCollapse={onRowCollapse} rowExpansionTemplate={rowExpansionTemplate}
-                            dataKey="noSep" tableStyle={{ minWidth: '60rem' }}>
+                        onRowExpand={onRowExpand} onRowCollapse={onRowCollapse} rowExpansionTemplate={rowExpansionTemplate}
+                        dataKey="noSep" tableStyle={{ minWidth: '60rem' }}>
                         <Column expander style={{ width: '5rem' }} />
 
                         <Column field="tglSep" header="Tanggal Masuk" ></Column>
@@ -249,7 +351,7 @@ export default function Dashboard({ auth,model,pasien }) {
                     </DataTable>
                 </Card>
             </>
-            
+
         </AuthenticatedLayout>
     );
 }
