@@ -12,8 +12,8 @@ import { InputText } from 'primereact/inputtext';
 import { InputMask } from "primereact/inputmask";
 import Checkbox from '@/Components/Checkbox';
 
-export default function Dashboard({ auth,model }) {
-    const [products, setProducts] = useState([]);
+export default function Dashboard({ auth,model,pasien }) {
+    const [datas, setdatas] = useState([]);
     const [expandedRows, setExpandedRows] = useState(null);
     const [loading, setLoading] = useState(false); // Loading state for expanded row
     const toast = useRef(null);
@@ -28,25 +28,37 @@ export default function Dashboard({ auth,model }) {
         const expandedProduct = event.data;
         // Set loading to true when starting the API request
         setLoading(true);
-        try {
-            // Fetch detailed data (e.g., reviews) for the expanded row
-            const response = await axios.get(`/getGroupperPasien/${expandedProduct.noSep}`);
-            // setExpandedRowData(response.data); // Store the data
-
-            if(response.data.model.metaData.code ==200){
-                toast.current.show({ severity: 'info', summary: event.data.nosep, detail: event.data.noSep, life: 3000 });
-            }else{
-                setExpandedRows(null);
-                toast.current.show({severity:'error', summary: 'Error', detail: response.data.model.metaData.message, life: 3000});
+        if(expandedProduct.pendaftaran_id==null){
+            toast.current.show({severity:'error', summary: 'Error', detail: 'No SEP belum di sinkron!', life: 3000});
+            setExpandedRows(null);
+        }else{
+            try {
+                // Fetch detailed data (e.g., reviews) for the expanded row
+                const response = await axios.post('/getGroupperPasien', {
+                    noSep: expandedProduct.noSep, // Send the expandedProduct.noSep data
+                    pendaftaran_id: expandedProduct.pendaftaran_id, // Example of additional data
+                });
+                // const response = await axios.get(`/getGroupperPasien/${expandedProduct.noSep}`);
+                // setExpandedRowData(response.data); // Store the data
+    
+                if(response.data.model.metaData.code ==200){
+                    toast.current.show({ severity: 'info', summary: event.data.noSep, detail: event.data.noSep, life: 3000 });
+                    console.log(response.data.model.response)
+                    setdatas(response.data.model.response);
+                }else{
+                    setExpandedRows(null);
+                    toast.current.show({severity:'error', summary: 'Error', detail: response.data.model.metaData.message, life: 3000});
+                }
+    
+    
+            } catch (error) {
+                console.error('Error fetching expanded row data:', error);
+                setExpandedRows(null); // Optionally, handle error state
+            } finally {
+                // Set loading to false when the API request finishes
+                setLoading(false);
             }
 
-
-        } catch (error) {
-            console.error('Error fetching expanded row data:', error);
-            // setExpandedRows(null); // Optionally, handle error state
-        } finally {
-            // Set loading to false when the API request finishes
-            setLoading(false);
         }
     };
     const onRowCollapse = (event) => {
@@ -71,9 +83,7 @@ export default function Dashboard({ auth,model }) {
                                         <div className="float-end">
                                             
                                             <label htmlFor="ssn" className="font-bold block mb-2">Jaminan / Cara Bayar</label>
-                                            aaaa
-
-
+                                            JKN
                                         </div>
                                     </div>
                                     <div className="col-sm-2">
@@ -194,10 +204,10 @@ export default function Dashboard({ auth,model }) {
     };
 
     const items = [
-        // { label: model[0]['no_rekam_medik'] },
-        // { label: model[0]['nama_pasien'] },
-        // { label: model[0]['jeniskelamin'] },
-        // { label: model[0]['tanggal_lahir'] },
+        { label: pasien['no_rekam_medik'] },
+        { label: pasien['nama_pasien'] },
+        { label: pasien['jeniskelamin'] },
+        { label: pasien['tanggal_lahir'] },
 
     ]; 
     const noSepBody = (rowData) => {

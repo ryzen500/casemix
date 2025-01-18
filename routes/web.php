@@ -51,7 +51,7 @@ Route::middleware('auth')->group(function () {
     Route::post('getSearchGroupper', [InAcbgGrouperController::class, 'getSearchGroupper'])->name('getSearchGroupper');
     Route::post('getSearchGroupperData', [InAcbgGrouperController::class, 'getSearchGroupperData'])->name('getSearchGroupperData');
     Route::get('searchGroupperPasien/{id}', [InAcbgGrouperController::class, 'searchGroupperPasien'])->name('searchGroupperPasien');
-    Route::get('getGroupperPasien/{id}', [InAcbgGrouperController::class, 'getGroupperPasien'])->name('getGroupperPasien');
+    Route::post('getGroupperPasien/', [InAcbgGrouperController::class, 'getGroupperPasien'])->name('getGroupperPasien');
 
 
 });
