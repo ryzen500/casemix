@@ -171,6 +171,7 @@ class Bpjs extends Model
             'search_sep' => 'SEP',
             'monitoring_kunjungan' => 'Monitoring/Kunjungan',
             'monitoring_klaim' => 'Monitoring/Klaim',
+            'riwayat_pelayanan' => 'monitoring/HistoriPelayanan',
 
 
             // Tambahkan endpoint lain sesuai kebutuhan...
