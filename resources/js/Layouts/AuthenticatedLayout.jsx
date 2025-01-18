@@ -71,11 +71,11 @@ export default function Authenticated({ user, header, children }) {
                             </NavLink>
                             <Sidebar menuItems=
                             {[
-                                { id: 1, label: "Transaksi", submenu: [{label:"Coding / Group ",link:"searchGroupper"},{label:"Kirim Data Online",link:"kirimDataOnline"},{label:"Pengajuan Klaim",link:"a2.html"}]}
+                                { id: 1, label: "Transaksi", submenu: [{label:"Coding / Group ",link:route('searchGroupper')},{label:"Kirim Data Online",link:"kirimDataOnline"},{label:"Pengajuan Klaim",link:"a2.html"}]}
                             ]}></Sidebar>
                             <Sidebar menuItems=
                             {[
-                                { id: 2, label: "Laporan", submenu: [{label:"Laporan SEP Peserta (BPJS) ",link:"laporanSEP"},{label:"Laporan detail pasien pulang",link:"a2.html"},{label:"Laporan Buku  Register",link:"a2.html"},{label:"Laporan Data Awal Klaim Piutang",link:"a2.html"}]}
+                                { id: 2, label: "Laporan", submenu: [{label:"Laporan SEP Peserta (BPJS) ",link:route('laporanSEP')},{label:"Laporan detail pasien pulang",link:"a2.html"},{label:"Laporan Buku  Register",link:"a2.html"},{label:"Laporan Data Awal Klaim Piutang",link:"a2.html"}]}
                             ]}></Sidebar>
                             <Sidebar menuItems=
                             {[
