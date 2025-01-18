@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Casemix\SearchProceduralController;
 use App\Http\Controllers\Laporan\laporanBukuRegisterController;
 use App\Http\Controllers\Laporan\LaporandetailPasienpulangController;
+use App\Http\Controllers\Laporan\LaporanSEPController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -72,6 +73,8 @@ Route::group(['prefix' => 'feature', 'middleware' => 'auth.jwt'], function () {
     Route::post('DetailPasienPulang', [LaporandetailPasienpulangController::class, 'index'])->name('DetailPasienPulang');
     Route::post('BukuRegister', [laporanBukuRegisterController::class, 'index'])->name('BukuRegister');
     Route::post('LaporanKlaimPiutang', [InAcbgGrouperController::class, 'listReportClaim'])->name('LaporanKlaimPiutang');
+    Route::get('getData', [LaporanSEPController::class, 'getData'])->name('getData');
+
 });
 
 
