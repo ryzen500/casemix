@@ -76,6 +76,107 @@ class InAcbgGrouperController extends Controller
         return response()->json($results, 200);
     }
 
+
+    public function updateNewKlaim(Request $request)
+    {
+
+        // Ambil keynya dari  ENV 
+        $key = env('INACBG_KEY');
+
+
+        $nomor_kartu = $request->input('nomor_kartu') ?? "";
+        $nomor_sep = $request->input('nomor_sep') ?? "";
+        $tgl_masuk = $request->input('tgl_masuk') ?? "";
+        $tgl_pulang = $request->input('tgl_pulang') ?? "";
+        $jenis_rawat = $request->input('jenis_rawat') ?? "";
+        $kelas_rawat = $request->input('kelas_rawat') ?? "";
+        $adl_sub_acute = $request->input('adl_sub_acute') ?? "";
+        $adl_chronic = $request->input('adl_chronic') ?? "";
+        $icu_indikator = $request->input('icu_indikator') ?? "";
+        $icu_los = $request->input('icu_los') ?? "";
+        $ventilator_hour = $request->input('ventilator_hour') ?? "";
+        $upgrade_class_ind = $request->input('upgrade_class_ind') ?? "";
+        $upgrade_class_class = $request->input('upgrade_class_class') ?? "";
+        $upgrade_class_los = $request->input("upgrade_class_los") ?? "";
+        $birth_weight = $request->input("birth_weight") ?? "";
+        $discharge_status = $request->input("discharge_status") ?? "";
+        $diagnosa = $request->input("diagnosa") ?? "";
+        $prosedur_non_bedah = $request->input("prosedur_non_bedah") ?? "";
+        $prosedur_bedah = $request->input("prosedur_bedah") ?? "";
+        $konsultasi = $request->input("konsultasi") ?? "";
+        $tenaga_ahli = $request->input("tenaga_ahli") ?? "";
+        $keperawatan = $request->input("keperawatan") ?? "";
+        $penunjang = $request->input("penunjang") ?? "";
+        $radiologi = $request->input("radiologi") ?? "";
+        $laboratorium = $request->input("laboratorium") ?? "";
+        $pelayanan_darah = $request->input("pelayanan_darah") ?? "";
+        $rehabilitasi = $request->input("rehabilitasi") ?? "";
+        $kamar = $request->input("kamar") ?? "";
+        $rawat_intensif = $request->input(key: "rawat_intensif") ?? "";
+        $obat = $request->input(key: "obat") ?? "";
+        $alkes = $request->input(key: "alkes") ?? "";
+        $bmhp = $request->input(key: "bmhp") ?? "";
+        $sewa_alat = $request->input(key: "sewa_alat") ?? "";
+        $tarif_poli_eks = $request->input(key: "tarif_poli_eks") ?? "";
+        $nama_dokter = $request->input(key: "nama_dokter") ?? "";
+        $kode_tarif = $request->input(key: "kode_tarif") ?? "";
+        $payor_id = $request->input(key: "payor_id") ?? "";
+        $payor_cd = $request->input(key: "payor_cd") ?? "";
+        $cob_cd = $request->input(key: "cob_cd") ?? "";
+        $coder_nik = $request->input(key: "coder_nik") ?? "";
+
+
+        // Structur Payload 
+        $data = [
+            'nomor_kartu' => $nomor_kartu,
+            'nomor_sep' => $nomor_sep,
+            'tgl_masuk' => $tgl_masuk,
+            'tgl_pulang' => $tgl_pulang,
+            'jenis_rawat' => $jenis_rawat,
+            'kelas_rawat' => $kelas_rawat,
+            'adl_sub_acute'=> $adl_sub_acute,
+            'adl_chronic'=>$adl_chronic,
+            'icu_indikator'=>$icu_indikator,
+            'icu_los'=>$icu_los,
+            'ventilator_hour'=>$ventilator_hour,
+            'upgrade_class_ind'=>$upgrade_class_ind,
+            'upgrade_class_class'=>$upgrade_class_class,
+            'upgrade_class_los'=>$upgrade_class_los,
+            'birth_weight'=>$birth_weight,
+            'discharge_status'=>$discharge_status,
+            'diagnosa'=>$diagnosa,
+            'prosedur_non_bedah'=>$prosedur_non_bedah,
+            'prosedur_bedah'=>$konsultasi,
+            'tenaga_ahli'=>$tenaga_ahli,
+            'keperawatan'=>$keperawatan,
+            'penunjang'=>$penunjang,
+            'radiologi'=>$radiologi,
+            'laboratorium'=>$laboratorium,
+            'pelayanan_darah'=>$pelayanan_darah,
+            'rehabilitasi'=>$rehabilitasi,
+            'kamar'=>$kamar,
+            'rawat_intensif'=>$rawat_intensif,
+            'obat'=>$obat,
+            'alkes'=>$alkes,
+            'bmhp'=>$bmhp,
+            'sewa_alat'=>$sewa_alat,
+            'tarif_poli_eks'=>$tarif_poli_eks,
+            'nama_dokter'=>$nama_dokter,
+            'kode_tarif'=>$kode_tarif,
+            'payor_id'=>$payor_id,
+            'payor_cd'=>$payor_cd,
+            'cob_cd'=>$cob_cd,
+            'coder_nik'=>$coder_nik
+        ];
+
+
+        // result kirim claim
+        $results = $this->inacbg->updateDataKlaim($data, $key);
+
+        // Kembalikan hasil sebagai JSON response
+        return response()->json($results, 200);
+    }
+
     public function listReportClaim(Request $request)
     {
         $currentPage = $request->input('page', 1);
@@ -181,6 +282,9 @@ class InAcbgGrouperController extends Controller
         //     'data' => $data,
         // ]);
     }
+
+
+    
     public function getSearchGroupperData(Request $request)
     {
         $currentPage = $request->input('page', 1);
