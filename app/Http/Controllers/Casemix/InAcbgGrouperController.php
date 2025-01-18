@@ -181,6 +181,30 @@ class InAcbgGrouperController extends Controller
         return response()->json($results, 200);
     }
 
+
+    public function groupingStageSatu(Request $request)
+    {
+
+        // Ambil keynya dari  ENV 
+        $key = env('INACBG_KEY');
+
+
+        $nomor_sep = $request->input('nomor_sep') ?? "";
+
+        // Structur Payload 
+        $data = [
+            'nomor_sep' => $nomor_sep,
+
+        ];
+
+
+        // result kirim claim
+        $results = $this->inacbg->groupingStageSatu($data, $key);
+
+        // Kembalikan hasil sebagai JSON response
+        return response()->json($results, 200);
+    }
+
     public function listReportClaim(Request $request)
     {
         $currentPage = $request->input('page', 1);
