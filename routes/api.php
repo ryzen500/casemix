@@ -85,5 +85,6 @@ Route::group(['prefix' => 'monitoring', 'middleware' => 'auth.jwt'], function ()
     Route::post('searchMonitoringKunjungan', [MonitoringBPJSController::class, 'index'])->name('searchMonitoringKunjungan');
     //Monitoring Klaim 
     Route::post('searchMonitoringKlaim', [MonitoringBPJSController::class, 'listDataKlaim'])->name('searchMonitoringKlaim');
-
+    //Monitoring riwayat 
+    Route::post('searchRiwayatKlaim', [MonitoringBPJSController::class, 'listDataRiwayat'])->name('searchRiwayatKlaim');
 });

@@ -45,10 +45,13 @@ Route::middleware('auth')->group(function () {
     // laporan
     Route::get('/laporanSEP', action: [LaporanSEPController::class, 'index'])->name('laporanSEP');
     Route::get('/getLaporanSEP', action: [LaporanSEPController::class, 'getData'])->name('getLaporanSEP');
+    
+    // transaksi
     Route::get('searchGroupper', [InAcbgGrouperController::class, 'searchGroupper'])->name('searchGroupper');
     Route::post('getSearchGroupper', [InAcbgGrouperController::class, 'getSearchGroupper'])->name('getSearchGroupper');
     Route::post('getSearchGroupperData', [InAcbgGrouperController::class, 'getSearchGroupperData'])->name('getSearchGroupperData');
     Route::get('searchGroupperPasien/{id}', [InAcbgGrouperController::class, 'searchGroupperPasien'])->name('searchGroupperPasien');
+    Route::get('getGroupperPasien/{id}', [InAcbgGrouperController::class, 'getGroupperPasien'])->name('getGroupperPasien');
 
 
 });

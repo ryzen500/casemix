@@ -3,11 +3,15 @@
 namespace App\Http\Controllers\Casemix;
 
 use App\Http\Controllers\Controller;
+use App\Http\Services\MonitoringHistoryService;
+use App\Http\Services\SearchSepService;
 use Illuminate\Http\Request;
 use App\Models\Casemix\Inacbg;
 use App\Models\PendaftaranT;
+use App\Models\SepT;
 use PaginationLibrary\Pagination;
 use Inertia\Inertia;
+use App\Services\DataService;
 
 class InAcbgGrouperController extends Controller
 {
@@ -321,18 +325,47 @@ class InAcbgGrouperController extends Controller
         // ]);
     }
 
-    public function searchGroupperPasien($pasien_id)
+    public function searchGroupperPasien($nopeserta)
     {
-        $model = PendaftaranT::dataListGrouper($pasien_id);
+        $model = new MonitoringHistoryService();
+        $getRiwayat = $model->getRiwayatData($nopeserta)->getOriginalContent();
+        $data=null;
+        if(isset($getRiwayat['response'])){
+            if(count($getRiwayat['response'])>0){
+                foreach ($getRiwayat['response']['histori'] as $key => $row) {
+                    $sep = SepT::getSep($row['noSep']);
+                    $data[] = $row;
+                    // dd($data,$sep,!empty($sep));
+                    
+                    if(!empty($sep)){
+                        $data[$key]['pendaftaran_id']=$sep->pendaftaran_id;
+                        $data[$key]['cbg']=$sep->cbg;
+                        $data[$key]['status']=$sep->status;
+                        $data[$key]['nama_pegawai']=$sep->nama_pegawai;
+
+                    }else{
+                        $data[$key]['pendaftaran_id']=null;
+                        $data[$key]['cbg']=null;
+                        $data[$key]['status']=null;
+                        $data[$key]['nama_pegawai']=null;
+    
+                    }
+
+                }
+            }
+        }
+        // $model = PendaftaranT::dataListGrouper($nopeserta);
         return Inertia::render('Grouping/indexPasien', [
-            'model' => $model
+            'model' => $data
         ]);
     }
-    public function getGroupperPasien($pendaftaran_id)
+    public function getGroupperPasien($nopeserta)
     {
-        $model = PendaftaranT::getGroupping($pendaftaran_id);
+        $model = new SearchSepService();
+        $getRiwayat = $model->getRiwayatData($nopeserta)->getOriginalContent();
+        // $model = PendaftaranT::getGroupping($pendaftaran_id);
         return response()->json([
-            'model' => $model,
+            'model' => $getRiwayat,
         ]);
     }
 }

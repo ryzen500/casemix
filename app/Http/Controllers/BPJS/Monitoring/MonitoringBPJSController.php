@@ -5,6 +5,7 @@ namespace App\Http\Controllers\BPJS\Monitoring;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Bpjs\Bpjs;
+use Carbon\Carbon;
 
 class MonitoringBPJSController extends Controller
 {
@@ -64,37 +65,75 @@ class MonitoringBPJSController extends Controller
      * @return mixed|\Illuminate\Http\JsonResponse
      */
     public function listDataKlaim(Request $request)
-{
-    // Validasi input
-    $validated = $request->validate([
-        'tanggal_pulang' => 'required|date',          // Tanggal format: yyyy-mm-dd
-        'jenis_pelayanan' => 'required|integer|in:1,2', // Jenis pelayanan: 1 (Inap), 2 (Jalan)
-        'status_klaim' => 'required|integer|in:1,2,3',  // Status klaim: 1 (Proses Verifikasi), 2 (Pending Verifikasi), 3 (Klaim)
-    ]);
+    {
+        // Validasi input
+        $validated = $request->validate([
+            'tanggal_pulang' => 'required|date',          // Tanggal format: yyyy-mm-dd
+            'jenis_pelayanan' => 'required|integer|in:1,2', // Jenis pelayanan: 1 (Inap), 2 (Jalan)
+            'status_klaim' => 'required|integer|in:1,2,3',  // Status klaim: 1 (Proses Verifikasi), 2 (Pending Verifikasi), 3 (Klaim)
+        ]);
 
-    // Ambil data dari request setelah divalidasi
-    $tanggal_pulang = $validated['tanggal_pulang'];
-    $jenis_pelayanan = $validated['jenis_pelayanan'];
-    $status_klaim = $validated['status_klaim'];
+        // Ambil data dari request setelah divalidasi
+        $tanggal_pulang = $validated['tanggal_pulang'];
+        $jenis_pelayanan = $validated['jenis_pelayanan'];
+        $status_klaim = $validated['status_klaim'];
 
-    // Ambil uid, timestamp, dan signature menggunakan HashBPJS
-    list($uid, $timestmp, $hashsignature) = $this->bpjs->HashBPJS();
+        // Ambil uid, timestamp, dan signature menggunakan HashBPJS
+        list($uid, $timestmp, $hashsignature) = $this->bpjs->HashBPJS();
 
-    // Ambil URL server endpoint yang sesuai
-    $endpoints = $this->bpjs->getServerEndpoints();
-    $url = $endpoints['monitoring_klaim'];
+        // Ambil URL server endpoint yang sesuai
+        $endpoints = $this->bpjs->getServerEndpoints();
+        $url = $endpoints['monitoring_klaim'];
 
-    // Gabungkan URL dengan parameter
-    $completeUrl = $url . '/Tanggal/' . $tanggal_pulang . '/JnsPelayanan/' . $jenis_pelayanan . '/Status/' . $status_klaim;
+        // Gabungkan URL dengan parameter
+        $completeUrl = $url . '/Tanggal/' . $tanggal_pulang . '/JnsPelayanan/' . $jenis_pelayanan . '/Status/' . $status_klaim;
 
-    // Lakukan request
-    $response = $this->bpjs->request($completeUrl, $hashsignature, $uid, $timestmp, 'GET');
+        // Lakukan request
+        $response = $this->bpjs->request($completeUrl, $hashsignature, $uid, $timestmp, 'GET');
 
-    // Decode the response jika berbentuk JSON string
-    $decodedResponse = is_string($response) ? json_decode($response, true) : $response;
+        // Decode the response jika berbentuk JSON string
+        $decodedResponse = is_string($response) ? json_decode($response, true) : $response;
 
-    // Kembalikan response ke frontend sebagai JSON
-    return response()->json($decodedResponse, 200);
-}
+        // Kembalikan response ke frontend sebagai JSON
+        return response()->json($decodedResponse, 200);
+    }
+    /**
+     * Summary of searchRiwayatKlaim ( Berikut merupakan endpoint monitoring Data Klaim)
+     * @param \Illuminate\Http\Request $request
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
+    public function listDataRiwayat(Request $request)
+    {
+        // Validasi input
+        $validated = $request->validate([
+            'nopeserta' => 'required',  // Status klaim: 1 (Proses Verifikasi), 2 (Pending Verifikasi), 3 (Klaim)
+        ]);
 
+        // Ambil data dari request setelah divalidasi
+        $nopeserta = $validated['nopeserta'];
+        $startDate = Carbon::now()->subDays(90);
+        $startDate= $startDate->format('Y-m-d');
+        $endDate=Carbon::now();
+        $endDate=$endDate->format('Y-m-d');
+
+        // dd($nopeserta,$startDate,$endDate);
+
+        // Ambil uid, timestamp, dan signature menggunakan HashBPJS
+        list($uid, $timestmp, $hashsignature) = $this->bpjs->HashBPJS();
+
+        // Ambil URL server endpoint yang sesuai
+        $endpoints = $this->bpjs->getServerEndpoints();
+        $url = $endpoints['riwayat_pelayanan'];
+
+        // Gabungkan URL dengan parameter
+        $completeUrl = $url . '/NoKartu/' . $nopeserta . '/tglMulai/' . $startDate . '/tglAkhir/' . $endDate;
+
+        // Lakukan request
+        $response = $this->bpjs->request($completeUrl, $hashsignature, $uid, $timestmp, 'GET');
+        // Decode the response jika berbentuk JSON string
+        $decodedResponse = is_string($response) ? json_decode($response, true) : $response;
+
+        // Kembalikan response ke frontend sebagai JSON
+        return response()->json($decodedResponse, 200);
+    }
 }
