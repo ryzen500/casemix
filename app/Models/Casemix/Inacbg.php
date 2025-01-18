@@ -172,6 +172,26 @@ class Inacbg extends Model
 
 
 
+    public function validateDataKlaimUpdate(array $data)
+    {
+        $validator = Validator::make($data, [
+            'nomor_kartu' => 'required|string',
+            'nomor_sep' => 'required|string',
+            'tgl_pulang' => 'required',
+            'tgl_masuk' => 'required',
+            'jenis_rawat' => 'required',
+            'kelas_rawat' => 'required',
+            'coder_nik' => 'required',
+            'diagnosa'=>'required'
+        ]);
+
+        if ($validator->fails()) {
+            throw new Exception(implode(', ', $validator->errors()->all()));
+        }
+    }
+
+
+
 
     /**
      * Summary of validateDataDiagnosisParameter
@@ -227,8 +247,8 @@ class Inacbg extends Model
             $response = $this->sendRequest($encryptedPayload, $key);
             return $this->processResponse($response, $key);
         } catch (Exception $e) {
-            echo "<pre>";
-            var_dump($e);die;
+            // echo "<pre>";
+            // var_dump($e);die;
             return [
                 'success' => false,
                 'message' => $e->getMessage(),
@@ -249,13 +269,13 @@ class Inacbg extends Model
     {
         try {
             // validate The Payload
-            $this->validateData($data);
+            $this->validateDataKlaimUpdate($data);
             $payload = $this->preparePayloadUpdateKlaim($data);
 
             $encryptedPayload = $this->inacbg_encrypt($payload, $key); // Tambahkan parameter $key
 
             $response = $this->sendRequest($encryptedPayload, $key);
-            return $this->processResponse($response, $key);
+            return $this->processResponseDataKlaim($response, $key);
         } catch (Exception $e) {
             return [
                 'success' => false,
@@ -351,14 +371,14 @@ class Inacbg extends Model
         return json_encode([
             'metadata' => ['method' => 'set_claim_data', 'nomor_sep' => $data['nomor_sep'] ?? null],
             'data' => [
-                'nomor_sep' => $data['nomor_sep'] ?? null,
-                'nomor_kartu' => $data['nomor_kartu'] ?? null,
-                'tgl_masuk' => $data['tgl_masuk'] ?? null,
-                'tgl_pulang' => $data['tgl_pulang'] ?? null,
-                'jenis_rawat' => $data['jenis_rawat'] ?? null,
-                'kelas_rawat' => $data['kelas_rawat'] ?? null,
-                'adl_sub_acute' => $data['adl_sub_acute'] ?? null,
-                'adl_chronic' => $data['adl_chronic'] ?? null,
+                'nomor_sep' => $data['nomor_sep'] ?? "",
+                'nomor_kartu' => $data['nomor_kartu'] ?? "",
+                'tgl_masuk' => $data['tgl_masuk'] ?? "",
+                'tgl_pulang' => $data['tgl_pulang'] ?? "",
+                'jenis_rawat' => $data['jenis_rawat'] ?? "",
+                'kelas_rawat' => $data['kelas_rawat'] ?? "",
+                'adl_sub_acute' => $data['adl_sub_acute'] ?? "",
+                'adl_chronic' => $data['adl_chronic'] ?? "",
                 'icu_indikator' => $data['icu_indikator'] ?? null,
                 'icu_los' => $data['icu_los'] ?? null,
                 'ventilator_hour' => $data['ventilator_hour'] ?? null,
@@ -502,6 +522,27 @@ class Inacbg extends Model
                 'success' => true,
                 'message' => $decodedResponse['metadata']['message'],
                 'data' => $decodedResponse['response'] ?? null,
+            ];
+        }
+
+        return [
+            'success' => false,
+            'message' => $decodedResponse['metadata']['message'] ?? 'Unknown error',
+        ];
+    }
+
+
+
+    private function processResponseDataKlaim(string $response, string $key): array
+    {
+        $decodedResponse = json_decode($response, true);
+
+        // echo "<pre>";
+        // var_dump($decodedResponse);die;
+        if ($decodedResponse['metadata']['code'] == 200) {
+            return [
+                'success' => true,
+                'message' => $decodedResponse['metadata']['message'],
             ];
         }
 
