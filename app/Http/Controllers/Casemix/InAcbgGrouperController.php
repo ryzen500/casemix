@@ -91,6 +91,7 @@ class InAcbgGrouperController extends Controller
         $nomor_kartu = $request->input('nomor_kartu') ?? "";
         $nomor_sep = $request->input('nomor_sep') ?? "";
         $tgl_masuk = $request->input('tgl_masuk') ?? "";
+        $cara_masuk = $request->input('cara_masuk') ?? "";
         $tgl_pulang = $request->input('tgl_pulang') ?? "";
         $jenis_rawat = $request->input('jenis_rawat') ?? "";
         $kelas_rawat = $request->input('kelas_rawat') ?? "";
@@ -102,9 +103,16 @@ class InAcbgGrouperController extends Controller
         $upgrade_class_ind = $request->input('upgrade_class_ind') ?? "";
         $upgrade_class_class = $request->input('upgrade_class_class') ?? "";
         $upgrade_class_los = $request->input("upgrade_class_los") ?? "";
+        $upgrade_class_payor = $request->input("upgrade_class_payor") ?? "";
+
+        
         $birth_weight = $request->input("birth_weight") ?? "";
         $discharge_status = $request->input("discharge_status") ?? "";
         $diagnosa = $request->input("diagnosa") ?? "";
+        $diagnosa_inagrouper = $request->input("diagnosa_inagrouper") ?? "";
+        $procedure_inagrouper = $request->input("procedure_inagrouper") ?? "";
+
+        
         $prosedur_non_bedah = $request->input("prosedur_non_bedah") ?? "";
         $prosedur_bedah = $request->input("prosedur_bedah") ?? "";
         $konsultasi = $request->input("konsultasi") ?? "";
@@ -128,13 +136,15 @@ class InAcbgGrouperController extends Controller
         $payor_cd = $request->input(key: "payor_cd") ?? "";
         $cob_cd = $request->input(key: "cob_cd") ?? "";
         $coder_nik = $request->input(key: "coder_nik") ?? "";
-
+        $sistole = $request->input(key: "sistole") ?? "";
+        $diastole = $request->input(key: "diastole") ?? "";
 
         // Structur Payload 
         $data = [
             'nomor_kartu' => $nomor_kartu,
             'nomor_sep' => $nomor_sep,
             'tgl_masuk' => $tgl_masuk,
+            'cara_masuk'=>$cara_masuk,
             'tgl_pulang' => $tgl_pulang,
             'jenis_rawat' => $jenis_rawat,
             'kelas_rawat' => $kelas_rawat,
@@ -146,9 +156,14 @@ class InAcbgGrouperController extends Controller
             'upgrade_class_ind'=>$upgrade_class_ind,
             'upgrade_class_class'=>$upgrade_class_class,
             'upgrade_class_los'=>$upgrade_class_los,
+            'upgrade_class_payor'=>$upgrade_class_payor,
             'birth_weight'=>$birth_weight,
             'discharge_status'=>$discharge_status,
             'diagnosa'=>$diagnosa,
+            'diagnosa_inagrouper'=>$diagnosa_inagrouper,
+            'procedure_inagrouper'=>$procedure_inagrouper,
+            'sistole'=>$sistole,
+            'diastole'=>$diastole,
             'prosedur_non_bedah'=>$prosedur_non_bedah,
             'prosedur_bedah'=>$konsultasi,
             'tenaga_ahli'=>$tenaga_ahli,
@@ -200,6 +215,32 @@ class InAcbgGrouperController extends Controller
 
         // result kirim claim
         $results = $this->inacbg->groupingStageSatu($data, $key);
+
+        // Kembalikan hasil sebagai JSON response
+        return response()->json($results, 200);
+    }
+
+
+    public function Finalisasi(Request $request)
+    {
+
+        // Ambil keynya dari  ENV 
+        $key = env('INACBG_KEY');
+
+
+        $nomor_sep = $request->input('nomor_sep') ?? "";
+        $coder_nik = $request->input('coder_nik') ?? "";
+
+        // Structur Payload 
+        $data = [
+            'nomor_sep' => $nomor_sep,
+            'coder_nik' => $coder_nik,
+
+        ];
+
+
+        // result kirim claim
+        $results = $this->inacbg->finalisasi($data, $key);
 
         // Kembalikan hasil sebagai JSON response
         return response()->json($results, 200);

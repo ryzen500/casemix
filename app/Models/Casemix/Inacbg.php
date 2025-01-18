@@ -182,7 +182,7 @@ class Inacbg extends Model
             'jenis_rawat' => 'required',
             'kelas_rawat' => 'required',
             'coder_nik' => 'required',
-            'diagnosa'=>'required'
+            'diagnosa' => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -191,7 +191,7 @@ class Inacbg extends Model
     }
 
 
-      /**
+    /**
      * Summary of validateData
      * @param array $data
      * @throws \Exception
@@ -202,6 +202,20 @@ class Inacbg extends Model
     {
         $validator = Validator::make($data, [
             'nomor_sep' => 'required|string'
+        ]);
+
+        if ($validator->fails()) {
+            throw new Exception(implode(', ', $validator->errors()->all()));
+        }
+    }
+
+
+    public function validateSendKlaim(array $data)
+    {
+        $validator = Validator::make($data, [
+            'nomor_sep' => 'required|string',
+            'coder_nik' => 'required|string'
+
         ]);
 
         if ($validator->fails()) {
@@ -304,7 +318,7 @@ class Inacbg extends Model
     }
 
 
-     /**
+    /**
      * Summary of updateDataKlaim
      * @param array $data
      * @param string $key
@@ -332,6 +346,25 @@ class Inacbg extends Model
     }
 
 
+
+    public function finalisasi(array $data, string $key): array
+    {
+        try {
+            // validate The Payload
+            $this->validateSendKlaim($data);
+            $payload = $this->preparePayloadSendFinalisasi($data);
+
+            $encryptedPayload = $this->inacbg_encrypt($payload, $key); // Tambahkan parameter $key
+
+            $response = $this->sendRequest($encryptedPayload, $key);
+            return $this->processResponse($response, $key);
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
     /**
      * Summary of searchDiagnosa
      * @param array $data
@@ -421,6 +454,7 @@ class Inacbg extends Model
                 'nomor_sep' => $data['nomor_sep'] ?? "",
                 'nomor_kartu' => $data['nomor_kartu'] ?? "",
                 'tgl_masuk' => $data['tgl_masuk'] ?? "",
+                'cara_masuk'=>$data['cara_masuk'] ??"",
                 'tgl_pulang' => $data['tgl_pulang'] ?? "",
                 'jenis_rawat' => $data['jenis_rawat'] ?? "",
                 'kelas_rawat' => $data['kelas_rawat'] ?? "",
@@ -432,9 +466,14 @@ class Inacbg extends Model
                 'upgrade_class_ind' => $data['upgrade_class_ind'] ?? null,
                 'upgrade_class_class' => $data['upgrade_class_class'] ?? null,
                 'upgrade_class_los' => $data['upgrade_class_los'] ?? null,
+                'upgrade_class_payor'=>$data['upgrade_class_payor'] ?? null,
                 'birth_weight' => $data['birth_weight'] ?? null,
+                'sistole' => $data['sistole'] ?? null,
+                'diastole' => $data['diastole'] ?? null,
                 'discharge_status' => $data['discharge_status'] ?? null,
                 'diagnosa' => $data['diagnosa'] ?? null,
+                'diagnosa_inagrouper'=>$data['diagnosa_inagrouper'] ?? null,
+                'procedure_inagrouper'=>$data['procedure_inagrouper'] ?? null,
                 'tarif_rs' => [
                     'prosedur_non_bedah' => $data['prosedur_non_bedah'] ?? null,
                     'prosedur_bedah' => $data['prosedur_bedah'] ?? null,
@@ -469,13 +508,26 @@ class Inacbg extends Model
     private function preparePayloadGroupingStageSatu(array $data): string
     {
         return json_encode([
-            'metadata' => ['method' => 'grouper',  'stage'=>1],
+            'metadata' => ['method' => 'grouper', 'stage' => 1],
             'data' => [
                 'nomor_sep' => $data['nomor_sep'] ?? ""
             ],
         ]);
     }
 
+
+
+    private function preparePayloadSendFinalisasi(array $data): string
+    {
+        return json_encode([
+            'metadata' => ['method' => 'claim_final'],
+            'data' => [
+                'nomor_sep' => $data['nomor_sep'] ?? "",
+                'coder_nik' => $data['coder_nik'] ?? ""
+
+            ],
+        ]);
+    }
 
     /**
      * Summary of preparePayloadSearchDiagnosa
@@ -697,7 +749,7 @@ class Inacbg extends Model
         // var_dump($filters);die;
 
         if (!empty($filters)) {
-            if(!empty($filters['periode']) ||!empty($filters['kelasRawat']) ||!empty($filters['jenisrawat']) ){
+            if (!empty($filters['periode']) || !empty($filters['kelasRawat']) || !empty($filters['jenisrawat'])) {
                 if ($filters['periode'] == 'tanggal_pulang') {
                     $query1->whereBetween(
                         DB::raw('DATE(pas.tglpulang)'), // Use DATE() for ensuring the format is consistent
@@ -717,18 +769,16 @@ class Inacbg extends Model
                 } else if ($filters['kelasRawat'] == 'hakkelas_kode') {
                     $query1->where('hakkelas_kode', '=', $filters['kelasRawat']);
 
-                }
-
-                else if ($filters['jenisrawat'] == 'jenisrawat') {
+                } else if ($filters['jenisrawat'] == 'jenisrawat') {
                     $query1->where('hakkelas_kode', '=', $filters['kelasRawat']);
 
                 }
-            }else{
-                if(isset($filters['query'])){
-                    $value=$filters['query'];
+            } else {
+                if (isset($filters['query'])) {
+                    $value = $filters['query'];
                     $query1->where('pa.nama_pasien', 'like', "%$value%")
-                          ->orWhere('s.nosep', 'like', "%$value%")
-                          ->orWhere('pa.no_rekam_medik', 'like', "%$value%");
+                        ->orWhere('s.nosep', 'like', "%$value%")
+                        ->orWhere('pa.no_rekam_medik', 'like', "%$value%");
                 }
             }
         }
@@ -752,7 +802,7 @@ class Inacbg extends Model
         // self::applyFilters($query2, $filters);
 
         if (!empty($filters)) {
-            if(!empty($filters['periode']) ||!empty($filters['kelasRawat']) ||!empty($filters['jenisrawat']) ){
+            if (!empty($filters['periode']) || !empty($filters['kelasRawat']) || !empty($filters['jenisrawat'])) {
                 if ($filters['periode'] == 'tanggal_pulang') {
                     $query1->whereBetween(
                         DB::raw('DATE(pas.tglpulang)'), // Use DATE() for ensuring the format is consistent
@@ -772,17 +822,16 @@ class Inacbg extends Model
                 } else if ($filters['kelasRawat'] == 'hakkelas_kode') {
                     $query1->where('s.klsrawat', '=', $filters['kelasRawat']);
 
-                }
-                else if ($filters['jenisrawat'] == 'jenisrawat') {
+                } else if ($filters['jenisrawat'] == 'jenisrawat') {
                     $query1->where('s.hakkelas_kode', '=', $filters['kelasRawat']);
 
                 }
-            }else{
-                if(isset($filters['query'])){
-                    $value=$filters['query'];
+            } else {
+                if (isset($filters['query'])) {
+                    $value = $filters['query'];
                     $query1->where('pa.nama_pasien', 'like', "%$value%")
-                          ->orWhere('s.nosep', 'like', "%$value%")
-                          ->orWhere('pa.no_rekam_medik', 'like', "%$value%");
+                        ->orWhere('s.nosep', 'like', "%$value%")
+                        ->orWhere('pa.no_rekam_medik', 'like', "%$value%");
                 }
             }
         }
