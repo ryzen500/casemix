@@ -593,30 +593,39 @@ class Inacbg extends Model
         // var_dump($filters);die;
 
         if (!empty($filters)) {
-            if ($filters['periode'] == 'tanggal_pulang') {
-                $query1->whereBetween(
-                    DB::raw('DATE(pas.tglpulang)'), // Use DATE() for ensuring the format is consistent
-                    [
-                        date('Y-m-d', strtotime($filters['tanggal_mulai'])), // Convert to 'YYYY-MM-DD' format
-                        date('Y-m-d', strtotime($filters['tanggal_selesai'])) // Convert to 'YYYY-MM-DD' format
-                    ]
-                );
-            } else if ($filters['periode'] == 'tanggal_masuk') {
-                $query1->whereBetween(
-                    DB::raw('DATE(tglmasuk)'), // Use DATE() for ensuring the format is consistent
-                    [
-                        date('Y-m-d', strtotime($filters['tanggal_mulai'])), // Convert to 'YYYY-MM-DD' format
-                        date('Y-m-d', strtotime($filters['tanggal_selesai'])) // Convert to 'YYYY-MM-DD' format
-                    ]
-                );
-            } else if ($filters['kelasRawat'] == 'hakkelas_kode') {
-                $query1->where('hakkelas_kode', '=', $filters['kelasRawat']);
+            if(!empty($filters['periode']) ||!empty($filters['kelasRawat']) ||!empty($filters['jenisrawat']) ){
+                if ($filters['periode'] == 'tanggal_pulang') {
+                    $query1->whereBetween(
+                        DB::raw('DATE(pas.tglpulang)'), // Use DATE() for ensuring the format is consistent
+                        [
+                            date('Y-m-d', strtotime($filters['tanggal_mulai'])), // Convert to 'YYYY-MM-DD' format
+                            date('Y-m-d', strtotime($filters['tanggal_selesai'])) // Convert to 'YYYY-MM-DD' format
+                        ]
+                    );
+                } else if ($filters['periode'] == 'tanggal_masuk') {
+                    $query1->whereBetween(
+                        DB::raw('DATE(tglmasuk)'), // Use DATE() for ensuring the format is consistent
+                        [
+                            date('Y-m-d', strtotime($filters['tanggal_mulai'])), // Convert to 'YYYY-MM-DD' format
+                            date('Y-m-d', strtotime($filters['tanggal_selesai'])) // Convert to 'YYYY-MM-DD' format
+                        ]
+                    );
+                } else if ($filters['kelasRawat'] == 'hakkelas_kode') {
+                    $query1->where('hakkelas_kode', '=', $filters['kelasRawat']);
 
-            }
+                }
 
-            else if ($filters['jenisrawat'] == 'jenisrawat') {
-                $query1->where('hakkelas_kode', '=', $filters['kelasRawat']);
+                else if ($filters['jenisrawat'] == 'jenisrawat') {
+                    $query1->where('hakkelas_kode', '=', $filters['kelasRawat']);
 
+                }
+            }else{
+                if(isset($filters['query'])){
+                    $value=$filters['query'];
+                    $query1->where('pa.nama_pasien', 'like', "%$value%")
+                          ->orWhere('s.nosep', 'like', "%$value%")
+                          ->orWhere('pa.no_rekam_medik', 'like', "%$value%");
+                }
             }
         }
 
@@ -639,29 +648,38 @@ class Inacbg extends Model
         // self::applyFilters($query2, $filters);
 
         if (!empty($filters)) {
-            if ($filters['periode'] == 'tanggal_pulang') {
-                $query1->whereBetween(
-                    DB::raw('DATE(pas.tglpulang)'), // Use DATE() for ensuring the format is consistent
-                    [
-                        date('Y-m-d', strtotime($filters['tanggal_mulai'])), // Convert to 'YYYY-MM-DD' format
-                        date('Y-m-d', strtotime($filters['tanggal_selesai'])) // Convert to 'YYYY-MM-DD' format
-                    ]
-                );
-            } else if ($filters['periode'] == 'tanggal_masuk') {
-                $query1->whereBetween(
-                    DB::raw('DATE(tglmasuk)'), // Use DATE() for ensuring the format is consistent
-                    [
-                        date('Y-m-d', strtotime($filters['tanggal_mulai'])), // Convert to 'YYYY-MM-DD' format
-                        date('Y-m-d', strtotime($filters['tanggal_selesai'])) // Convert to 'YYYY-MM-DD' format
-                    ]
-                );
-            } else if ($filters['kelasRawat'] == 'hakkelas_kode') {
-                $query1->where('s.klsrawat', '=', $filters['kelasRawat']);
+            if(!empty($filters['periode']) ||!empty($filters['kelasRawat']) ||!empty($filters['jenisrawat']) ){
+                if ($filters['periode'] == 'tanggal_pulang') {
+                    $query1->whereBetween(
+                        DB::raw('DATE(pas.tglpulang)'), // Use DATE() for ensuring the format is consistent
+                        [
+                            date('Y-m-d', strtotime($filters['tanggal_mulai'])), // Convert to 'YYYY-MM-DD' format
+                            date('Y-m-d', strtotime($filters['tanggal_selesai'])) // Convert to 'YYYY-MM-DD' format
+                        ]
+                    );
+                } else if ($filters['periode'] == 'tanggal_masuk') {
+                    $query1->whereBetween(
+                        DB::raw('DATE(tglmasuk)'), // Use DATE() for ensuring the format is consistent
+                        [
+                            date('Y-m-d', strtotime($filters['tanggal_mulai'])), // Convert to 'YYYY-MM-DD' format
+                            date('Y-m-d', strtotime($filters['tanggal_selesai'])) // Convert to 'YYYY-MM-DD' format
+                        ]
+                    );
+                } else if ($filters['kelasRawat'] == 'hakkelas_kode') {
+                    $query1->where('s.klsrawat', '=', $filters['kelasRawat']);
 
-            }
-            else if ($filters['jenisrawat'] == 'jenisrawat') {
-                $query1->where('s.hakkelas_kode', '=', $filters['kelasRawat']);
+                }
+                else if ($filters['jenisrawat'] == 'jenisrawat') {
+                    $query1->where('s.hakkelas_kode', '=', $filters['kelasRawat']);
 
+                }
+            }else{
+                if(isset($filters['query'])){
+                    $value=$filters['query'];
+                    $query1->where('pa.nama_pasien', 'like', "%$value%")
+                          ->orWhere('s.nosep', 'like', "%$value%")
+                          ->orWhere('pa.no_rekam_medik', 'like', "%$value%");
+                }
             }
         }
 
@@ -764,6 +782,7 @@ class Inacbg extends Model
             "),
                 'pa.nama_pasien',
                 's.nosep',
+                'pa.pasien_id',
                 's.klsrawat',
                 DB::raw("'JKN'::text AS jaminan"),
                 DB::raw("
