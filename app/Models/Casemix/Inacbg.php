@@ -227,6 +227,8 @@ class Inacbg extends Model
             $response = $this->sendRequest($encryptedPayload, $key);
             return $this->processResponse($response, $key);
         } catch (Exception $e) {
+            echo "<pre>";
+            var_dump($e);die;
             return [
                 'success' => false,
                 'message' => $e->getMessage(),
@@ -493,12 +495,13 @@ class Inacbg extends Model
     {
         $decodedResponse = json_decode($response, true);
 
-        // var_dump($decodedResponse['response']['data']);die;
+        // echo "<pre>";
+        // var_dump($decodedResponse);die;
         if ($decodedResponse['metadata']['code'] == 200) {
             return [
                 'success' => true,
-                'message' => $decodedResponse['response']['message'],
-                'data' => $decodedResponse['response']['data'] ?? null,
+                'message' => $decodedResponse['metadata']['message'],
+                'data' => $decodedResponse['response'] ?? null,
             ];
         }
 
