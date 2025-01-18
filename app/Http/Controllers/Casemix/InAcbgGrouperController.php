@@ -224,4 +224,11 @@ class InAcbgGrouperController extends Controller
             'model' => $model
         ]);
     }
+    public function getGroupperPasien($pendaftaran_id)
+    {
+        $model = PendaftaranT::getGroupping($pendaftaran_id);
+        return response()->json([
+            'model' => $model,
+        ]);
+    }
 }
