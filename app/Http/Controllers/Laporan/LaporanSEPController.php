@@ -21,33 +21,23 @@ class LaporanSEPController extends Controller
         $filters = $request->only([
             'tgl_sep',
         ]);
-        // Hitung total data
-        $totalItems = LaporanresepR::getTotalItems($filters);
-
-        // Inisialisasi pagination
-        $pagination = new Pagination($totalItems, $itemsPerPage, $currentPage);
-
-        // Ambil data berdasarkan pagination
-        $data = LaporanresepR::getPaginatedData($pagination->getLimit(), $pagination->getOffset(), $filters);
-
-        // Kembalikan response JSON
-        // return response()->json([
-        //     'pagination' => $pagination->getPaginationInfo(),
-        //     'data' => $data,
-        // ]);
-        return Inertia::render('Laporan/LaporanSEP/index', [
-            'pagination' => $pagination->getPaginationInfo(),
-            'data' => $data,
-        ]);
+       
+        return Inertia::render('Laporan/LaporanSEP/index');
     }
 
     public function getData(Request $request)
     {
-        $currentPage = $request->input('page', 1);
-        $itemsPerPage = $request->input('items_per_page', 10);
-        $filters = $request->only([
-            'tgl_sep','no_sep',
-        ]);
+        $currentPage = request()->get('page', 1);
+        $itemsPerPage = request()->get('items_per_page', 10);
+        // $filters = $request->only([
+        //     'range','tanggal_mulai','tanggal_selesai',
+        // ]);
+        // var_dump($request)
+        $filters =[
+            'range'=>request()->get('range'),
+            'tanggal_mulai'=>request()->get('tanggal_mulai'),
+            'tanggal_selesai'=>request()->get('tanggal_selesai'),
+        ];
         // Hitung total data
         $totalItems = LaporanresepR::getTotalItems($filters);
 
