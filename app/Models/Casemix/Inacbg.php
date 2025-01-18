@@ -191,6 +191,25 @@ class Inacbg extends Model
     }
 
 
+      /**
+     * Summary of validateData
+     * @param array $data
+     * @throws \Exception
+     * @return void
+     * Validasi Untuk Data Request Apakah Sudah Valid Atau Tidak
+     */
+    public function validateGroupingSatu(array $data)
+    {
+        $validator = Validator::make($data, [
+            'nomor_sep' => 'required|string'
+        ]);
+
+        if ($validator->fails()) {
+            throw new Exception(implode(', ', $validator->errors()->all()));
+        }
+    }
+
+
 
 
     /**
@@ -276,6 +295,34 @@ class Inacbg extends Model
 
             $response = $this->sendRequest($encryptedPayload, $key);
             return $this->processResponseDataKlaim($response, $key);
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+
+     /**
+     * Summary of updateDataKlaim
+     * @param array $data
+     * @param string $key
+     * @return array
+     * 
+     * This is Function For Update or set data Klaim
+     */
+    public function groupingStageSatu(array $data, string $key): array
+    {
+        try {
+            // validate The Payload
+            $this->validateGroupingSatu($data);
+            $payload = $this->preparePayloadGroupingStageSatu($data);
+
+            $encryptedPayload = $this->inacbg_encrypt($payload, $key); // Tambahkan parameter $key
+
+            $response = $this->sendRequest($encryptedPayload, $key);
+            return $this->processResponse($response, $key);
         } catch (Exception $e) {
             return [
                 'success' => false,
@@ -419,6 +466,17 @@ class Inacbg extends Model
     }
 
 
+    private function preparePayloadGroupingStageSatu(array $data): string
+    {
+        return json_encode([
+            'metadata' => ['method' => 'grouper',  'stage'=>1],
+            'data' => [
+                'nomor_sep' => $data['nomor_sep'] ?? ""
+            ],
+        ]);
+    }
+
+
     /**
      * Summary of preparePayloadSearchDiagnosa
      * @param array $data
@@ -551,6 +609,8 @@ class Inacbg extends Model
             'message' => $decodedResponse['metadata']['message'] ?? 'Unknown error',
         ];
     }
+
+
 
 
     public static function reportClaimReceivables(int $limit, int $offset, array $filters = [])
