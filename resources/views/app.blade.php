@@ -42,6 +42,9 @@
         top: -1rem;
         right: -1rem;
     }
+    .p-jc-center{
+        text-align:center;
+    }
 </style>
 <body >
     @inertia

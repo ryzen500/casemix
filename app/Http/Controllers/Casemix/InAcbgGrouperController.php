@@ -395,6 +395,7 @@ class InAcbgGrouperController extends Controller
         $model = new MonitoringHistoryService();
         $getRiwayat = $model->getRiwayatData($nopeserta)->getOriginalContent();
         $data=null;
+        $pasien=null;
         if(isset($getRiwayat['response'])){
             if(count($getRiwayat['response'])>0){
                 foreach ($getRiwayat['response']['histori'] as $key => $row) {
@@ -407,6 +408,10 @@ class InAcbgGrouperController extends Controller
                         $data[$key]['cbg']=$sep->cbg;
                         $data[$key]['status']=$sep->status;
                         $data[$key]['nama_pegawai']=$sep->nama_pegawai;
+                        $pasien['nama_pasien'] = $sep->nama_pasien;
+                        $pasien['no_rekam_medik'] = $sep->no_rekam_medik;
+                        $pasien['jeniskelamin'] = $sep->jeniskelamin;
+                        $pasien['tanggal_lahir'] = $sep->tanggal_lahir;
 
                     }else{
                         $data[$key]['pendaftaran_id']=null;
@@ -421,13 +426,15 @@ class InAcbgGrouperController extends Controller
         }
         // $model = PendaftaranT::dataListGrouper($nopeserta);
         return Inertia::render('Grouping/indexPasien', [
-            'model' => $data
+            'model' => $data,'pasien'=>$pasien
         ]);
     }
-    public function getGroupperPasien($nopeserta)
+    public function getGroupperPasien(Request $request)
     {
+        $noSep = $request->input('noSep');
+
         $model = new SearchSepService();
-        $getRiwayat = $model->getRiwayatData($nopeserta)->getOriginalContent();
+        $getRiwayat = $model->getRiwayatData($noSep)->getOriginalContent();
         // $model = PendaftaranT::getGroupping($pendaftaran_id);
         return response()->json([
             'model' => $getRiwayat,
