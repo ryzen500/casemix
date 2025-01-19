@@ -45,6 +45,18 @@
     .p-jc-center{
         text-align:center;
     }
+    .p-tabview-nav-container {
+        border-bottom: 1px solid;
+    }
+    .p-tabview{
+        border : 1px solid black;
+        margin-bottom: 10px;
+    }
+    .p-tabview .p-tabview-nav li.p-highlight .p-tabview-nav-link {
+        background: #ffffff;
+        border-color: #06b6d4;
+        color: #06b6d4;
+    }
 </style>
 <body >
     @inertia
