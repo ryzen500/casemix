@@ -933,6 +933,7 @@ class Inacbg extends Model
                     ELSE date(p.tgl_pendaftaran)::timestamp without time zone 
                 END AS tglpulang
             "),
+               'pa.no_rekam_medik',
                 'pa.nama_pasien',
                 's.nosep',
                 'pa.pasien_id',

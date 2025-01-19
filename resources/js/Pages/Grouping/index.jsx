@@ -32,7 +32,7 @@ export default function CodingGrouping({ auth, pagination, data }) {
         const id = e.data.nopeserta;
         window.open(route('searchGroupperPasien',id), '_parent');
 
-        toast.current.show({ severity: 'info', summary: 'Product Selected', detail:e.data.name, life: 3000 }); 
+        toast.current.show({ severity: 'info', summary: 'Data Sudah Dipilih', detail:e.data.name, life: 3000 }); 
     };
     useEffect(() => {
         isMounted.current = true;
@@ -113,6 +113,31 @@ export default function CodingGrouping({ auth, pagination, data }) {
             });
     };
 
+
+    const customBodyTemplate = (rowData) => {
+        return (
+            <div>
+                
+                <div>
+                    {rowData.nama_pasien}
+                </div>
+            
+                <small style={{ display: 'block', color: '#6c757d' }}>
+                Kartu: {rowData.nopeserta}
+                </small>
+
+                <small style={{ display: 'block', color: '#6c757d' }}>
+                Tanggal Lahir: {rowData.tanggal_lahir} ({rowData.usia})
+                </small>
+                <small style={{ display: 'block', color: '#6c757d',marginBottom:'15px' , textAlign:'right' }}>
+                    Rekam Medik: {rowData.no_rekam_medik} 
+                </small>
+             
+            </div>
+        );
+    };
+
+
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -181,7 +206,7 @@ export default function CodingGrouping({ auth, pagination, data }) {
                                                             loading={loading}
                                                         
                                                         >
-                                                            <Column field="nama_pasien" header="Name"  style={{ minWidth: '12rem' }} />
+                                                            <Column field="nama_pasien" header="Name" body={customBodyTemplate}  style={{ minWidth: '12rem' }} />
 
                                                         </DataTable>
                                                     </OverlayPanel>

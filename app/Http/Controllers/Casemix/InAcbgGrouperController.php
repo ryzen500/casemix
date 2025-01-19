@@ -58,7 +58,7 @@ class InAcbgGrouperController extends Controller
 
 
         $nomor_kartu = $request->input('nomor_kartu') ?? null;
-        $nomor_sep = $request->input('nomor_sep') ?? null;
+        $nomor_sep = $request->input('noSep') ?? null;
         $nomor_rm = $request->input('nomor_rm') ?? null;
         $nama_pasien = $request->input('nama_pasien') ?? null;
         $tgl_lahir = $request->input('tgl_lahir') ?? null;

@@ -13,7 +13,7 @@ import { InputMask } from "primereact/inputmask";
 import Checkbox from '@/Components/Checkbox';
 import { Dropdown } from 'primereact/dropdown';
 import { TabPanel, TabView } from 'primereact/tabview';
-export default function Dashboard({ auth,model,pasien,caraMasuk }) {
+export default function Dashboard({ auth, model, pasien, caraMasuk }) {
     const [datas, setDatas] = useState([]);
     const [pendaftarans, setPendaftarans] = useState([]);
     const [tarifs, setTarifs] = useState([]);
@@ -34,10 +34,10 @@ export default function Dashboard({ auth,model,pasien,caraMasuk }) {
         const expandedProduct = event.data;
         // Set loading to true when starting the API request
         setLoading(true);
-        if(expandedProduct.pendaftaran_id==null){
-            toast.current.show({severity:'error', summary: 'Error', detail: 'No SEP belum di sinkron!', life: 3000});
+        if (expandedProduct.pendaftaran_id == null) {
+            toast.current.show({ severity: 'error', summary: 'Error', detail: 'No SEP belum di sinkron!', life: 3000 });
             setExpandedRows(null);
-        }else{
+        } else {
             try {
                 // Fetch detailed data (e.g., reviews) for the expanded row
                 const response = await axios.post('/getGroupperPasien', {
@@ -46,8 +46,8 @@ export default function Dashboard({ auth,model,pasien,caraMasuk }) {
                 });
                 // const response = await axios.get(`/getGroupperPasien/${expandedProduct.noSep}`);
                 // setExpandedRowData(response.data); // Store the data
-    
-                if(response.data.model.metaData.code ==200){
+
+                if (response.data.model.metaData.code == 200) {
                     toast.current.show({ severity: 'info', summary: event.data.noSep, detail: event.data.noSep, life: 3000 });
                     setDatas(response.data.model.response);
                     setPendaftarans(response.data.pendaftaran);
@@ -56,14 +56,14 @@ export default function Dashboard({ auth,model,pasien,caraMasuk }) {
                     setProfil(response.data.profil);
 
                     // console.log(response.data,tarifs.total);
-                }else{
-                    toast.current.show({severity:'error', summary: 'Error', detail: response.data.model.metaData.message, life: 3000});
+                } else {
+                    toast.current.show({ severity: 'error', summary: 'Error', detail: response.data.model.metaData.message, life: 3000 });
                     setExpandedRows(null);
                 }
-    
-    
+
+
             } catch (error) {
-                toast.current.show({severity:'error', summary: 'Error', detail: error, life: 3000});
+                toast.current.show({ severity: 'error', summary: 'Error', detail: error, life: 3000 });
                 setExpandedRows(null); // Optionally, handle error state
             } finally {
                 // Set loading to false when the API request finishes
@@ -77,7 +77,7 @@ export default function Dashboard({ auth,model,pasien,caraMasuk }) {
     };
     const rowExpansionTemplate = (data) => {
         return (
-            
+
             <div className="p-3">
                 {/* Show loading spinner while fetching expanded row data */}
                 {loading ? (
@@ -92,7 +92,7 @@ export default function Dashboard({ auth,model,pasien,caraMasuk }) {
                                 <div className="row">
                                     <div className="col-sm-5 ">
                                         <div className="float-end">
-                                            
+
                                             <label htmlFor="ssn" className="font-bold block mb-2">Jaminan / Cara Bayar</label>
                                             JKN
                                         </div>
@@ -109,7 +109,7 @@ export default function Dashboard({ auth,model,pasien,caraMasuk }) {
                                     </div>
 
                                 </div>
-                                <table className='table table-bordered' style={{border:' 1px solid black'}}>
+                                <table className='table table-bordered' style={{ border: ' 1px solid black' }}>
                                     <tr>
                                         <td width={"15%"}>
                                             Jenis Rawat
@@ -130,7 +130,7 @@ export default function Dashboard({ auth,model,pasien,caraMasuk }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-6">
-                                                        Masuk : 
+                                                        Masuk :
                                                     </div>
                                                     <div className="col-sm-6">
                                                         Pulang :
@@ -144,8 +144,8 @@ export default function Dashboard({ auth,model,pasien,caraMasuk }) {
                                     <tr>
                                         <td>Cara Masuk</td>
                                         <td colSpan={3}>
-                                            <Dropdown value={selectedCaraMasuk} onChange={(e) => setCaraMasuk(e.value)} options={caraMasuk} optionLabel="name" 
-                                            placeholder="Pilih Cara Masuk" className="w-full md:w-14rem" />
+                                            <Dropdown value={selectedCaraMasuk} onChange={(e) => setCaraMasuk(e.value)} options={caraMasuk} optionLabel="name"
+                                                placeholder="Pilih Cara Masuk" className="w-full md:w-14rem" />
                                         </td>
                                     </tr>
                                     <tr>
@@ -169,17 +169,17 @@ export default function Dashboard({ auth,model,pasien,caraMasuk }) {
                                     <tr>
                                         <td>Pasien TB</td>
                                         <td colSpan={3}>
-                                            <Checkbox name="pasien_tb" value="true"  />
+                                            <Checkbox name="pasien_tb" value="true" />
                                             <label htmlFor="ingredient1" className="ml-2">Ya</label>
                                         </td>
                                     </tr>
                                 </table>
-                                <table className='table table-bordered' style={{border:' 1px solid black',width:'100%'}}>
+                                <table className='table table-bordered' style={{ border: ' 1px solid black', width: '100%' }}>
                                     <tr>
                                         <td colSpan={3}>
                                             <div className="col-sm-12 text-center">
                                                 Tarif Rumah Sakit :
-                                                <input type="text" className="ml-2" name='total_tarif_rs' value={(parseFloat(tarifs.total)+parseFloat(obats.total))} />    
+                                                <input type="text" className="ml-2" name='total_tarif_rs' value={(parseFloat(tarifs.total) + parseFloat(obats.total))} />
 
                                             </div>
                                         </td>
@@ -201,9 +201,11 @@ export default function Dashboard({ auth,model,pasien,caraMasuk }) {
                                     </tr>
                                     <tr>
                                         <td width={"35%"}>Rehabilitasi <input type="text" className="m-2" name='tarif_rehabilitasi' value={tarifs.rehabilitasi} /></td>
-                                        <td width={"35%"}> Kamar / Akomodasi <input type="text" className="m-2" name='tarif_akomodasi' value={tarifs.kamar_akomodasi} /></td>
+                                        <td width={"35%"}> Kamar / Akomodasi
+                                            <input type="text" className="m-2" name='tarif_akomodasi' value={tarifs.kamar_akomodasi} /></td>
                                         <td width={"30%"}>Rawat Intensif <input type="text" className="m-2" name='tarif_rawat_integerensif' value={tarifs.rawatintensif} /></td>
                                     </tr>
+
                                     <tr>
                                         <td width={"35%"}>Obat <input type="text" className="m-2" name='tarif_obat' value={obats.obat} /></td>
                                         <td width={"35%"}>Obat Kronis <input type="text" className="m-2" name='tarif_obat_kronis' value={obats.obatkronis} /></td>
@@ -219,22 +221,29 @@ export default function Dashboard({ auth,model,pasien,caraMasuk }) {
                                 <TabView>
                                     <TabPanel header="Coding UNU Grouper">
                                         <p className="m-0">
-                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                                             Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                                            consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
+                                            consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
                                             Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
                                         </p>
                                     </TabPanel>
                                     <TabPanel header="Coding INA Grouper">
                                         <p className="m-0">
-                                            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, 
+                                            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam,
                                             eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo
-                                            enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui 
+                                            enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui
                                             ratione voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam eius modi.
                                         </p>
                                     </TabPanel>
 
                                 </TabView>
+                                <div className="col-md-6 d-flex mb-3">
+                                    <button className="btn btn-primary" style={{float:'right'}} onClick={handleSimpanKlaim}>Simpan</button>
+                                    <button className="btn btn-secondary ml-2" style={{float:'right'}} >Groupper</button>
+
+                                    <button className="btn btn-secondary ml-2" style={{float:'right'}} >Hapus Klaim</button>
+                                </div>
+
                                 {/*  Hasil Grouping */}
                                 <table className='table table-bordered' style={{ border: ' 1px solid black', width: '100%' }}>
                                     <tr>
@@ -242,95 +251,95 @@ export default function Dashboard({ auth,model,pasien,caraMasuk }) {
                                     </tr>
                                     <tr>
                                         <td width={"15%"}>Info</td>
-                                        <td width={"35%"} style={{textAlign:'left'}} >-</td>
+                                        <td width={"35%"} style={{ textAlign: 'left' }} >-</td>
                                         <td width={"30%"}></td>
                                         <td width={"30%"}></td>
 
                                     </tr>
                                     <tr>
                                         <td width={"15%"}>Jenis Rawat</td>
-                                        <td width={"35%"} style={{textAlign:'left'}}>Rawat Jalan Regular </td>
+                                        <td width={"35%"} style={{ textAlign: 'left' }}>Rawat Jalan Regular </td>
                                         <td width={"30%"}></td>
                                         <td width={"30%"}></td>
 
                                     </tr>
                                     <tr>
                                         <td width={"15%"}>Group</td>
-                                        <td width={"35%"} style={{textAlign:'left'}}>PENYAKIT KRONIS KECIL LAIN-LAIN</td>
-                                        <td width={"30%"} style={{textAlign:'center'}}>Q-5-44-0</td>
-                                        <td width={"30%"} style={{textAlign:'right'}}>Rp 0 </td>
+                                        <td width={"35%"} style={{ textAlign: 'left' }}>PENYAKIT KRONIS KECIL LAIN-LAIN</td>
+                                        <td width={"30%"} style={{ textAlign: 'center' }}>Q-5-44-0</td>
+                                        <td width={"30%"} style={{ textAlign: 'right' }}>Rp 0 </td>
 
                                     </tr>
                                     <tr>
                                         <td width={"15%"}>Sub Acute</td>
-                                        <td width={"35%"} style={{textAlign:'left'}}>-</td>
-                                        <td width={"30%"} style={{textAlign:'center'}}>-</td>
-                                        <td width={"30%"} style={{textAlign:'right'}}>Rp 0 </td>
+                                        <td width={"35%"} style={{ textAlign: 'left' }}>-</td>
+                                        <td width={"30%"} style={{ textAlign: 'center' }}>-</td>
+                                        <td width={"30%"} style={{ textAlign: 'right' }}>Rp 0 </td>
 
                                     </tr>
                                     <tr>
                                         <td width={"15%"}>Chronic</td>
-                                        <td width={"35%"} style={{textAlign:'left'}}>-</td>
-                                        <td width={"30%"} style={{textAlign:'center'}}>-</td>
-                                        <td width={"30%"} style={{textAlign:'right'}}>Rp 0 </td>
+                                        <td width={"35%"} style={{ textAlign: 'left' }}>-</td>
+                                        <td width={"30%"} style={{ textAlign: 'center' }}>-</td>
+                                        <td width={"30%"} style={{ textAlign: 'right' }}>Rp 0 </td>
 
                                     </tr>
                                     <tr>
                                         <td width={"15%"}>Special Procedure</td>
-                                        <td width={"35%"} style={{textAlign:'left'}}>-</td>
-                                        <td width={"30%"} style={{textAlign:'center'}}>-</td>
-                                        <td width={"30%"} style={{textAlign:'right'}}>Rp 0 </td>
+                                        <td width={"35%"} style={{ textAlign: 'left' }}>-</td>
+                                        <td width={"30%"} style={{ textAlign: 'center' }}>-</td>
+                                        <td width={"30%"} style={{ textAlign: 'right' }}>Rp 0 </td>
 
                                     </tr>
 
                                     <tr>
                                         <td width={"15%"}>Special Prosthesis</td>
-                                        <td width={"35%"} style={{textAlign:'left'}}>-</td>
-                                        <td width={"30%"} style={{textAlign:'center'}}>-</td>
-                                        <td width={"30%"} style={{textAlign:'right'}}>Rp 0 </td>
+                                        <td width={"35%"} style={{ textAlign: 'left' }}>-</td>
+                                        <td width={"30%"} style={{ textAlign: 'center' }}>-</td>
+                                        <td width={"30%"} style={{ textAlign: 'right' }}>Rp 0 </td>
 
                                     </tr>
 
 
                                     <tr>
                                         <td width={"15%"}>Special Investigation</td>
-                                        <td width={"35%"} style={{textAlign:'left'}}>-</td>
-                                        <td width={"30%"} style={{textAlign:'center'}}>-</td>
-                                        <td width={"30%"} style={{textAlign:'right'}}>Rp 0 </td>
+                                        <td width={"35%"} style={{ textAlign: 'left' }}>-</td>
+                                        <td width={"30%"} style={{ textAlign: 'center' }}>-</td>
+                                        <td width={"30%"} style={{ textAlign: 'right' }}>Rp 0 </td>
 
                                     </tr>
 
 
                                     <tr>
                                         <td width={"15%"}>Special Drug</td>
-                                        <td width={"35%"} style={{textAlign:'left'}}>-</td>
-                                        <td width={"30%"} style={{textAlign:'center'}}>-</td>
-                                        <td width={"30%"} style={{textAlign:'right'}}>Rp 0 </td>
+                                        <td width={"35%"} style={{ textAlign: 'left' }}>-</td>
+                                        <td width={"30%"} style={{ textAlign: 'center' }}>-</td>
+                                        <td width={"30%"} style={{ textAlign: 'right' }}>Rp 0 </td>
 
                                     </tr>
 
                                     <tr>
                                         <td width={"15%"}>Status DC Kemkes</td>
-                                        <td width={"35%"} style={{textAlign:'left'}}>Klaim belum terkirim ke Pusat Data Kementerian Kesehatan</td>
-                                        <td width={"30%"} style={{textAlign:'center'}}></td>
-                                        <td width={"30%"} style={{textAlign:'right'}}>Rp 0 </td>
+                                        <td width={"35%"} style={{ textAlign: 'left' }}>Klaim belum terkirim ke Pusat Data Kementerian Kesehatan</td>
+                                        <td width={"30%"} style={{ textAlign: 'center' }}></td>
+                                        <td width={"30%"} style={{ textAlign: 'right' }}>Rp 0 </td>
 
                                     </tr>
 
                                     <tr>
                                         <td width={"15%"}>Status Klaim</td>
-                                        <td width={"35%"} style={{textAlign:'left'}}>-</td>
-                                        <td width={"30%"} style={{textAlign:'center'}}></td>
-                                        <td width={"30%"} style={{textAlign:'right'}}>Rp 0 </td>
+                                        <td width={"35%"} style={{ textAlign: 'left' }}>-</td>
+                                        <td width={"30%"} style={{ textAlign: 'center' }}></td>
+                                        <td width={"30%"} style={{ textAlign: 'right' }}>Rp 0 </td>
 
                                     </tr>
 
 
                                     <tr>
                                         <td width={"15%"}></td>
-                                        <td width={"35%"} style={{textAlign:'left'}}></td>
-                                        <td width={"30%"} style={{textAlign:'center'}}>Total</td>
-                                        <td width={"30%"} style={{textAlign:'right'}}>Rp 0 </td>
+                                        <td width={"35%"} style={{ textAlign: 'left' }}></td>
+                                        <td width={"30%"} style={{ textAlign: 'center' }}>Total</td>
+                                        <td width={"30%"} style={{ textAlign: 'right' }}>Rp 0 </td>
 
                                     </tr>
 
@@ -344,8 +353,20 @@ export default function Dashboard({ auth,model,pasien,caraMasuk }) {
 
         );
     };
-    const allowExpansion = (rowData) => {
-        // return rowData.orders.length > 0;
+    const handleSimpanKlaim = (e) => {
+        e.preventDefault(); // Prevent page reload
+
+        console.log('Form Data Submitted:', datas);
+
+        // Perform API request with axios
+        axios.post(route('newClaim'), datas)
+            .then((response) => {
+                console.log('Response:', response.data);
+                // Handle the response from the backend
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
     };
 
     const items = [
@@ -354,7 +375,7 @@ export default function Dashboard({ auth,model,pasien,caraMasuk }) {
         { label: pasien['jeniskelamin'] },
         { label: pasien['tanggal_lahir'] },
 
-    ]; 
+    ];
     const noSepBody = (rowData) => {
         return (
             <div>
@@ -367,20 +388,20 @@ export default function Dashboard({ auth,model,pasien,caraMasuk }) {
                 )}
             </div>
         );
-    };   
+    };
     return (
         <AuthenticatedLayout
             user={auth.user}
         >
             <>
-            <div className="card">
-                <BreadCrumb model={items} separatorIcon={'pi pi-ellipsis-h'}  />
-            </div>
+                <div className="card">
+                    <BreadCrumb model={items} separatorIcon={'pi pi-ellipsis-h'} />
+                </div>
                 <Card>
                     <Toast ref={toast} />
                     <DataTable value={model} expandedRows={expandedRows} onRowToggle={(e) => setExpandedRows(e.data)}
-                            onRowExpand={onRowExpand} onRowCollapse={onRowCollapse} rowExpansionTemplate={rowExpansionTemplate}
-                            dataKey="noSep" tableStyle={{ minWidth: '60rem' }}>
+                        onRowExpand={onRowExpand} onRowCollapse={onRowCollapse} rowExpansionTemplate={rowExpansionTemplate}
+                        dataKey="noSep" tableStyle={{ minWidth: '60rem' }}>
                         <Column expander style={{ width: '5rem' }} />
 
                         <Column field="tglSep" header="Tanggal Masuk" ></Column>
