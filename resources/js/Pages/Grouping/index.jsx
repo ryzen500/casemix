@@ -29,7 +29,7 @@ export default function CodingGrouping({ auth, pagination, data }) {
     const isMounted = useRef(false);
     const productSelect = (e) => {
         op.current.hide();
-        const id = e.data.nosep;
+        const id = e.data.nopeserta;
         window.open(route('searchGroupperPasien',id), '_parent');
 
         toast.current.show({ severity: 'info', summary: 'Product Selected', detail:e.data.name, life: 3000 }); 

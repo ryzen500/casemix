@@ -11,9 +11,15 @@ import { FloatLabel } from 'primereact/floatlabel';
 import { InputText } from 'primereact/inputtext';
 import { InputMask } from "primereact/inputmask";
 import Checkbox from '@/Components/Checkbox';
-
-export default function Dashboard({ auth, model, pasien }) {
-    const [datas, setdatas] = useState([]);
+import { Dropdown } from 'primereact/dropdown';
+import { TabPanel, TabView } from 'primereact/tabview';
+export default function Dashboard({ auth,model,pasien,caraMasuk }) {
+    const [datas, setDatas] = useState([]);
+    const [pendaftarans, setPendaftarans] = useState([]);
+    const [tarifs, setTarifs] = useState([]);
+    const [obats, setObats] = useState([]);
+    const [profils, setProfil] = useState([]);
+    const [selectedCaraMasuk, setCaraMasuk] = useState(null);
     const [expandedRows, setExpandedRows] = useState(null);
     const [loading, setLoading] = useState(false); // Loading state for expanded row
     const toast = useRef(null);
@@ -28,10 +34,10 @@ export default function Dashboard({ auth, model, pasien }) {
         const expandedProduct = event.data;
         // Set loading to true when starting the API request
         setLoading(true);
-        if (expandedProduct.pendaftaran_id == null) {
-            toast.current.show({ severity: 'error', summary: 'Error', detail: 'No SEP belum di sinkron!', life: 3000 });
+        if(expandedProduct.pendaftaran_id==null){
+            toast.current.show({severity:'error', summary: 'Error', detail: 'No SEP belum di sinkron!', life: 3000});
             setExpandedRows(null);
-        } else {
+        }else{
             try {
                 // Fetch detailed data (e.g., reviews) for the expanded row
                 const response = await axios.post('/getGroupperPasien', {
@@ -40,19 +46,24 @@ export default function Dashboard({ auth, model, pasien }) {
                 });
                 // const response = await axios.get(`/getGroupperPasien/${expandedProduct.noSep}`);
                 // setExpandedRowData(response.data); // Store the data
-
-                if (response.data.model.metaData.code == 200) {
+    
+                if(response.data.model.metaData.code ==200){
                     toast.current.show({ severity: 'info', summary: event.data.noSep, detail: event.data.noSep, life: 3000 });
-                    console.log(response.data.model.response)
-                    setdatas(response.data.model.response);
-                } else {
+                    setDatas(response.data.model.response);
+                    setPendaftarans(response.data.pendaftaran);
+                    setTarifs(response.data.tarif);
+                    setObats(response.data.obat);
+                    setProfil(response.data.profil);
+
+                    // console.log(response.data,tarifs.total);
+                }else{
+                    toast.current.show({severity:'error', summary: 'Error', detail: response.data.model.metaData.message, life: 3000});
                     setExpandedRows(null);
-                    toast.current.show({ severity: 'error', summary: 'Error', detail: response.data.model.metaData.message, life: 3000 });
                 }
-
-
+    
+    
             } catch (error) {
-                console.error('Error fetching expanded row data:', error);
+                toast.current.show({severity:'error', summary: 'Error', detail: error, life: 3000});
                 setExpandedRows(null); // Optionally, handle error state
             } finally {
                 // Set loading to false when the API request finishes
@@ -66,7 +77,7 @@ export default function Dashboard({ auth, model, pasien }) {
     };
     const rowExpansionTemplate = (data) => {
         return (
-
+            
             <div className="p-3">
                 {/* Show loading spinner while fetching expanded row data */}
                 {loading ? (
@@ -81,24 +92,24 @@ export default function Dashboard({ auth, model, pasien }) {
                                 <div className="row">
                                     <div className="col-sm-5 ">
                                         <div className="float-end">
-
+                                            
                                             <label htmlFor="ssn" className="font-bold block mb-2">Jaminan / Cara Bayar</label>
                                             JKN
                                         </div>
                                     </div>
                                     <div className="col-sm-2">
                                         <label htmlFor="ssn" className="font-bold block mb-2">No. Peserta</label>
-                                        <InputText />
+                                        <input type="text" className="form-control" name='nokartuasuransi' value={datas.peserta.noKartu} />
                                     </div>
                                     <div className="col-sm-5">
                                         <div className="float-start">
                                             <label htmlFor="ssn" className="font-bold block mb-2">No. SEP</label>
-                                            <InputText />
+                                            <input type="text" className="form-control" name='nosep' value={datas.noSep} />
                                         </div>
                                     </div>
 
                                 </div>
-                                <table className='table table-bordered' style={{ border: ' 1px solid black' }}>
+                                <table className='table table-bordered' style={{border:' 1px solid black'}}>
                                     <tr>
                                         <td width={"15%"}>
                                             Jenis Rawat
@@ -107,7 +118,9 @@ export default function Dashboard({ auth, model, pasien }) {
                                             isian
                                         </td>
                                         <td width={"10%"}>Kelas Hak</td>
-                                        <td width={"15%"}>Isian</td>
+                                        <td width={"15%"}>
+                                            <input type="text" className="form-control" name='hakKelas' value={datas.peserta.hakKelas} />
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td width={"15%"}>
@@ -117,7 +130,7 @@ export default function Dashboard({ auth, model, pasien }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-6">
-                                                        Masuk :
+                                                        Masuk : 
                                                     </div>
                                                     <div className="col-sm-6">
                                                         Pulang :
@@ -126,72 +139,102 @@ export default function Dashboard({ auth, model, pasien }) {
                                             </div>
                                         </td>
                                         <td width={"10%"}>Umur</td>
-                                        <td width={"15%"}>tes Tahun</td>
+                                        <td width={"15%"}>{pendaftarans.umur}</td>
                                     </tr>
                                     <tr>
                                         <td>Cara Masuk</td>
-                                        <td colSpan={3}>ISIAN</td>
+                                        <td colSpan={3}>
+                                            <Dropdown value={selectedCaraMasuk} onChange={(e) => setCaraMasuk(e.value)} options={caraMasuk} optionLabel="name" 
+                                            placeholder="Pilih Cara Masuk" className="w-full md:w-14rem" />
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td>LOS</td>
-                                        <td>dev hari</td>
+                                        <td>- hari</td>
                                         <td>Berat Lahir(gram)</td>
-                                        <td>isian</td>
+                                        <td>-</td>
                                     </tr>
                                     <tr>
                                         <td>ADL Score</td>
-                                        <td>isian</td>
+                                        <td></td>
                                         <td>Cara Pulang</td>
-                                        <td>dev</td>
+                                        <td></td>
                                     </tr>
                                     <tr>
                                         <td>DPJP</td>
-                                        <td>isian</td>
+                                        <td></td>
                                         <td>Jenis Tarif</td>
-                                        <td>dev</td>
+                                        <td><input type="text" className="form-control" name='nama_tarifinacbgs_1' value={profils.nama_tarifinacbgs_1} /></td>
                                     </tr>
                                     <tr>
                                         <td>Pasien TB</td>
-                                        <td colSpan={3}>isian</td>
+                                        <td colSpan={3}>
+                                            <Checkbox name="pasien_tb" value="true"  />
+                                            <label htmlFor="ingredient1" className="ml-2">Ya</label>
+                                        </td>
                                     </tr>
                                 </table>
-                                <table className='table table-bordered' style={{ border: ' 1px solid black', width: '100%' }}>
+                                <table className='table table-bordered' style={{border:' 1px solid black',width:'100%'}}>
                                     <tr>
-                                        <td colSpan={3}><p className='text-center'>Tarif Rumah Sakit</p></td>
+                                        <td colSpan={3}>
+                                            <div className="col-sm-12 text-center">
+                                                Tarif Rumah Sakit :
+                                                <input type="text" className="ml-2" name='total_tarif_rs' value={(parseFloat(tarifs.total)+parseFloat(obats.total))} />    
+
+                                            </div>
+                                        </td>
                                     </tr>
                                     <tr>
-                                        <td width={"35%"}>ddd</td>
-                                        <td width={"35%"}>ddd</td>
-                                        <td width={"30%"}>ddd</td>
+                                        <td width={"35%"}>Prosedur Non Bedah  <input type="text" className="m-2" name='tarif_prosedur_nonbedah' value={tarifs.prosedurenonbedah} /></td>
+                                        <td width={"35%"}>Prosedur Bedah  <input type="text" className="m-2" name='tarif_prosedur_bedah' value={tarifs.prosedurebedah} /> </td>
+                                        <td width={"30%"}>Konsultasi   <input type="text" className="m-2" name='tarif_konsultasi' value={tarifs.konsultasi} /></td>
                                     </tr>
                                     <tr>
-                                        <td width={"35%"}>ddd</td>
-                                        <td width={"35%"}>ddd</td>
-                                        <td width={"30%"}>ddd</td>
+                                        <td width={"35%"}>Tenaga Ahli <input type="text" className="m-2" name='tarif_tenaga_ahli' value={tarifs.tenagaahli} /></td>
+                                        <td width={"35%"}>Keperawatan <input type="text" className="m-2" name='tarif_keperawatan' value={tarifs.keperawatan} /></td>
+                                        <td width={"30%"}>Penunjang <input type="text" className="m-2" name='tarif_penunjang' value={tarifs.penunjang} /></td>
                                     </tr>
                                     <tr>
-                                        <td width={"35%"}>ddd</td>
-                                        <td width={"35%"}>ddd</td>
-                                        <td width={"30%"}>ddd</td>
+                                        <td width={"35%"}>Radiologi <input type="text" className="m-2" name='tarif_radiologi' value={tarifs.radiologi} /></td>
+                                        <td width={"35%"}>Laboratorium <input type="text" className="m-2" name='tarif_laboratorium' value={tarifs.laboratorium} /></td>
+                                        <td width={"30%"}>Pelayanan Darah	<input type="text" className="m-2" name='tarif_pelayanan_darah' value={tarifs.pelayanandarah} /></td>
                                     </tr>
                                     <tr>
-                                        <td width={"35%"}>ddd</td>
-                                        <td width={"35%"}>ddd</td>
-                                        <td width={"30%"}>ddd</td>
+                                        <td width={"35%"}>Rehabilitasi <input type="text" className="m-2" name='tarif_rehabilitasi' value={tarifs.rehabilitasi} /></td>
+                                        <td width={"35%"}> Kamar / Akomodasi <input type="text" className="m-2" name='tarif_akomodasi' value={tarifs.kamar_akomodasi} /></td>
+                                        <td width={"30%"}>Rawat Intensif <input type="text" className="m-2" name='tarif_rawat_integerensif' value={tarifs.rawatintensif} /></td>
                                     </tr>
                                     <tr>
-                                        <td width={"35%"}>ddd</td>
-                                        <td width={"35%"}>ddd</td>
-                                        <td width={"30%"}>ddd</td>
+                                        <td width={"35%"}>Obat <input type="text" className="m-2" name='tarif_obat' value={obats.obat} /></td>
+                                        <td width={"35%"}>Obat Kronis <input type="text" className="m-2" name='tarif_obat_kronis' value={obats.obatkronis} /></td>
+                                        <td width={"30%"}>Obat Kemoterapi <input type="text" className="m-2" name='tarif_obat_kemoterapi' value={obats.obatkemoterapi} /></td>
                                     </tr>
                                     <tr>
-                                        <td width={"35%"}>ddd</td>
-                                        <td width={"35%"}>ddd</td>
-                                        <td width={"30%"}>ddd</td>
+                                        <td width={"35%"}>Alkes <input type="text" className="m-2" name='tarif_alkes' value={obats.alkes} /></td>
+                                        <td width={"35%"}>BMHP <input type="text" className="m-2" name='tarif_bhp' value={obats.bmhp} /></td>
+                                        <td width={"30%"}>Sewa Alat <input type="text" className="m-2" name='tarif_sewa_alat' value={obats.sewaalat} /></td>
                                     </tr>
                                 </table>
                                 <div className='text-center'><Checkbox></Checkbox> Menyatakan benar bahwa data tarif yang tersebut di atas adalah benar sesuai dengan kondisi yang sesungguhnya.</div>
+                                <TabView>
+                                    <TabPanel header="Coding UNU Grouper">
+                                        <p className="m-0">
+                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+                                            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                                            consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
+                                            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                                        </p>
+                                    </TabPanel>
+                                    <TabPanel header="Coding INA Grouper">
+                                        <p className="m-0">
+                                            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, 
+                                            eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo
+                                            enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui 
+                                            ratione voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam eius modi.
+                                        </p>
+                                    </TabPanel>
 
+                                </TabView>
                                 {/*  Hasil Grouping */}
                                 <table className='table table-bordered' style={{ border: ' 1px solid black', width: '100%' }}>
                                     <tr>
@@ -311,7 +354,7 @@ export default function Dashboard({ auth, model, pasien }) {
         { label: pasien['jeniskelamin'] },
         { label: pasien['tanggal_lahir'] },
 
-    ];
+    ]; 
     const noSepBody = (rowData) => {
         return (
             <div>
@@ -324,20 +367,20 @@ export default function Dashboard({ auth, model, pasien }) {
                 )}
             </div>
         );
-    };
+    };   
     return (
         <AuthenticatedLayout
             user={auth.user}
         >
             <>
-                <div className="card">
-                    <BreadCrumb model={items} separatorIcon={'pi pi-ellipsis-h'} />
-                </div>
+            <div className="card">
+                <BreadCrumb model={items} separatorIcon={'pi pi-ellipsis-h'}  />
+            </div>
                 <Card>
                     <Toast ref={toast} />
                     <DataTable value={model} expandedRows={expandedRows} onRowToggle={(e) => setExpandedRows(e.data)}
-                        onRowExpand={onRowExpand} onRowCollapse={onRowCollapse} rowExpansionTemplate={rowExpansionTemplate}
-                        dataKey="noSep" tableStyle={{ minWidth: '60rem' }}>
+                            onRowExpand={onRowExpand} onRowCollapse={onRowCollapse} rowExpansionTemplate={rowExpansionTemplate}
+                            dataKey="noSep" tableStyle={{ minWidth: '60rem' }}>
                         <Column expander style={{ width: '5rem' }} />
 
                         <Column field="tglSep" header="Tanggal Masuk" ></Column>

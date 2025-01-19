@@ -7,7 +7,9 @@ use App\Http\Services\MonitoringHistoryService;
 use App\Http\Services\SearchSepService;
 use Illuminate\Http\Request;
 use App\Models\Casemix\Inacbg;
+use App\Models\LookupM;
 use App\Models\PendaftaranT;
+use App\Models\ProfilrumahsakitM;
 use App\Models\SepT;
 use PaginationLibrary\Pagination;
 use Inertia\Inertia;
@@ -424,20 +426,26 @@ class InAcbgGrouperController extends Controller
                 }
             }
         }
+        $caraMasuk= LookupM::getLookupType('inacbgs_caramasuk');
         // $model = PendaftaranT::dataListGrouper($nopeserta);
         return Inertia::render('Grouping/indexPasien', [
-            'model' => $data,'pasien'=>$pasien
+            'model' => $data,'pasien'=>$pasien, 'caraMasuk'=>$caraMasuk
         ]);
     }
     public function getGroupperPasien(Request $request)
     {
         $noSep = $request->input('noSep');
+        $pendaftaran_id = $request->input('pendaftaran_id');
 
         $model = new SearchSepService();
         $getRiwayat = $model->getRiwayatData($noSep)->getOriginalContent();
-        // $model = PendaftaranT::getGroupping($pendaftaran_id);
+        $pendaftaran = PendaftaranT::getDataGroup($pendaftaran_id);
+        $tarif = PendaftaranT::getTarif( $pendaftaran_id);
+        $obat = PendaftaranT::getGroupping($pendaftaran_id);
+        $profil = ProfilrumahsakitM::getProfilRS();
         return response()->json([
-            'model' => $getRiwayat,
+            'model' => $getRiwayat,'pendaftaran'=>$pendaftaran, 'tarif'=>$tarif,'obat'=>$obat,
+            'profil'=>$profil
         ]);
     }
 }
