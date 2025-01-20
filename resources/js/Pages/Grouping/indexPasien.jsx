@@ -16,6 +16,8 @@ import { TabPanel, TabView } from 'primereact/tabview';
 export default function Dashboard({ auth, model, pasien, caraMasuk }) {
     const [datas, setDatas] = useState([]);
     const [pendaftarans, setPendaftarans] = useState([]);
+    const [dataDiagnosa, setDiagnosa] = useState([]);
+
     const [tarifs, setTarifs] = useState([]);
     const [obats, setObats] = useState([]);
     const [profils, setProfil] = useState([]);
@@ -29,6 +31,21 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
 
     const onRowExpand1 = (event) => {
         toast.current.show({ severity: 'info', summary: event.data.nosep, detail: event.data.nosep, life: 3000 });
+    };
+    const onRowEditComplete = (e) => {
+        console.log(e);
+        // let _products = [...products];
+        // let { newData, index } = e;
+
+        // _products[index] = newData;
+
+        // setProducts(_products);
+    };
+    const allowEdit = (rowData) => {
+        return rowData.name !== 'Blue Band';
+    };
+    const textEditor = (options) => {
+        return <InputText type="text" value={options.value} onChange={(e) => options.editorCallback(e.target.value)} />;
     };
     const onRowExpand = async (event) => {
         const expandedProduct = event.data;
@@ -55,7 +72,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                     setTarifs(response.data.tarif);
                     setObats(response.data.obat);
                     setProfil(response.data.profil);
-
+                    setDiagnosa(response.data.dataDiagnosa);
                     // console.log(response.data,tarifs.total);
                 } else {
                     toast.current.show({ severity: 'error', summary: 'Error', detail: response.data.model.metaData.message, life: 3000 });
@@ -359,22 +376,24 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                 <div className='text-center'><Checkbox></Checkbox> Menyatakan benar bahwa data tarif yang tersebut di atas adalah benar sesuai dengan kondisi yang sesungguhnya.</div>
                                 <TabView>
                                     <TabPanel header="Coding UNU Grouper">
-                                        {/* <DataTable value={customers} rowGroupMode="subheader" groupRowsBy="representative.name" sortMode="single" sortField="representative.name"
-                                                sortOrder={1} scrollable scrollHeight="400px" rowGroupHeaderTemplate={headerTemplate} rowGroupFooterTemplate={footerTemplate} tableStyle={{ minWidth: '50rem' }}>
-                                            <Column field="name" header="Name" style={{ minWidth: '200px' }}></Column>
-                                            <Column field="country" header="Country" body={countryBodyTemplate} style={{ minWidth: '200px' }}></Column>
-                                            <Column field="company" header="Company" style={{ minWidth: '200px' }}></Column>
-                                            <Column field="status" header="Status" body={statusBodyTemplate} style={{ minWidth: '200px' }}></Column>
-                                            <Column field="date" header="Date" style={{ minWidth: '200px' }}></Column>
-                                        </DataTable> */}
+                                        <DataTable value={dataDiagnosa} rowGroupMode="subheader" groupRowsBy="jenis_diagnosa" sortMode="single" sortField="jenis_diagnosa"
+                                                sortOrder={1} scrollable scrollHeight="400px" rowGroupHeaderTemplate={headerTemplate} tableStyle={{ minWidth: '50rem' }}
+                                                editMode="row" dataKey="diagnosa_id" onRowEditComplete={onRowEditComplete}
+                                        >
+                                            <Column field="diagnosa_kode" header="Kode Diagnosa" style={{ minWidth: '200px' }}  editor={(options) => textEditor(options)} ></Column>
+                                            <Column field="diagnosa_nama" header="Nama Diagnosa" style={{ minWidth: '200px' }}  editor={(options) => textEditor(options)}></Column>
+                                            <Column rowEditor={allowEdit} headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column>
+                                        </DataTable>
                                     </TabPanel>
                                     <TabPanel header="Coding INA Grouper">
-                                        <p className="m-0">
-                                            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam,
-                                            eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo
-                                            enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui
-                                            ratione voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam eius modi.
-                                        </p>
+                                        <DataTable value={dataDiagnosa} rowGroupMode="subheader" groupRowsBy="jenis_diagnosa" sortMode="single" sortField="jenis_diagnosa"
+                                                sortOrder={1} scrollable scrollHeight="400px" rowGroupHeaderTemplate={headerTemplate} tableStyle={{ minWidth: '50rem' }}
+                                                editMode="row" dataKey="diagnosa_id" onRowEditComplete={onRowEditComplete}
+                                        >
+                                            <Column field="diagnosa_kode" header="Kode Diagnosa" style={{ minWidth: '200px' }}  editor={(options) => textEditor(options)} ></Column>
+                                            <Column field="diagnosa_nama" header="Nama Diagnosa" style={{ minWidth: '200px' }}  editor={(options) => textEditor(options)}></Column>
+                                            <Column rowEditor={allowEdit} headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column>
+                                        </DataTable>
                                     </TabPanel>
 
                                 </TabView>
@@ -494,6 +513,13 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
 
         );
     };
+    const headerTemplate = (data) => {
+        return (
+            <div className="flex align-items-center gap-2">
+                <span className="font-bold">{data.jenis_diagnosa} </span>
+            </div>
+        );
+    };
     const handleSimpanKlaim = (e) => {
         e.preventDefault(); // Prevent page reload
 
@@ -511,10 +537,10 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
     };
 
     const items = [
-        { label: pasien['no_rekam_medik'] },
-        { label: pasien['nama_pasien'] },
-        { label: pasien['jeniskelamin'] },
-        { label: pasien['tanggal_lahir'] },
+        { label: pasien? pasien['no_rekam_medik']:null},
+        { label: pasien? pasien['nama_pasien']:null },
+        { label: pasien ? pasien['jeniskelamin']:null},
+        { label: pasien? pasien['tanggal_lahir']:null },
 
     ];
     const noSepBody = (rowData) => {
