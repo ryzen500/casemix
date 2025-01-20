@@ -43,6 +43,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                 const response = await axios.post('/getGroupperPasien', {
                     noSep: expandedProduct.noSep, // Send the expandedProduct.noSep data
                     pendaftaran_id: expandedProduct.pendaftaran_id, // Example of additional data
+                    diagnosa: expandedProduct.diagnosa
                 });
                 // const response = await axios.get(`/getGroupperPasien/${expandedProduct.noSep}`);
                 // setExpandedRowData(response.data); // Store the data
@@ -185,47 +186,187 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td width={"35%"}>Prosedur Non Bedah  <input type="text" className="m-2" name='tarif_prosedur_nonbedah' value={tarifs.prosedurenonbedah} /></td>
-                                        <td width={"35%"}>Prosedur Bedah  <input type="text" className="m-2" name='tarif_prosedur_bedah' value={tarifs.prosedurebedah} /> </td>
-                                        <td width={"30%"}>Konsultasi   <input type="text" className="m-2" name='tarif_konsultasi' value={tarifs.konsultasi} /></td>
+                                        <td width={"35%"}>
+                                            <div className="col-sm-12">
+                                                <div className="row">
+                                                    <div className="col-sm-5" style={{alignContent: 'center'}}>
+                                                        Prosedur Non Bedah
+                                                    </div>
+                                                    <div className="col-sm-7">
+                                                        <input type="text" className="m-2" name='tarif_prosedur_nonbedah' value={tarifs.prosedurenonbedah} />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </td>
+                                        <td width={"35%"}>
+                                            <div className="col-sm-12">
+                                                <div className="row">
+                                                    <div className="col-sm-5" style={{alignContent: 'center'}}>
+                                                        Prosedur Bedah
+                                                    </div>
+                                                    <div className="col-sm-7">
+                                                        <input type="text" className="m-2" name='tarif_prosedur_bedah' value={tarifs.prosedurebedah} /> 
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td width={"30%"}>
+                                            <div className="col-sm-12">
+                                                <div className="row">
+                                                    <div className="col-sm-5" style={{alignContent: 'center'}}>
+                                                        Konsultasi
+                                                    </div>
+                                                    <div className="col-sm-7">
+                                                        <input type="text" className="m-2" name='tarif_konsultasi' value={tarifs.konsultasi} />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
                                     </tr>
                                     <tr>
-                                        <td width={"35%"}>Tenaga Ahli <input type="text" className="m-2" name='tarif_tenaga_ahli' value={tarifs.tenagaahli} /></td>
-                                        <td width={"35%"}>Keperawatan <input type="text" className="m-2" name='tarif_keperawatan' value={tarifs.keperawatan} /></td>
-                                        <td width={"30%"}>Penunjang <input type="text" className="m-2" name='tarif_penunjang' value={tarifs.penunjang} /></td>
+                                        <td width={"35%"}>
+                                            <div className="col-sm-12">
+                                                <div className="row">
+                                                    <div className="col-sm-5"  style={{alignContent: 'center'}}>Tenaga Ahli</div>
+                                                    <div className="col-sm-7"><input type="text" className="m-2" name='tarif_tenaga_ahli' value={tarifs.tenagaahli} /></div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td width={"35%"}>
+                                            <div className="col-sm-12">
+                                                <div className="row">
+                                                    <div className="col-sm-5"  style={{alignContent: 'center'}}>Keperawatan</div>
+                                                    <div className="col-sm-7"> <input type="text" className="m-2" name='tarif_keperawatan' value={tarifs.keperawatan} /></div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td width={"30%"}>
+                                            <div className="col-sm-12">
+                                                <div className="row">
+                                                    <div className="col-sm-5"  style={{alignContent: 'center'}}>Penunjang</div>
+                                                    <div className="col-sm-7">  <input type="text" className="m-2" name='tarif_penunjang' value={tarifs.penunjang} /></div>
+                                                </div>
+                                            </div>
+                                        </td>
                                     </tr>
                                     <tr>
-                                        <td width={"35%"}>Radiologi <input type="text" className="m-2" name='tarif_radiologi' value={tarifs.radiologi} /></td>
-                                        <td width={"35%"}>Laboratorium <input type="text" className="m-2" name='tarif_laboratorium' value={tarifs.laboratorium} /></td>
-                                        <td width={"30%"}>Pelayanan Darah	<input type="text" className="m-2" name='tarif_pelayanan_darah' value={tarifs.pelayanandarah} /></td>
+                                        <td width={"35%"}>
+                                            <div className="col-sm-12">
+                                                <div className="row">
+                                                    <div className="col-sm-5"  style={{alignContent: 'center'}}>Radiologi</div>
+                                                    <div className="col-sm-7"> <input type="text" className="m-2" name='tarif_radiologi' value={tarifs.radiologi} /></div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td width={"35%"}>
+                                            <div className="col-sm-12">
+                                                <div className="row">
+                                                    <div className="col-sm-5"  style={{alignContent: 'center'}}>Laboratorium</div>
+                                                    <div className="col-sm-7"> <input type="text" className="m-2" name='tarif_laboratorium' value={tarifs.laboratorium} /></div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td width={"30%"}>
+                                            <div className="col-sm-12">
+                                                <div className="row">
+                                                    <div className="col-sm-5"  style={{alignContent: 'center'}}>Pelayanan Darah</div>
+                                                    <div className="col-sm-7"> <input type="text" className="m-2" name='tarif_pelayanan_darah' value={tarifs.pelayanandarah} /></div>
+                                                </div>
+                                            </div>
+                                        </td>
                                     </tr>
                                     <tr>
-                                        <td width={"35%"}>Rehabilitasi <input type="text" className="m-2" name='tarif_rehabilitasi' value={tarifs.rehabilitasi} /></td>
-                                        <td width={"35%"}> Kamar / Akomodasi
-                                            <input type="text" className="m-2" name='tarif_akomodasi' value={tarifs.kamar_akomodasi} /></td>
-                                        <td width={"30%"}>Rawat Intensif <input type="text" className="m-2" name='tarif_rawat_integerensif' value={tarifs.rawatintensif} /></td>
+                                        <td width={"35%"}>
+                                            <div className="col-sm-12">
+                                                <div className="row">
+                                                    <div className="col-sm-5"  style={{alignContent: 'center'}}>Rehabilitasi</div>
+                                                    <div className="col-sm-7"> <input type="text" className="m-2" name='tarif_rehabilitasi' value={tarifs.rehabilitasi} /></div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td width={"35%"}>
+                                            <div className="col-sm-12">
+                                                <div className="row">
+                                                    <div className="col-sm-5"  style={{alignContent: 'center'}}>Kamar / Akomodasi</div>
+                                                    <div className="col-sm-7"> <input type="text" className="m-2" name='tarif_akomodasi' value={tarifs.kamar_akomodasi} /></div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td width={"30%"}>
+                                            <div className="col-sm-12">
+                                                <div className="row">
+                                                    <div className="col-sm-5"  style={{alignContent: 'center'}}>Rawat Intensif</div>
+                                                    <div className="col-sm-7"><input type="text" className="m-2" name='tarif_rawat_integerensif' value={tarifs.rawatintensif} /></div>
+                                                </div>
+                                            </div>
+                                        </td>
                                     </tr>
 
                                     <tr>
-                                        <td width={"35%"}>Obat <input type="text" className="m-2" name='tarif_obat' value={obats.obat} /></td>
-                                        <td width={"35%"}>Obat Kronis <input type="text" className="m-2" name='tarif_obat_kronis' value={obats.obatkronis} /></td>
-                                        <td width={"30%"}>Obat Kemoterapi <input type="text" className="m-2" name='tarif_obat_kemoterapi' value={obats.obatkemoterapi} /></td>
+                                        <td width={"35%"}>
+                                            <div className="col-sm-12">
+                                                <div className="row">
+                                                    <div className="col-sm-5"  style={{alignContent: 'center'}}>Obat</div>
+                                                    <div className="col-sm-7"><input type="text" className="m-2" name='tarif_obat' value={obats.obat} /></div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td width={"35%"}>
+                                            <div className="col-sm-12">
+                                                <div className="row">
+                                                    <div className="col-sm-5"  style={{alignContent: 'center'}}>Obat Kronis</div>
+                                                    <div className="col-sm-7"><input type="text" className="m-2" name='tarif_obat_kronis' value={obats.obatkronis} /></div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td width={"30%"}>
+                                            <div className="col-sm-12">
+                                                <div className="row">
+                                                    <div className="col-sm-5"  style={{alignContent: 'center'}}>Obat Kemoterapi</div>
+                                                    <div className="col-sm-7"><input type="text" className="m-2" name='tarif_obat_kemoterapi' value={obats.obatkemoterapi} /></div>
+                                                </div>
+                                            </div>
+                                        </td>
                                     </tr>
                                     <tr>
-                                        <td width={"35%"}>Alkes <input type="text" className="m-2" name='tarif_alkes' value={obats.alkes} /></td>
-                                        <td width={"35%"}>BMHP <input type="text" className="m-2" name='tarif_bhp' value={obats.bmhp} /></td>
-                                        <td width={"30%"}>Sewa Alat <input type="text" className="m-2" name='tarif_sewa_alat' value={obats.sewaalat} /></td>
+                                        <td width={"35%"}>
+                                            <div className="col-sm-12">
+                                                <div className="row">
+                                                    <div className="col-sm-5"  style={{alignContent: 'center'}}>Alkes</div>
+                                                    <div className="col-sm-7"><input type="text" className="m-2" name='tarif_alkes' value={obats.alkes} /></div>
+                                                </div>
+                                            </div>                                             
+                                        </td>
+                                        <td width={"35%"}>
+                                            <div className="col-sm-12">
+                                                <div className="row">
+                                                    <div className="col-sm-5"  style={{alignContent: 'center'}}>BMHP</div>
+                                                    <div className="col-sm-7"><input type="text" className="m-2" name='tarif_bhp' value={obats.bmhp} /></div>
+                                                </div>
+                                            </div>  
+                                        </td>
+                                        <td width={"30%"}>
+                                            <div className="col-sm-12">
+                                                <div className="row">
+                                                    <div className="col-sm-5"  style={{alignContent: 'center'}}>Sewa Alat</div>
+                                                    <div className="col-sm-7"><input type="text" className="m-2" name='tarif_sewa_alat' value={obats.sewaalat} /></div>
+                                                </div>
+                                            </div>
+                                        </td>
                                     </tr>
                                 </table>
                                 <div className='text-center'><Checkbox></Checkbox> Menyatakan benar bahwa data tarif yang tersebut di atas adalah benar sesuai dengan kondisi yang sesungguhnya.</div>
                                 <TabView>
                                     <TabPanel header="Coding UNU Grouper">
-                                        <p className="m-0">
-                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                                            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                                            consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-                                            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                                        </p>
+                                        {/* <DataTable value={customers} rowGroupMode="subheader" groupRowsBy="representative.name" sortMode="single" sortField="representative.name"
+                                                sortOrder={1} scrollable scrollHeight="400px" rowGroupHeaderTemplate={headerTemplate} rowGroupFooterTemplate={footerTemplate} tableStyle={{ minWidth: '50rem' }}>
+                                            <Column field="name" header="Name" style={{ minWidth: '200px' }}></Column>
+                                            <Column field="country" header="Country" body={countryBodyTemplate} style={{ minWidth: '200px' }}></Column>
+                                            <Column field="company" header="Company" style={{ minWidth: '200px' }}></Column>
+                                            <Column field="status" header="Status" body={statusBodyTemplate} style={{ minWidth: '200px' }}></Column>
+                                            <Column field="date" header="Date" style={{ minWidth: '200px' }}></Column>
+                                        </DataTable> */}
                                     </TabPanel>
                                     <TabPanel header="Coding INA Grouper">
                                         <p className="m-0">
