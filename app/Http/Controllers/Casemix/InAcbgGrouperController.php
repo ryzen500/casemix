@@ -58,9 +58,10 @@ class InAcbgGrouperController extends Controller
         $key = env('INACBG_KEY');
 
 
+        // dd($request->all);
         $nomor_kartu = $request->input('nomor_kartu') ?? null;
         $nomor_sep = $request->input('noSep') ?? null;
-        $nomor_rm = $request->input('nomor_rm') ?? null;
+        $nomor_rm = $request->input('no_rekam_medik') ?? null;
         $nama_pasien = $request->input('nama_pasien') ?? null;
         $tgl_lahir = $request->input('tgl_lahir') ?? null;
         $gender = $request->input('gender') ?? null;
