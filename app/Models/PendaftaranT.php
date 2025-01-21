@@ -201,7 +201,7 @@ class PendaftaranT extends Model
 
         )
         ->join('sep_t as s', 's.sep_id', '=', 'p.sep_id')
-        // ->join('pasien_m as pm', 'pm.pasien_id', '=', 'p.pasien_id')
+        ->leftJoin('pasien_m as pm', 'pm.pasien_id', '=', 'p.pasien_id')
         ->leftJoin('inacbg_t', 'inacbg_t.sep_id', '=', 'p.sep_id')
         ->leftJoin('inasiscbg_t', 'inasiscbg_t.inacbg_id', '=', 'inacbg_t.inacbg_id')
         ->leftJoin('pegawai_m as pg', 'pg.loginpemakai_id', '=', 'inacbg_t.create_loginpemakai_id')

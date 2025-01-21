@@ -13,10 +13,13 @@ import { InputMask } from "primereact/inputmask";
 import Checkbox from '@/Components/Checkbox';
 import { Dropdown } from 'primereact/dropdown';
 import { TabPanel, TabView } from 'primereact/tabview';
+import { FormatRupiah } from '@arismun/format-rupiah';
 export default function Dashboard({ auth, model, pasien, caraMasuk }) {
     const [datas, setDatas] = useState([]);
     const [pendaftarans, setPendaftarans] = useState([]);
     const [dataDiagnosa, setDiagnosa] = useState([]);
+    const [dataGrouper, setDataGrouper] = useState([]);
+
 
     const [tarifs, setTarifs] = useState([]);
     const [obats, setObats] = useState([]);
@@ -117,7 +120,11 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                     </div>
                                     <div className="col-sm-2">
                                         <label htmlFor="ssn" className="font-bold block mb-2">No. Peserta</label>
-                                        <input type="text" className="form-control" name='nokartuasuransi' value={datas.peserta.noKartu} />
+                                        <input type="text" className="form-control" name='nomor_kartu' value={datas.peserta.noKartu} />
+                                        <input type="hidden" className="form-control" name='nomer_rekam_medik' value={datas.peserta.noMr} />
+                                        <input type="hidden" className="form-control" name='gender' value={datas.peserta.kelamin} />
+                                        <input type="hidden" className="form-control" name='nama_pasien' value={datas.peserta.nama} />
+                                        <input type="hidden" className="form-control" name='tgl_lahir' value={datas.peserta.tglLahir} />
                                     </div>
                                     <div className="col-sm-5">
                                         <div className="float-start">
@@ -206,7 +213,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                         <td width={"35%"}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5" style={{alignContent: 'center'}}>
+                                                    <div className="col-sm-5" style={{ alignContent: 'center' }}>
                                                         Prosedur Non Bedah
                                                     </div>
                                                     <div className="col-sm-7">
@@ -219,11 +226,11 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                         <td width={"35%"}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5" style={{alignContent: 'center'}}>
+                                                    <div className="col-sm-5" style={{ alignContent: 'center' }}>
                                                         Prosedur Bedah
                                                     </div>
                                                     <div className="col-sm-7">
-                                                        <input type="text" className="m-2" name='tarif_prosedur_bedah' value={tarifs.prosedurebedah} /> 
+                                                        <input type="text" className="m-2" name='tarif_prosedur_bedah' value={tarifs.prosedurebedah} />
                                                     </div>
                                                 </div>
                                             </div>
@@ -231,7 +238,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                         <td width={"30%"}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5" style={{alignContent: 'center'}}>
+                                                    <div className="col-sm-5" style={{ alignContent: 'center' }}>
                                                         Konsultasi
                                                     </div>
                                                     <div className="col-sm-7">
@@ -245,7 +252,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                         <td width={"35%"}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5"  style={{alignContent: 'center'}}>Tenaga Ahli</div>
+                                                    <div className="col-sm-5" style={{ alignContent: 'center' }}>Tenaga Ahli</div>
                                                     <div className="col-sm-7"><input type="text" className="m-2" name='tarif_tenaga_ahli' value={tarifs.tenagaahli} /></div>
                                                 </div>
                                             </div>
@@ -253,7 +260,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                         <td width={"35%"}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5"  style={{alignContent: 'center'}}>Keperawatan</div>
+                                                    <div className="col-sm-5" style={{ alignContent: 'center' }}>Keperawatan</div>
                                                     <div className="col-sm-7"> <input type="text" className="m-2" name='tarif_keperawatan' value={tarifs.keperawatan} /></div>
                                                 </div>
                                             </div>
@@ -261,7 +268,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                         <td width={"30%"}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5"  style={{alignContent: 'center'}}>Penunjang</div>
+                                                    <div className="col-sm-5" style={{ alignContent: 'center' }}>Penunjang</div>
                                                     <div className="col-sm-7">  <input type="text" className="m-2" name='tarif_penunjang' value={tarifs.penunjang} /></div>
                                                 </div>
                                             </div>
@@ -271,7 +278,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                         <td width={"35%"}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5"  style={{alignContent: 'center'}}>Radiologi</div>
+                                                    <div className="col-sm-5" style={{ alignContent: 'center' }}>Radiologi</div>
                                                     <div className="col-sm-7"> <input type="text" className="m-2" name='tarif_radiologi' value={tarifs.radiologi} /></div>
                                                 </div>
                                             </div>
@@ -279,7 +286,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                         <td width={"35%"}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5"  style={{alignContent: 'center'}}>Laboratorium</div>
+                                                    <div className="col-sm-5" style={{ alignContent: 'center' }}>Laboratorium</div>
                                                     <div className="col-sm-7"> <input type="text" className="m-2" name='tarif_laboratorium' value={tarifs.laboratorium} /></div>
                                                 </div>
                                             </div>
@@ -287,7 +294,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                         <td width={"30%"}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5"  style={{alignContent: 'center'}}>Pelayanan Darah</div>
+                                                    <div className="col-sm-5" style={{ alignContent: 'center' }}>Pelayanan Darah</div>
                                                     <div className="col-sm-7"> <input type="text" className="m-2" name='tarif_pelayanan_darah' value={tarifs.pelayanandarah} /></div>
                                                 </div>
                                             </div>
@@ -297,7 +304,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                         <td width={"35%"}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5"  style={{alignContent: 'center'}}>Rehabilitasi</div>
+                                                    <div className="col-sm-5" style={{ alignContent: 'center' }}>Rehabilitasi</div>
                                                     <div className="col-sm-7"> <input type="text" className="m-2" name='tarif_rehabilitasi' value={tarifs.rehabilitasi} /></div>
                                                 </div>
                                             </div>
@@ -305,7 +312,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                         <td width={"35%"}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5"  style={{alignContent: 'center'}}>Kamar / Akomodasi</div>
+                                                    <div className="col-sm-5" style={{ alignContent: 'center' }}>Kamar / Akomodasi</div>
                                                     <div className="col-sm-7"> <input type="text" className="m-2" name='tarif_akomodasi' value={tarifs.kamar_akomodasi} /></div>
                                                 </div>
                                             </div>
@@ -313,7 +320,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                         <td width={"30%"}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5"  style={{alignContent: 'center'}}>Rawat Intensif</div>
+                                                    <div className="col-sm-5" style={{ alignContent: 'center' }}>Rawat Intensif</div>
                                                     <div className="col-sm-7"><input type="text" className="m-2" name='tarif_rawat_integerensif' value={tarifs.rawatintensif} /></div>
                                                 </div>
                                             </div>
@@ -324,7 +331,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                         <td width={"35%"}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5"  style={{alignContent: 'center'}}>Obat</div>
+                                                    <div className="col-sm-5" style={{ alignContent: 'center' }}>Obat</div>
                                                     <div className="col-sm-7"><input type="text" className="m-2" name='tarif_obat' value={obats.obat} /></div>
                                                 </div>
                                             </div>
@@ -332,7 +339,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                         <td width={"35%"}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5"  style={{alignContent: 'center'}}>Obat Kronis</div>
+                                                    <div className="col-sm-5" style={{ alignContent: 'center' }}>Obat Kronis</div>
                                                     <div className="col-sm-7"><input type="text" className="m-2" name='tarif_obat_kronis' value={obats.obatkronis} /></div>
                                                 </div>
                                             </div>
@@ -340,7 +347,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                         <td width={"30%"}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5"  style={{alignContent: 'center'}}>Obat Kemoterapi</div>
+                                                    <div className="col-sm-5" style={{ alignContent: 'center' }}>Obat Kemoterapi</div>
                                                     <div className="col-sm-7"><input type="text" className="m-2" name='tarif_obat_kemoterapi' value={obats.obatkemoterapi} /></div>
                                                 </div>
                                             </div>
@@ -350,23 +357,23 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                         <td width={"35%"}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5"  style={{alignContent: 'center'}}>Alkes</div>
+                                                    <div className="col-sm-5" style={{ alignContent: 'center' }}>Alkes</div>
                                                     <div className="col-sm-7"><input type="text" className="m-2" name='tarif_alkes' value={obats.alkes} /></div>
                                                 </div>
-                                            </div>                                             
+                                            </div>
                                         </td>
                                         <td width={"35%"}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5"  style={{alignContent: 'center'}}>BMHP</div>
+                                                    <div className="col-sm-5" style={{ alignContent: 'center' }}>BMHP</div>
                                                     <div className="col-sm-7"><input type="text" className="m-2" name='tarif_bhp' value={obats.bmhp} /></div>
                                                 </div>
-                                            </div>  
+                                            </div>
                                         </td>
                                         <td width={"30%"}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5"  style={{alignContent: 'center'}}>Sewa Alat</div>
+                                                    <div className="col-sm-5" style={{ alignContent: 'center' }}>Sewa Alat</div>
                                                     <div className="col-sm-7"><input type="text" className="m-2" name='tarif_sewa_alat' value={obats.sewaalat} /></div>
                                                 </div>
                                             </div>
@@ -398,10 +405,10 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
 
                                 </TabView>
                                 <div className="col-md-6 d-flex mb-3">
-                                    <button className="btn btn-primary" style={{float:'right'}} onClick={handleSimpanKlaim}>Simpan</button>
-                                    <button className="btn btn-secondary ml-2" style={{float:'right'}} >Groupper</button>
+                                    <button className="btn btn-primary" style={{ float: 'right' }} onClick={handleSimpanKlaim}>Simpan</button>
+                                    <button className="btn btn-secondary ml-2" style={{ float: 'right' }} onClick={handleSimpanGroupingStage1}>Groupper</button>
 
-                                    <button className="btn btn-secondary ml-2" style={{float:'right'}} >Hapus Klaim</button>
+                                    <button className="btn btn-secondary ml-2" style={{ float: 'right' }} >Hapus Klaim</button>
                                 </div>
 
                                 {/*  Hasil Grouping */}
@@ -425,10 +432,15 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                     </tr>
                                     <tr>
                                         <td width={"15%"}>Group</td>
-                                        <td width={"35%"} style={{ textAlign: 'left' }}>PENYAKIT KRONIS KECIL LAIN-LAIN</td>
-                                        <td width={"30%"} style={{ textAlign: 'center' }}>Q-5-44-0</td>
-                                        <td width={"30%"} style={{ textAlign: 'right' }}>Rp 0 </td>
-
+                                        <td width="35%" style={{ textAlign: 'left' }}>
+                                            {dataGrouper.cbg?.description || '-'}
+                                        </td>
+                                        <td width="30%" style={{ textAlign: 'center' }}>
+                                            {dataGrouper.cbg?.code || '-'}
+                                        </td>
+                                        <td width="30%" style={{ textAlign: 'right' }}>
+                                            <FormatRupiah value={dataGrouper.cbg?.base_tariff || 0} />
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td width={"15%"}>Sub Acute</td>
@@ -520,15 +532,49 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
             </div>
         );
     };
+
+    /**Simpan Klaim */
     const handleSimpanKlaim = (e) => {
         e.preventDefault(); // Prevent page reload
 
         console.log('Form Data Submitted:', datas);
 
         // Perform API request with axios
-        axios.post(route('newClaim'), datas)
+        const payload = {
+
+            no_rekam_medik: datas.peserta.noMr,
+            nama_pasien: datas.peserta.nama,
+            nomor_kartu: datas.peserta.noKartu,
+            noSep: datas.noSep,
+            tgl_lahir: datas.peserta.tglLahir,
+            gender: datas.peserta.tglLahir
+        };
+        axios.post(route('newClaim'), payload)
             .then((response) => {
                 console.log('Response:', response.data);
+                // Handle the response from the backend
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    };
+
+    /**Simpan Grouping */
+    const handleSimpanGroupingStage1 = (e) => {
+        e.preventDefault(); // Prevent page reload
+
+        console.log('Form Data Submitted:', datas);
+
+        // Perform API request with axios
+        const payload = {
+            nomor_sep: datas.noSep
+        };
+        axios.post(route('groupingStageSatu'), payload)
+            .then((response) => {
+                console.log('Response:', response.data);
+                setDataGrouper(response.data.data);
+                toast.current.show({ severity: 'success', summary: `Data  Berhasil Di Grouping`, detail:datas.noSep, life: 3000 });
+
                 // Handle the response from the backend
             })
             .catch((error) => {
