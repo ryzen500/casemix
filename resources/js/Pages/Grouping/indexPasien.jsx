@@ -14,6 +14,9 @@ import Checkbox from '@/Components/Checkbox';
 import { Dropdown } from 'primereact/dropdown';
 import { TabPanel, TabView } from 'primereact/tabview';
 import { FormatRupiah } from '@arismun/format-rupiah';
+import { IconField } from 'primereact/iconfield';
+import { InputIcon } from 'primereact/inputicon';
+
 export default function Dashboard({ auth, model, pasien, caraMasuk }) {
     const [datas, setDatas] = useState([]);
     const [pendaftarans, setPendaftarans] = useState([]);
@@ -47,6 +50,15 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
     const allowEdit = (rowData) => {
         return rowData.name !== 'Blue Band';
     };
+    const header = (
+        <div className="flex flex-wrap gap-2 align-items-center justify-content-between">
+            <h4 className="m-0">Diagnosa (ICD X)</h4>
+            <IconField iconPosition="left">
+                <InputIcon className="pi pi-search" />
+                <InputText type="search" placeholder="Search..." />
+            </IconField>
+        </div>
+    );
     const textEditor = (options) => {
         return <InputText type="text" value={options.value} onChange={(e) => options.editorCallback(e.target.value)} />;
     };
@@ -217,7 +229,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                                         Prosedur Non Bedah
                                                     </div>
                                                     <div className="col-sm-7">
-                                                        <input type="text" className="m-2" name='tarif_prosedur_nonbedah' value={tarifs.prosedurenonbedah} />
+                                                        <input type="text" className="m-2 form-control" name='tarif_prosedur_nonbedah' value={tarifs.prosedurenonbedah} />
                                                     </div>
                                                 </div>
                                             </div>
@@ -230,7 +242,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                                         Prosedur Bedah
                                                     </div>
                                                     <div className="col-sm-7">
-                                                        <input type="text" className="m-2" name='tarif_prosedur_bedah' value={tarifs.prosedurebedah} />
+                                                        <input type="text" className="m-2 form-control" name='tarif_prosedur_bedah' value={tarifs.prosedurebedah} />
                                                     </div>
                                                 </div>
                                             </div>
@@ -242,7 +254,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                                         Konsultasi
                                                     </div>
                                                     <div className="col-sm-7">
-                                                        <input type="text" className="m-2" name='tarif_konsultasi' value={tarifs.konsultasi} />
+                                                        <input type="text" className="m-2 form-control" name='tarif_konsultasi' value={tarifs.konsultasi} />
                                                     </div>
                                                 </div>
                                             </div>
@@ -253,7 +265,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Tenaga Ahli</div>
-                                                    <div className="col-sm-7"><input type="text" className="m-2" name='tarif_tenaga_ahli' value={tarifs.tenagaahli} /></div>
+                                                    <div className="col-sm-7"><input type="text" className="m-2 form-control" name='tarif_tenaga_ahli' value={tarifs.tenagaahli} /></div>
                                                 </div>
                                             </div>
                                         </td>
@@ -261,7 +273,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Keperawatan</div>
-                                                    <div className="col-sm-7"> <input type="text" className="m-2" name='tarif_keperawatan' value={tarifs.keperawatan} /></div>
+                                                    <div className="col-sm-7"> <input type="text" className="m-2 form-control" name='tarif_keperawatan' value={tarifs.keperawatan} /></div>
                                                 </div>
                                             </div>
                                         </td>
@@ -269,7 +281,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Penunjang</div>
-                                                    <div className="col-sm-7">  <input type="text" className="m-2" name='tarif_penunjang' value={tarifs.penunjang} /></div>
+                                                    <div className="col-sm-7">  <input type="text" className="m-2 form-control" name='tarif_penunjang' value={tarifs.penunjang} /></div>
                                                 </div>
                                             </div>
                                         </td>
@@ -279,7 +291,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Radiologi</div>
-                                                    <div className="col-sm-7"> <input type="text" className="m-2" name='tarif_radiologi' value={tarifs.radiologi} /></div>
+                                                    <div className="col-sm-7"> <input type="text" className="m-2 form-control" name='tarif_radiologi' value={tarifs.radiologi} /></div>
                                                 </div>
                                             </div>
                                         </td>
@@ -287,7 +299,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Laboratorium</div>
-                                                    <div className="col-sm-7"> <input type="text" className="m-2" name='tarif_laboratorium' value={tarifs.laboratorium} /></div>
+                                                    <div className="col-sm-7"> <input type="text" className="m-2 form-control" name='tarif_laboratorium' value={tarifs.laboratorium} /></div>
                                                 </div>
                                             </div>
                                         </td>
@@ -295,7 +307,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Pelayanan Darah</div>
-                                                    <div className="col-sm-7"> <input type="text" className="m-2" name='tarif_pelayanan_darah' value={tarifs.pelayanandarah} /></div>
+                                                    <div className="col-sm-7"> <input type="text" className="m-2 form-control" name='tarif_pelayanan_darah' value={tarifs.pelayanandarah} /></div>
                                                 </div>
                                             </div>
                                         </td>
@@ -305,7 +317,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Rehabilitasi</div>
-                                                    <div className="col-sm-7"> <input type="text" className="m-2" name='tarif_rehabilitasi' value={tarifs.rehabilitasi} /></div>
+                                                    <div className="col-sm-7"> <input type="text" className="m-2 form-control" name='tarif_rehabilitasi' value={tarifs.rehabilitasi} /></div>
                                                 </div>
                                             </div>
                                         </td>
@@ -313,7 +325,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Kamar / Akomodasi</div>
-                                                    <div className="col-sm-7"> <input type="text" className="m-2" name='tarif_akomodasi' value={tarifs.kamar_akomodasi} /></div>
+                                                    <div className="col-sm-7"> <input type="text" className="m-2 form-control" name='tarif_akomodasi' value={tarifs.kamar_akomodasi} /></div>
                                                 </div>
                                             </div>
                                         </td>
@@ -321,7 +333,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Rawat Intensif</div>
-                                                    <div className="col-sm-7"><input type="text" className="m-2" name='tarif_rawat_integerensif' value={tarifs.rawatintensif} /></div>
+                                                    <div className="col-sm-7"><input type="text" className="m-2 form-control" name='tarif_rawat_integerensif' value={tarifs.rawatintensif} /></div>
                                                 </div>
                                             </div>
                                         </td>
@@ -332,7 +344,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Obat</div>
-                                                    <div className="col-sm-7"><input type="text" className="m-2" name='tarif_obat' value={obats.obat} /></div>
+                                                    <div className="col-sm-7"><input type="text" className="m-2 form-control" name='tarif_obat' value={obats.obat} /></div>
                                                 </div>
                                             </div>
                                         </td>
@@ -340,7 +352,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Obat Kronis</div>
-                                                    <div className="col-sm-7"><input type="text" className="m-2" name='tarif_obat_kronis' value={obats.obatkronis} /></div>
+                                                    <div className="col-sm-7"><input type="text" className="m-2 form-control" name='tarif_obat_kronis' value={obats.obatkronis} /></div>
                                                 </div>
                                             </div>
                                         </td>
@@ -348,7 +360,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Obat Kemoterapi</div>
-                                                    <div className="col-sm-7"><input type="text" className="m-2" name='tarif_obat_kemoterapi' value={obats.obatkemoterapi} /></div>
+                                                    <div className="col-sm-7"><input type="text" className="m-2 form-control" name='tarif_obat_kemoterapi' value={obats.obatkemoterapi} /></div>
                                                 </div>
                                             </div>
                                         </td>
@@ -358,7 +370,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Alkes</div>
-                                                    <div className="col-sm-7"><input type="text" className="m-2" name='tarif_alkes' value={obats.alkes} /></div>
+                                                    <div className="col-sm-7"><input type="text" className="m-2 form-control" name='tarif_alkes' value={obats.alkes} /></div>
                                                 </div>
                                             </div>
                                         </td>
@@ -366,7 +378,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>BMHP</div>
-                                                    <div className="col-sm-7"><input type="text" className="m-2" name='tarif_bhp' value={obats.bmhp} /></div>
+                                                    <div className="col-sm-7"><input type="text" className="m-2 form-control" name='tarif_bhp' value={obats.bmhp} /></div>
                                                 </div>
                                             </div>
                                         </td>
@@ -374,7 +386,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Sewa Alat</div>
-                                                    <div className="col-sm-7"><input type="text" className="m-2" name='tarif_sewa_alat' value={obats.sewaalat} /></div>
+                                                    <div className="col-sm-7"><input type="text" className="m-2 form-control" name='tarif_sewa_alat' value={obats.sewaalat} /></div>
                                                 </div>
                                             </div>
                                         </td>
@@ -383,6 +395,13 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                 <div className='text-center'><Checkbox></Checkbox> Menyatakan benar bahwa data tarif yang tersebut di atas adalah benar sesuai dengan kondisi yang sesungguhnya.</div>
                                 <TabView>
                                     <TabPanel header="Coding UNU Grouper">
+                                        <DataTable  value={dataDiagnosa} 
+                                                dataKey="diagnosa_kode" header={header}>
+                                            <Column field="diagnosa_kode" header="Kode Diagnosa"  style={{ minWidth: '12rem' }}></Column>
+                                            <Column field="diagnosa_nama" header="Nama Diagnosa"  style={{ minWidth: '16rem' }}></Column>
+                                            <Column rowEditor={allowEdit} headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column>
+
+                                        </DataTable>
                                         <DataTable value={dataDiagnosa} rowGroupMode="subheader" groupRowsBy="jenis_diagnosa" sortMode="single" sortField="jenis_diagnosa"
                                                 sortOrder={1} scrollable scrollHeight="400px" rowGroupHeaderTemplate={headerTemplate} tableStyle={{ minWidth: '50rem' }}
                                                 editMode="row" dataKey="diagnosa_id" onRowEditComplete={onRowEditComplete}
