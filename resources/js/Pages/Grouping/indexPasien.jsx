@@ -23,6 +23,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
     const [dataDiagnosa, setDiagnosa] = useState([]);
     const [dataGrouper, setDataGrouper] = useState([]);
 
+    const [dataFinalisasi, setDataFinalisasi] = useState([]);
 
     const [tarifs, setTarifs] = useState([]);
     const [obats, setObats] = useState([]);
@@ -50,6 +51,11 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
     const allowEdit = (rowData) => {
         return rowData.name !== 'Blue Band';
     };
+
+ 
+const format_rupiah = (value) => {
+    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(value);
+};
     const header = (
         <div className="flex flex-wrap gap-2 align-items-center justify-content-between">
             <h4 className="m-0">Diagnosa (ICD X)</h4>
@@ -216,7 +222,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                         <td colSpan={3}>
                                             <div className="col-sm-12 text-center">
                                                 Tarif Rumah Sakit :
-                                                <input type="text" className="ml-2" name='total_tarif_rs' value={(parseFloat(tarifs.total) + parseFloat(obats.total))} />
+                                                <input type="text" className="ml-2" name='total_tarif_rs' value={ format_rupiah(parseFloat(tarifs.total) + parseFloat(obats.total))} />
 
                                             </div>
                                         </td>
@@ -229,7 +235,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                                         Prosedur Non Bedah
                                                     </div>
                                                     <div className="col-sm-7">
-                                                        <input type="text" className="m-2 form-control" name='tarif_prosedur_nonbedah' value={tarifs.prosedurenonbedah} />
+                                                        <input type="text" className="m-2 form-control" name='tarif_prosedur_nonbedah' value={format_rupiah(tarifs.prosedurenonbedah)} />
                                                     </div>
                                                 </div>
                                             </div>
@@ -242,7 +248,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                                         Prosedur Bedah
                                                     </div>
                                                     <div className="col-sm-7">
-                                                        <input type="text" className="m-2 form-control" name='tarif_prosedur_bedah' value={tarifs.prosedurebedah} />
+                                                        <input type="text" className="m-2 form-control" name='tarif_prosedur_bedah' value={format_rupiah(tarifs.prosedurebedah)} />
                                                     </div>
                                                 </div>
                                             </div>
@@ -254,7 +260,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                                         Konsultasi
                                                     </div>
                                                     <div className="col-sm-7">
-                                                        <input type="text" className="m-2 form-control" name='tarif_konsultasi' value={tarifs.konsultasi} />
+                                                        <input type="text" className="m-2 form-control" name='tarif_konsultasi' value={format_rupiah(tarifs.konsultasi)} />
                                                     </div>
                                                 </div>
                                             </div>
@@ -265,7 +271,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Tenaga Ahli</div>
-                                                    <div className="col-sm-7"><input type="text" className="m-2 form-control" name='tarif_tenaga_ahli' value={tarifs.tenagaahli} /></div>
+                                                    <div className="col-sm-7"><input type="text" className="m-2 form-control" name='tarif_tenaga_ahli' value={format_rupiah(tarifs.tenagaahli)} /></div>
                                                 </div>
                                             </div>
                                         </td>
@@ -273,7 +279,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Keperawatan</div>
-                                                    <div className="col-sm-7"> <input type="text" className="m-2 form-control" name='tarif_keperawatan' value={tarifs.keperawatan} /></div>
+                                                    <div className="col-sm-7"> <input type="text" className="m-2 form-control" name='tarif_keperawatan' value={format_rupiah(tarifs.keperawatan)} /></div>
                                                 </div>
                                             </div>
                                         </td>
@@ -281,7 +287,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Penunjang</div>
-                                                    <div className="col-sm-7">  <input type="text" className="m-2 form-control" name='tarif_penunjang' value={tarifs.penunjang} /></div>
+                                                    <div className="col-sm-7">  <input type="text" className="m-2 form-control" name='tarif_penunjang' value={format_rupiah(tarifs.penunjang)} /></div>
                                                 </div>
                                             </div>
                                         </td>
@@ -291,7 +297,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Radiologi</div>
-                                                    <div className="col-sm-7"> <input type="text" className="m-2 form-control" name='tarif_radiologi' value={tarifs.radiologi} /></div>
+                                                    <div className="col-sm-7"> <input type="text" className="m-2 form-control" name='tarif_radiologi' value={ format_rupiah(tarifs.radiologi)} /></div>
                                                 </div>
                                             </div>
                                         </td>
@@ -299,7 +305,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Laboratorium</div>
-                                                    <div className="col-sm-7"> <input type="text" className="m-2 form-control" name='tarif_laboratorium' value={tarifs.laboratorium} /></div>
+                                                    <div className="col-sm-7"> <input type="text" className="m-2 form-control" name='tarif_laboratorium' value={format_rupiah(tarifs.laboratorium)} /></div>
                                                 </div>
                                             </div>
                                         </td>
@@ -307,7 +313,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Pelayanan Darah</div>
-                                                    <div className="col-sm-7"> <input type="text" className="m-2 form-control" name='tarif_pelayanan_darah' value={tarifs.pelayanandarah} /></div>
+                                                    <div className="col-sm-7"> <input type="text" className="m-2 form-control" name='tarif_pelayanan_darah' value={ format_rupiah(tarifs.pelayanandarah)} /></div>
                                                 </div>
                                             </div>
                                         </td>
@@ -317,7 +323,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Rehabilitasi</div>
-                                                    <div className="col-sm-7"> <input type="text" className="m-2 form-control" name='tarif_rehabilitasi' value={tarifs.rehabilitasi} /></div>
+                                                    <div className="col-sm-7"> <input type="text" className="m-2 form-control" name='tarif_rehabilitasi' value={format_rupiah(tarifs.rehabilitasi)} /></div>
                                                 </div>
                                             </div>
                                         </td>
@@ -325,7 +331,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Kamar / Akomodasi</div>
-                                                    <div className="col-sm-7"> <input type="text" className="m-2 form-control" name='tarif_akomodasi' value={tarifs.kamar_akomodasi} /></div>
+                                                    <div className="col-sm-7"> <input type="text" className="m-2 form-control" name='tarif_akomodasi' value={format_rupiah(tarifs.kamar_akomodasi)} /></div>
                                                 </div>
                                             </div>
                                         </td>
@@ -333,7 +339,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Rawat Intensif</div>
-                                                    <div className="col-sm-7"><input type="text" className="m-2 form-control" name='tarif_rawat_integerensif' value={tarifs.rawatintensif} /></div>
+                                                    <div className="col-sm-7"><input type="text" className="m-2 form-control" name='tarif_rawat_integerensif' value={format_rupiah(tarifs.rawatintensif)} /></div>
                                                 </div>
                                             </div>
                                         </td>
@@ -344,7 +350,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Obat</div>
-                                                    <div className="col-sm-7"><input type="text" className="m-2 form-control" name='tarif_obat' value={obats.obat} /></div>
+                                                    <div className="col-sm-7"><input type="text" className="m-2 form-control" name='tarif_obat' value={format_rupiah(obats.obat)} /></div>
                                                 </div>
                                             </div>
                                         </td>
@@ -352,7 +358,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Obat Kronis</div>
-                                                    <div className="col-sm-7"><input type="text" className="m-2 form-control" name='tarif_obat_kronis' value={obats.obatkronis} /></div>
+                                                    <div className="col-sm-7"><input type="text" className="m-2 form-control" name='tarif_obat_kronis' value={ format_rupiah(obats.obatkronis)} /></div>
                                                 </div>
                                             </div>
                                         </td>
@@ -360,7 +366,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Obat Kemoterapi</div>
-                                                    <div className="col-sm-7"><input type="text" className="m-2 form-control" name='tarif_obat_kemoterapi' value={obats.obatkemoterapi} /></div>
+                                                    <div className="col-sm-7"><input type="text" className="m-2 form-control" name='tarif_obat_kemoterapi' value={format_rupiah(obats.obatkemoterapi)} /></div>
                                                 </div>
                                             </div>
                                         </td>
@@ -370,7 +376,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Alkes</div>
-                                                    <div className="col-sm-7"><input type="text" className="m-2 form-control" name='tarif_alkes' value={obats.alkes} /></div>
+                                                    <div className="col-sm-7"><input type="text" className="m-2 form-control" name='tarif_alkes' value={ format_rupiah(obats.alkes)} /></div>
                                                 </div>
                                             </div>
                                         </td>
@@ -378,7 +384,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>BMHP</div>
-                                                    <div className="col-sm-7"><input type="text" className="m-2 form-control" name='tarif_bhp' value={obats.bmhp} /></div>
+                                                    <div className="col-sm-7"><input type="text" className="m-2 form-control" name='tarif_bhp' value={ format_rupiah(obats.bmhp)} /></div>
                                                 </div>
                                             </div>
                                         </td>
@@ -386,7 +392,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Sewa Alat</div>
-                                                    <div className="col-sm-7"><input type="text" className="m-2 form-control" name='tarif_sewa_alat' value={obats.sewaalat} /></div>
+                                                    <div className="col-sm-7"><input type="text" className="m-2 form-control" name='tarif_sewa_alat' value={ format_rupiah(obats.sewaalat || 0)} /></div>
                                                 </div>
                                             </div>
                                         </td>
@@ -395,29 +401,29 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                 <div className='text-center'><Checkbox></Checkbox> Menyatakan benar bahwa data tarif yang tersebut di atas adalah benar sesuai dengan kondisi yang sesungguhnya.</div>
                                 <TabView>
                                     <TabPanel header="Coding UNU Grouper">
-                                        <DataTable  value={dataDiagnosa} 
-                                                dataKey="diagnosa_kode" header={header}>
-                                            <Column field="diagnosa_kode" header="Kode Diagnosa"  style={{ minWidth: '12rem' }}></Column>
-                                            <Column field="diagnosa_nama" header="Nama Diagnosa"  style={{ minWidth: '16rem' }}></Column>
+                                        <DataTable value={dataDiagnosa}
+                                            dataKey="diagnosa_kode" header={header}>
+                                            <Column field="diagnosa_kode" header="Kode Diagnosa" style={{ minWidth: '12rem' }}></Column>
+                                            <Column field="diagnosa_nama" header="Nama Diagnosa" style={{ minWidth: '16rem' }}></Column>
                                             <Column rowEditor={allowEdit} headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column>
 
                                         </DataTable>
                                         <DataTable value={dataDiagnosa} rowGroupMode="subheader" groupRowsBy="jenis_diagnosa" sortMode="single" sortField="jenis_diagnosa"
-                                                sortOrder={1} scrollable scrollHeight="400px" rowGroupHeaderTemplate={headerTemplate} tableStyle={{ minWidth: '50rem' }}
-                                                editMode="row" dataKey="diagnosa_id" onRowEditComplete={onRowEditComplete}
+                                            sortOrder={1} scrollable scrollHeight="400px" rowGroupHeaderTemplate={headerTemplate} tableStyle={{ minWidth: '50rem' }}
+                                            editMode="row" dataKey="diagnosa_id" onRowEditComplete={onRowEditComplete}
                                         >
-                                            <Column field="diagnosa_kode" header="Kode Diagnosa" style={{ minWidth: '200px' }}  editor={(options) => textEditor(options)} ></Column>
-                                            <Column field="diagnosa_nama" header="Nama Diagnosa" style={{ minWidth: '200px' }}  editor={(options) => textEditor(options)}></Column>
+                                            <Column field="diagnosa_kode" header="Kode Diagnosa" style={{ minWidth: '200px' }} editor={(options) => textEditor(options)} ></Column>
+                                            <Column field="diagnosa_nama" header="Nama Diagnosa" style={{ minWidth: '200px' }} editor={(options) => textEditor(options)}></Column>
                                             <Column rowEditor={allowEdit} headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column>
                                         </DataTable>
                                     </TabPanel>
                                     <TabPanel header="Coding INA Grouper">
                                         <DataTable value={dataDiagnosa} rowGroupMode="subheader" groupRowsBy="jenis_diagnosa" sortMode="single" sortField="jenis_diagnosa"
-                                                sortOrder={1} scrollable scrollHeight="400px" rowGroupHeaderTemplate={headerTemplate} tableStyle={{ minWidth: '50rem' }}
-                                                editMode="row" dataKey="diagnosa_id" onRowEditComplete={onRowEditComplete}
+                                            sortOrder={1} scrollable scrollHeight="400px" rowGroupHeaderTemplate={headerTemplate} tableStyle={{ minWidth: '50rem' }}
+                                            editMode="row" dataKey="diagnosa_id" onRowEditComplete={onRowEditComplete}
                                         >
-                                            <Column field="diagnosa_kode" header="Kode Diagnosa" style={{ minWidth: '200px' }}  editor={(options) => textEditor(options)} ></Column>
-                                            <Column field="diagnosa_nama" header="Nama Diagnosa" style={{ minWidth: '200px' }}  editor={(options) => textEditor(options)}></Column>
+                                            <Column field="diagnosa_kode" header="Kode Diagnosa" style={{ minWidth: '200px' }} editor={(options) => textEditor(options)} ></Column>
+                                            <Column field="diagnosa_nama" header="Nama Diagnosa" style={{ minWidth: '200px' }} editor={(options) => textEditor(options)}></Column>
                                             <Column rowEditor={allowEdit} headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column>
                                         </DataTable>
                                     </TabPanel>
@@ -431,111 +437,122 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                 </div>
 
                                 {/*  Hasil Grouping */}
-                                <table className='table table-bordered' style={{ border: ' 1px solid black', width: '100%' }}>
-                                    <tr>
-                                        <td colSpan={4}><p className='text-center'>Hasil Grouper E-Klaim v5 </p></td>
-                                    </tr>
-                                    <tr>
-                                        <td width={"15%"}>Info</td>
-                                        <td width={"35%"} style={{ textAlign: 'left' }} >-</td>
-                                        <td width={"30%"}></td>
-                                        <td width={"30%"}></td>
 
-                                    </tr>
-                                    <tr>
-                                        <td width={"15%"}>Jenis Rawat</td>
-                                        <td width={"35%"} style={{ textAlign: 'left' }}>Rawat Jalan Regular </td>
-                                        <td width={"30%"}></td>
-                                        <td width={"30%"}></td>
+                                <div>
+                                    <table className='table table-bordered' style={{ border: ' 1px solid black', width: '100%' }}>
+                                        <tr>
+                                            <td colSpan={4}><p className='text-center'>Hasil Grouper E-Klaim v5 </p></td>
+                                        </tr>
+                                        <tr>
+                                            <td width={"15%"}>Info</td>
+                                            <td width={"35%"} style={{ textAlign: 'left' }} >-</td>
+                                            <td width={"30%"}></td>
+                                            <td width={"30%"}></td>
 
-                                    </tr>
-                                    <tr>
-                                        <td width={"15%"}>Group</td>
-                                        <td width="35%" style={{ textAlign: 'left' }}>
-                                            {dataGrouper.cbg?.description || '-'}
-                                        </td>
-                                        <td width="30%" style={{ textAlign: 'center' }}>
-                                            {dataGrouper.cbg?.code || '-'}
-                                        </td>
-                                        <td width="30%" style={{ textAlign: 'right' }}>
-                                            <FormatRupiah value={dataGrouper.cbg?.base_tariff || 0} />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td width={"15%"}>Sub Acute</td>
-                                        <td width={"35%"} style={{ textAlign: 'left' }}>-</td>
-                                        <td width={"30%"} style={{ textAlign: 'center' }}>-</td>
-                                        <td width={"30%"} style={{ textAlign: 'right' }}>Rp 0 </td>
+                                        </tr>
+                                        <tr>
+                                            <td width={"15%"}>Jenis Rawat</td>
+                                            <td width={"35%"} style={{ textAlign: 'left' }}>Rawat Jalan Regular </td>
+                                            <td width={"30%"}></td>
+                                            <td width={"30%"}></td>
 
-                                    </tr>
-                                    <tr>
-                                        <td width={"15%"}>Chronic</td>
-                                        <td width={"35%"} style={{ textAlign: 'left' }}>-</td>
-                                        <td width={"30%"} style={{ textAlign: 'center' }}>-</td>
-                                        <td width={"30%"} style={{ textAlign: 'right' }}>Rp 0 </td>
+                                        </tr>
+                                        <tr>
+                                            <td width={"15%"}>Group</td>
+                                            <td width="35%" style={{ textAlign: 'left' }}>
+                                                {dataGrouper.cbg?.description || '-'}
+                                            </td>
+                                            <td width="30%" style={{ textAlign: 'center' }}>
+                                                {dataGrouper.cbg?.code || '-'}
+                                            </td>
+                                            <td width="30%" style={{ textAlign: 'right' }}>
+                                                <FormatRupiah value={dataGrouper.cbg?.base_tariff || 0} />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td width={"15%"}>Sub Acute</td>
+                                            <td width={"35%"} style={{ textAlign: 'left' }}>-</td>
+                                            <td width={"30%"} style={{ textAlign: 'center' }}>-</td>
+                                            <td width={"30%"} style={{ textAlign: 'right' }}>Rp 0 </td>
 
-                                    </tr>
-                                    <tr>
-                                        <td width={"15%"}>Special Procedure</td>
-                                        <td width={"35%"} style={{ textAlign: 'left' }}>-</td>
-                                        <td width={"30%"} style={{ textAlign: 'center' }}>-</td>
-                                        <td width={"30%"} style={{ textAlign: 'right' }}>Rp 0 </td>
+                                        </tr>
+                                        <tr>
+                                            <td width={"15%"}>Chronic</td>
+                                            <td width={"35%"} style={{ textAlign: 'left' }}>-</td>
+                                            <td width={"30%"} style={{ textAlign: 'center' }}>-</td>
+                                            <td width={"30%"} style={{ textAlign: 'right' }}>Rp 0 </td>
 
-                                    </tr>
+                                        </tr>
+                                        <tr>
+                                            <td width={"15%"}>Special Procedure</td>
+                                            <td width={"35%"} style={{ textAlign: 'left' }}>-</td>
+                                            <td width={"30%"} style={{ textAlign: 'center' }}>-</td>
+                                            <td width={"30%"} style={{ textAlign: 'right' }}>Rp 0 </td>
 
-                                    <tr>
-                                        <td width={"15%"}>Special Prosthesis</td>
-                                        <td width={"35%"} style={{ textAlign: 'left' }}>-</td>
-                                        <td width={"30%"} style={{ textAlign: 'center' }}>-</td>
-                                        <td width={"30%"} style={{ textAlign: 'right' }}>Rp 0 </td>
+                                        </tr>
 
-                                    </tr>
+                                        <tr>
+                                            <td width={"15%"}>Special Prosthesis</td>
+                                            <td width={"35%"} style={{ textAlign: 'left' }}>-</td>
+                                            <td width={"30%"} style={{ textAlign: 'center' }}>-</td>
+                                            <td width={"30%"} style={{ textAlign: 'right' }}>Rp 0 </td>
 
-
-                                    <tr>
-                                        <td width={"15%"}>Special Investigation</td>
-                                        <td width={"35%"} style={{ textAlign: 'left' }}>-</td>
-                                        <td width={"30%"} style={{ textAlign: 'center' }}>-</td>
-                                        <td width={"30%"} style={{ textAlign: 'right' }}>Rp 0 </td>
-
-                                    </tr>
+                                        </tr>
 
 
-                                    <tr>
-                                        <td width={"15%"}>Special Drug</td>
-                                        <td width={"35%"} style={{ textAlign: 'left' }}>-</td>
-                                        <td width={"30%"} style={{ textAlign: 'center' }}>-</td>
-                                        <td width={"30%"} style={{ textAlign: 'right' }}>Rp 0 </td>
+                                        <tr>
+                                            <td width={"15%"}>Special Investigation</td>
+                                            <td width={"35%"} style={{ textAlign: 'left' }}>-</td>
+                                            <td width={"30%"} style={{ textAlign: 'center' }}>-</td>
+                                            <td width={"30%"} style={{ textAlign: 'right' }}>Rp 0 </td>
 
-                                    </tr>
-
-                                    <tr>
-                                        <td width={"15%"}>Status DC Kemkes</td>
-                                        <td width={"35%"} style={{ textAlign: 'left' }}>Klaim belum terkirim ke Pusat Data Kementerian Kesehatan</td>
-                                        <td width={"30%"} style={{ textAlign: 'center' }}></td>
-                                        <td width={"30%"} style={{ textAlign: 'right' }}>Rp 0 </td>
-
-                                    </tr>
-
-                                    <tr>
-                                        <td width={"15%"}>Status Klaim</td>
-                                        <td width={"35%"} style={{ textAlign: 'left' }}>-</td>
-                                        <td width={"30%"} style={{ textAlign: 'center' }}></td>
-                                        <td width={"30%"} style={{ textAlign: 'right' }}>Rp 0 </td>
-
-                                    </tr>
+                                        </tr>
 
 
-                                    <tr>
-                                        <td width={"15%"}></td>
-                                        <td width={"35%"} style={{ textAlign: 'left' }}></td>
-                                        <td width={"30%"} style={{ textAlign: 'center' }}>Total</td>
-                                        <td width={"30%"} style={{ textAlign: 'right' }}>Rp 0 </td>
+                                        <tr>
+                                            <td width={"15%"}>Special Drug</td>
+                                            <td width={"35%"} style={{ textAlign: 'left' }}>-</td>
+                                            <td width={"30%"} style={{ textAlign: 'center' }}>-</td>
+                                            <td width={"30%"} style={{ textAlign: 'right' }}>Rp 0 </td>
 
-                                    </tr>
+                                        </tr>
+
+                                        <tr>
+                                            <td width={"15%"}>Status DC Kemkes</td>
+                                            <td width={"35%"} style={{ textAlign: 'left' }}>Klaim belum terkirim ke Pusat Data Kementerian Kesehatan</td>
+                                            <td width={"30%"} style={{ textAlign: 'center' }}></td>
+                                            <td width={"30%"} style={{ textAlign: 'right' }}>Rp 0 </td>
+
+                                        </tr>
+
+                                        <tr>
+                                            <td width={"15%"}>Status Klaim</td>
+                                            <td width={"35%"} style={{ textAlign: 'left' }}>-</td>
+                                            <td width={"30%"} style={{ textAlign: 'center' }}></td>
+                                            <td width={"30%"} style={{ textAlign: 'right' }}>Rp 0 </td>
+
+                                        </tr>
 
 
-                                </table>
+                                        <tr>
+                                            <td width={"15%"}></td>
+                                            <td width={"35%"} style={{ textAlign: 'left' }}></td>
+                                            <td width={"30%"} style={{ textAlign: 'center' }}>Total</td>
+                                            <td width={"30%"} style={{ textAlign: 'right' }}>Rp 0 </td>
+
+                                        </tr>
+
+
+                                    </table>
+
+                                    {/* Button Finalisasi */}
+                                    <div className="col-md-6 d-flex mb-3">
+                                        <button className="btn btn-primary" style={{ float: 'right' }} onClick={handleSimpanFinalisasi}>Finalisasi</button>
+                                    </div>
+
+
+                                </div>
+
                             </div>
                         </div>
                     )
@@ -592,7 +609,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
             .then((response) => {
                 console.log('Response:', response.data);
                 setDataGrouper(response.data.data);
-                toast.current.show({ severity: 'success', summary: `Data  Berhasil Di Grouping`, detail:datas.noSep, life: 3000 });
+                toast.current.show({ severity: 'success', summary: `Data  Berhasil Di Grouping`, detail: datas.noSep, life: 3000 });
 
                 // Handle the response from the backend
             })
@@ -601,11 +618,37 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
             });
     };
 
+    /**Simpan Grouping */
+    const handleSimpanFinalisasi = (e) => {
+        e.preventDefault(); // Prevent page reload
+
+        console.log("Auth", auth);
+        console.log('Form Data Submitted:', datas);
+
+        // Perform API request with axios
+        const payload = {
+            nomor_sep: datas.noSep,
+            coder_nik:auth.user.coder_nik
+        };
+        axios.post(route('Finalisasi'), payload)
+            .then((response) => {
+                console.log('Response:', response.data);
+                setDataFinalisasi(response.data.data);
+                toast.current.show({ severity: 'success', summary: `Data  Berhasil Di Grouping`, detail: datas.noSep, life: 3000 });
+
+                // Handle the response from the backend
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    };
+
+
     const items = [
-        { label: pasien? pasien['no_rekam_medik']:null},
-        { label: pasien? pasien['nama_pasien']:null },
-        { label: pasien ? pasien['jeniskelamin']:null},
-        { label: pasien? pasien['tanggal_lahir']:null },
+        { label: pasien ? pasien['no_rekam_medik'] : null },
+        { label: pasien ? pasien['nama_pasien'] : null },
+        { label: pasien ? pasien['jeniskelamin'] : null },
+        { label: pasien ? pasien['tanggal_lahir'] : null },
 
     ];
     const noSepBody = (rowData) => {
