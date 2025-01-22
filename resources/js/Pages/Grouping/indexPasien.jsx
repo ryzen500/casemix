@@ -18,7 +18,7 @@ import { IconField } from 'primereact/iconfield';
 import { InputIcon } from 'primereact/inputicon';
 import { AutoComplete } from 'primereact/autocomplete';
 
-export default function Dashboard({ auth, model, pasien, caraMasuk }) {
+export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
     const [datas, setDatas] = useState([]);
     const [pendaftarans, setPendaftarans] = useState([]);
     const [dataDiagnosa, setDiagnosa] = useState([]);
@@ -36,22 +36,90 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
 
     const [dataFinalisasi, setDataFinalisasi] = useState([]);
 
-    const [tarifs, setTarifs] = useState([]);
-    const [obats, setObats] = useState([]);
+    // const [tarifs, setTarifs] = useState([]);
+    // const [obats, setObats] = useState([]);
+
+    const [tarifs, setTarifs] = useState({
+        total: 0,
+        prosedurenonbedah: '',
+        prosedurebedah: 0,
+        konsultasi: 0,
+        tenagaahli: 0,
+        keperawatan: 0,
+        penunjang: 0,
+        radiologi: 0,
+        laboratorium: 0,
+        pelayanandarah: 0,
+        rehabilitasi: 0,
+        kamar_akomodasi: 0,
+        rawatintensif: 0,
+    });
+
+    const format_rupiah = (value) => {
+        return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(value);
+    };
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+
+        // Remove any non-numeric characters except for the period (for decimal numbers)
+        const numericValue = value.replace(/[^0-9.]/g, '');
+
+        // Format the number if it is numeric
+        const formattedValue = numericValue ? (numericValue) : '';
+
+        setTarifs((prevData) => ({
+            ...prevData,
+            [name]: value, // Update the specific input based on the name
+        }));
+    };
+
+
+    const handleBlur = (e) => {
+        const { name, value } = e.target;
+
+        const numericValue = value.replace(/[^0-9.]/g, '');
+
+        // Format the number if it is numeric
+        const formattedValue = numericValue ? format_rupiah(numericValue) : '';
+
+        setTarifs((prevData) => ({
+            ...prevData,
+            [name]: formattedValue, // Update the specific input based on the name
+        }));
+    };
+
+    const [obats, setObats] = useState({
+        total: 0,
+        obat: 0,
+        obatkronis: 0,
+        obatkemoterapi: 0,
+        alkes: 0,
+        bmhp: 0,
+        sewaalat: 0,
+    });
+
+
     const [profils, setProfil] = useState([]);
     const [selectedCaraMasuk, setCaraMasuk] = useState(null);
+    const [selectedDPJP, setDPJP] = useState(null);
+
     const [expandedRows, setExpandedRows] = useState(null);
     const [loading, setLoading] = useState(false); // Loading state for expanded row
     const toast = useRef(null);
     const [suggestions, setSuggestions] = useState([]);
     const [searchText, setSearchText] = useState('');
     useEffect(() => {
-
+        setTarifs((prevData) => {
+            const formattedData = {};
+            for (const key in prevData) {
+                if (prevData[key]) {
+                    formattedData[key] = format_rupiah(prevData[key]);
+                }
+            }
+            return formattedData;
+        });
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
-    
-    const format_rupiah = (value) => {
-        return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(value);
-    };
+
     const onRowExpand1 = (event) => {
         toast.current.show({ severity: 'info', summary: event.data.nosep, detail: event.data.nosep, life: 3000 });
     };
@@ -156,6 +224,15 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
     const textEditor = (options) => {
         return <InputText type="text" value={options.value} onChange={(e) => options.editorCallback(e.target.value)} />;
     };
+
+
+    const formatDate = (dateString) => {
+        // Check if dateString exists and is valid
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        if (isNaN(date)) return ''; // Handle invalid date
+        return date.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+    };
     const onRowExpand = async (event) => {
         const expandedProduct = event.data;
         // Set loading to true when starting the API request
@@ -177,7 +254,24 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                 if (response.data.model.metaData.code == 200) {
                     toast.current.show({ severity: 'info', summary: event.data.noSep, detail: event.data.noSep, life: 3000 });
                     setDatas(response.data.model.response);
+
+
+                    const defaultCaraMasuk = caraMasuk.find(
+                        (caramasuk) => caramasuk.code === "gp"
+                    );
+
+                    setCaraMasuk(defaultCaraMasuk || null);
+
+
+
+                    const defaultDPJP = DPJP.find(
+                        (dpjp) => dpjp.kdDPJP === response.data.model.response.dpjp.kdDPJP
+                    );
+
+                    setDPJP(defaultDPJP || null);
+
                     setPendaftarans(response.data.pendaftaran);
+                    console.log(response.data.tarif);
                     setTarifs(response.data.tarif);
                     setObats(response.data.obat);
                     setProfil(response.data.profil);
@@ -284,7 +378,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                             Jenis Rawat
                                         </td>
                                         <td width={"60%"}>
-                                            isian
+                                            {datas.jnsPelayanan}
                                         </td>
                                         <td width={"10%"}>Kelas Hak</td>
                                         <td width={"15%"}>
@@ -300,9 +394,12 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                                 <div className="row">
                                                     <div className="col-sm-6">
                                                         Masuk :
+                                                        <input type="date" name="tanggal_masuk" class="form-control" value={formatDate(pendaftarans.tglsep)} />
                                                     </div>
                                                     <div className="col-sm-6">
                                                         Pulang :
+                                                        <input type="date" name="tanggal_pulang" class="form-control" value={formatDate(pendaftarans.tglpulang)} />
+
                                                     </div>
                                                 </div>
                                             </div>
@@ -312,7 +409,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                     </tr>
                                     <tr>
                                         <td>Cara Masuk</td>
-                                        <td colSpan={3}>
+                                        <td >
                                             <Dropdown value={selectedCaraMasuk} onChange={(e) => setCaraMasuk(e.value)} options={caraMasuk} optionLabel="name"
                                                 placeholder="Pilih Cara Masuk" className="w-full md:w-14rem" />
                                         </td>
@@ -331,7 +428,10 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                     </tr>
                                     <tr>
                                         <td>DPJP</td>
-                                        <td></td>
+                                        <td >
+                                            <Dropdown value={selectedDPJP} onChange={(e) => setDPJP(e.value)} options={DPJP} optionLabel="nmdpjp"
+                                                placeholder="Pilih DPJP" className="w-full md:w-14rem" />
+                                        </td>
                                         <td>Jenis Tarif</td>
                                         <td><input type="text" className="form-control" name='nama_tarifinacbgs_1' value={profils.nama_tarifinacbgs_1} /></td>
                                     </tr>
@@ -343,12 +443,13 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                         </td>
                                     </tr>
                                 </table>
+                                {/* Tarif Rumah Sakit */}
                                 <table className='table table-bordered' style={{ border: ' 1px solid black', width: '100%' }}>
                                     <tr>
                                         <td colSpan={3}>
                                             <div className="col-sm-12 text-center">
                                                 Tarif Rumah Sakit :
-                                                <input type="text" className="ml-2" name='total_tarif_rs' value={ format_rupiah(parseFloat(tarifs.total) + parseFloat(obats.total))} />
+                                                <input type="text" className="ml-2" name='total_tarif_rs' value={format_rupiah(parseFloat(tarifs.total) + parseFloat(obats.total))} />
 
                                             </div>
                                         </td>
@@ -361,7 +462,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                                         Prosedur Non Bedah
                                                     </div>
                                                     <div className="col-sm-7">
-                                                        <input type="text" className="m-2 form-control" name='tarif_prosedur_nonbedah' value={format_rupiah(tarifs.prosedurenonbedah)} />
+                                                        <input type="text" className="m-2 form-control" name='prosedurenonbedah' value={(tarifs.prosedurenonbedah)}
+                                                            onChange={handleInputChange} onBlur={handleBlur} />
                                                     </div>
                                                 </div>
                                             </div>
@@ -386,7 +488,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                                         Konsultasi
                                                     </div>
                                                     <div className="col-sm-7">
-                                                        <input type="text" className="m-2 form-control" name='tarif_konsultasi' value={format_rupiah(tarifs.konsultasi)} />
+                                                        <input type="text" className="m-2 form-control" name='konsultasi' value={tarifs.konsultasi} onChange={handleInputChange} onBlur={handleBlur} />
                                                     </div>
                                                 </div>
                                             </div>
@@ -423,7 +525,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Radiologi</div>
-                                                    <div className="col-sm-7"> <input type="text" className="m-2 form-control" name='tarif_radiologi' value={tarifs.radiologi} /></div>
+                                                    <div className="col-sm-7"> <input type="text" className="m-2 form-control" name='tarif_radiologi' value={format_rupiah(tarifs.radiologi)} /></div>
                                                 </div>
                                             </div>
                                         </td>
@@ -439,7 +541,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Pelayanan Darah</div>
-                                                    <div className="col-sm-7"> <input type="text" className="m-2 form-control" name='tarif_pelayanan_darah' value={ format_rupiah(tarifs.pelayanandarah)} /></div>
+                                                    <div className="col-sm-7"> <input type="text" className="m-2 form-control" name='tarif_pelayanan_darah' value={format_rupiah(tarifs.pelayanandarah)} /></div>
                                                 </div>
                                             </div>
                                         </td>
@@ -457,7 +559,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Kamar / Akomodasi</div>
-                                                    <div className="col-sm-7"> <input type="text" className="m-2 form-control" name='tarif_akomodasi' value={tarifs.kamar_akomodasi} /></div>
+                                                    <div className="col-sm-7"> <input type="text" className="m-2 form-control" name='tarif_akomodasi' value={(tarifs.kamar_akomodasi)} onChange={handleInputChange} onBlur={handleBlur}/></div>
                                                 </div>
                                             </div>
                                         </td>
@@ -484,7 +586,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Obat Kronis</div>
-                                                    <div className="col-sm-7"><input type="text" className="m-2 form-control" name='tarif_obat_kronis' value={ format_rupiah(obats.obatkronis)} /></div>
+                                                    <div className="col-sm-7"><input type="text" className="m-2 form-control" name='tarif_obat_kronis' value={format_rupiah(obats.obatkronis)} /></div>
                                                 </div>
                                             </div>
                                         </td>
@@ -502,7 +604,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Alkes</div>
-                                                    <div className="col-sm-7"><input type="text" className="m-2 form-control" name='tarif_alkes' value={ format_rupiah(obats.alkes)} /></div>
+                                                    <div className="col-sm-7"><input type="text" className="m-2 form-control" name='tarif_alkes' value={format_rupiah(obats.alkes)} /></div>
                                                 </div>
                                             </div>
                                         </td>
@@ -510,7 +612,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>BMHP</div>
-                                                    <div className="col-sm-7"><input type="text" className="m-2 form-control" name='tarif_bhp' value={ format_rupiah(obats.bmhp)} /></div>
+                                                    <div className="col-sm-7"><input type="text" className="m-2 form-control" name='tarif_bhp' value={format_rupiah(obats.bmhp)} /></div>
                                                 </div>
                                             </div>
                                         </td>
@@ -518,12 +620,13 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Sewa Alat</div>
-                                                    <div className="col-sm-7"><input type="text" className="m-2 form-control" name='tarif_sewa_alat' value={ format_rupiah(obats.sewaalat || 0)} /></div>
+                                                    <div className="col-sm-7"><input type="text" className="m-2 form-control" name='tarif_sewa_alat' value={format_rupiah(obats.sewaalat || 0)} /></div>
                                                 </div>
                                             </div>
                                         </td>
                                     </tr>
                                 </table>
+                                {/* Checkbox Tarif */}
                                 <div className='text-center'><Checkbox></Checkbox> Menyatakan benar bahwa data tarif yang tersebut di atas adalah benar sesuai dengan kondisi yang sesungguhnya.</div>
                                 <TabView>
                                     <TabPanel header="Coding UNU Grouper">
@@ -789,7 +892,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
         // Perform API request with axios
         const payload = {
             nomor_sep: datas.noSep,
-            coder_nik:auth.user.coder_nik
+            coder_nik: auth.user.coder_nik
         };
         axios.post(route('Finalisasi'), payload)
             .then((response) => {
@@ -816,7 +919,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
         return (
             <div>
                 {rowData.pendaftaran_id == null ? (
-                    <div>{rowData.noSep}<br />No SEP belum di sinkron</div> // Show message if pendaftaran_id is null
+                    <div>{rowData.noSep}<br /> <span style={{ color: 'red' }}> ( No SEP belum di sinkron )</span> </div> // Show message if pendaftaran_id is null
                 ) : (
                     <div>
                         {rowData.noSep}

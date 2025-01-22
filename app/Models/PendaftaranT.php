@@ -195,7 +195,9 @@ class PendaftaranT extends Model
                 WHEN inacbg_t.is_finalisasi = true AND inacbg_t.is_terkirim = false THEN 'Final'::text
                 WHEN inacbg_t.is_finalisasi = false AND inacbg_t.is_terkirim = false THEN '-'::text
                 ELSE '-'::text
-                END AS status"),
+                END AS status,
+                inacbg_t.cara_pulang
+                "),
             DB::raw('pg.nama_pegawai, inasiscbg_t.kodeprosedur AS cbg'),
             DB::raw('p.umur'),
 
