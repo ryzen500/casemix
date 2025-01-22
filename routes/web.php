@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Casemix\InAcbgGrouperController;
+use App\Http\Controllers\Casemix\SearchDiagnosaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Laporan\LaporanSEPController;
 use App\Http\Controllers\ProfileController;
@@ -55,6 +56,9 @@ Route::middleware('auth')->group(function () {
     Route::post('getGroupperPasien/', [InAcbgGrouperController::class, 'getGroupperPasien'])->name('getGroupperPasien');
     Route::post('groupingStageSatu', [InAcbgGrouperController::class, 'groupingStageSatu'])->name('groupingStageSatu');
     Route::post('Finalisasi', [InAcbgGrouperController::class, 'Finalisasi'])->name('Finalisasi');
+
+    // autocomplete
+    Route::post('searchDiagnosa', [SearchDiagnosaController::class, 'autocompleteDiagnosa'])->name('searchDiagnosa');
 
 
 });
