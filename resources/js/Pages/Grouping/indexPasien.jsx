@@ -16,11 +16,22 @@ import { TabPanel, TabView } from 'primereact/tabview';
 import { FormatRupiah } from '@arismun/format-rupiah';
 import { IconField } from 'primereact/iconfield';
 import { InputIcon } from 'primereact/inputicon';
+import { AutoComplete } from 'primereact/autocomplete';
 
 export default function Dashboard({ auth, model, pasien, caraMasuk }) {
     const [datas, setDatas] = useState([]);
     const [pendaftarans, setPendaftarans] = useState([]);
     const [dataDiagnosa, setDiagnosa] = useState([]);
+    const [dataIcd9cm, setDataIcd9cm] = useState([]);
+    const [dataDiagnosaINA, setDiagnosaINA] = useState([]);
+
+    let emptyDiagnosa = {
+        diagnosa_id: null,
+        diagnosa_kode:null,
+        diagnosa_nama:null,
+        kelompokdiagnosa_nama:null
+    };
+    const [diagnosaTemp, setDiagnosaTemp] = useState(emptyDiagnosa);
     const [dataGrouper, setDataGrouper] = useState([]);
 
     const [dataFinalisasi, setDataFinalisasi] = useState([]);
@@ -32,15 +43,19 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
     const [expandedRows, setExpandedRows] = useState(null);
     const [loading, setLoading] = useState(false); // Loading state for expanded row
     const toast = useRef(null);
+    const [suggestions, setSuggestions] = useState([]);
+    const [searchText, setSearchText] = useState('');
     useEffect(() => {
 
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
+    
+    const format_rupiah = (value) => {
+        return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(value);
+    };
     const onRowExpand1 = (event) => {
         toast.current.show({ severity: 'info', summary: event.data.nosep, detail: event.data.nosep, life: 3000 });
     };
     const onRowEditComplete = (e) => {
-        console.log(e);
         // let _products = [...products];
         // let { newData, index } = e;
 
@@ -48,23 +63,96 @@ export default function Dashboard({ auth, model, pasien, caraMasuk }) {
 
         // setProducts(_products);
     };
+    // Function to fetch data from API
+    const fetchSuggestions = async (query) => {
+        try {
+            // Replace with your API 
+            const response = await axios.post('/searchDiagnosa', {
+                keyword: query, // Send the expandedProduct.noSep data
+            });
+            const res = response.data;
+            // let query = event.query;
+            let _filteredItems = [];
+    
+            for(let i = 0; i < res.length; i++) {
+
+                _filteredItems.push({'label': res[i].diagnosa_nama, 'value' : res[i].diagnosa_kode,'id':res[i].diagnosa_id})                
+            }
+
+            // const data = await response.json();
+            setSuggestions(_filteredItems);  // Set your data here
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
+    // Handle change in input field
+    const onSearchChange = (e) => {
+        let length = e.query.length;
+        // setSearchText(null);
+        setSearchText(e.query);
+
+        if(length>2){
+            fetchSuggestions(e.query);  // Fetch suggestions based on the input
+        }
+    }
+    
     const allowEdit = (rowData) => {
         return rowData.name !== 'Blue Band';
     };
+    const addRowDiagnosaX = (rowData) =>{
+        let _dataDiagnosa = [...dataDiagnosa];
+        let _diagnosa = { ...diagnosaTemp };
+        _diagnosa.diagnosa_id = rowData.id;
+        _diagnosa.diagnosa_nama = rowData.label;
+        _diagnosa.diagnosa_kode = rowData.value;
+        _dataDiagnosa.push(_diagnosa);
+        setDiagnosa(_dataDiagnosa);
+        setDiagnosaTemp(emptyDiagnosa);
+        setSearchText(null);
+        // setDiagnosa(response.data.dataDiagnosa);
 
- 
-const format_rupiah = (value) => {
-    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(value);
-};
+    }
     const header = (
         <div className="flex flex-wrap gap-2 align-items-center justify-content-between">
             <h4 className="m-0">Diagnosa (ICD X)</h4>
             <IconField iconPosition="left">
-                <InputIcon className="pi pi-search" />
-                <InputText type="search" placeholder="Search..." />
+
+                <AutoComplete
+                    value={searchText}
+                    suggestions={suggestions}
+                    completeMethod={onSearchChange}  // Trigger search on typing
+                    field="search-icdx"  // Field to display in the suggestion (adjust based on your API response)
+                    onSelect ={(e) => addRowDiagnosaX(e.value)}  // Update input field
+                    itemTemplate={(item) => (
+                        <div>
+                            <span>{item.label} ({item.value})</span>  {/* Custom template to display both label and value */}
+                        </div>
+                    )}
+                />
             </IconField>
         </div>
     );
+    const headerUnuICDIX = (
+        <div className="flex flex-wrap gap-2 align-items-center justify-content-between">
+            <h4 className="m-0">Diagnosa (ICD IX)</h4>
+            <IconField iconPosition="left">
+
+                <AutoComplete
+                    value={searchText}
+                    suggestions={suggestions}
+                    completeMethod={onSearchChange}  // Trigger search on typing
+                    field="search-icdix"  // Field to display in the suggestion (adjust based on your API response)
+                    onSelect ={(e) => addRowDiagnosaIX(e.value)}  // Update input field
+                    itemTemplate={(item) => (
+                        <div>
+                            <span>{item.label} ({item.value})</span>  {/* Custom template to display both label and value */}
+                        </div>
+                    )}
+                />
+            </IconField>
+        </div>
+    );
+    
     const textEditor = (options) => {
         return <InputText type="text" value={options.value} onChange={(e) => options.editorCallback(e.target.value)} />;
     };
@@ -94,6 +182,8 @@ const format_rupiah = (value) => {
                     setObats(response.data.obat);
                     setProfil(response.data.profil);
                     setDiagnosa(response.data.dataDiagnosa);
+                    setDataIcd9cm(response.data.dataIcd9cm);
+                    setDiagnosaINA(response.data.dataDiagnosa)
                     // console.log(response.data,tarifs.total);
                 } else {
                     toast.current.show({ severity: 'error', summary: 'Error', detail: response.data.model.metaData.message, life: 3000 });
@@ -111,6 +201,42 @@ const format_rupiah = (value) => {
 
         }
     };
+        // Custom input renderer for hidden input
+        const unuICDX = (rowData) => {
+            return (
+                <>
+                    <input type="hidden" value={rowData.pasienmorbiditas_id} />
+                    <input type="hidden" value={rowData.diagnosa_id} />
+                    {/* <input readOnly value={rowData.kelompokdiagnosa_nama} /> */}
+                    {rowData.kelompokdiagnosa_nama}
+                    
+                </>
+            );
+        };
+        // Custom input renderer for hidden input
+        const unuICDIX = (rowData) => {
+            return (
+                <>
+                    <input type="hidden" value={rowData.pasienicd9cm_id} />
+                    <input type="hidden" value={rowData.diagnosaicdix_id} />
+                    {/* <input readOnly value={rowData.kelompokdiagnosa_nama} /> */}
+                    {rowData.kelompokdiagnosa_nama}
+                    
+                </>
+            );
+        };
+        // Custom input renderer for hidden input
+        const inaICDX = (rowData) => {
+            return (
+                <>
+                    <input type="hidden" value={rowData.pasienmorbiditas_id} />
+                    <input type="hidden" value={rowData.diagnosa_id} />
+                    {/* <input readOnly value={rowData.kelompokdiagnosa_nama} /> */}
+                    {rowData.kelompokdiagnosa_nama}
+                    
+                </>
+            );
+        };
     const onRowCollapse = (event) => {
         // toast.current.show({ severity: 'success', summary: event.data.name, detail: event.data.name, life: 3000 });
     };
@@ -271,7 +397,7 @@ const format_rupiah = (value) => {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Tenaga Ahli</div>
-                                                    <div className="col-sm-7"><input type="text" className="m-2 form-control" name='tarif_tenaga_ahli' value={format_rupiah(tarifs.tenagaahli)} /></div>
+                                                    <div className="col-sm-7"><input type="text" className="m-2 form-control" name='tarif_tenaga_ahli' value={tarifs.tenagaahli} /></div>
                                                 </div>
                                             </div>
                                         </td>
@@ -279,7 +405,7 @@ const format_rupiah = (value) => {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Keperawatan</div>
-                                                    <div className="col-sm-7"> <input type="text" className="m-2 form-control" name='tarif_keperawatan' value={format_rupiah(tarifs.keperawatan)} /></div>
+                                                    <div className="col-sm-7"> <input type="text" className="m-2 form-control" name='tarif_keperawatan' value={tarifs.keperawatan} /></div>
                                                 </div>
                                             </div>
                                         </td>
@@ -297,7 +423,7 @@ const format_rupiah = (value) => {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Radiologi</div>
-                                                    <div className="col-sm-7"> <input type="text" className="m-2 form-control" name='tarif_radiologi' value={ format_rupiah(tarifs.radiologi)} /></div>
+                                                    <div className="col-sm-7"> <input type="text" className="m-2 form-control" name='tarif_radiologi' value={tarifs.radiologi} /></div>
                                                 </div>
                                             </div>
                                         </td>
@@ -305,7 +431,7 @@ const format_rupiah = (value) => {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Laboratorium</div>
-                                                    <div className="col-sm-7"> <input type="text" className="m-2 form-control" name='tarif_laboratorium' value={format_rupiah(tarifs.laboratorium)} /></div>
+                                                    <div className="col-sm-7"> <input type="text" className="m-2 form-control" name='tarif_laboratorium' value={tarifs.laboratorium} /></div>
                                                 </div>
                                             </div>
                                         </td>
@@ -331,7 +457,7 @@ const format_rupiah = (value) => {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Kamar / Akomodasi</div>
-                                                    <div className="col-sm-7"> <input type="text" className="m-2 form-control" name='tarif_akomodasi' value={format_rupiah(tarifs.kamar_akomodasi)} /></div>
+                                                    <div className="col-sm-7"> <input type="text" className="m-2 form-control" name='tarif_akomodasi' value={tarifs.kamar_akomodasi} /></div>
                                                 </div>
                                             </div>
                                         </td>
@@ -339,7 +465,7 @@ const format_rupiah = (value) => {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Rawat Intensif</div>
-                                                    <div className="col-sm-7"><input type="text" className="m-2 form-control" name='tarif_rawat_integerensif' value={format_rupiah(tarifs.rawatintensif)} /></div>
+                                                    <div className="col-sm-7"><input type="text" className="m-2 form-control" name='tarif_rawat_integerensif' value={tarifs.rawatintensif} /></div>
                                                 </div>
                                             </div>
                                         </td>
@@ -401,32 +527,67 @@ const format_rupiah = (value) => {
                                 <div className='text-center'><Checkbox></Checkbox> Menyatakan benar bahwa data tarif yang tersebut di atas adalah benar sesuai dengan kondisi yang sesungguhnya.</div>
                                 <TabView>
                                     <TabPanel header="Coding UNU Grouper">
-                                        <DataTable value={dataDiagnosa}
-                                            dataKey="diagnosa_kode" header={header}>
-                                            <Column field="diagnosa_kode" header="Kode Diagnosa" style={{ minWidth: '12rem' }}></Column>
-                                            <Column field="diagnosa_nama" header="Nama Diagnosa" style={{ minWidth: '16rem' }}></Column>
-                                            <Column rowEditor={allowEdit} headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column>
+                                        <DataTable  value={dataDiagnosa} 
+                                                dataKey="diagnosa_id" 
+                                                header={header}
+                                                onRowEditComplete={onRowEditComplete}
+                                                editMode="row"
+                                        >
+                                            <Column field="diagnosa_kode" header="Kode Diagnosa"  style={{ minWidth: '12rem' }}></Column>
+                                            <Column field="diagnosa_nama" header="Nama Diagnosa"  style={{ minWidth: '16rem' }}></Column>
+                                            <Column field="kelompokdiagnosa_nama" header="Kelompok Diagnosa"  style={{ minWidth: '16rem' }}  body={unuICDX}></Column>
+                                            	
+                                            {/* <Column rowEditor={allowEdit} headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column> */}
 
                                         </DataTable>
-                                        <DataTable value={dataDiagnosa} rowGroupMode="subheader" groupRowsBy="jenis_diagnosa" sortMode="single" sortField="jenis_diagnosa"
-                                            sortOrder={1} scrollable scrollHeight="400px" rowGroupHeaderTemplate={headerTemplate} tableStyle={{ minWidth: '50rem' }}
-                                            editMode="row" dataKey="diagnosa_id" onRowEditComplete={onRowEditComplete}
+
+                                        <DataTable  value={dataIcd9cm} 
+                                                dataKey="diagnosaicdix_id" 
+                                                header={headerUnuICDIX}
+                                                onRowEditComplete={onRowEditComplete}
+                                                editMode="row"
+                                                className="pt-5"
                                         >
-                                            <Column field="diagnosa_kode" header="Kode Diagnosa" style={{ minWidth: '200px' }} editor={(options) => textEditor(options)} ></Column>
-                                            <Column field="diagnosa_nama" header="Nama Diagnosa" style={{ minWidth: '200px' }} editor={(options) => textEditor(options)}></Column>
-                                            <Column rowEditor={allowEdit} headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column>
+                                            <Column field="diagnosaicdix_kode" header="Kode Diagnosa"  style={{ minWidth: '12rem' }}></Column>
+                                            <Column field="diagnosaicdix_nama" header="Nama Diagnosa"  style={{ minWidth: '16rem' }}></Column>
+                                            <Column field="kelompokdiagnosa_nama" header="Kelompok Diagnosa"  style={{ minWidth: '16rem' }}  body={unuICDIX}></Column>
+                                            	
+                                            {/* <Column rowEditor={allowEdit} headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column> */}
+
                                         </DataTable>
+    
                                     </TabPanel>
                                     <TabPanel header="Coding INA Grouper">
-                                        <DataTable value={dataDiagnosa} rowGroupMode="subheader" groupRowsBy="jenis_diagnosa" sortMode="single" sortField="jenis_diagnosa"
-                                            sortOrder={1} scrollable scrollHeight="400px" rowGroupHeaderTemplate={headerTemplate} tableStyle={{ minWidth: '50rem' }}
-                                            editMode="row" dataKey="diagnosa_id" onRowEditComplete={onRowEditComplete}
+                                        <DataTable  value={dataDiagnosaINA} 
+                                                    dataKey="diagnosa_id" 
+                                                    header={header}
+                                                    onRowEditComplete={onRowEditComplete}
+                                                    editMode="row"
+                                            >
+                                                <Column field="diagnosa_kode" header="Kode Diagnosa"  style={{ minWidth: '12rem' }}></Column>
+                                                <Column field="diagnosa_nama" header="Nama Diagnosa"  style={{ minWidth: '16rem' }}></Column>
+                                                <Column field="kelompokdiagnosa_nama" header="Kelompok Diagnosa"  style={{ minWidth: '16rem' }}  body={inaICDX}></Column>
+                                                    
+                                                {/* <Column rowEditor={allowEdit} headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column> */}
+
+                                        </DataTable>
+
+                                        <DataTable  value={dataIcd9cm} 
+                                                dataKey="diagnosaicdix_id" 
+                                                header={headerUnuICDIX}
+                                                onRowEditComplete={onRowEditComplete}
+                                                editMode="row"
+                                                className="pt-5"
                                         >
-                                            <Column field="diagnosa_kode" header="Kode Diagnosa" style={{ minWidth: '200px' }} editor={(options) => textEditor(options)} ></Column>
-                                            <Column field="diagnosa_nama" header="Nama Diagnosa" style={{ minWidth: '200px' }} editor={(options) => textEditor(options)}></Column>
-                                            <Column rowEditor={allowEdit} headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column>
+                                            <Column field="diagnosaicdix_kode" header="Kode Diagnosa"  style={{ minWidth: '12rem' }}></Column>
+                                            <Column field="diagnosaicdix_nama" header="Nama Diagnosa"  style={{ minWidth: '16rem' }}></Column>
+                                            <Column field="kelompokdiagnosa_nama" header="Kelompok Diagnosa"  style={{ minWidth: '16rem' }}  body={unuICDIX}></Column>
+                                            	
+                                            {/* <Column rowEditor={allowEdit} headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column> */}
+
                                         </DataTable>
                                     </TabPanel>
+
 
                                 </TabView>
                                 <div className="col-md-6 d-flex mb-3">

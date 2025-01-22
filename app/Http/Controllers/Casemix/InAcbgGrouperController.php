@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use App\Models\Casemix\Inacbg;
 use App\Models\DiagnosaM;
 use App\Models\LookupM;
+use App\Models\Pasienicd9cmT;
+use App\Models\PasienmorbiditasT;
 use App\Models\PendaftaranT;
 use App\Models\ProfilrumahsakitM;
 use App\Models\SepT;
@@ -440,19 +442,8 @@ class InAcbgGrouperController extends Controller
         $pendaftaran_id = $request->input('pendaftaran_id');
         $diagnosa = $request->input('diagnosa');
         $diagnosa = explode(' ', $diagnosa);
-        $dataDiagnosa = [];
-
-        if(isset($diagnosa)){
-            $modDiagnosa = DiagnosaM::getDiagnosaByCode($diagnosa[0]);
-            // $dataDiagnosa['jenis_diagnosa'][0] = 'Diagnosa (ICD-10)';
-            // $dataDiagnosa['representative'][] =$modDiagnosa; 
-            $dataDiagnosa[] = [
-                'jenis_diagnosa' => 'Diagnosa (ICD-10)',  // Single value, not an array
-                'diagnosa_id' => $modDiagnosa->diagnosa_id,  // Assuming the result has 'diagnosa_id'
-                'diagnosa_kode' => $modDiagnosa->diagnosa_kode,  // Assuming the result has 'diagnosa_kode'
-                'diagnosa_nama' => $modDiagnosa->diagnosa_nama  // Assuming the result has 'diagnosa_nama'
-            ];
-        }
+        $dataDiagnosa = PasienmorbiditasT::getMorbiditas($pendaftaran_id);
+        $dataIcd9cm = Pasienicd9cmT::getIcdIX($pendaftaran_id);
         $model = new SearchSepService();
         $getRiwayat = $model->getRiwayatData($noSep)->getOriginalContent();
         $pendaftaran = PendaftaranT::getDataGroup($pendaftaran_id);
@@ -461,7 +452,7 @@ class InAcbgGrouperController extends Controller
         $profil = ProfilrumahsakitM::getProfilRS();
         return response()->json([
             'model' => $getRiwayat,'pendaftaran'=>$pendaftaran, 'tarif'=>$tarif,'obat'=>$obat,
-            'profil'=>$profil,'dataDiagnosa'=>$dataDiagnosa
+            'profil'=>$profil,'dataDiagnosa'=>$dataDiagnosa, 'dataIcd9cm'=>$dataIcd9cm
         ]);
     }
 }
