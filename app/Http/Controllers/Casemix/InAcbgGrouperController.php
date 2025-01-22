@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Casemix;
 use App\Http\Controllers\Controller;
 use App\Http\Services\MonitoringHistoryService;
 use App\Http\Services\SearchSepService;
+use App\Models\PegawaiM;
 use Illuminate\Http\Request;
 use App\Models\Casemix\Inacbg;
 use App\Models\DiagnosaM;
@@ -431,9 +432,10 @@ class InAcbgGrouperController extends Controller
             }
         }
         $caraMasuk= LookupM::getLookupType('inacbgs_caramasuk');
+        $DPJP = PegawaiM::getPegawaiDPJP('1');
         // $model = PendaftaranT::dataListGrouper($nopeserta);
         return Inertia::render('Grouping/indexPasien', [
-            'model' => $data,'pasien'=>$pasien, 'caraMasuk'=>$caraMasuk
+            'model' => $data,'pasien'=>$pasien, 'caraMasuk'=>$caraMasuk, 'DPJP'=>$DPJP
         ]);
     }
     public function getGroupperPasien(Request $request)

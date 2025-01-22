@@ -41,6 +41,7 @@ export default function CodingGrouping({ auth, pagination, data }) {
     const onProductSelect = (e) => {
         setSelectedProduct(e.value);
     };
+
     const handleClick = (event) => {
         // Show the overlay relative to the clicked element
         op.current.toggle(event, event.currentTarget);
