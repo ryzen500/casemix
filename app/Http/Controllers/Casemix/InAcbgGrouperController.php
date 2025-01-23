@@ -88,6 +88,61 @@ class InAcbgGrouperController extends Controller
     }
 
 
+    public function printKlaim(Request $request)
+    {
+
+        // Ambil keynya dari  ENV 
+        $key = env('INACBG_KEY');
+
+
+        // dd($request->all);
+        $nomor_sep = $request->input('noSep') ?? null;
+
+        // Structur Payload 
+        $data = [
+            'nomor_sep' => $nomor_sep,
+
+        ];
+
+
+        // result kirim claim
+        $results = $this->inacbg->printKlaim($data, $key);
+
+        // var_dump($results["data"]);die;
+        $base64Data = $this->getBase64FromNoSep($results["data"]);  // Ganti dengan logika Anda untuk mengambil base64
+
+        // Menghilangkan prefix base64 jika ada
+        if (preg_match('/^data:application\/pdf;base64,/', $base64Data)) {
+            $base64Data = substr($base64Data, strpos($base64Data, ',') + 1);
+        }
+    
+        // Decode base64 menjadi data binar
+        $pdfData = base64_decode($base64Data);
+    
+        // Tentukan nama file PDF
+        $fileName = 'klaim_' . $nomor_sep . '.pdf';
+    
+        // Kembalikan file PDF untuk diunduh
+        return response()->stream(
+            function () use ($pdfData) {
+                echo $pdfData;  // Menulis data PDF
+            },
+            200,
+            [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
+            ]
+        );
+    }
+
+    private function getBase64FromNoSep($results)
+{
+    // Implementasikan logika untuk mendapatkan data base64 berdasarkan noSep
+    // Misalnya dari database atau layanan lain
+    return "data:application/pdf;base64,$results";
+}
+
+
     public function updateNewKlaim(Request $request)
     {
 
@@ -96,7 +151,7 @@ class InAcbgGrouperController extends Controller
 
 
         $nomor_kartu = $request->input('nomor_kartu') ?? "";
-        $nomor_sep = $request->input('nomor_sep') ?? "";
+        $nomor_sep = $request->input('noSep') ?? "";
         $tgl_masuk = $request->input('tgl_masuk') ?? "";
         $cara_masuk = $request->input('cara_masuk') ?? "";
         $tgl_pulang = $request->input('tgl_pulang') ?? "";
@@ -172,7 +227,8 @@ class InAcbgGrouperController extends Controller
             'sistole'=>$sistole,
             'diastole'=>$diastole,
             'prosedur_non_bedah'=>$prosedur_non_bedah,
-            'prosedur_bedah'=>$konsultasi,
+            'prosedur_bedah'=>$prosedur_bedah,
+            'konsultasi'=>$konsultasi,
             'tenaga_ahli'=>$tenaga_ahli,
             'keperawatan'=>$keperawatan,
             'penunjang'=>$penunjang,

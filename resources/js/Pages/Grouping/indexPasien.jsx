@@ -27,9 +27,9 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
 
     let emptyDiagnosa = {
         diagnosa_id: null,
-        diagnosa_kode:null,
-        diagnosa_nama:null,
-        kelompokdiagnosa_nama:null
+        diagnosa_kode: null,
+        diagnosa_nama: null,
+        kelompokdiagnosa_nama: null
     };
     const [diagnosaTemp, setDiagnosaTemp] = useState(emptyDiagnosa);
     const [dataGrouper, setDataGrouper] = useState([]);
@@ -141,10 +141,10 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
             const res = response.data;
             // let query = event.query;
             let _filteredItems = [];
-    
-            for(let i = 0; i < res.length; i++) {
 
-                _filteredItems.push({'label': res[i].diagnosa_nama, 'value' : res[i].diagnosa_kode,'id':res[i].diagnosa_id})                
+            for (let i = 0; i < res.length; i++) {
+
+                _filteredItems.push({ 'label': res[i].diagnosa_nama, 'value': res[i].diagnosa_kode, 'id': res[i].diagnosa_id })
             }
 
             // const data = await response.json();
@@ -159,15 +159,15 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
         // setSearchText(null);
         setSearchText(e.query);
 
-        if(length>2){
+        if (length > 2) {
             fetchSuggestions(e.query);  // Fetch suggestions based on the input
         }
     }
-    
+
     const allowEdit = (rowData) => {
         return rowData.name !== 'Blue Band';
     };
-    const addRowDiagnosaX = (rowData) =>{
+    const addRowDiagnosaX = (rowData) => {
         let _dataDiagnosa = [...dataDiagnosa];
         let _diagnosa = { ...diagnosaTemp };
         _diagnosa.diagnosa_id = rowData.id;
@@ -190,7 +190,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                     suggestions={suggestions}
                     completeMethod={onSearchChange}  // Trigger search on typing
                     field="search-icdx"  // Field to display in the suggestion (adjust based on your API response)
-                    onSelect ={(e) => addRowDiagnosaX(e.value)}  // Update input field
+                    onSelect={(e) => addRowDiagnosaX(e.value)}  // Update input field
                     itemTemplate={(item) => (
                         <div>
                             <span>{item.label} ({item.value})</span>  {/* Custom template to display both label and value */}
@@ -210,7 +210,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                     suggestions={suggestions}
                     completeMethod={onSearchChange}  // Trigger search on typing
                     field="search-icdix"  // Field to display in the suggestion (adjust based on your API response)
-                    onSelect ={(e) => addRowDiagnosaIX(e.value)}  // Update input field
+                    onSelect={(e) => addRowDiagnosaIX(e.value)}  // Update input field
                     itemTemplate={(item) => (
                         <div>
                             <span>{item.label} ({item.value})</span>  {/* Custom template to display both label and value */}
@@ -220,7 +220,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
             </IconField>
         </div>
     );
-    
+
     const textEditor = (options) => {
         return <InputText type="text" value={options.value} onChange={(e) => options.editorCallback(e.target.value)} />;
     };
@@ -295,42 +295,42 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
 
         }
     };
-        // Custom input renderer for hidden input
-        const unuICDX = (rowData) => {
-            return (
-                <>
-                    <input type="hidden" value={rowData.pasienmorbiditas_id} />
-                    <input type="hidden" value={rowData.diagnosa_id} />
-                    {/* <input readOnly value={rowData.kelompokdiagnosa_nama} /> */}
-                    {rowData.kelompokdiagnosa_nama}
-                    
-                </>
-            );
-        };
-        // Custom input renderer for hidden input
-        const unuICDIX = (rowData) => {
-            return (
-                <>
-                    <input type="hidden" value={rowData.pasienicd9cm_id} />
-                    <input type="hidden" value={rowData.diagnosaicdix_id} />
-                    {/* <input readOnly value={rowData.kelompokdiagnosa_nama} /> */}
-                    {rowData.kelompokdiagnosa_nama}
-                    
-                </>
-            );
-        };
-        // Custom input renderer for hidden input
-        const inaICDX = (rowData) => {
-            return (
-                <>
-                    <input type="hidden" value={rowData.pasienmorbiditas_id} />
-                    <input type="hidden" value={rowData.diagnosa_id} />
-                    {/* <input readOnly value={rowData.kelompokdiagnosa_nama} /> */}
-                    {rowData.kelompokdiagnosa_nama}
-                    
-                </>
-            );
-        };
+    // Custom input renderer for hidden input
+    const unuICDX = (rowData) => {
+        return (
+            <>
+                <input type="hidden" value={rowData.pasienmorbiditas_id} />
+                <input type="hidden" value={rowData.diagnosa_id} />
+                {/* <input readOnly value={rowData.kelompokdiagnosa_nama} /> */}
+                {rowData.kelompokdiagnosa_nama}
+
+            </>
+        );
+    };
+    // Custom input renderer for hidden input
+    const unuICDIX = (rowData) => {
+        return (
+            <>
+                <input type="hidden" value={rowData.pasienicd9cm_id} />
+                <input type="hidden" value={rowData.diagnosaicdix_id} />
+                {/* <input readOnly value={rowData.kelompokdiagnosa_nama} /> */}
+                {rowData.kelompokdiagnosa_nama}
+
+            </>
+        );
+    };
+    // Custom input renderer for hidden input
+    const inaICDX = (rowData) => {
+        return (
+            <>
+                <input type="hidden" value={rowData.pasienmorbiditas_id} />
+                <input type="hidden" value={rowData.diagnosa_id} />
+                {/* <input readOnly value={rowData.kelompokdiagnosa_nama} /> */}
+                {rowData.kelompokdiagnosa_nama}
+
+            </>
+        );
+    };
     const onRowCollapse = (event) => {
         // toast.current.show({ severity: 'success', summary: event.data.name, detail: event.data.name, life: 3000 });
     };
@@ -559,7 +559,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Kamar / Akomodasi</div>
-                                                    <div className="col-sm-7"> <input type="text" className="m-2 form-control" name='tarif_akomodasi' value={(tarifs.kamar_akomodasi)} onChange={handleInputChange} onBlur={handleBlur}/></div>
+                                                    <div className="col-sm-7"> <input type="text" className="m-2 form-control" name='tarif_akomodasi' value={(tarifs.kamar_akomodasi)} onChange={handleInputChange} onBlur={handleBlur} /></div>
                                                 </div>
                                             </div>
                                         </td>
@@ -630,62 +630,62 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                 <div className='text-center'><Checkbox></Checkbox> Menyatakan benar bahwa data tarif yang tersebut di atas adalah benar sesuai dengan kondisi yang sesungguhnya.</div>
                                 <TabView>
                                     <TabPanel header="Coding UNU Grouper">
-                                        <DataTable  value={dataDiagnosa} 
-                                                dataKey="diagnosa_id" 
-                                                header={header}
-                                                onRowEditComplete={onRowEditComplete}
-                                                editMode="row"
+                                        <DataTable value={dataDiagnosa}
+                                            dataKey="diagnosa_id"
+                                            header={header}
+                                            onRowEditComplete={onRowEditComplete}
+                                            editMode="row"
                                         >
-                                            <Column field="diagnosa_kode" header="Kode Diagnosa"  style={{ minWidth: '12rem' }}></Column>
-                                            <Column field="diagnosa_nama" header="Nama Diagnosa"  style={{ minWidth: '16rem' }}></Column>
-                                            <Column field="kelompokdiagnosa_nama" header="Kelompok Diagnosa"  style={{ minWidth: '16rem' }}  body={unuICDX}></Column>
-                                            	
+                                            <Column field="diagnosa_kode" header="Kode Diagnosa" style={{ minWidth: '12rem' }}></Column>
+                                            <Column field="diagnosa_nama" header="Nama Diagnosa" style={{ minWidth: '16rem' }}></Column>
+                                            <Column field="kelompokdiagnosa_nama" header="Kelompok Diagnosa" style={{ minWidth: '16rem' }} body={unuICDX}></Column>
+
                                             {/* <Column rowEditor={allowEdit} headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column> */}
 
                                         </DataTable>
 
-                                        <DataTable  value={dataIcd9cm} 
-                                                dataKey="diagnosaicdix_id" 
-                                                header={headerUnuICDIX}
-                                                onRowEditComplete={onRowEditComplete}
-                                                editMode="row"
-                                                className="pt-5"
+                                        <DataTable value={dataIcd9cm}
+                                            dataKey="diagnosaicdix_id"
+                                            header={headerUnuICDIX}
+                                            onRowEditComplete={onRowEditComplete}
+                                            editMode="row"
+                                            className="pt-5"
                                         >
-                                            <Column field="diagnosaicdix_kode" header="Kode Diagnosa"  style={{ minWidth: '12rem' }}></Column>
-                                            <Column field="diagnosaicdix_nama" header="Nama Diagnosa"  style={{ minWidth: '16rem' }}></Column>
-                                            <Column field="kelompokdiagnosa_nama" header="Kelompok Diagnosa"  style={{ minWidth: '16rem' }}  body={unuICDIX}></Column>
-                                            	
+                                            <Column field="diagnosaicdix_kode" header="Kode Diagnosa" style={{ minWidth: '12rem' }}></Column>
+                                            <Column field="diagnosaicdix_nama" header="Nama Diagnosa" style={{ minWidth: '16rem' }}></Column>
+                                            <Column field="kelompokdiagnosa_nama" header="Kelompok Diagnosa" style={{ minWidth: '16rem' }} body={unuICDIX}></Column>
+
                                             {/* <Column rowEditor={allowEdit} headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column> */}
 
                                         </DataTable>
-    
+
                                     </TabPanel>
                                     <TabPanel header="Coding INA Grouper">
-                                        <DataTable  value={dataDiagnosaINA} 
-                                                    dataKey="diagnosa_id" 
-                                                    header={header}
-                                                    onRowEditComplete={onRowEditComplete}
-                                                    editMode="row"
-                                            >
-                                                <Column field="diagnosa_kode" header="Kode Diagnosa"  style={{ minWidth: '12rem' }}></Column>
-                                                <Column field="diagnosa_nama" header="Nama Diagnosa"  style={{ minWidth: '16rem' }}></Column>
-                                                <Column field="kelompokdiagnosa_nama" header="Kelompok Diagnosa"  style={{ minWidth: '16rem' }}  body={inaICDX}></Column>
-                                                    
-                                                {/* <Column rowEditor={allowEdit} headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column> */}
+                                        <DataTable value={dataDiagnosaINA}
+                                            dataKey="diagnosa_id"
+                                            header={header}
+                                            onRowEditComplete={onRowEditComplete}
+                                            editMode="row"
+                                        >
+                                            <Column field="diagnosa_kode" header="Kode Diagnosa" style={{ minWidth: '12rem' }}></Column>
+                                            <Column field="diagnosa_nama" header="Nama Diagnosa" style={{ minWidth: '16rem' }}></Column>
+                                            <Column field="kelompokdiagnosa_nama" header="Kelompok Diagnosa" style={{ minWidth: '16rem' }} body={inaICDX}></Column>
+
+                                            {/* <Column rowEditor={allowEdit} headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column> */}
 
                                         </DataTable>
 
-                                        <DataTable  value={dataIcd9cm} 
-                                                dataKey="diagnosaicdix_id" 
-                                                header={headerUnuICDIX}
-                                                onRowEditComplete={onRowEditComplete}
-                                                editMode="row"
-                                                className="pt-5"
+                                        <DataTable value={dataIcd9cm}
+                                            dataKey="diagnosaicdix_id"
+                                            header={headerUnuICDIX}
+                                            onRowEditComplete={onRowEditComplete}
+                                            editMode="row"
+                                            className="pt-5"
                                         >
-                                            <Column field="diagnosaicdix_kode" header="Kode Diagnosa"  style={{ minWidth: '12rem' }}></Column>
-                                            <Column field="diagnosaicdix_nama" header="Nama Diagnosa"  style={{ minWidth: '16rem' }}></Column>
-                                            <Column field="kelompokdiagnosa_nama" header="Kelompok Diagnosa"  style={{ minWidth: '16rem' }}  body={unuICDIX}></Column>
-                                            	
+                                            <Column field="diagnosaicdix_kode" header="Kode Diagnosa" style={{ minWidth: '12rem' }}></Column>
+                                            <Column field="diagnosaicdix_nama" header="Nama Diagnosa" style={{ minWidth: '16rem' }}></Column>
+                                            <Column field="kelompokdiagnosa_nama" header="Kelompok Diagnosa" style={{ minWidth: '16rem' }} body={unuICDIX}></Column>
+
                                             {/* <Column rowEditor={allowEdit} headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column> */}
 
                                         </DataTable>
@@ -811,7 +811,9 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
 
                                     {/* Button Finalisasi */}
                                     <div className="col-md-6 d-flex mb-3">
-                                        <button className="btn btn-primary" style={{ float: 'right' }} onClick={handleSimpanFinalisasi}>Finalisasi</button>
+                                        <button className="btn btn-primary ml-2" style={{ float: 'right' }} onClick={handleSimpanFinalisasi}>Finalisasi</button>
+                                        <button className="btn btn-secondary ml-2" style={{ float: 'left' }} onClick={handleCetak}>Cetak Klaim</button>
+
                                     </div>
 
 
@@ -837,7 +839,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
     const handleSimpanKlaim = (e) => {
         e.preventDefault(); // Prevent page reload
 
-        console.log('Form Data Submitted:', datas);
+        console.log('Form Data Submitted:', dataDiagnosa);
 
         // Perform API request with axios
         const payload = {
@@ -846,10 +848,20 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
             nama_pasien: datas.peserta.nama,
             nomor_kartu: datas.peserta.noKartu,
             noSep: datas.noSep,
-            tgl_lahir: datas.peserta.tglLahir,
-            gender: datas.peserta.tglLahir
+            tgl_pulang: pendaftarans.tglpulang,
+            tgl_masuk: pendaftarans.tglsep,
+            jenis_rawat: pendaftarans.jnspelayanan,
+            kelas_rawat: datas.klsRawat.klsRawatHak,
+            gender: datas.peserta.tglLahir,
+            coder_nik: auth.user.coder_nik,
+            nama_dokter: datas.dpjp.kdDPJP,
+            kode_tarif: profils.kode_tarifinacbgs_1,
+            payor_id: 3,
+            diagnosa: dataDiagnosa[0].diagnosa_kode,
+            diagnosa_inagrouper: `${dataDiagnosaINA[0].diagnosa_kode}#${dataDiagnosaINA[1].diagnosa_kode}#${dataDiagnosaINA[2].diagnosa_kode}`,
+
         };
-        axios.post(route('newClaim'), payload)
+        axios.post(route('updateNewKlaim'), payload)
             .then((response) => {
                 console.log('Response:', response.data);
                 // Handle the response from the backend
@@ -881,6 +893,38 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                 console.error('Error:', error);
             });
     };
+
+
+    /**handleCetak */
+    const handleCetak = (e) => {
+        e.preventDefault(); // Prevent page reload
+    
+        console.log("Auth", auth);
+    
+        // Buat payload dengan noSep
+        const payload = {
+            noSep: datas.noSep,
+        };
+    
+        // Lakukan request ke backend untuk mendapatkan file PDF
+        axios.post(route('printKlaim'), payload, { responseType: 'blob' })
+            .then((response) => {
+                console.log('response',response);
+                // Mendapatkan file PDF yang diunduh
+                const file = new Blob([response.data], { type: 'application/pdf' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(file);
+                link.download = `klaim_${datas.noSep}.pdf`; // Nama file PDF yang akan diunduh
+                link.click(); // Memulai proses unduhan
+    
+                toast.current.show({ severity: 'success', summary: `Data Berhasil Diunduh`, detail: datas.noSep, life: 3000 });
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                toast.current.show({ severity: 'error', summary: 'Gagal Mengunduh', detail: 'Terjadi kesalahan saat mengunduh file PDF.', life: 3000 });
+            });
+    };
+
 
     /**Simpan Grouping */
     const handleSimpanFinalisasi = (e) => {
