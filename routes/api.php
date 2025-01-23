@@ -63,6 +63,7 @@ Route::group(['prefix' => 'feature', 'middleware' => 'auth.jwt'], function () {
     Route::post('updateNewKlaim', [InAcbgGrouperController::class, 'updateNewKlaim'])->name('updateNewKlaim');
     Route::post('groupingStageSatu', [InAcbgGrouperController::class, 'groupingStageSatu'])->name('groupingStageSatu');
     Route::post('Finalisasi', [InAcbgGrouperController::class, 'Finalisasi'])->name('Finalisasi');
+    Route::post('printKlaim', [InAcbgGrouperController::class, 'printKlaim'])->name('printKlaim');
 
 });
 

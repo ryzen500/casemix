@@ -171,6 +171,18 @@ class Inacbg extends Model
     }
 
 
+    public function validateDataPrint(array $data)
+    {
+        $validator = Validator::make($data, [
+            'nomor_sep' => 'required|string'
+        ]);
+
+        if ($validator->fails()) {
+            throw new Exception(implode(', ', $validator->errors()->all()));
+        }
+    }
+
+
 
     public function validateDataKlaimUpdate(array $data)
     {
@@ -279,6 +291,29 @@ class Inacbg extends Model
 
             $response = $this->sendRequest($encryptedPayload, $key);
             return $this->processResponse($response, $key);
+        } catch (Exception $e) {
+            // echo "<pre>";
+            // var_dump($e);die;
+            return [
+                'success' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+
+
+    public function printKlaim(array $data, string $key): array
+    {
+        try {
+            // validate The Payload
+            $this->validateDataPrint($data);
+            $payload = $this->preparePayloadPrintklaim($data);
+
+            $encryptedPayload = $this->inacbg_encrypt($payload, $key); // Tambahkan parameter $key
+
+            $response = $this->sendRequest($encryptedPayload, $key);
+            return $this->processResponsePrint($response, $key);
         } catch (Exception $e) {
             // echo "<pre>";
             // var_dump($e);die;
@@ -441,6 +476,24 @@ class Inacbg extends Model
                 'nama_pasien' => $data['nama_pasien'] ?? null,
                 'tgl_lahir' => $data['tgl_lahir'] ?? null,
                 'gender' => $data['gender'] ?? null,
+            ],
+        ]);
+    }
+
+
+
+    /**
+     * Summary of preparePayloadPrintklaim
+     * @param array $data
+     * @return string
+     * This Is Function For Prepare The payload after Validation the Request Already Valid
+     */
+    private function preparePayloadPrintklaim(array $data): string
+    {
+        return json_encode([
+            'metadata' => ['method' => 'claim_print'],
+            'data' => [
+                'nomor_sep' => $data['nomor_sep'] ?? null
             ],
         ]);
     }
@@ -641,6 +694,26 @@ class Inacbg extends Model
         ];
     }
 
+    private function processResponsePrint(string $response, string $key): array
+    {
+        $decodedResponse = json_decode($response, true);
+
+        // echo "<pre>";
+        // var_dump($decodedResponse['data']);die;
+        if ($decodedResponse['metadata']['code'] == 200) {
+            return [
+                'success' => true,
+                'message' => $decodedResponse['metadata']['message'],
+                'data' => $decodedResponse['data'] ?? null,
+            ];
+        }
+
+        return [
+            'success' => false,
+            'message' => $decodedResponse['metadata']['message'] ?? 'Unknown error',
+        ];
+    }
+    
 
 
     private function processResponseDataKlaim(string $response, string $key): array
