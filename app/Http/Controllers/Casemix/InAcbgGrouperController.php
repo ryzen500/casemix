@@ -188,6 +188,10 @@ class InAcbgGrouperController extends Controller
         $kamar = $request->input("kamar") ?? "";
         $rawat_intensif = $request->input(key: "rawat_intensif") ?? "";
         $obat = $request->input(key: "obat") ?? "";
+        $obat_kronis = $request->input(key: "obat_kronis") ?? "";
+        $obat_kemoterapi = $request->input(key: "obat_kemoterapi") ?? "";
+
+        
         $alkes = $request->input(key: "alkes") ?? "";
         $bmhp = $request->input(key: "bmhp") ?? "";
         $sewa_alat = $request->input(key: "sewa_alat") ?? "";
@@ -239,6 +243,8 @@ class InAcbgGrouperController extends Controller
             'kamar'=>$kamar,
             'rawat_intensif'=>$rawat_intensif,
             'obat'=>$obat,
+            'obat_kronis'=>$obat_kronis,
+            'obat_kemoterapi'=>$obat_kemoterapi,
             'alkes'=>$alkes,
             'bmhp'=>$bmhp,
             'sewa_alat'=>$sewa_alat,
