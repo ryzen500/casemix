@@ -293,7 +293,18 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
     const [value, setValue] = useState(null);
 
     const handleValueChange = (e) => {
-      setValue(e.value); // Set the value from the InputNumber component
+
+        const { value, name } = e.target; // Get name and value from the event
+        setTarifs((prevTarifs) => ({
+            ...prevTarifs,
+            [name]: (value), // Update the specific field dynamically
+        }));
+
+        setObats((prevObats) => ({
+            ...prevObats,
+            [name]: (value), // Update the specific field dynamically
+        }));
+        //   setValue(e.value); // Set the value from the InputNumber component
     };
     // end onchange tarif
     const rowExpansionTemplate = (data) => {
@@ -530,7 +541,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Keperawatan</div>
-                                                    <div className="col-sm-7"> 
+                                                    <div className="col-sm-7">
                                                         <InputNumber
                                                             value={parseFloat(tarifs.keperawatan)}
                                                             onValueChange={handleValueChange}
@@ -552,7 +563,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Penunjang</div>
-                                                    <div className="col-sm-7">  
+                                                    <div className="col-sm-7">
                                                         <InputNumber
                                                             value={parseFloat(tarifs.penunjang)}
                                                             onValueChange={handleValueChange}
@@ -576,7 +587,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Radiologi</div>
-                                                    <div className="col-sm-7"> 
+                                                    <div className="col-sm-7">
                                                         <InputNumber
                                                             value={parseFloat(tarifs.radiologi)}
                                                             onValueChange={handleValueChange}
@@ -598,7 +609,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Laboratorium</div>
-                                                    <div className="col-sm-7"> 
+                                                    <div className="col-sm-7">
                                                         <InputNumber
                                                             value={parseFloat(tarifs.laboratorium)}
                                                             onValueChange={handleValueChange}
@@ -620,7 +631,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Pelayanan Darah</div>
-                                                    <div className="col-sm-7"> 
+                                                    <div className="col-sm-7">
                                                         <InputNumber
                                                             value={parseFloat(tarifs.pelayanandarah)}
                                                             onValueChange={handleValueChange}
@@ -644,7 +655,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Rehabilitasi</div>
-                                                    <div className="col-sm-7"> 
+                                                    <div className="col-sm-7">
                                                         <InputNumber
                                                             value={parseFloat(tarifs.rehabilitasi)}
                                                             onValueChange={handleValueChange}
@@ -666,7 +677,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Kamar / Akomodasi</div>
-                                                    <div className="col-sm-7"> 
+                                                    <div className="col-sm-7">
                                                         <InputNumber
                                                             value={parseFloat(tarifs.kamar_akomodasi)}
                                                             onValueChange={handleValueChange}
@@ -677,9 +688,9 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                                             prefix="" // Adds the Rp prefix to the input value
                                                             min={0} // Optional: Set a minimum value
                                                             max={100000000} // Optional: Set a maximum value
-                                                            name='tarif_akomodasi'
+                                                            name='kamar_akomodasi'
                                                             inputClassName='ml-2 form-control'
-                                                        />                                                    
+                                                        />
                                                     </div>
                                                 </div>
                                             </div>
@@ -826,7 +837,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Sewa Alat</div>
                                                     <div className="col-sm-7">
-                                                    <InputNumber
+                                                        <InputNumber
                                                             value={parseFloat(obats.sewaalat || 0)}
                                                             onValueChange={handleValueChange}
                                                             mode="currency"
@@ -1073,11 +1084,31 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
             kelas_rawat: datas.klsRawat.klsRawatHak,
             gender: datas.peserta.tglLahir,
             coder_nik: auth.user.coder_nik,
-            nama_dokter: datas.dpjp.kdDPJP,
+            nama_dokter: datas.dpjp.nmDPJP,
             kode_tarif: profils.kode_tarifinacbgs_1,
+            kamar: tarifs.kamar_akomodasi,
+            tenaga_ahli: tarifs.tenagaahli,
+            tenaga_ahli: tarifs.tenagaahli,
+            prosedur_non_bedah : tarifs.prosedurenonbedah,
+            prosedur_bedah : tarifs.prosedurebedah,
+            konsultasi : tarifs.konsultasi,
+            keperawatan : tarifs.keperawatan,
+            penunjang : tarifs.penunjang,
+            radiologi : tarifs.radiologi,
+            radiologi : tarifs.radiologi,
+            laboratorium: tarifs.laboratorium,
+            pelayanan_darah: tarifs.pelayanandarah,
+            rehabilitasi: tarifs.rehabilitasi,
+            rawat_intensif : tarifs.rawatintensif,
+            obat:obats.obat,
+            obat_kronis:obats.obatkronis,
+            obat_kemoterapi:obats.obatkemoterapi,
+            alkes : obats.alkes,
+            bmhp : obats.bmhp,
+            sewa_alat:obats.sewaalat,
             payor_id: 3,
-            diagnosa: dataDiagnosa[0].diagnosa_kode,
-            diagnosa_inagrouper: `${dataDiagnosaINA[0].diagnosa_kode}#${dataDiagnosaINA[1].diagnosa_kode}#${dataDiagnosaINA[2].diagnosa_kode}`,
+            diagnosa: `${dataDiagnosa.map(item => item.diagnosa_kode).join('#')}`,
+            diagnosa_inagrouper: `${dataDiagnosaINA.map(item => item.diagnosa_kode).join('#')}`,
 
         };
         axios.post(route('updateNewKlaim'), payload)
@@ -1117,25 +1148,25 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
     /**handleCetak */
     const handleCetak = (e) => {
         e.preventDefault(); // Prevent page reload
-    
+
         console.log("Auth", auth);
-    
+
         // Buat payload dengan noSep
         const payload = {
             noSep: datas.noSep,
         };
-    
+
         // Lakukan request ke backend untuk mendapatkan file PDF
         axios.post(route('printKlaim'), payload, { responseType: 'blob' })
             .then((response) => {
-                console.log('response',response);
+                console.log('response', response);
                 // Mendapatkan file PDF yang diunduh
                 const file = new Blob([response.data], { type: 'application/pdf' });
                 const link = document.createElement('a');
                 link.href = URL.createObjectURL(file);
                 link.download = `klaim_${datas.noSep}.pdf`; // Nama file PDF yang akan diunduh
                 link.click(); // Memulai proses unduhan
-    
+
                 toast.current.show({ severity: 'success', summary: `Data Berhasil Diunduh`, detail: datas.noSep, life: 3000 });
             })
             .catch((error) => {

@@ -541,6 +541,8 @@ class Inacbg extends Model
                     'kamar' => $data['kamar'] ?? null,
                     'rawat_intensif' => $data['rawat_intensif'] ?? null,
                     'obat' => $data['obat'] ?? null,
+                    'obat_kronis' => $data['obat_kronis'] ?? null,
+                    'obat_kemoterapi' => $data['obat_kemoterapi'] ?? null,
                     'alkes' => $data['alkes'] ?? null,
                     'bmhp' => $data['bmhp'] ?? null,
                     'sewa_alat' => $data['sewa_alat'] ?? null,
