@@ -17,7 +17,7 @@ import { FormatRupiah } from '@arismun/format-rupiah';
 import { IconField } from 'primereact/iconfield';
 import { InputIcon } from 'primereact/inputicon';
 import { AutoComplete } from 'primereact/autocomplete';
-
+import { InputNumber } from 'primereact/inputnumber';
 export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
     const [datas, setDatas] = useState([]);
     const [pendaftarans, setPendaftarans] = useState([]);
@@ -55,39 +55,6 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
         rawatintensif: 0,
     });
 
-    const format_rupiah = (value) => {
-        return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(value);
-    };
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-
-        // Remove any non-numeric characters except for the period (for decimal numbers)
-        const numericValue = value.replace(/[^0-9.]/g, '');
-
-        // Format the number if it is numeric
-        const formattedValue = numericValue ? (numericValue) : '';
-
-        setTarifs((prevData) => ({
-            ...prevData,
-            [name]: value, // Update the specific input based on the name
-        }));
-    };
-
-
-    const handleBlur = (e) => {
-        const { name, value } = e.target;
-
-        const numericValue = value.replace(/[^0-9.]/g, '');
-
-        // Format the number if it is numeric
-        const formattedValue = numericValue ? format_rupiah(numericValue) : '';
-
-        setTarifs((prevData) => ({
-            ...prevData,
-            [name]: formattedValue, // Update the specific input based on the name
-        }));
-    };
-
     const [obats, setObats] = useState({
         total: 0,
         obat: 0,
@@ -97,27 +64,15 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
         bmhp: 0,
         sewaalat: 0,
     });
-
-
     const [profils, setProfil] = useState([]);
     const [selectedCaraMasuk, setCaraMasuk] = useState(null);
     const [selectedDPJP, setDPJP] = useState(null);
-
     const [expandedRows, setExpandedRows] = useState(null);
     const [loading, setLoading] = useState(false); // Loading state for expanded row
     const toast = useRef(null);
     const [suggestions, setSuggestions] = useState([]);
     const [searchText, setSearchText] = useState('');
     useEffect(() => {
-        setTarifs((prevData) => {
-            const formattedData = {};
-            for (const key in prevData) {
-                if (prevData[key]) {
-                    formattedData[key] = format_rupiah(prevData[key]);
-                }
-            }
-            return formattedData;
-        });
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const onRowExpand1 = (event) => {
@@ -334,6 +289,13 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
     const onRowCollapse = (event) => {
         // toast.current.show({ severity: 'success', summary: event.data.name, detail: event.data.name, life: 3000 });
     };
+    // onchange tarif
+    const [value, setValue] = useState(null);
+
+    const handleValueChange = (e) => {
+      setValue(e.value); // Set the value from the InputNumber component
+    };
+    // end onchange tarif
     const rowExpansionTemplate = (data) => {
         return (
 
@@ -449,7 +411,19 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                         <td colSpan={3}>
                                             <div className="col-sm-12 text-center">
                                                 Tarif Rumah Sakit :
-                                                <input type="text" className="ml-2" name='total_tarif_rs' value={format_rupiah(parseFloat(tarifs.total) + parseFloat(obats.total))} />
+                                                <InputNumber
+                                                    value={parseFloat(tarifs.total) + parseFloat(obats.total)}
+                                                    onValueChange={handleValueChange}
+                                                    mode="currency"
+                                                    currency="IDR"
+                                                    locale="id-ID" // Set the locale for Indonesia (Rupiah)
+                                                    showSymbol
+                                                    prefix="" // Adds the Rp prefix to the input value
+                                                    min={0} // Optional: Set a minimum value
+                                                    max={100000000} // Optional: Set a maximum value
+                                                    name='total_tarif_rs'
+                                                    inputClassName='ml-2 form-control'
+                                                />
 
                                             </div>
                                         </td>
@@ -462,8 +436,19 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                                         Prosedur Non Bedah
                                                     </div>
                                                     <div className="col-sm-7">
-                                                        <input type="text" className="m-2 form-control" name='prosedurenonbedah' value={(tarifs.prosedurenonbedah)}
-                                                            onChange={handleInputChange} onBlur={handleBlur} />
+                                                        <InputNumber
+                                                            value={parseFloat(tarifs.prosedurenonbedah)}
+                                                            onValueChange={handleValueChange}
+                                                            mode="currency"
+                                                            currency="IDR"
+                                                            locale="id-ID" // Set the locale for Indonesia (Rupiah)
+                                                            showSymbol
+                                                            prefix="" // Adds the Rp prefix to the input value
+                                                            min={0} // Optional: Set a minimum value
+                                                            max={100000000} // Optional: Set a maximum value
+                                                            name='prosedurenonbedah'
+                                                            inputClassName='ml-2 form-control'
+                                                        />
                                                     </div>
                                                 </div>
                                             </div>
@@ -476,7 +461,19 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                                         Prosedur Bedah
                                                     </div>
                                                     <div className="col-sm-7">
-                                                        <input type="text" className="m-2 form-control" name='tarif_prosedur_bedah' value={format_rupiah(tarifs.prosedurebedah)} />
+                                                        <InputNumber
+                                                            value={parseFloat(tarifs.prosedurebedah)}
+                                                            onValueChange={handleValueChange}
+                                                            mode="currency"
+                                                            currency="IDR"
+                                                            locale="id-ID" // Set the locale for Indonesia (Rupiah)
+                                                            showSymbol
+                                                            prefix="" // Adds the Rp prefix to the input value
+                                                            min={0} // Optional: Set a minimum value
+                                                            max={100000000} // Optional: Set a maximum value
+                                                            name='tarif_prosedur_bedah'
+                                                            inputClassName='ml-2 form-control'
+                                                        />
                                                     </div>
                                                 </div>
                                             </div>
@@ -488,7 +485,19 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                                         Konsultasi
                                                     </div>
                                                     <div className="col-sm-7">
-                                                        <input type="text" className="m-2 form-control" name='konsultasi' value={tarifs.konsultasi} onChange={handleInputChange} onBlur={handleBlur} />
+                                                        <InputNumber
+                                                            value={parseFloat(tarifs.konsultasi)}
+                                                            onValueChange={handleValueChange}
+                                                            mode="currency"
+                                                            currency="IDR"
+                                                            locale="id-ID" // Set the locale for Indonesia (Rupiah)
+                                                            showSymbol
+                                                            prefix="" // Adds the Rp prefix to the input value
+                                                            min={0} // Optional: Set a minimum value
+                                                            max={100000000} // Optional: Set a maximum value
+                                                            name='konsultasi'
+                                                            inputClassName='ml-2 form-control'
+                                                        />
                                                     </div>
                                                 </div>
                                             </div>
@@ -499,7 +508,21 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Tenaga Ahli</div>
-                                                    <div className="col-sm-7"><input type="text" className="m-2 form-control" name='tarif_tenaga_ahli' value={tarifs.tenagaahli} /></div>
+                                                    <div className="col-sm-7">
+                                                        <InputNumber
+                                                            value={parseFloat(tarifs.tenagaahli)}
+                                                            onValueChange={handleValueChange}
+                                                            mode="currency"
+                                                            currency="IDR"
+                                                            locale="id-ID" // Set the locale for Indonesia (Rupiah)
+                                                            showSymbol
+                                                            prefix="" // Adds the Rp prefix to the input value
+                                                            min={0} // Optional: Set a minimum value
+                                                            max={100000000} // Optional: Set a maximum value
+                                                            name='tarif_tenaga_ahli'
+                                                            inputClassName='ml-2 form-control'
+                                                        />
+                                                    </div>
                                                 </div>
                                             </div>
                                         </td>
@@ -507,7 +530,21 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Keperawatan</div>
-                                                    <div className="col-sm-7"> <input type="text" className="m-2 form-control" name='tarif_keperawatan' value={tarifs.keperawatan} /></div>
+                                                    <div className="col-sm-7"> 
+                                                        <InputNumber
+                                                            value={parseFloat(tarifs.keperawatan)}
+                                                            onValueChange={handleValueChange}
+                                                            mode="currency"
+                                                            currency="IDR"
+                                                            locale="id-ID" // Set the locale for Indonesia (Rupiah)
+                                                            showSymbol
+                                                            prefix="" // Adds the Rp prefix to the input value
+                                                            min={0} // Optional: Set a minimum value
+                                                            max={100000000} // Optional: Set a maximum value
+                                                            name='tarif_keperawatan'
+                                                            inputClassName='ml-2 form-control'
+                                                        />
+                                                    </div>
                                                 </div>
                                             </div>
                                         </td>
@@ -515,7 +552,21 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Penunjang</div>
-                                                    <div className="col-sm-7">  <input type="text" className="m-2 form-control" name='tarif_penunjang' value={format_rupiah(tarifs.penunjang)} /></div>
+                                                    <div className="col-sm-7">  
+                                                        <InputNumber
+                                                            value={parseFloat(tarifs.penunjang)}
+                                                            onValueChange={handleValueChange}
+                                                            mode="currency"
+                                                            currency="IDR"
+                                                            locale="id-ID" // Set the locale for Indonesia (Rupiah)
+                                                            showSymbol
+                                                            prefix="" // Adds the Rp prefix to the input value
+                                                            min={0} // Optional: Set a minimum value
+                                                            max={100000000} // Optional: Set a maximum value
+                                                            name='tarif_penunjang'
+                                                            inputClassName='ml-2 form-control'
+                                                        />
+                                                    </div>
                                                 </div>
                                             </div>
                                         </td>
@@ -525,7 +576,21 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Radiologi</div>
-                                                    <div className="col-sm-7"> <input type="text" className="m-2 form-control" name='tarif_radiologi' value={format_rupiah(tarifs.radiologi)} /></div>
+                                                    <div className="col-sm-7"> 
+                                                        <InputNumber
+                                                            value={parseFloat(tarifs.radiologi)}
+                                                            onValueChange={handleValueChange}
+                                                            mode="currency"
+                                                            currency="IDR"
+                                                            locale="id-ID" // Set the locale for Indonesia (Rupiah)
+                                                            showSymbol
+                                                            prefix="" // Adds the Rp prefix to the input value
+                                                            min={0} // Optional: Set a minimum value
+                                                            max={100000000} // Optional: Set a maximum value
+                                                            name='tarif_radiologi'
+                                                            inputClassName='ml-2 form-control'
+                                                        />
+                                                    </div>
                                                 </div>
                                             </div>
                                         </td>
@@ -533,7 +598,21 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Laboratorium</div>
-                                                    <div className="col-sm-7"> <input type="text" className="m-2 form-control" name='tarif_laboratorium' value={tarifs.laboratorium} /></div>
+                                                    <div className="col-sm-7"> 
+                                                        <InputNumber
+                                                            value={parseFloat(tarifs.laboratorium)}
+                                                            onValueChange={handleValueChange}
+                                                            mode="currency"
+                                                            currency="IDR"
+                                                            locale="id-ID" // Set the locale for Indonesia (Rupiah)
+                                                            showSymbol
+                                                            prefix="" // Adds the Rp prefix to the input value
+                                                            min={0} // Optional: Set a minimum value
+                                                            max={100000000} // Optional: Set a maximum value
+                                                            name='tarif_laboratorium'
+                                                            inputClassName='ml-2 form-control'
+                                                        />
+                                                    </div>
                                                 </div>
                                             </div>
                                         </td>
@@ -541,7 +620,21 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Pelayanan Darah</div>
-                                                    <div className="col-sm-7"> <input type="text" className="m-2 form-control" name='tarif_pelayanan_darah' value={format_rupiah(tarifs.pelayanandarah)} /></div>
+                                                    <div className="col-sm-7"> 
+                                                        <InputNumber
+                                                            value={parseFloat(tarifs.pelayanandarah)}
+                                                            onValueChange={handleValueChange}
+                                                            mode="currency"
+                                                            currency="IDR"
+                                                            locale="id-ID" // Set the locale for Indonesia (Rupiah)
+                                                            showSymbol
+                                                            prefix="" // Adds the Rp prefix to the input value
+                                                            min={0} // Optional: Set a minimum value
+                                                            max={100000000} // Optional: Set a maximum value
+                                                            name='tarif_pelayanan_darah'
+                                                            inputClassName='ml-2 form-control'
+                                                        />
+                                                    </div>
                                                 </div>
                                             </div>
                                         </td>
@@ -551,7 +644,21 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Rehabilitasi</div>
-                                                    <div className="col-sm-7"> <input type="text" className="m-2 form-control" name='tarif_rehabilitasi' value={format_rupiah(tarifs.rehabilitasi)} /></div>
+                                                    <div className="col-sm-7"> 
+                                                        <InputNumber
+                                                            value={parseFloat(tarifs.rehabilitasi)}
+                                                            onValueChange={handleValueChange}
+                                                            mode="currency"
+                                                            currency="IDR"
+                                                            locale="id-ID" // Set the locale for Indonesia (Rupiah)
+                                                            showSymbol
+                                                            prefix="" // Adds the Rp prefix to the input value
+                                                            min={0} // Optional: Set a minimum value
+                                                            max={100000000} // Optional: Set a maximum value
+                                                            name='tarif_rehabilitasi'
+                                                            inputClassName='ml-2 form-control'
+                                                        />
+                                                    </div>
                                                 </div>
                                             </div>
                                         </td>
@@ -559,7 +666,21 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Kamar / Akomodasi</div>
-                                                    <div className="col-sm-7"> <input type="text" className="m-2 form-control" name='tarif_akomodasi' value={(tarifs.kamar_akomodasi)} onChange={handleInputChange} onBlur={handleBlur}/></div>
+                                                    <div className="col-sm-7"> 
+                                                        <InputNumber
+                                                            value={parseFloat(tarifs.kamar_akomodasi)}
+                                                            onValueChange={handleValueChange}
+                                                            mode="currency"
+                                                            currency="IDR"
+                                                            locale="id-ID" // Set the locale for Indonesia (Rupiah)
+                                                            showSymbol
+                                                            prefix="" // Adds the Rp prefix to the input value
+                                                            min={0} // Optional: Set a minimum value
+                                                            max={100000000} // Optional: Set a maximum value
+                                                            name='tarif_akomodasi'
+                                                            inputClassName='ml-2 form-control'
+                                                        />                                                    
+                                                    </div>
                                                 </div>
                                             </div>
                                         </td>
@@ -567,7 +688,21 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Rawat Intensif</div>
-                                                    <div className="col-sm-7"><input type="text" className="m-2 form-control" name='tarif_rawat_integerensif' value={tarifs.rawatintensif} /></div>
+                                                    <div className="col-sm-7">
+                                                        <InputNumber
+                                                            value={parseFloat(tarifs.rawatintensif)}
+                                                            onValueChange={handleValueChange}
+                                                            mode="currency"
+                                                            currency="IDR"
+                                                            locale="id-ID" // Set the locale for Indonesia (Rupiah)
+                                                            showSymbol
+                                                            prefix="" // Adds the Rp prefix to the input value
+                                                            min={0} // Optional: Set a minimum value
+                                                            max={100000000} // Optional: Set a maximum value
+                                                            name='tarif_rawat_integerensif'
+                                                            inputClassName='ml-2 form-control'
+                                                        />
+                                                    </div>
                                                 </div>
                                             </div>
                                         </td>
@@ -578,7 +713,21 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Obat</div>
-                                                    <div className="col-sm-7"><input type="text" className="m-2 form-control" name='tarif_obat' value={format_rupiah(obats.obat)} /></div>
+                                                    <div className="col-sm-7">
+                                                        <InputNumber
+                                                            value={parseFloat(obats.obat)}
+                                                            onValueChange={handleValueChange}
+                                                            mode="currency"
+                                                            currency="IDR"
+                                                            locale="id-ID" // Set the locale for Indonesia (Rupiah)
+                                                            showSymbol
+                                                            prefix="" // Adds the Rp prefix to the input value
+                                                            min={0} // Optional: Set a minimum value
+                                                            max={100000000} // Optional: Set a maximum value
+                                                            name='tarif_obat'
+                                                            inputClassName='ml-2 form-control'
+                                                        />
+                                                    </div>
                                                 </div>
                                             </div>
                                         </td>
@@ -586,7 +735,21 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Obat Kronis</div>
-                                                    <div className="col-sm-7"><input type="text" className="m-2 form-control" name='tarif_obat_kronis' value={format_rupiah(obats.obatkronis)} /></div>
+                                                    <div className="col-sm-7">
+                                                        <InputNumber
+                                                            value={parseFloat(obats.obatkronis)}
+                                                            onValueChange={handleValueChange}
+                                                            mode="currency"
+                                                            currency="IDR"
+                                                            locale="id-ID" // Set the locale for Indonesia (Rupiah)
+                                                            showSymbol
+                                                            prefix="" // Adds the Rp prefix to the input value
+                                                            min={0} // Optional: Set a minimum value
+                                                            max={100000000} // Optional: Set a maximum value
+                                                            name='tarif_obat_kronis'
+                                                            inputClassName='ml-2 form-control'
+                                                        />
+                                                    </div>
                                                 </div>
                                             </div>
                                         </td>
@@ -594,7 +757,21 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Obat Kemoterapi</div>
-                                                    <div className="col-sm-7"><input type="text" className="m-2 form-control" name='tarif_obat_kemoterapi' value={format_rupiah(obats.obatkemoterapi)} /></div>
+                                                    <div className="col-sm-7">
+                                                        <InputNumber
+                                                            value={parseFloat(obats.obatkemoterapi)}
+                                                            onValueChange={handleValueChange}
+                                                            mode="currency"
+                                                            currency="IDR"
+                                                            locale="id-ID" // Set the locale for Indonesia (Rupiah)
+                                                            showSymbol
+                                                            prefix="" // Adds the Rp prefix to the input value
+                                                            min={0} // Optional: Set a minimum value
+                                                            max={100000000} // Optional: Set a maximum value
+                                                            name='tarif_obat_kemoterapi'
+                                                            inputClassName='ml-2 form-control'
+                                                        />
+                                                    </div>
                                                 </div>
                                             </div>
                                         </td>
@@ -604,7 +781,21 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Alkes</div>
-                                                    <div className="col-sm-7"><input type="text" className="m-2 form-control" name='tarif_alkes' value={format_rupiah(obats.alkes)} /></div>
+                                                    <div className="col-sm-7">
+                                                        <InputNumber
+                                                            value={parseFloat(obats.alkes)}
+                                                            onValueChange={handleValueChange}
+                                                            mode="currency"
+                                                            currency="IDR"
+                                                            locale="id-ID" // Set the locale for Indonesia (Rupiah)
+                                                            showSymbol
+                                                            prefix="" // Adds the Rp prefix to the input value
+                                                            min={0} // Optional: Set a minimum value
+                                                            max={100000000} // Optional: Set a maximum value
+                                                            name='tarif_alkes'
+                                                            inputClassName='ml-2 form-control'
+                                                        />
+                                                    </div>
                                                 </div>
                                             </div>
                                         </td>
@@ -612,7 +803,21 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>BMHP</div>
-                                                    <div className="col-sm-7"><input type="text" className="m-2 form-control" name='tarif_bhp' value={format_rupiah(obats.bmhp)} /></div>
+                                                    <div className="col-sm-7">
+                                                        <InputNumber
+                                                            value={parseFloat(obats.bmhp)}
+                                                            onValueChange={handleValueChange}
+                                                            mode="currency"
+                                                            currency="IDR"
+                                                            locale="id-ID" // Set the locale for Indonesia (Rupiah)
+                                                            showSymbol
+                                                            prefix="" // Adds the Rp prefix to the input value
+                                                            min={0} // Optional: Set a minimum value
+                                                            max={100000000} // Optional: Set a maximum value
+                                                            name='tarif_bhp'
+                                                            inputClassName='ml-2 form-control'
+                                                        />
+                                                    </div>
                                                 </div>
                                             </div>
                                         </td>
@@ -620,7 +825,21 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Sewa Alat</div>
-                                                    <div className="col-sm-7"><input type="text" className="m-2 form-control" name='tarif_sewa_alat' value={format_rupiah(obats.sewaalat || 0)} /></div>
+                                                    <div className="col-sm-7">
+                                                    <InputNumber
+                                                            value={parseFloat(obats.sewaalat || 0)}
+                                                            onValueChange={handleValueChange}
+                                                            mode="currency"
+                                                            currency="IDR"
+                                                            locale="id-ID" // Set the locale for Indonesia (Rupiah)
+                                                            showSymbol
+                                                            prefix="" // Adds the Rp prefix to the input value
+                                                            min={0} // Optional: Set a minimum value
+                                                            max={100000000} // Optional: Set a maximum value
+                                                            name='tarif_sewa_alat'
+                                                            inputClassName='ml-2 form-control'
+                                                        />
+                                                    </div>
                                                 </div>
                                             </div>
                                         </td>
