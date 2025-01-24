@@ -72,6 +72,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
     const toast = useRef(null);
     const [suggestions, setSuggestions] = useState([]);
     const [searchText, setSearchText] = useState('');
+    const [searchTextIX, setSearchTextIX] = useState('');
+
     useEffect(() => {
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -86,7 +88,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
 
         // setProducts(_products);
     };
-    // Function to fetch data from API
+    // Function to fetch data from API search diagnosa_kode/diagnosa_nama
     const fetchSuggestions = async (query) => {
         try {
             // Replace with your API 
@@ -108,6 +110,118 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
             console.error('Error fetching data:', error);
         }
     };
+    // Function to fetch data from API search diagnosa_kode
+    const fetchSuggestionsIX = async (query) => {
+            try {
+            // Replace with your API 
+            const response = await axios.post('/searchDiagnosaIX', {
+                keyword: query, // Send the expandedProduct.noSep data
+            });
+            const res = response.data;
+            // let query = event.query;
+            let _filteredItems = [];
+
+            for (let i = 0; i < res.length; i++) {
+                _filteredItems.push({ 'label': res[i].diagnosaicdix_nama, 'value': res[i].diagnosaicdix_kode	, 'id': res[i].diagnosaicdix_id })
+            }
+            // const data = await response.json();
+            setSuggestions(_filteredItems);  // Set your data here
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
+        // Function to fetch data from API search diagnosa_kode
+    const fetchSuggestionsCode = async (query) => {
+        try {
+            // Replace with your API 
+            const response = await axios.post('/searchDiagnosaCode', {
+                keyword: query, // Send the expandedProduct.noSep data
+            });
+            const res = response.data;
+            // let query = event.query;
+            let _filteredItems = [];
+
+            for (let i = 0; i < res.length; i++) {
+                _filteredItems.push({ 'label': res[i].diagnosa_nama, 'value': res[i].diagnosa_kode, 'id': res[i].diagnosa_id })
+            }
+            // const data = await response.json();
+            setSuggestions(_filteredItems);  // Set your data here
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
+        // Function to fetch data from API search diagnosa_kode
+        const fetchSuggestionsCodeIX = async (query) => {
+            try {
+                // Replace with your API 
+                const response = await axios.post('/searchDiagnosaCodeIX', {
+                    keyword: query, // Send the expandedProduct.noSep data
+                });
+                const res = response.data;
+                // let query = event.query;
+                let _filteredItems = [];
+
+                for (let i = 0; i < res.length; i++) {
+                    _filteredItems.push({ 'label': res[i].diagnosaicdix_nama, 'value': res[i].diagnosaicdix_kode	, 'id': res[i].diagnosaicdix_id })
+                }
+                // const data = await response.json();
+                setSuggestions(_filteredItems);  // Set your data here
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+          // Handle input changes
+        const handleInputChangeAutocompleteRow = (index, field, value) => {
+            const updatedRows = [...dataDiagnosa];
+            updatedRows[index][field] = value;
+            setDiagnosa(updatedRows);
+            let length = value.length;
+            if (length > 2) {
+                fetchSuggestionsCode(value);  // Fetch suggestions based on the input
+            }
+        };
+        // Handle input changes
+        const handleInputChangeAutocompleteIXRow = (index, field, value) => {
+            const updatedRows = [...dataIcd9cm];
+            updatedRows[index][field] = value;
+            setDataIcd9cm(updatedRows);
+            let length = value.length;
+            if (length > 2) {
+                fetchSuggestionsCodeIX(value);  // Fetch suggestions based on the input
+            }
+        };
+        const handleInputChangeRow = (index, field, value) => {
+            const updatedRows = [...dataDiagnosa];
+            updatedRows[index][field] = value;
+            setDiagnosa(updatedRows);
+            let length = value.length;
+            if (length > 2) {
+                fetchSuggestionsCode(value);  // Fetch suggestions based on the input
+            }
+        };
+        const updateRow = (index, value) => {
+            const updatedRows = [...dataDiagnosa];
+            updatedRows[index]['diagnosa_id'] = value.id;
+            updatedRows[index]['diagnosa_kode'] = value.value;
+            updatedRows[index]['diagnosa_nama'] = value.label;
+            setDiagnosa(updatedRows);
+            let length = value.length;
+            if (length > 2) {
+                fetchSuggestionsCode(value);  // Fetch suggestions based on the input
+            }
+        };
+        const updateIXRow = (index, value) => {
+            const updatedRows = [...dataIcd9cm];
+            updatedRows[index]['pasienicd9cm_id'] = value.id;
+            updatedRows[index]['diagnosaicdix_kode'] = value.value;
+            updatedRows[index]['diagnosaicdix_nama'] = value.label;
+            setDataIcd9cm(updatedRows);
+            let length = value.length;
+            if (length > 2) {
+                fetchSuggestionsCode(value);  // Fetch suggestions based on the input
+            }
+        }; 
+        
     // Handle change in input field
     const onSearchChange = (e) => {
         let length = e.query.length;
@@ -118,7 +232,16 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
             fetchSuggestions(e.query);  // Fetch suggestions based on the input
         }
     }
+    // Handle change in input field
+    const onSearchChangeIX = (e) => {
+        let length = e.query.length;
+        // setSearchText(null);
+        setSearchTextIX(e.query);
 
+        if (length > 2) {
+            fetchSuggestionsIX(e.query);  // Fetch suggestions based on the input
+        }
+    }
     const allowEdit = (rowData) => {
         return rowData.name !== 'Blue Band';
     };
@@ -132,6 +255,19 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
         setDiagnosa(_dataDiagnosa);
         setDiagnosaTemp(emptyDiagnosa);
         setSearchText(null);
+        // setDiagnosa(response.data.dataDiagnosa);
+
+    }
+    const addRowDiagnosaIX = (rowData) => {
+        let _dataDiagnosa = [...dataIcd9cm];
+        let _diagnosa = { ...diagnosaTemp };
+        _diagnosa.pasienicd9cm_id = rowData.id;
+        _diagnosa.diagnosaicdix_nama = rowData.label;
+        _diagnosa.diagnosaicdix_kode = rowData.value;
+        _dataDiagnosa.push(_diagnosa);
+        setDataIcd9cm(_dataDiagnosa);
+        setDiagnosaTemp(emptyDiagnosa);
+        setSearchTextIX(null);
         // setDiagnosa(response.data.dataDiagnosa);
 
     }
@@ -161,9 +297,9 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
             <IconField iconPosition="left">
 
                 <AutoComplete
-                    value={searchText}
+                    value={searchTextIX}
                     suggestions={suggestions}
-                    completeMethod={onSearchChange}  // Trigger search on typing
+                    completeMethod={onSearchChangeIX}  // Trigger search on typing
                     field="search-icdix"  // Field to display in the suggestion (adjust based on your API response)
                     onSelect={(e) => addRowDiagnosaIX(e.value)}  // Update input field
                     itemTemplate={(item) => (
@@ -293,18 +429,15 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
     const [value, setValue] = useState(null);
 
     const handleValueChange = (e) => {
-
-        const { value, name } = e.target; // Get name and value from the event
-        setTarifs((prevTarifs) => ({
-            ...prevTarifs,
-            [name]: (value), // Update the specific field dynamically
-        }));
-
-        setObats((prevObats) => ({
-            ...prevObats,
-            [name]: (value), // Update the specific field dynamically
-        }));
-        //   setValue(e.value); // Set the value from the InputNumber component
+      setValue(e.value); // Set the value from the InputNumber component
+    };
+    const removeRow = (index) => {
+        const updatedRows = dataDiagnosa.filter((_, i) => i !== index);
+        setDiagnosa(updatedRows); // Remove row and update state
+    };
+    const removeRowIX = (index) => {
+        const updatedRows = dataIcd9cm.filter((_, i) => i !== index);
+        setDataIcd9cm(updatedRows); // Remove row and update state
     };
     // end onchange tarif
     const rowExpansionTemplate = (data) => {
@@ -863,65 +996,314 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                 <div className='text-center'><Checkbox></Checkbox> Menyatakan benar bahwa data tarif yang tersebut di atas adalah benar sesuai dengan kondisi yang sesungguhnya.</div>
                                 <TabView>
                                     <TabPanel header="Coding UNU Grouper">
-                                        <DataTable value={dataDiagnosa}
-                                            dataKey="diagnosa_id"
-                                            header={header}
-                                            onRowEditComplete={onRowEditComplete}
-                                            editMode="row"
-                                        >
-                                            <Column field="diagnosa_kode" header="Kode Diagnosa" style={{ minWidth: '12rem' }}></Column>
-                                            <Column field="diagnosa_nama" header="Nama Diagnosa" style={{ minWidth: '16rem' }}></Column>
-                                            <Column field="kelompokdiagnosa_nama" header="Kelompok Diagnosa" style={{ minWidth: '16rem' }} body={unuICDX}></Column>
-
-                                            {/* <Column rowEditor={allowEdit} headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column> */}
-
-                                        </DataTable>
-
-                                        <DataTable value={dataIcd9cm}
-                                            dataKey="diagnosaicdix_id"
-                                            header={headerUnuICDIX}
-                                            onRowEditComplete={onRowEditComplete}
-                                            editMode="row"
-                                            className="pt-5"
-                                        >
-                                            <Column field="diagnosaicdix_kode" header="Kode Diagnosa" style={{ minWidth: '12rem' }}></Column>
-                                            <Column field="diagnosaicdix_nama" header="Nama Diagnosa" style={{ minWidth: '16rem' }}></Column>
-                                            <Column field="kelompokdiagnosa_nama" header="Kelompok Diagnosa" style={{ minWidth: '16rem' }} body={unuICDIX}></Column>
-
-                                            {/* <Column rowEditor={allowEdit} headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column> */}
-
-                                        </DataTable>
+                                        <div className="p-datatable-header">
+                                            {
+                                                header
+                                            }
+                                        </div>
+                                        <table className="p-datatable-table">
+                                            <thead className='p-datatable-thead'>
+                                                <tr>
+                                                <th>No</th>
+                                                <th>Diagnosa Kode</th>
+                                                <th>Diagnosa Nama</th>
+                                                <th>Kelompok Diagnosa</th>
+                                                <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {dataDiagnosa.map((row, index) => (
+                                                <tr key={index}>
+                                                    <td>
+                                                        {index + 1}
+                                                    </td>
+                                                    <td>
+                                                        <input
+                                                            type="hidden"
+                                                            value={row.diagnosa_id}
+                                                            onChange={(e) => handleInputChange(index, 'diagnosa_id', e.target.value)}
+                                                            name={`[PasienmorbiditasT][${index}][diagnosa_id]`}
+                                                            id={`diagnosa_id_${index}`}
+                                                        />
+                                                        <AutoComplete
+                                                            value={row.diagnosa_kode}
+                                                            suggestions={suggestions}
+                                                            completeMethod={fetchSuggestionsCode}
+                                                            field="name"
+                                                            onChange={(e) => handleInputChangeAutocompleteRow(index, 'diagnosa_kode', e.value)}
+                                                            name={`[PasienmorbiditasT][${index}][diagnosa_kode]`}
+                                                            id={`diagnosa_kode_${index}`}
+                                                            onSelect={(e) => updateRow(index,e.value)}  // Update input field
+                                                            // loading={loading}
+                                                            minLength={3}
+                                                            placeholder="Enter Diagnosa Kode"
+                                                            itemTemplate={(item) => (
+                                                                <div>
+                                                                    <span>{item.label} ({item.value})</span>  {/* Custom template to display both label and value */}
+                                                                </div>
+                                                            )}
+                                                        />
+        
+                                                    </td>
+                                                    <td>
+                                                    <input
+                                                        type="text"
+                                                        value={row.diagnosa_nama}
+                                                        onChange={(e) => handleInputChangeRow(index, 'diagnosa_nama', e.target.value)}
+                                                        name={`[PasienmorbiditasT][${index}][diagnosa_nama]`}
+                                                        id={`diagnosa_nama_${index}`}
+                                                    />
+                                                    </td>
+                                                    <td>
+                                                    <input
+                                                        type="text"
+                                                        value={row.kelompokdiagnosa_nama}
+                                                        onChange={(e) => handleInputChangeRow(index, 'kelompokdiagnosa_nama', e.target.value)}
+                                                        name={`[PasienmorbiditasT][${index}][kelompokdiagnosa_nama]`}
+                                                        id={`kelompokdiagnosa_nama_${index}`}
+                                                    />
+                                                    </td>
+                                                    <td>
+                                                    <button type="button" onClick={() => removeRow(index)}>
+                                                        <i className="pi pi-trash"></i>
+                                                    </button>
+                                                    </td>
+                                                </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                        
+                                        <div className="p-datatable-header mt-5">
+                                            {
+                                                headerUnuICDIX
+                                            }
+                                        </div>
+                                        <table className="p-datatable-table ">
+                                            <thead className='p-datatable-thead'>
+                                                <tr>
+                                                <th>No</th>
+                                                <th>Diagnosa Kode</th>
+                                                <th>Diagnosa Nama</th>
+                                                <th>Kelompok Diagnosa</th>
+                                                <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {dataIcd9cm.map((row, index) => (
+                                                <tr key={index}>
+                                                    <td>
+                                                        {index + 1}
+                                                    </td>
+                                                    <td>
+                                                        <input
+                                                            type="hidden"
+                                                            value={row.diagnosaicdix_id}
+                                                            onChange={(e) => handleInputChange(index, 'diagnosaicdix_id', e.target.value)}
+                                                            name={`[Pasienicd9cmT][${index}][diagnosaicdix_id]`}
+                                                            id={`diagnosaicdix_id_${index}`}
+                                                        />
+                                                        <AutoComplete
+                                                            value={row.diagnosaicdix_kode}
+                                                            suggestions={suggestions}
+                                                            completeMethod={fetchSuggestionsCodeIX}
+                                                            field="name"
+                                                            onChange={(e) => handleInputChangeAutocompleteIXRow(index, 'diagnosaicdix_kode', e.value)}
+                                                            name={`[Pasienicd9cmT][${index}][diagnosaicdix_kode]`}
+                                                            id={`diagnosaicdix_kode_${index}`}
+                                                            onSelect={(e) => updateIXRow(index,e.value)}  // Update input field
+                                                            // loading={loading}
+                                                            minLength={3}
+                                                            placeholder="Enter Diagnosa Kode"
+                                                            itemTemplate={(item) => (
+                                                                <div>
+                                                                    <span>{item.label} ({item.value})</span>  {/* Custom template to display both label and value */}
+                                                                </div>
+                                                            )}
+                                                        />
+        
+                                                    </td>
+                                                    <td>
+                                                    <input
+                                                        type="text"
+                                                        value={row.diagnosaicdix_nama}
+                                                        onChange={(e) => handleInputChangeRow(index, 'diagnosaicdix_nama', e.target.value)}
+                                                        name={`[Pasienicd9cmT][${index}][diagnosaicdix_nama]`}
+                                                        id={`diagnosaicdix_nama_${index}`}
+                                                    />
+                                                    </td>
+                                                    <td>
+                                                    <input
+                                                        type="text"
+                                                        value={row.kelompokdiagnosa_nama}
+                                                        onChange={(e) => handleInputChangeRow(index, 'kelompokdiagnosa_nama', e.target.value)}
+                                                        name={`[Pasienicd9cmT][${index}][kelompokdiagnosa_nama]`}
+                                                        id={`kelompokdiagnosa_nama_${index}`}
+                                                    />
+                                                    </td>
+                                                    <td>
+                                                    <button type="button" onClick={() => removeRowIX(index)}>
+                                                        <i className="pi pi-trash"></i>
+                                                    </button>
+                                                    </td>
+                                                </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
 
                                     </TabPanel>
                                     <TabPanel header="Coding INA Grouper">
-                                        <DataTable value={dataDiagnosaINA}
-                                            dataKey="diagnosa_id"
-                                            header={header}
-                                            onRowEditComplete={onRowEditComplete}
-                                            editMode="row"
-                                        >
-                                            <Column field="diagnosa_kode" header="Kode Diagnosa" style={{ minWidth: '12rem' }}></Column>
-                                            <Column field="diagnosa_nama" header="Nama Diagnosa" style={{ minWidth: '16rem' }}></Column>
-                                            <Column field="kelompokdiagnosa_nama" header="Kelompok Diagnosa" style={{ minWidth: '16rem' }} body={inaICDX}></Column>
+                                        <div className="p-datatable-header">
+                                            {
+                                                header
+                                            }
+                                        </div>
+                                        <table className="p-datatable-table">
+                                            <thead className='p-datatable-thead'>
+                                                <tr>
+                                                <th>No</th>
+                                                <th>Diagnosa Kode</th>
+                                                <th>Diagnosa Nama</th>
+                                                <th>Kelompok Diagnosa</th>
+                                                <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {dataDiagnosaINA.map((row, index) => (
+                                                <tr key={index}>
+                                                    <td>
+                                                        {index + 1}
+                                                    </td>
+                                                    <td>
+                                                        <input
+                                                            type="hidden"
+                                                            value={row.diagnosa_id}
+                                                            onChange={(e) => handleInputChange(index, 'diagnosa_id', e.target.value)}
+                                                            name={`[PasienmorbiditasTINA][${index}][diagnosa_id]`}
+                                                            id={`diagnosa_id_${index}`}
+                                                        />
+                                                        <AutoComplete
+                                                            value={row.diagnosa_kode}
+                                                            suggestions={suggestions}
+                                                            completeMethod={fetchSuggestionsCode}
+                                                            field="name"
+                                                            onChange={(e) => handleInputChangeAutocompleteRow(index, 'diagnosa_kode', e.value)}
+                                                            name={`[PasienmorbiditasTINA][${index}][diagnosa_kode]`}
+                                                            id={`diagnosa_kode_${index}`}
+                                                            onSelect={(e) => updateRow(index,e.value)}  // Update input field
+                                                            // loading={loading}
+                                                            minLength={3}
+                                                            placeholder="Enter Diagnosa Kode"
+                                                            itemTemplate={(item) => (
+                                                                <div>
+                                                                    <span>{item.label} ({item.value})</span>  {/* Custom template to display both label and value */}
+                                                                </div>
+                                                            )}
+                                                        />
+        
+                                                    </td>
+                                                    <td>
+                                                    <input
+                                                        type="text"
+                                                        value={row.diagnosa_nama}
+                                                        onChange={(e) => handleInputChangeRow(index, 'diagnosa_nama', e.target.value)}
+                                                        name={`[PasienmorbiditasTINA][${index}][diagnosa_nama]`}
+                                                        id={`diagnosa_nama_${index}`}
+                                                    />
+                                                    </td>
+                                                    <td>
+                                                    <input
+                                                        type="text"
+                                                        value={row.kelompokdiagnosa_nama}
+                                                        onChange={(e) => handleInputChangeRow(index, 'kelompokdiagnosa_nama', e.target.value)}
+                                                        name={`[PasienmorbiditasTINA][${index}][kelompokdiagnosa_nama]`}
+                                                        id={`kelompokdiagnosa_nama_${index}`}
+                                                    />
+                                                    </td>
+                                                    <td>
+                                                    <button type="button" onClick={() => removeRow(index)}>
+                                                        <i className="pi pi-trash"></i>
+                                                    </button>
+                                                    </td>
+                                                </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
 
-                                            {/* <Column rowEditor={allowEdit} headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column> */}
-
-                                        </DataTable>
-
-                                        <DataTable value={dataIcd9cm}
-                                            dataKey="diagnosaicdix_id"
-                                            header={headerUnuICDIX}
-                                            onRowEditComplete={onRowEditComplete}
-                                            editMode="row"
-                                            className="pt-5"
-                                        >
-                                            <Column field="diagnosaicdix_kode" header="Kode Diagnosa" style={{ minWidth: '12rem' }}></Column>
-                                            <Column field="diagnosaicdix_nama" header="Nama Diagnosa" style={{ minWidth: '16rem' }}></Column>
-                                            <Column field="kelompokdiagnosa_nama" header="Kelompok Diagnosa" style={{ minWidth: '16rem' }} body={unuICDIX}></Column>
-
-                                            {/* <Column rowEditor={allowEdit} headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column> */}
-
-                                        </DataTable>
+                                        <div className="p-datatable-header mt-5">
+                                            {
+                                                headerUnuICDIX
+                                            }
+                                        </div>
+                                        <table className="p-datatable-table ">
+                                            <thead className='p-datatable-thead'>
+                                                <tr>
+                                                <th>No</th>
+                                                <th>Diagnosa Kode</th>
+                                                <th>Diagnosa Nama</th>
+                                                <th>Kelompok Diagnosa</th>
+                                                <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                { dataIcd9cm.map((row, index) => (
+                                                <tr key={index}>
+                                                    <td>
+                                                        {index + 1}
+                                                    </td>
+                                                    <td>
+                                                        <input
+                                                            type="hidden"
+                                                            value={row.diagnosaicdix_id}
+                                                            onChange={(e) => handleInputChange(index, 'diagnosaicdix_id', e.target.value)}
+                                                            name={`[Pasienicd9cmT][${index}][diagnosaicdix_id]`}
+                                                            id={`diagnosaicdix_id_${index}`}
+                                                        />
+                                                        <AutoComplete
+                                                            value={row.diagnosaicdix_kode}
+                                                            suggestions={suggestions}
+                                                            completeMethod={fetchSuggestionsCodeIX}
+                                                            field="name"
+                                                            onChange={(e) => handleInputChangeAutocompleteIXRow(index, 'diagnosaicdix_kode', e.value)}
+                                                            name={`[Pasienicd9cmT][${index}][diagnosaicdix_kode]`}
+                                                            id={`diagnosaicdix_kode_${index}`}
+                                                            onSelect={(e) => updateIXRow(index,e.value)}  // Update input field
+                                                            // loading={loading}
+                                                            minLength={3}
+                                                            placeholder="Enter Diagnosa Kode"
+                                                            itemTemplate={(item) => (
+                                                                <div>
+                                                                    <span>{item.label} ({item.value})</span>  {/* Custom template to display both label and value */}
+                                                                </div>
+                                                            )}
+                                                        />
+                                                    </td>
+                                                    <td>
+                                                    <input
+                                                        type="text"
+                                                        value={row.diagnosaicdix_nama}
+                                                        onChange={(e) => handleInputChangeRow(index, 'diagnosaicdix_nama', e.target.value)}
+                                                        name={`[Pasienicd9cmT][${index}][diagnosaicdix_nama]`}
+                                                        id={`diagnosaicdix_nama_${index}`}
+                                                    />
+                                                    </td>
+                                                    <td>
+                                                    <input
+                                                        type="text"
+                                                        value={row.kelompokdiagnosa_nama}
+                                                        onChange={(e) => handleInputChangeRow(index, 'kelompokdiagnosa_nama', e.target.value)}
+                                                        name={`[Pasienicd9cmT][${index}][kelompokdiagnosa_nama]`}
+                                                        id={`kelompokdiagnosa_nama_${index}`}
+                                                    />
+                                                    </td>
+                                                    <td>
+                                                    <button type="button" onClick={() => removeRowIX(index)}>
+                                                        <i className="pi pi-trash"></i>
+                                                    </button>
+                                                    </td>
+                                                </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
                                     </TabPanel>
 
 
