@@ -61,7 +61,9 @@ Route::middleware('auth')->group(function () {
 
     // autocomplete
     Route::post('searchDiagnosa', [SearchDiagnosaController::class, 'autocompleteDiagnosa'])->name('searchDiagnosa');
-
+    Route::post('searchDiagnosaCode', [SearchDiagnosaController::class, 'autocompleteDiagnosa'])->name('searchDiagnosaCode');
+    Route::post('searchDiagnosaIX', [SearchDiagnosaController::class, 'autocompleteDiagnosaIX'])->name('searchDiagnosaIX');
+    Route::post('searchDiagnosaCodeIX', [SearchDiagnosaController::class, 'getDiagnosaByCodeAutocomplete'])->name('searchDiagnosaCodeIX');
 
 });
 
