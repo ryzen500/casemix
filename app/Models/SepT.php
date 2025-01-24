@@ -10,6 +10,7 @@ class SepT extends Model
 {
     use HasFactory;
 
+
     public static function getSep( $nosep)
     {
         // $query = self::buildBaseQueryGrouping();

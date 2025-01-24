@@ -4,7 +4,10 @@ namespace App\Http\Controllers\Casemix;
 
 use App\Http\Controllers\Controller;
 use App\Http\Services\MonitoringHistoryService;
+use App\Http\Services\Action\SaveDataKlaimService;
+
 use App\Http\Services\SearchSepService;
+use App\Models\LaporanresepR;
 use App\Models\PegawaiM;
 use Illuminate\Http\Request;
 use App\Models\Casemix\Inacbg;
@@ -115,13 +118,13 @@ class InAcbgGrouperController extends Controller
         if (preg_match('/^data:application\/pdf;base64,/', $base64Data)) {
             $base64Data = substr($base64Data, strpos($base64Data, ',') + 1);
         }
-    
+
         // Decode base64 menjadi data binar
         $pdfData = base64_decode($base64Data);
-    
+
         // Tentukan nama file PDF
         $fileName = 'klaim_' . $nomor_sep . '.pdf';
-    
+
         // Kembalikan file PDF untuk diunduh
         return response()->stream(
             function () use ($pdfData) {
@@ -136,11 +139,11 @@ class InAcbgGrouperController extends Controller
     }
 
     private function getBase64FromNoSep($results)
-{
-    // Implementasikan logika untuk mendapatkan data base64 berdasarkan noSep
-    // Misalnya dari database atau layanan lain
-    return "data:application/pdf;base64,$results";
-}
+    {
+        // Implementasikan logika untuk mendapatkan data base64 berdasarkan noSep
+        // Misalnya dari database atau layanan lain
+        return "data:application/pdf;base64,$results";
+    }
 
 
     public function updateNewKlaim(Request $request)
@@ -167,14 +170,14 @@ class InAcbgGrouperController extends Controller
         $upgrade_class_los = $request->input("upgrade_class_los") ?? "";
         $upgrade_class_payor = $request->input("upgrade_class_payor") ?? "";
 
-        
+
         $birth_weight = $request->input("birth_weight") ?? "";
         $discharge_status = $request->input("discharge_status") ?? "";
         $diagnosa = $request->input("diagnosa") ?? "";
         $diagnosa_inagrouper = $request->input("diagnosa_inagrouper") ?? "";
         $procedure_inagrouper = $request->input("procedure_inagrouper") ?? "";
 
-        
+
         $prosedur_non_bedah = $request->input("prosedur_non_bedah") ?? "";
         $prosedur_bedah = $request->input("prosedur_bedah") ?? "";
         $konsultasi = $request->input("konsultasi") ?? "";
@@ -191,7 +194,7 @@ class InAcbgGrouperController extends Controller
         $obat_kronis = $request->input(key: "obat_kronis") ?? "";
         $obat_kemoterapi = $request->input(key: "obat_kemoterapi") ?? "";
 
-        
+
         $alkes = $request->input(key: "alkes") ?? "";
         $bmhp = $request->input(key: "bmhp") ?? "";
         $sewa_alat = $request->input(key: "sewa_alat") ?? "";
@@ -205,65 +208,100 @@ class InAcbgGrouperController extends Controller
         $sistole = $request->input(key: "sistole") ?? "";
         $diastole = $request->input(key: "diastole") ?? "";
 
+        //Data DB
+        $carabayar_id = $request->input(key: "carabayar_id") ?? "";
+        $carabayar_nama = $request->input(key: "carabayar_nama") ?? "";
+        $umur_pasien = $request->input(key: "umur") ?? "";
+
         // Structur Payload 
         $data = [
             'nomor_kartu' => $nomor_kartu,
             'nomor_sep' => $nomor_sep,
             'tgl_masuk' => $tgl_masuk,
-            'cara_masuk'=>$cara_masuk,
+            'cara_masuk' => $cara_masuk,
             'tgl_pulang' => $tgl_pulang,
             'jenis_rawat' => $jenis_rawat,
             'kelas_rawat' => $kelas_rawat,
-            'adl_sub_acute'=> $adl_sub_acute,
-            'adl_chronic'=>$adl_chronic,
-            'icu_indikator'=>$icu_indikator,
-            'icu_los'=>$icu_los,
-            'ventilator_hour'=>$ventilator_hour,
-            'upgrade_class_ind'=>$upgrade_class_ind,
-            'upgrade_class_class'=>$upgrade_class_class,
-            'upgrade_class_los'=>$upgrade_class_los,
-            'upgrade_class_payor'=>$upgrade_class_payor,
-            'birth_weight'=>$birth_weight,
-            'discharge_status'=>$discharge_status,
-            'diagnosa'=>$diagnosa,
-            'diagnosa_inagrouper'=>$diagnosa_inagrouper,
-            'procedure_inagrouper'=>$procedure_inagrouper,
-            'sistole'=>$sistole,
-            'diastole'=>$diastole,
-            'prosedur_non_bedah'=>$prosedur_non_bedah,
-            'prosedur_bedah'=>$prosedur_bedah,
-            'konsultasi'=>$konsultasi,
-            'tenaga_ahli'=>$tenaga_ahli,
-            'keperawatan'=>$keperawatan,
-            'penunjang'=>$penunjang,
-            'radiologi'=>$radiologi,
-            'laboratorium'=>$laboratorium,
-            'pelayanan_darah'=>$pelayanan_darah,
-            'rehabilitasi'=>$rehabilitasi,
-            'kamar'=>$kamar,
-            'rawat_intensif'=>$rawat_intensif,
-            'obat'=>$obat,
-            'obat_kronis'=>$obat_kronis,
-            'obat_kemoterapi'=>$obat_kemoterapi,
-            'alkes'=>$alkes,
-            'bmhp'=>$bmhp,
-            'sewa_alat'=>$sewa_alat,
-            'tarif_poli_eks'=>$tarif_poli_eks,
-            'nama_dokter'=>$nama_dokter,
-            'kode_tarif'=>$kode_tarif,
-            'payor_id'=>$payor_id,
-            'payor_cd'=>$payor_cd,
-            'cob_cd'=>$cob_cd,
-            'coder_nik'=>$coder_nik
+            'adl_sub_acute' => $adl_sub_acute,
+            'adl_chronic' => $adl_chronic,
+            'icu_indikator' => $icu_indikator,
+            'icu_los' => $icu_los,
+            'ventilator_hour' => $ventilator_hour,
+            'upgrade_class_ind' => $upgrade_class_ind,
+            'upgrade_class_class' => $upgrade_class_class,
+            'upgrade_class_los' => $upgrade_class_los,
+            'upgrade_class_payor' => $upgrade_class_payor,
+            'birth_weight' => $birth_weight,
+            'discharge_status' => $discharge_status,
+            'diagnosa' => $diagnosa,
+            'diagnosa_inagrouper' => $diagnosa_inagrouper,
+            'procedure_inagrouper' => $procedure_inagrouper,
+            'sistole' => $sistole,
+            'diastole' => $diastole,
+            'prosedur_non_bedah' => $prosedur_non_bedah,
+            'prosedur_bedah' => $prosedur_bedah,
+            'konsultasi' => $konsultasi,
+            'tenaga_ahli' => $tenaga_ahli,
+            'keperawatan' => $keperawatan,
+            'penunjang' => $penunjang,
+            'radiologi' => $radiologi,
+            'laboratorium' => $laboratorium,
+            'pelayanan_darah' => $pelayanan_darah,
+            'rehabilitasi' => $rehabilitasi,
+            'kamar' => $kamar,
+            'rawat_intensif' => $rawat_intensif,
+            'obat' => $obat,
+            'obat_kronis' => $obat_kronis,
+            'obat_kemoterapi' => $obat_kemoterapi,
+            'alkes' => $alkes,
+            'bmhp' => $bmhp,
+            'sewa_alat' => $sewa_alat,
+            'tarif_poli_eks' => $tarif_poli_eks,
+            'nama_dokter' => $nama_dokter,
+            'kode_tarif' => $kode_tarif,
+            'payor_id' => $payor_id,
+            'payor_cd' => $payor_cd,
+            'cob_cd' => $cob_cd,
+            'coder_nik' => $coder_nik
+        ];
+
+        // Payload Pendaftaran 
+        $dataSep = LaporanresepR::where('nosep',$nomor_sep)->first();
+
+        // dd($dataSep['sep_id']);die;
+        $pendaftaran = [
+            'carabayar_id' => $carabayar_id,
+            'carabayar_nama' => $carabayar_nama,
+            'umur_pasien' => $umur_pasien,
+            'sep_id'=>$dataSep['sep_id']
         ];
 
 
-        // result kirim claim
-        $results = $this->inacbg->updateDataKlaim($data, $key);
+        $saveService = new SaveDataKlaimService();
+        $saveResult = $saveService->addDataInacbgT($data, $pendaftaran);
 
-        // Kembalikan hasil sebagai JSON response
-        return response()->json($results, 200);
+        // var_dump($saveResult['s']);die;
+        if ($saveResult['status'] === 'success') {
+            // Jika berhasil, kirim klaim
+            $results = $this->inacbg->updateDataKlaim($data, $key);
+            return response()->json($results, 200);
+        } else {
+            // Jika gagal, kembalikan pesan error
+            return response()->json([
+                'status' => 'error',
+                'message' => $saveResult['message']
+            ], 400);
+        }
+        // $saveResult = $saveService->addDataInacbgT($data, $pendaftaran);
+        //     // result kirim claim
+        //     $results = $this->inacbg->updateDataKlaim($data, $key);
+
+        //     // Kembalikan hasil sebagai JSON response
+        //     return response()->json($results, 200);
+
     }
+
+
 
 
     public function groupingStageSatu(Request $request)
@@ -393,9 +431,9 @@ class InAcbgGrouperController extends Controller
             'tanggal_mulai' => $request->input('tanggal_mulai') ?? null,
             'tanggal_selesai' => $request->input('tanggal_selesai') ?? null,
             'metodePembayaran' => $request->input('metodePembayaran') ?? null,
-            'kelasRawat'=>$request->input('kelasRawat') ?? null,
-            'status'=> $request->input('statusKlaim') ?? null,
-            'jenisrawat'=>$request->input('jenisrawat') ?? null
+            'kelasRawat' => $request->input('kelasRawat') ?? null,
+            'status' => $request->input('statusKlaim') ?? null,
+            'jenisrawat' => $request->input('jenisrawat') ?? null
         ];
 
         // Hitung total data
@@ -422,7 +460,7 @@ class InAcbgGrouperController extends Controller
     }
 
 
-    
+
     public function getSearchGroupperData(Request $request)
     {
         $currentPage = $request->input('page', 1);
@@ -463,41 +501,44 @@ class InAcbgGrouperController extends Controller
     {
         $model = new MonitoringHistoryService();
         $getRiwayat = $model->getRiwayatData($nopeserta)->getOriginalContent();
-        $data=null;
-        $pasien=null;
-        if(isset($getRiwayat['response'])){
-            if(count($getRiwayat['response'])>0){
+        $data = null;
+        $pasien = null;
+        if (isset($getRiwayat['response'])) {
+            if (count($getRiwayat['response']) > 0) {
                 foreach ($getRiwayat['response']['histori'] as $key => $row) {
                     $sep = SepT::getSep($row['noSep']);
                     $data[] = $row;
                     // dd($data,$sep,!empty($sep));
-                    
-                    if(!empty($sep)){
-                        $data[$key]['pendaftaran_id']=$sep->pendaftaran_id;
-                        $data[$key]['cbg']=$sep->cbg;
-                        $data[$key]['status']=$sep->status;
-                        $data[$key]['nama_pegawai']=$sep->nama_pegawai;
+
+                    if (!empty($sep)) {
+                        $data[$key]['pendaftaran_id'] = $sep->pendaftaran_id;
+                        $data[$key]['cbg'] = $sep->cbg;
+                        $data[$key]['status'] = $sep->status;
+                        $data[$key]['nama_pegawai'] = $sep->nama_pegawai;
                         $pasien['nama_pasien'] = $sep->nama_pasien;
                         $pasien['no_rekam_medik'] = $sep->no_rekam_medik;
                         $pasien['jeniskelamin'] = $sep->jeniskelamin;
                         $pasien['tanggal_lahir'] = $sep->tanggal_lahir;
 
-                    }else{
-                        $data[$key]['pendaftaran_id']=null;
-                        $data[$key]['cbg']=null;
-                        $data[$key]['status']=null;
-                        $data[$key]['nama_pegawai']=null;
-    
+                    } else {
+                        $data[$key]['pendaftaran_id'] = null;
+                        $data[$key]['cbg'] = null;
+                        $data[$key]['status'] = null;
+                        $data[$key]['nama_pegawai'] = null;
+
                     }
 
                 }
             }
         }
-        $caraMasuk= LookupM::getLookupType('inacbgs_caramasuk');
+        $caraMasuk = LookupM::getLookupType('inacbgs_caramasuk');
         $DPJP = PegawaiM::getPegawaiDPJP('1');
         // $model = PendaftaranT::dataListGrouper($nopeserta);
         return Inertia::render('Grouping/indexPasien', [
-            'model' => $data,'pasien'=>$pasien, 'caraMasuk'=>$caraMasuk, 'DPJP'=>$DPJP
+            'model' => $data,
+            'pasien' => $pasien,
+            'caraMasuk' => $caraMasuk,
+            'DPJP' => $DPJP
         ]);
     }
     public function getGroupperPasien(Request $request)
@@ -511,12 +552,17 @@ class InAcbgGrouperController extends Controller
         $model = new SearchSepService();
         $getRiwayat = $model->getRiwayatData($noSep)->getOriginalContent();
         $pendaftaran = PendaftaranT::getDataGroup($pendaftaran_id);
-        $tarif = PendaftaranT::getTarif( $pendaftaran_id);
+        $tarif = PendaftaranT::getTarif($pendaftaran_id);
         $obat = PendaftaranT::getGroupping($pendaftaran_id);
         $profil = ProfilrumahsakitM::getProfilRS();
         return response()->json([
-            'model' => $getRiwayat,'pendaftaran'=>$pendaftaran, 'tarif'=>$tarif,'obat'=>$obat,
-            'profil'=>$profil,'dataDiagnosa'=>$dataDiagnosa, 'dataIcd9cm'=>$dataIcd9cm
+            'model' => $getRiwayat,
+            'pendaftaran' => $pendaftaran,
+            'tarif' => $tarif,
+            'obat' => $obat,
+            'profil' => $profil,
+            'dataDiagnosa' => $dataDiagnosa,
+            'dataIcd9cm' => $dataIcd9cm
         ]);
     }
 }

@@ -12,6 +12,43 @@ class Inacbg extends Model
 {
     protected $table = 'inacbg_t';
 
+    public $timestamps = false;
+    // PK (Primary Key)
+    protected $primaryKey = 'inacbg_id';
+    // Attributes
+    protected $fillable = [
+        'jaminan_id',
+        'jaminan_nama',
+        'inacbg_nosep',
+        'pasien_id',
+        'pendaftaran_id',
+        'inacbg_tgl',
+        'sep_id',
+        'kodeinacbg',
+        'tarifgruper',
+        'totaltarif',
+        'ruanganakhir_id',
+        'create_time',
+        'cob_id',
+        'create_loginpemakai_id',
+        'create_ruangan',
+        'create_tanggal',
+        'create_coder_nik',
+        'create_ruangan_id',
+        'jenisrawat_inacbg',
+        'tglrawat_masuk',
+        'tglrawat_keluar',
+        'hak_kelasrawat_inacbg',
+        'umur_pasien',
+        'berat_lahir',
+        'adlscore_subaccute',
+        'adlscore_chronic',
+        'nama_dpjp',
+        'cara_pulang',
+        'no_reg_sitb',
+        'sistole',
+        'diastole'
+    ];
     /**
      * get data from dashboard
      */

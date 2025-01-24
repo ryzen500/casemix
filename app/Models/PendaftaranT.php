@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 
 class PendaftaranT extends Model
 {
+    protected $table = 'pendaftaran_t';
     use HasFactory;
     private static function buildBaseQuery(bool $isSecondQuery = false)
     {
@@ -189,7 +190,7 @@ class PendaftaranT extends Model
     {
         $query = DB::table('pendaftaran_t as p')
         ->select(
-            DB::raw('p.pendaftaran_id, s.*'),
+            DB::raw('p.pendaftaran_id,  p.carabayar_id , cm.carabayar_nama ,s.*'),
             DB::raw("CASE
                 WHEN inacbg_t.is_finalisasi = true AND inacbg_t.is_terkirim = true THEN 'Terkirim'::text
                 WHEN inacbg_t.is_finalisasi = true AND inacbg_t.is_terkirim = false THEN 'Final'::text
@@ -207,6 +208,8 @@ class PendaftaranT extends Model
         ->leftJoin('inacbg_t', 'inacbg_t.sep_id', '=', 'p.sep_id')
         ->leftJoin('inasiscbg_t', 'inasiscbg_t.inacbg_id', '=', 'inacbg_t.inacbg_id')
         ->leftJoin('pegawai_m as pg', 'pg.loginpemakai_id', '=', 'inacbg_t.create_loginpemakai_id')
+        ->leftJoin('carabayar_m as cm', 'cm.carabayar_id', '=', 'p.carabayar_id')
+
         ->where('p.pendaftaran_id', $pendaftaran_id);
         // $query->where('laporan.pendaftaran_id', '=', $pendaftaran_id);
         return $query->first();

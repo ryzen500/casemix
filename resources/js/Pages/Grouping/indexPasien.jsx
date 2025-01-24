@@ -327,6 +327,9 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
 
                                             <label htmlFor="ssn" className="font-bold block mb-2">Jaminan / Cara Bayar</label>
                                             JKN
+                                            <input type="hidden" className="form-control" name='carabayar_id' value={pendaftarans.carabayar_id} />
+                                            <input type="hidden" className="form-control" name='carabayar_nama' value={pendaftarans.carabayar_nama} />
+
                                         </div>
                                     </div>
                                     <div className="col-sm-2">
@@ -482,7 +485,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                                             prefix="" // Adds the Rp prefix to the input value
                                                             min={0} // Optional: Set a minimum value
                                                             max={100000000} // Optional: Set a maximum value
-                                                            name='tarif_prosedur_bedah'
+                                                            name='prosedurebedah'
                                                             inputClassName='ml-2 form-control'
                                                         />
                                                     </div>
@@ -530,7 +533,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                                             prefix="" // Adds the Rp prefix to the input value
                                                             min={0} // Optional: Set a minimum value
                                                             max={100000000} // Optional: Set a maximum value
-                                                            name='tarif_tenaga_ahli'
+                                                            name='tenagaahli'
                                                             inputClassName='ml-2 form-control'
                                                         />
                                                     </div>
@@ -552,7 +555,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                                             prefix="" // Adds the Rp prefix to the input value
                                                             min={0} // Optional: Set a minimum value
                                                             max={100000000} // Optional: Set a maximum value
-                                                            name='tarif_keperawatan'
+                                                            name='keperawatan'
                                                             inputClassName='ml-2 form-control'
                                                         />
                                                     </div>
@@ -574,7 +577,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                                             prefix="" // Adds the Rp prefix to the input value
                                                             min={0} // Optional: Set a minimum value
                                                             max={100000000} // Optional: Set a maximum value
-                                                            name='tarif_penunjang'
+                                                            name='penunjang'
                                                             inputClassName='ml-2 form-control'
                                                         />
                                                     </div>
@@ -598,7 +601,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                                             prefix="" // Adds the Rp prefix to the input value
                                                             min={0} // Optional: Set a minimum value
                                                             max={100000000} // Optional: Set a maximum value
-                                                            name='tarif_radiologi'
+                                                            name='radiologi'
                                                             inputClassName='ml-2 form-control'
                                                         />
                                                     </div>
@@ -620,7 +623,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                                             prefix="" // Adds the Rp prefix to the input value
                                                             min={0} // Optional: Set a minimum value
                                                             max={100000000} // Optional: Set a maximum value
-                                                            name='tarif_laboratorium'
+                                                            name='laboratorium'
                                                             inputClassName='ml-2 form-control'
                                                         />
                                                     </div>
@@ -642,7 +645,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                                             prefix="" // Adds the Rp prefix to the input value
                                                             min={0} // Optional: Set a minimum value
                                                             max={100000000} // Optional: Set a maximum value
-                                                            name='tarif_pelayanan_darah'
+                                                            name='pelayanandarah'
                                                             inputClassName='ml-2 form-control'
                                                         />
                                                     </div>
@@ -666,7 +669,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                                             prefix="" // Adds the Rp prefix to the input value
                                                             min={0} // Optional: Set a minimum value
                                                             max={100000000} // Optional: Set a maximum value
-                                                            name='tarif_rehabilitasi'
+                                                            name='rehabilitasi'
                                                             inputClassName='ml-2 form-control'
                                                         />
                                                     </div>
@@ -710,7 +713,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                                             prefix="" // Adds the Rp prefix to the input value
                                                             min={0} // Optional: Set a minimum value
                                                             max={100000000} // Optional: Set a maximum value
-                                                            name='tarif_rawat_integerensif'
+                                                            name='rawatintensif'
                                                             inputClassName='ml-2 form-control'
                                                         />
                                                     </div>
@@ -735,7 +738,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                                             prefix="" // Adds the Rp prefix to the input value
                                                             min={0} // Optional: Set a minimum value
                                                             max={100000000} // Optional: Set a maximum value
-                                                            name='tarif_obat'
+                                                            name='obat'
                                                             inputClassName='ml-2 form-control'
                                                         />
                                                     </div>
@@ -757,7 +760,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                                             prefix="" // Adds the Rp prefix to the input value
                                                             min={0} // Optional: Set a minimum value
                                                             max={100000000} // Optional: Set a maximum value
-                                                            name='tarif_obat_kronis'
+                                                            name='obatkronis'
                                                             inputClassName='ml-2 form-control'
                                                         />
                                                     </div>
@@ -779,7 +782,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                                             prefix="" // Adds the Rp prefix to the input value
                                                             min={0} // Optional: Set a minimum value
                                                             max={100000000} // Optional: Set a maximum value
-                                                            name='tarif_obat_kemoterapi'
+                                                            name='obatkemoterapi'
                                                             inputClassName='ml-2 form-control'
                                                         />
                                                     </div>
@@ -803,7 +806,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                                             prefix="" // Adds the Rp prefix to the input value
                                                             min={0} // Optional: Set a minimum value
                                                             max={100000000} // Optional: Set a maximum value
-                                                            name='tarif_alkes'
+                                                            name='alkes'
                                                             inputClassName='ml-2 form-control'
                                                         />
                                                     </div>
@@ -825,7 +828,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                                             prefix="" // Adds the Rp prefix to the input value
                                                             min={0} // Optional: Set a minimum value
                                                             max={100000000} // Optional: Set a maximum value
-                                                            name='tarif_bhp'
+                                                            name='bmhp'
                                                             inputClassName='ml-2 form-control'
                                                         />
                                                     </div>
@@ -847,7 +850,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                                             prefix="" // Adds the Rp prefix to the input value
                                                             min={0} // Optional: Set a minimum value
                                                             max={100000000} // Optional: Set a maximum value
-                                                            name='tarif_sewa_alat'
+                                                            name='sewaalat'
                                                             inputClassName='ml-2 form-control'
                                                         />
                                                     </div>
@@ -1069,7 +1072,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
     const handleSimpanKlaim = (e) => {
         e.preventDefault(); // Prevent page reload
 
-        console.log('Form Data Submitted:', dataDiagnosa);
+        // console.log('Form Data Submitted:', dataDiagnosa);
+        console.log('Response:', tarifs);
 
         // Perform API request with axios
         const payload = {
@@ -1087,7 +1091,6 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
             nama_dokter: datas.dpjp.nmDPJP,
             kode_tarif: profils.kode_tarifinacbgs_1,
             kamar: tarifs.kamar_akomodasi,
-            tenaga_ahli: tarifs.tenagaahli,
             tenaga_ahli: tarifs.tenagaahli,
             prosedur_non_bedah : tarifs.prosedurenonbedah,
             prosedur_bedah : tarifs.prosedurebedah,
@@ -1109,11 +1112,12 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
             payor_id: 3,
             diagnosa: `${dataDiagnosa.map(item => item.diagnosa_kode).join('#')}`,
             diagnosa_inagrouper: `${dataDiagnosaINA.map(item => item.diagnosa_kode).join('#')}`,
-
+            carabayar_id: pendaftarans.carabayar_id,
+            carabayar_nama: pendaftarans.carabayar_nama,
+            umur_pasien : pendaftarans.umur
         };
         axios.post(route('updateNewKlaim'), payload)
             .then((response) => {
-                console.log('Response:', response.data);
                 // Handle the response from the backend
             })
             .catch((error) => {
