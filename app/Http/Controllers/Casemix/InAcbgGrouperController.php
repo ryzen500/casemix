@@ -561,6 +561,8 @@ class InAcbgGrouperController extends Controller
         $tarif = PendaftaranT::getTarif($pendaftaran_id);
         $obat = PendaftaranT::getGroupping($pendaftaran_id);
         $profil = ProfilrumahsakitM::getProfilRS();
+        $SEP = Inacbg::where('inacbg_nosep', $noSep)->first();
+
         return response()->json([
             'model' => $getRiwayat,
             'pendaftaran' => $pendaftaran,
@@ -568,7 +570,8 @@ class InAcbgGrouperController extends Controller
             'obat' => $obat,
             'profil' => $profil,
             'dataDiagnosa' => $dataDiagnosa,
-            'dataIcd9cm' => $dataIcd9cm
+            'dataIcd9cm' => $dataIcd9cm,
+            'inacbg'=>$SEP
         ]);
     }
 }

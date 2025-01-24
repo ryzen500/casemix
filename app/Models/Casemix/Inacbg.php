@@ -67,6 +67,28 @@ class Inacbg extends Model
         'sistole',
         'diastole'
     ];
+
+    protected $casts = [
+        'tarif_prosedur_nonbedah' => 'float',
+        'tarif_prosedur_bedah' => 'float',
+        'tarif_konsultasi' => 'float',
+        'tarif_tenaga_ahli' => 'float',
+        'tarif_keperawatan' => 'float',
+        'tarif_penunjang' => 'float',
+        'tarif_radiologi' => 'float',
+        'tarif_laboratorium' => 'float',
+        'tarif_pelayanan_darah' => 'float',
+        'tarif_rehabilitasi' => 'float',
+        'tarif_akomodasi' => 'float',
+        'tarif_rawat_integerensif' => 'float',
+        'tarif_obat' => 'float',
+        'tarif_obat_kronis' => 'float',
+        'tarif_obat_kemoterapi' => 'float',
+        'tarif_alkes' => 'float',
+        'tarif_bhp' => 'float',
+        'tarif_sewa_alat' => 'float',
+    ];
+    
     /**
      * get data from dashboard
      */
