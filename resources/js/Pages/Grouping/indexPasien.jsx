@@ -18,7 +18,7 @@ import { IconField } from 'primereact/iconfield';
 import { InputIcon } from 'primereact/inputicon';
 import { AutoComplete } from 'primereact/autocomplete';
 import { InputNumber } from 'primereact/inputnumber';
-export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
+export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, COB }) {
     const [datas, setDatas] = useState([]);
     const [pendaftarans, setPendaftarans] = useState([]);
     const [dataDiagnosa, setDiagnosa] = useState([]);
@@ -66,6 +66,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
     });
     const [profils, setProfil] = useState([]);
     const [selectedCaraMasuk, setCaraMasuk] = useState(null);
+    const [selectedCOB, setCOB] = useState(null);
+
     const [selectedDPJP, setDPJP] = useState(null);
     const [expandedRows, setExpandedRows] = useState(null);
     const [loading, setLoading] = useState(false); // Loading state for expanded row
@@ -88,7 +90,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
 
         // setProducts(_products);
     };
-    // Function to fetch data from API search diagnosa_kode/diagnosa_nama
+    // Function to fetch data from API
     const fetchSuggestions = async (query) => {
         try {
             // Replace with your API 
@@ -110,8 +112,9 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
             console.error('Error fetching data:', error);
         }
     };
-    // Function to fetch data from API search diagnosa_kode
-    const fetchSuggestionsIX = async (query) => {
+
+        // Function to fetch data from API search diagnosa_kode
+        const fetchSuggestionsIX = async (query) => {
             try {
             // Replace with your API 
             const response = await axios.post('/searchDiagnosaIX', {
@@ -120,7 +123,6 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
             const res = response.data;
             // let query = event.query;
             let _filteredItems = [];
-
             for (let i = 0; i < res.length; i++) {
                 _filteredItems.push({ 'label': res[i].diagnosaicdix_nama, 'value': res[i].diagnosaicdix_kode	, 'id': res[i].diagnosaicdix_id })
             }
@@ -140,7 +142,6 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
             const res = response.data;
             // let query = event.query;
             let _filteredItems = [];
-
             for (let i = 0; i < res.length; i++) {
                 _filteredItems.push({ 'label': res[i].diagnosa_nama, 'value': res[i].diagnosa_kode, 'id': res[i].diagnosa_id })
             }
@@ -160,7 +161,6 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                 const res = response.data;
                 // let query = event.query;
                 let _filteredItems = [];
-
                 for (let i = 0; i < res.length; i++) {
                     _filteredItems.push({ 'label': res[i].diagnosaicdix_nama, 'value': res[i].diagnosaicdix_kode	, 'id': res[i].diagnosaicdix_id })
                 }
@@ -221,7 +221,6 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                 fetchSuggestionsCode(value);  // Fetch suggestions based on the input
             }
         }; 
-        
     // Handle change in input field
     const onSearchChange = (e) => {
         let length = e.query.length;
@@ -232,7 +231,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
             fetchSuggestions(e.query);  // Fetch suggestions based on the input
         }
     }
-    // Handle change in input field
+
+
     const onSearchChangeIX = (e) => {
         let length = e.query.length;
         // setSearchText(null);
@@ -241,6 +241,20 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
         if (length > 2) {
             fetchSuggestionsIX(e.query);  // Fetch suggestions based on the input
         }
+    }
+
+
+    const addRowDiagnosaIX = (rowData) => {
+        let _dataDiagnosa = [...dataIcd9cm];
+        let _diagnosa = { ...diagnosaTemp };
+        _diagnosa.pasienicd9cm_id = rowData.id;
+        _diagnosa.diagnosaicdix_nama = rowData.label;
+        _diagnosa.diagnosaicdix_kode = rowData.value;
+        _dataDiagnosa.push(_diagnosa);
+        setDataIcd9cm(_dataDiagnosa);
+        setDiagnosaTemp(emptyDiagnosa);
+        setSearchTextIX(null);
+        // setDiagnosa(response.data.dataDiagnosa);
     }
     const allowEdit = (rowData) => {
         return rowData.name !== 'Blue Band';
@@ -255,19 +269,6 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
         setDiagnosa(_dataDiagnosa);
         setDiagnosaTemp(emptyDiagnosa);
         setSearchText(null);
-        // setDiagnosa(response.data.dataDiagnosa);
-
-    }
-    const addRowDiagnosaIX = (rowData) => {
-        let _dataDiagnosa = [...dataIcd9cm];
-        let _diagnosa = { ...diagnosaTemp };
-        _diagnosa.pasienicd9cm_id = rowData.id;
-        _diagnosa.diagnosaicdix_nama = rowData.label;
-        _diagnosa.diagnosaicdix_kode = rowData.value;
-        _dataDiagnosa.push(_diagnosa);
-        setDataIcd9cm(_dataDiagnosa);
-        setDiagnosaTemp(emptyDiagnosa);
-        setSearchTextIX(null);
         // setDiagnosa(response.data.dataDiagnosa);
 
     }
@@ -429,8 +430,21 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
     const [value, setValue] = useState(null);
 
     const handleValueChange = (e) => {
-      setValue(e.value); // Set the value from the InputNumber component
+
+        const { value, name } = e.target; // Get name and value from the event
+        setTarifs((prevTarifs) => ({
+            ...prevTarifs,
+            [name]: (value), // Update the specific field dynamically
+        }));
+
+        setObats((prevObats) => ({
+            ...prevObats,
+            [name]: (value), // Update the specific field dynamically
+        }));
+       
+        //   setValue(e.value); // Set the value from the InputNumber component
     };
+
     const removeRow = (index) => {
         const updatedRows = dataDiagnosa.filter((_, i) => i !== index);
         setDiagnosa(updatedRows); // Remove row and update state
@@ -521,6 +535,16 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                         <td >
                                             <Dropdown value={selectedCaraMasuk} onChange={(e) => setCaraMasuk(e.value)} options={caraMasuk} optionLabel="name"
                                                 placeholder="Pilih Cara Masuk" className="w-full md:w-14rem" />
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        {console.log("COB",selectedCOB)}
+                                        <td>COB</td>
+                                        <td >
+
+                                            <Dropdown value={selectedCOB} onChange={(e) => setCOB(e.value)} options={COB} optionLabel="name"
+                                                placeholder="Pilih COB" className="w-full md:w-14rem" />
                                         </td>
                                     </tr>
                                     <tr>
@@ -995,7 +1019,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                 {/* Checkbox Tarif */}
                                 <div className='text-center'><Checkbox></Checkbox> Menyatakan benar bahwa data tarif yang tersebut di atas adalah benar sesuai dengan kondisi yang sesungguhnya.</div>
                                 <TabView>
-                                    <TabPanel header="Coding UNU Grouper">
+                                <TabPanel header="Coding UNU Grouper">
                                         <div className="p-datatable-header">
                                             {
                                                 header
@@ -1063,8 +1087,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                                         id={`kelompokdiagnosa_nama_${index}`}
                                                     />
                                                     </td>
-                                                    <td>
-                                                    <button type="button" onClick={() => removeRow(index)}>
+                                                    <td style={{textAlign:'center'}}>
+                                                    <button type="button" onClick={() => removeRow(index)} >
                                                         <i className="pi pi-trash"></i>
                                                     </button>
                                                     </td>
@@ -1140,7 +1164,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                                         id={`kelompokdiagnosa_nama_${index}`}
                                                     />
                                                     </td>
-                                                    <td>
+                                                    <td style={{textAlign:'center'}}>
                                                     <button type="button" onClick={() => removeRowIX(index)}>
                                                         <i className="pi pi-trash"></i>
                                                     </button>
@@ -1219,7 +1243,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                                         id={`kelompokdiagnosa_nama_${index}`}
                                                     />
                                                     </td>
-                                                    <td>
+                                                    <td style={{textAlign:'center'}}>
                                                     <button type="button" onClick={() => removeRow(index)}>
                                                         <i className="pi pi-trash"></i>
                                                     </button>
@@ -1295,7 +1319,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
                                                         id={`kelompokdiagnosa_nama_${index}`}
                                                     />
                                                     </td>
-                                                    <td>
+                                                    <td style={{textAlign:'center'}}>
                                                     <button type="button" onClick={() => removeRowIX(index)}>
                                                         <i className="pi pi-trash"></i>
                                                     </button>
@@ -1455,7 +1479,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
         e.preventDefault(); // Prevent page reload
 
         // console.log('Form Data Submitted:', dataDiagnosa);
-        console.log('Response:', tarifs);
+        console.log('Response:', auth);
 
         // Perform API request with axios
         const payload = {
@@ -1496,11 +1520,15 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP }) {
             diagnosa_inagrouper: `${dataDiagnosaINA.map(item => item.diagnosa_kode).join('#')}`,
             carabayar_id: pendaftarans.carabayar_id,
             carabayar_nama: pendaftarans.carabayar_nama,
-            umur_pasien : pendaftarans.umur
+            umur_pasien : pendaftarans.umur,
+            cob_cd: selectedCOB.code,
+            loginpemakai_id : auth.user.loginpemakai_id
         };
         axios.post(route('updateNewKlaim'), payload)
             .then((response) => {
                 // Handle the response from the backend
+                toast.current.show({ severity: 'success', summary: `Data  Berhasil Di simpan`, detail: datas.noSep, life: 3000 });
+
             })
             .catch((error) => {
                 console.error('Error:', error);

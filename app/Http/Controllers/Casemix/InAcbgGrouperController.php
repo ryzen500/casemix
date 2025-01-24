@@ -9,6 +9,7 @@ use App\Http\Services\Action\SaveDataKlaimService;
 use App\Http\Services\SearchSepService;
 use App\Models\LaporanresepR;
 use App\Models\PegawaiM;
+use App\Models\PenjaminPasien;
 use Illuminate\Http\Request;
 use App\Models\Casemix\Inacbg;
 use App\Models\DiagnosaM;
@@ -212,6 +213,7 @@ class InAcbgGrouperController extends Controller
         $carabayar_id = $request->input(key: "carabayar_id") ?? "";
         $carabayar_nama = $request->input(key: "carabayar_nama") ?? "";
         $umur_pasien = $request->input(key: "umur") ?? "";
+        $loginpemakai_id = $request->input(key: "loginpemakai_id") ?? "";
 
         // Structur Payload 
         $data = [
@@ -273,7 +275,8 @@ class InAcbgGrouperController extends Controller
             'carabayar_id' => $carabayar_id,
             'carabayar_nama' => $carabayar_nama,
             'umur_pasien' => $umur_pasien,
-            'sep_id'=>$dataSep['sep_id']
+            'sep_id'=>$dataSep['sep_id'],
+            'create_loginpemakai_id'=>$loginpemakai_id
         ];
 
 
@@ -532,13 +535,16 @@ class InAcbgGrouperController extends Controller
             }
         }
         $caraMasuk = LookupM::getLookupType('inacbgs_caramasuk');
+        $COB = PenjaminPasien::getLookupType();
+
         $DPJP = PegawaiM::getPegawaiDPJP('1');
         // $model = PendaftaranT::dataListGrouper($nopeserta);
         return Inertia::render('Grouping/indexPasien', [
             'model' => $data,
             'pasien' => $pasien,
             'caraMasuk' => $caraMasuk,
-            'DPJP' => $DPJP
+            'DPJP' => $DPJP,
+            'COB'=>$COB
         ]);
     }
     public function getGroupperPasien(Request $request)
