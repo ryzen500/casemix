@@ -46,4 +46,15 @@ class DiagnosaM extends Model
         return $results->get();
 
     }
+    public static function getDiagnosaByCodeAutocomplete( $diagnosa_kode)
+    {
+        // $query = self::buildBaseQueryGrouping();
+        $query = DB::table('diagnosa_m as d')
+                ->select('diagnosa_id', 'diagnosa_kode', 'diagnosa_nama')
+                ->where('d.diagnosa_aktif', true) // Ensuring that the diagnosa is active
+                ->where('d.diagnosa_kode', $diagnosa_kode);
+                // ->where('s.nosep', '=', "'".$nosep."'");
+        return $query->first();
+
+    }
 }
