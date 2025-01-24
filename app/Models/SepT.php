@@ -16,7 +16,7 @@ class SepT extends Model
         // $query = self::buildBaseQueryGrouping();
         $query = DB::table('sep_t as s')
                 ->select(
-                    DB::raw('p.pendaftaran_id, s.*'),
+                    DB::raw('p.pendaftaran_id,s.*'),
                     DB::raw("CASE
                         WHEN inacbg_t.is_finalisasi = true AND inacbg_t.is_terkirim = true THEN 'Terkirim'::text
                         WHEN inacbg_t.is_finalisasi = true AND inacbg_t.is_terkirim = false THEN 'Final'::text

@@ -71,6 +71,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, COB })
     const [selectedDPJP, setDPJP] = useState(null);
     const [expandedRows, setExpandedRows] = useState(null);
     const [loading, setLoading] = useState(false); // Loading state for expanded row
+    const [hide, setHide] = useState(false); // Loading state for expanded row
+
     const toast = useRef(null);
     const [suggestions, setSuggestions] = useState([]);
     const [searchText, setSearchText] = useState('');
@@ -348,6 +350,13 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, COB })
                     setDatas(response.data.model.response);
 
 
+                    if (response.data.inacbg === null) {
+                        setHide(true);
+                        
+                    }else{
+                        setHide(false);
+
+                    }
                     const defaultCaraMasuk = caraMasuk.find(
                         (caramasuk) => caramasuk.code === "gp"
                     );
@@ -998,7 +1007,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, COB })
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Sewa Alat</div>
                                                     <div className="col-sm-7">
                                                         <InputNumber
-                                                            value={parseFloat(obats.sewaalat || 0)}
+                                                            value={parseFloat(obats.sewaalat)}
                                                             onValueChange={handleValueChange}
                                                             mode="currency"
                                                             currency="IDR"
@@ -1341,8 +1350,9 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, COB })
 
                                 {/*  Hasil Grouping */}
 
-                                <div>
-                                    <table className='table table-bordered' style={{ border: ' 1px solid black', width: '100%' }}>
+                                {console.log("Display", hide)}
+                                <div style={{ display: hide === true ? 'none' : 'block' }}>
+                                <table className='table table-bordered' style={{ border: ' 1px solid black', width: '100%' }}>
                                         <tr>
                                             <td colSpan={4}><p className='text-center'>Hasil Grouper E-Klaim v5 </p></td>
                                         </tr>
@@ -1527,7 +1537,9 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, COB })
         axios.post(route('updateNewKlaim'), payload)
             .then((response) => {
                 // Handle the response from the backend
+                setHide(false);
                 toast.current.show({ severity: 'success', summary: `Data  Berhasil Di simpan`, detail: datas.noSep, life: 3000 });
+                {console.log("Display 2", hide)}
 
             })
             .catch((error) => {
