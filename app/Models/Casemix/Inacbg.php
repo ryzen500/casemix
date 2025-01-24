@@ -29,6 +29,24 @@ class Inacbg extends Model
         'totaltarif',
         'ruanganakhir_id',
         'create_time',
+        'tarif_prosedur_nonbedah',
+        'tarif_prosedur_bedah',
+        'tarif_konsultasi',
+        'tarif_tenaga_ahli',
+        'tarif_keperawatan',
+        'tarif_penunjang',
+        'tarif_radiologi',
+        'tarif_laboratorium',
+        'tarif_pelayanan_darah',
+        'tarif_rehabilitasi',
+        'tarif_akomodasi',
+        'tarif_rawat_integerensif',
+        'tarif_obat',
+        'tarif_obat_kronis',
+        'tarif_obat_kemoterapi',
+        'tarif_alkes',
+        'tarif_bhp',
+        'tarif_sewa_alat',
         'cob_id',
         'create_loginpemakai_id',
         'create_ruangan',
@@ -544,7 +562,7 @@ class Inacbg extends Model
                 'nomor_sep' => $data['nomor_sep'] ?? "",
                 'nomor_kartu' => $data['nomor_kartu'] ?? "",
                 'tgl_masuk' => $data['tgl_masuk'] ?? "",
-                'cara_masuk'=>$data['cara_masuk'] ??"",
+                'cara_masuk' => $data['cara_masuk'] ?? "",
                 'tgl_pulang' => $data['tgl_pulang'] ?? "",
                 'jenis_rawat' => $data['jenis_rawat'] ?? "",
                 'kelas_rawat' => $data['kelas_rawat'] ?? "",
@@ -556,14 +574,14 @@ class Inacbg extends Model
                 'upgrade_class_ind' => $data['upgrade_class_ind'] ?? null,
                 'upgrade_class_class' => $data['upgrade_class_class'] ?? null,
                 'upgrade_class_los' => $data['upgrade_class_los'] ?? null,
-                'upgrade_class_payor'=>$data['upgrade_class_payor'] ?? null,
+                'upgrade_class_payor' => $data['upgrade_class_payor'] ?? null,
                 'birth_weight' => $data['birth_weight'] ?? null,
                 'sistole' => $data['sistole'] ?? null,
                 'diastole' => $data['diastole'] ?? null,
                 'discharge_status' => $data['discharge_status'] ?? null,
                 'diagnosa' => $data['diagnosa'] ?? null,
-                'diagnosa_inagrouper'=>$data['diagnosa_inagrouper'] ?? null,
-                'procedure_inagrouper'=>$data['procedure_inagrouper'] ?? null,
+                'diagnosa_inagrouper' => $data['diagnosa_inagrouper'] ?? null,
+                'procedure_inagrouper' => $data['procedure_inagrouper'] ?? null,
                 'tarif_rs' => [
                     'prosedur_non_bedah' => $data['prosedur_non_bedah'] ?? null,
                     'prosedur_bedah' => $data['prosedur_bedah'] ?? null,
@@ -752,7 +770,7 @@ class Inacbg extends Model
             'message' => $decodedResponse['metadata']['message'] ?? 'Unknown error',
         ];
     }
-    
+
 
 
     private function processResponseDataKlaim(string $response, string $key): array
@@ -1045,7 +1063,7 @@ class Inacbg extends Model
                     ELSE date(p.tgl_pendaftaran)::timestamp without time zone 
                 END AS tglpulang
             "),
-               'pa.no_rekam_medik',
+                'pa.no_rekam_medik',
                 'pa.nama_pasien',
                 's.nosep',
                 'pa.pasien_id',
