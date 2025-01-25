@@ -337,7 +337,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, COB })
         } else {
             try {
                 // Fetch detailed data (e.g., reviews) for the expanded row
-                const response = await axios.post('/getGroupperPasien', {
+                const response = await axios.post(route('getGroupperPasien'), {
                     noSep: expandedProduct.noSep, // Send the expandedProduct.noSep data
                     pendaftaran_id: expandedProduct.pendaftaran_id, // Example of additional data
                     diagnosa: expandedProduct.diagnosa
@@ -349,8 +349,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, COB })
                     toast.current.show({ severity: 'info', summary: event.data.noSep, detail: event.data.noSep, life: 3000 });
                     setDatas(response.data.model.response);
 
-
-                    if (response.data.inacbg === null) {
+                    // console.log("Responsess ", response.data.getGrouping.data.data.grouper.response);
+                    if (response.data.getGrouping.data.data.grouper.response === null) {
                         setHide(true);
                         
                     }else{
@@ -1007,7 +1007,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, COB })
                                                     <div className="col-sm-5" style={{ alignContent: 'center' }}>Sewa Alat</div>
                                                     <div className="col-sm-7">
                                                         <InputNumber
-                                                            value={parseFloat(obats.sewaalat)}
+                                                            value={parseFloat(obats.sewaalat | 0)}
                                                             onValueChange={handleValueChange}
                                                             mode="currency"
                                                             currency="IDR"
@@ -1514,7 +1514,6 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, COB })
             keperawatan : tarifs.keperawatan,
             penunjang : tarifs.penunjang,
             radiologi : tarifs.radiologi,
-            radiologi : tarifs.radiologi,
             laboratorium: tarifs.laboratorium,
             pelayanan_darah: tarifs.pelayanandarah,
             rehabilitasi: tarifs.rehabilitasi,
@@ -1530,6 +1529,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, COB })
             diagnosa_inagrouper: `${dataDiagnosaINA.map(item => item.diagnosa_kode).join('#')}`,
             carabayar_id: pendaftarans.carabayar_id,
             carabayar_nama: pendaftarans.carabayar_nama,
+            pendaftaran_id: pendaftarans.pendaftaran_id,
             umur_pasien : pendaftarans.umur,
             cob_cd: selectedCOB.code,
             loginpemakai_id : auth.user.loginpemakai_id
@@ -1537,9 +1537,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, COB })
         axios.post(route('updateNewKlaim'), payload)
             .then((response) => {
                 // Handle the response from the backend
-                setHide(false);
                 toast.current.show({ severity: 'success', summary: `Data  Berhasil Di simpan`, detail: datas.noSep, life: 3000 });
-                {console.log("Display 2", hide)}
+                // {console.log("Display 2", hide)}
 
             })
             .catch((error) => {
@@ -1555,11 +1554,13 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, COB })
 
         // Perform API request with axios
         const payload = {
-            nomor_sep: datas.noSep
+            nomor_sep: datas.noSep,
+
         };
         axios.post(route('groupingStageSatu'), payload)
             .then((response) => {
-                console.log('Response:', response.data);
+                // console.log('Response:', response.data);
+                setHide(false);
                 setDataGrouper(response.data.data);
                 toast.current.show({ severity: 'success', summary: `Data  Berhasil Di Grouping`, detail: datas.noSep, life: 3000 });
 

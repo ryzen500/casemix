@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Casemix;
 
 use App\Http\Controllers\Controller;
+use App\Http\Services\groupingService;
 use App\Http\Services\MonitoringHistoryService;
 use App\Http\Services\Action\SaveDataKlaimService;
 
 use App\Http\Services\SearchSepService;
 use App\Models\LaporanresepR;
+use App\Models\PasienMordibitasR;
 use App\Models\PegawaiM;
 use App\Models\PenjaminPasien;
 use Illuminate\Http\Request;
@@ -215,6 +217,7 @@ class InAcbgGrouperController extends Controller
         $carabayar_nama = $request->input(key: "carabayar_nama") ?? "";
         $umur_pasien = $request->input(key: "umur") ?? "";
         $loginpemakai_id = $request->input(key: "loginpemakai_id") ?? "";
+        $pendaftaran_id = $request->input(key: "pendaftaran_id") ?? "";
 
         // Structur Payload 
         $data = [
@@ -270,8 +273,20 @@ class InAcbgGrouperController extends Controller
 
         // Payload Pendaftaran 
         $dataSep = LaporanresepR::where('nosep',$nomor_sep)->first();
+        $dataDiagnosa = PasienmorbiditasT::insertMorbiditasByPendaftaran($pendaftaran_id)->toArray();
+      
+        //Procedural
+        $dataIcd9cm = Pasienicd9cmT::getIcdIX($pendaftaran_id);
 
-        // dd($dataSep['sep_id']);die;
+        // $diagnosa_explode = explode('#', $diagnosa);
+
+
+        // Temporary Table 
+
+        $dataDiagnosaRiwayat = PasienMordibitasR::getMorbiditas($pendaftaran_id)->toArray();
+
+        // // echo "<pre>"; var_dump($dataDiagnosa);die;
+        // dd($dataDiagnosaRiwayat);
         $pendaftaran = [
             'carabayar_id' => $carabayar_id,
             'carabayar_nama' => $carabayar_nama,
@@ -283,6 +298,9 @@ class InAcbgGrouperController extends Controller
 
         $saveService = new SaveDataKlaimService();
         $saveResult = $saveService->addDataInacbgT($data, $pendaftaran);
+        $saveDiagnosa = $saveService->addDataPasienMordibitasRiwayat($data, $pendaftaran, $dataDiagnosa);
+        $deletePasienMordibitasT = $saveService->DeleteDataPasienMordibitas($data, $pendaftaran, $dataDiagnosa);
+        $addDataPasienMordibitas = $saveService->addDataPasienMordibitas($data, $pendaftaran, $dataDiagnosaRiwayat);
 
         // var_dump($saveResult['s']);die;
         if ($saveResult['status'] === 'success') {
@@ -317,12 +335,21 @@ class InAcbgGrouperController extends Controller
 
         $nomor_sep = $request->input('nomor_sep') ?? "";
 
+
+        // $diagnosa = explode(' ', $diagnosa);
+        // ICDX
+
+
+        //Pengecekan
+        // dd($dataDiagnosa);
+        // var_dump($dataDiagnosa);die;
         // Structur Payload 
         $data = [
             'nomor_sep' => $nomor_sep,
 
         ];
 
+        // GetData
 
         // result kirim claim
         $results = $this->inacbg->groupingStageSatu($data, $key);
@@ -555,6 +582,7 @@ class InAcbgGrouperController extends Controller
         $caraMasuk = LookupM::getLookupType('inacbgs_caramasuk');
         $COB = PenjaminPasien::getLookupType();
 
+        // var_dump($COB);die;
         $DPJP = PegawaiM::getPegawaiDPJP('1');
         // $model = PendaftaranT::dataListGrouper($nopeserta);
         return Inertia::render('Grouping/indexPasien', [
@@ -580,7 +608,8 @@ class InAcbgGrouperController extends Controller
         $obat = PendaftaranT::getGroupping($pendaftaran_id);
         $profil = ProfilrumahsakitM::getProfilRS();
         $SEP = Inacbg::where('inacbg_nosep', $noSep)->first();
-
+        $serviceGrouping = new groupingService($this->inacbg);
+        $getGrouping = $serviceGrouping->callDataGrouping($noSep);
         return response()->json([
             'model' => $getRiwayat,
             'pendaftaran' => $pendaftaran,
@@ -589,7 +618,8 @@ class InAcbgGrouperController extends Controller
             'profil' => $profil,
             'dataDiagnosa' => $dataDiagnosa,
             'dataIcd9cm' => $dataIcd9cm,
-            'inacbg'=>$SEP
+            'inacbg'=>$SEP,
+            'getGrouping'=>$getGrouping
         ]);
     }
     public function getKlaim($noSep){
