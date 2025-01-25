@@ -13,6 +13,7 @@ use App\Models\PenjaminPasien;
 use Illuminate\Http\Request;
 use App\Models\Casemix\Inacbg;
 use App\Models\DiagnosaM;
+use App\Models\LoginPemakaiK;
 use App\Models\LookupM;
 use App\Models\Pasienicd9cmT;
 use App\Models\PasienmorbiditasT;
@@ -512,12 +513,10 @@ class InAcbgGrouperController extends Controller
                     $sep = SepT::getSep($row['noSep']);
                     $data[] = $row;
                     // dd($data,$sep,!empty($sep));
+                    $getClaim = $this->getKlaim($row['noSep']);
 
                     if (!empty($sep)) {
                         $data[$key]['pendaftaran_id'] = $sep->pendaftaran_id;
-                        $data[$key]['cbg'] = $sep->cbg;
-                        $data[$key]['status'] = $sep->status;
-                        $data[$key]['nama_pegawai'] = $sep->nama_pegawai;
                         $pasien['nama_pasien'] = $sep->nama_pasien;
                         $pasien['no_rekam_medik'] = $sep->no_rekam_medik;
                         $pasien['jeniskelamin'] = $sep->jeniskelamin;
@@ -525,10 +524,29 @@ class InAcbgGrouperController extends Controller
 
                     } else {
                         $data[$key]['pendaftaran_id'] = null;
-                        $data[$key]['cbg'] = null;
-                        $data[$key]['status'] = null;
-                        $data[$key]['nama_pegawai'] = null;
+                    }
+                    if(!empty($getClaim['data']['data'])){
+                        $data[$key]['tglSep'] = $getClaim['data']['data']['tgl_masuk'];
+                        $data[$key]['tglPlgSep'] = $getClaim['data']['data']['tgl_pulang'];
+                        $data[$key]['jaminan'] = $getClaim['data']['data']['payor_nm'];
+                        $tipe ='-';
+                        if($getClaim['data']['data']['jenis_rawat']==1){
+                            $tipe ='RI';
+                        }else if($getClaim['data']['data']['jenis_rawat']==2){
+                            $tipe ='RJ';
+                        }else if($getClaim['data']['data']['jenis_rawat']==3){
+                            $tipe ='RD';
+                        }
+                        $data[$key]['tipe'] = $tipe;
 
+                        $data[$key]['cbg'] = !empty($getClaim['data']['data']['grouper']['response'])?$getClaim['data']['data']['grouper']['response']['cbg']['code']:"-";
+                        $data[$key]['status'] =!empty($getClaim['data']['data']['klaim_status_cd'])?$getClaim['data']['data']['klaim_status_cd']:"-";
+                        if(!empty($getClaim['data']['data']['coder_nik'])){
+                            $peg = LoginPemakaiK::getCoder($getClaim['data']['data']['coder_nik']);
+                            $data[$key]['nama_pegawai'] = !empty($peg)?$peg->namaLengkap:'-';
+                        }else{
+                            $data[$key]['nama_pegawai'] ='-';
+                        }
                     }
 
                 }
@@ -573,5 +591,23 @@ class InAcbgGrouperController extends Controller
             'dataIcd9cm' => $dataIcd9cm,
             'inacbg'=>$SEP
         ]);
+    }
+    public function getKlaim($noSep){
+        // Ambil keynya dari  ENV 
+        $key_ina = env('INACBG_KEY');
+
+
+        // dd($request->all);
+        $nomor_sep = $noSep?? null;
+
+        // Structur Payload 
+        $data_ina = [
+            'nomor_sep' => $nomor_sep,
+
+        ];
+
+
+        // result kirim claim
+        return $this->inacbg->getClaim($data_ina, $key_ina);
     }
 }

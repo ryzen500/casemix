@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 
 class LoginPemakaiK extends Authenticatable
 {
@@ -23,5 +24,22 @@ class LoginPemakaiK extends Authenticatable
     public function getAuthPassword()
     {
         return $this->katakunci_pemakai;
+    }
+    public static function getCoder($coder_nik)
+    {
+        $query = DB::table('loginpemakai_k')
+        ->select(
+            DB::raw("CONCAT(
+                COALESCE(pegawai_m.gelardepan, ''), ' ',
+                pegawai_m.nama_pegawai, ' ',
+                COALESCE(gelarbelakang_m.gelarbelakang_nama, '')
+            ) AS namaLengkap"),
+ 
+        )
+        ->join('pegawai_m', 'pegawai_m.pegawai_id','=','loginpemakai_k.pegawai_id')
+        ->leftJoin('gelarbelakang_m', 'pegawai_m.gelarbelakang_id', '=', 'gelarbelakang_m.gelarbelakang_id') // Adjust the join condition as per your database schema
+        ->where('loginpemakai_k.coder_nik', $coder_nik);    
+
+        return $query->first();
     }
 }

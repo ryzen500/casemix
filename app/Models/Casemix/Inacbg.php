@@ -695,6 +695,50 @@ class Inacbg extends Model
         ]);
     }
 
+    public function validateDataClaim(array $data)
+    {
+        $validator = Validator::make($data, [
+            'nomor_sep' => 'required|string'
+        ]);
+
+        if ($validator->fails()) {
+            throw new Exception(implode(', ', $validator->errors()->all()));
+        }
+    }
+    private function preparePayloadGetClaim(array $data): string
+    {
+        return json_encode([
+            'metadata' => ['method' => 'get_claim_data'],
+            'data' => [
+                'nomor_sep' => $data['nomor_sep'] ?? "",
+            ],
+        ]);
+    }
+    
+    /**
+     * Summary of getClaim
+     * @param array $data
+     * @return string
+     * get claim from nomor_sep
+     */
+    public function getClaim(array $data, string $key): array
+    {
+        try {
+            // validate The Payload
+            $this->validateDataClaim($data);
+            $payload = $this->preparePayloadGetClaim($data);
+ 
+            $encryptedPayload = $this->inacbg_encrypt($payload, $key); // Tambahkan parameter $key
+
+            $response = $this->sendRequest($encryptedPayload, $key);
+            return $this->processResponse($response, $key);
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
     /**
      * Summary of sendRequest
      * @param string $encryptedPayload
