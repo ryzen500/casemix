@@ -1580,7 +1580,10 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
         e.preventDefault(); // Prevent page reload
 
         // console.log('Form Data Submitted:', dataDiagnosa);
-        console.log('Response:', auth);
+
+        console.log('Total All', total.total);
+
+        console.log('Data inA', dataDiagnosaINA);
 
         // Perform API request with axios
         const payload = {
@@ -1617,13 +1620,15 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
             sewa_alat:obats.sewaalat,
             payor_id: 3,
             diagnosa: `${dataDiagnosa.map(item => item.diagnosa_kode).join('#')}`,
+            diagnosa_array: JSON.stringify(dataDiagnosa),
             diagnosa_inagrouper: `${dataDiagnosaINA.map(item => item.diagnosa_kode).join('#')}`,
             carabayar_id: pendaftarans.carabayar_id,
             carabayar_nama: pendaftarans.carabayar_nama,
             pendaftaran_id: pendaftarans.pendaftaran_id,
             umur_pasien : pendaftarans.umur,
             cob_cd: selectedCOB.code,
-            loginpemakai_id : auth.user.loginpemakai_id
+            loginpemakai_id : auth.user.loginpemakai_id,
+            total_tarif_rs : total.total
         };
         axios.post(route('updateNewKlaim'), payload)
             .then((response) => {

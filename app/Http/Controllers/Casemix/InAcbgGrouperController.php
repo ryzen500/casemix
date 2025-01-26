@@ -180,6 +180,10 @@ class InAcbgGrouperController extends Controller
         $discharge_status = $request->input("discharge_status") ?? "";
         $diagnosa = $request->input("diagnosa") ?? "";
         $diagnosa_inagrouper = $request->input("diagnosa_inagrouper") ?? "";
+        $diagnosa_array = $request->input("diagnosa_array") ?? "";
+
+
+
         $procedure_inagrouper = $request->input("procedure_inagrouper") ?? "";
 
 
@@ -219,6 +223,7 @@ class InAcbgGrouperController extends Controller
         $umur_pasien = $request->input(key: "umur") ?? "";
         $loginpemakai_id = $request->input(key: "loginpemakai_id") ?? "";
         $pendaftaran_id = $request->input(key: "pendaftaran_id") ?? "";
+        $total_tarif_rs = $request->input(key: "total_tarif_rs") ?? "";
 
         // Structur Payload 
         $data = [
@@ -284,7 +289,10 @@ class InAcbgGrouperController extends Controller
 
         // Temporary Table 
 
-        $dataDiagnosaRiwayat = PasienMordibitasR::getMorbiditas($pendaftaran_id)->toArray();
+        // $dataDiagnosaRiwayat = PasienMordibitasR::getMorbiditas($pendaftaran_id)->toArray();
+
+        $decodedRiwayat = json_decode($diagnosa_array,true);
+        // dd(json_decode($diagnosa_array,true));
 
         // // echo "<pre>"; var_dump($dataDiagnosa);die;
         // dd($dataDiagnosaRiwayat);
@@ -293,7 +301,8 @@ class InAcbgGrouperController extends Controller
             'carabayar_nama' => $carabayar_nama,
             'umur_pasien' => $umur_pasien,
             'sep_id'=>$dataSep['sep_id'],
-            'create_loginpemakai_id'=>$loginpemakai_id
+            'create_loginpemakai_id'=>$loginpemakai_id,
+            'total_tarif_rs'=>$total_tarif_rs
         ];
 
 
@@ -301,7 +310,7 @@ class InAcbgGrouperController extends Controller
         $saveResult = $saveService->addDataInacbgT($data, $pendaftaran);
         $saveDiagnosa = $saveService->addDataPasienMordibitasRiwayat($data, $pendaftaran, $dataDiagnosa);
         $deletePasienMordibitasT = $saveService->DeleteDataPasienMordibitas($data, $pendaftaran, $dataDiagnosa);
-        $addDataPasienMordibitas = $saveService->addDataPasienMordibitas($data, $pendaftaran, $dataDiagnosaRiwayat);
+        $addDataPasienMordibitas = $saveService->addDataPasienMordibitas($data, $pendaftaran, $decodedRiwayat);
 
         // var_dump($saveResult['s']);die;
         if ($saveResult['status'] === 'success') {
