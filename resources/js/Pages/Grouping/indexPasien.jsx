@@ -263,6 +263,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
         let _dataDiagnosa = [...dataDiagnosa];
         let _diagnosa = { ...diagnosaTemp };
         _diagnosa.diagnosa_id = rowData.id;
+        _diagnosa.tgl_pendaftaran = pendaftarans.tgl_pendaftaran;
+        _diagnosa.pegawai_id = pendaftarans.pegawai_id;
         _diagnosa.diagnosa_nama = rowData.label;
         _diagnosa.diagnosa_kode = rowData.value;
         _dataDiagnosa.push(_diagnosa);

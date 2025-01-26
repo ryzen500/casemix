@@ -200,7 +200,7 @@ class PendaftaranT extends Model
                 inacbg_t.cara_pulang
                 "),
             DB::raw('pg.nama_pegawai, inasiscbg_t.kodeprosedur AS cbg'),
-            DB::raw('p.umur'),
+            DB::raw('p.umur,p.tgl_pendaftaran,p.pegawai_id'),
 
         )
         ->join('sep_t as s', 's.sep_id', '=', 'p.sep_id')
