@@ -1563,6 +1563,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, COB })
         // Perform API request with axios
         const payload = {
             nomor_sep: datas.noSep,
+            loginpemakai_id : auth.user.loginpemakai_id,
 
         };
         axios.post(route('groupingStageSatu'), payload)
