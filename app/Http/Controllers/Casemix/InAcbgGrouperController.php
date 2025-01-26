@@ -603,17 +603,22 @@ class InAcbgGrouperController extends Controller
                 }
             }
         }
+        // for dropdown
         $caraMasuk = LookupM::getLookupType('inacbgs_caramasuk');
+        $jenisKasus = LookupM::getLookupType('kasusdiagnosa');
         $COB = PenjaminPasien::getLookupType();
 
         // var_dump($COB);die;
         $DPJP = PegawaiM::getPegawaiDPJP('1');
+        $pegawai = PegawaiM::getPegawaiDPJP('1');
         // $model = PendaftaranT::dataListGrouper($nopeserta);
         return Inertia::render('Grouping/indexPasien', [
             'model' => $data,
             'pasien' => $pasien,
             'caraMasuk' => $caraMasuk,
             'DPJP' => $DPJP,
+            'jenisKasus' => $jenisKasus,
+            'pegawai' => $pegawai,
             'COB'=>$COB
         ]);
     }

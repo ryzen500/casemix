@@ -18,7 +18,8 @@ import { IconField } from 'primereact/iconfield';
 import { InputIcon } from 'primereact/inputicon';
 import { AutoComplete } from 'primereact/autocomplete';
 import { InputNumber } from 'primereact/inputnumber';
-export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, COB }) {
+import { Calendar } from 'primereact/calendar';
+export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisKasus, pegawai, COB }) {
     const [datas, setDatas] = useState([]);
     const [pendaftarans, setPendaftarans] = useState([]);
     const [dataDiagnosa, setDiagnosa] = useState([]);
@@ -237,6 +238,11 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, COB })
         }
     }
 
+    const formatDateTime = (dateString) => {
+        // Convert the date string to a Date object
+        const formattedDate = new Date(dateString.replace(" ", "T"));
+        return isNaN(formattedDate) ? null : formattedDate;
+      };
 
     const addRowDiagnosaIX = (rowData) => {
         let _dataDiagnosa = [...dataIcd9cm];
@@ -1036,7 +1042,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, COB })
                                 {/* Checkbox Tarif */}
                                 <div className='text-center'><Checkbox></Checkbox> Menyatakan benar bahwa data tarif yang tersebut di atas adalah benar sesuai dengan kondisi yang sesungguhnya.</div>
                                 <TabView>
-                                <TabPanel header="Coding UNU Grouper">
+                                    <TabPanel header="Coding UNU Grouper">
                                         <div className="p-datatable-header">
                                             {
                                                 header
@@ -1046,6 +1052,9 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, COB })
                                             <thead className='p-datatable-thead'>
                                                 <tr>
                                                 <th>No</th>
+                                                <th>Tgl. Diagnosa</th>
+                                                <th>Dokter</th>
+                                                <th>Jenis Kasus</th>
                                                 <th>Diagnosa Kode</th>
                                                 <th>Diagnosa Nama</th>
                                                 <th>Kelompok Diagnosa</th>
@@ -1057,6 +1066,41 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, COB })
                                                 <tr key={index}>
                                                     <td>
                                                         {index + 1}
+                                                    </td>
+                                                    <td>
+                                                        {console.log(row.tgl_pendaftaran)}
+                                                        <Calendar 
+                                                        value={formatDateTime(row.tgl_pendaftaran)} // Pass a valid Date object
+                                                        //  value={row.tgl_pendaftaran} 
+                                                        onChange={(e) =>  handleInputChangeRow(index, 'tgl_pendaftaran', e.target.value)} 
+                                                        showTime 
+                                                        name={`[PasienmorbiditasT][${index}][tglmorbiditas]`}
+                                                        id={`tglmorbiditas_${index}`}
+                                                        />
+                                                    </td>
+                                                    <td>
+                                                        <Dropdown 
+                                                            value={row.pegawai_id} onChange={(e) =>  handleInputChangeRow(index, 'pegawai_id', e.target.value)} 
+                                                            options={pegawai} optionLabel="nmdpjp"
+                                                            optionValue = "pegawai_id"
+                                                         placeholder="Pilih DPJP"  
+                                                         filter={true} // Enables the search filter
+                                                            filterBy="nmdpjp"
+                                                         name={`[PasienmorbiditasT][${index}][pegawai_id]`}
+                                                            id={`pegawai_id_${index}`}
+                                                            style={{ width: '250px' }}
+                                                         />
+                                                    </td>
+                                                    <td>
+                                                        <Dropdown 
+                                                            value={row.kasusdiagnosa} onChange={(e) =>  handleInputChangeRow(index, 'kasusdiagnosa', e.target.value)} 
+                                                            options={jenisKasus} optionLabel="name" 
+                                                         placeholder="Pilih Jenis Kasus Penyakit"  
+                                                         filter={true} // Enables the search filter
+                                                            filterBy="name"
+                                                         name={`[PasienmorbiditasT][${index}][kasusdiagnosa]`}
+                                                            id={`kasusdiagnosa_${index}`}
+                                                         />
                                                     </td>
                                                     <td>
                                                         <input
@@ -1202,6 +1246,9 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, COB })
                                             <thead className='p-datatable-thead'>
                                                 <tr>
                                                 <th>No</th>
+                                                <th>Tgl. Diagnosa</th>
+                                                <th>Dokter</th>
+                                                <th>Jenis Kasus</th>
                                                 <th>Diagnosa Kode</th>
                                                 <th>Diagnosa Nama</th>
                                                 <th>Kelompok Diagnosa</th>
@@ -1213,6 +1260,40 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, COB })
                                                 <tr key={index}>
                                                     <td>
                                                         {index + 1}
+                                                    </td>
+                                                    <td>
+                                                        <Calendar 
+                                                        value={formatDateTime(row.tgl_pendaftaran)} // Pass a valid Date object
+                                                        //  value={row.tgl_pendaftaran} 
+                                                        onChange={(e) =>  handleInputChangeRow(index, 'tgl_pendaftaran', e.target.value)} 
+                                                        showTime 
+                                                        name={`[PasienmorbiditasTINA][${index}][tglmorbiditas]`}
+                                                        id={`tglmorbiditas_${index}`}
+                                                        />
+                                                    </td>
+                                                    <td>
+                                                        <Dropdown 
+                                                            value={row.pegawai_id} onChange={(e) =>  handleInputChangeRow(index, 'pegawai_id', e.target.value)} 
+                                                            options={pegawai} optionLabel="nmdpjp"
+                                                            optionValue = "pegawai_id"
+                                                         placeholder="Pilih DPJP"  
+                                                         filter={true} // Enables the search filter
+                                                            filterBy="nmdpjp"
+                                                         name={`[PasienmorbiditasTINA][${index}][pegawai_id]`}
+                                                            id={`pegawai_id_${index}`}
+                                                            style={{ width: '250px' }}
+                                                         />
+                                                    </td>
+                                                    <td>
+                                                        <Dropdown 
+                                                            value={row.kasusdiagnosa} onChange={(e) =>  handleInputChangeRow(index, 'kasusdiagnosa', e.target.value)} 
+                                                            options={jenisKasus} optionLabel="name" 
+                                                         placeholder="Pilih Jenis Kasus Penyakit"  
+                                                         filter={true} // Enables the search filter
+                                                            filterBy="name"
+                                                         name={`[PasienmorbiditasTINA][${index}][kasusdiagnosa]`}
+                                                            id={`kasusdiagnosa_${index}`}
+                                                         />
                                                     </td>
                                                     <td>
                                                         <input
