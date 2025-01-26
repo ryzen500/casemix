@@ -13,7 +13,7 @@ class LookupM extends Model
     {
         $query = DB::table('lookup_m ')
         ->select(
-            DB::raw('lookup_name as name,lookup_value as code')
+            DB::raw('lookup_name as name,lookup_value as value')
         )
         ->from('lookup_m')
         ->where('lookup_type', $type)

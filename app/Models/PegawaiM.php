@@ -20,10 +20,12 @@ class PegawaiM extends Model
                 pegawai_m.nama_pegawai, ' ',
                 COALESCE(gelarbelakang_m.gelarbelakang_nama, '')
             ) AS nmDPJP"),
+             DB::raw('pegawai_m.pegawai_id'),
             'pegawai_m.kodedokter_bpjs AS kdDPJP'
         )
         ->leftJoin('gelarbelakang_m', 'pegawai_m.gelarbelakang_id', '=', 'gelarbelakang_m.gelarbelakang_id') // Adjust the join condition as per your database schema
         ->where('pegawai_m.kelompokpegawai_id', $kelompokpegawai_id)
+        ->where('pegawai_m.pegawai_aktif', true) // Ensuring that the diagnosa is active
         ->orderBy('pegawai_m.nama_pegawai', 'asc');
     
 

@@ -13,11 +13,15 @@ class PasienmorbiditasT extends Model
     {
         $query = DB::table('pasienmorbiditas_t ')
         ->select(
-            DB::raw('pasienmorbiditas_t.pasienmorbiditas_id,pasienmorbiditas_t.pendaftaran_id,diagnosa_m.diagnosa_id,diagnosa_m.diagnosa_nama,diagnosa_m.diagnosa_kode,kelompokdiagnosa_m.kelompokdiagnosa_id,kelompokdiagnosa_m.kelompokdiagnosa_nama')
+            DB::raw('pasienmorbiditas_t.pasienmorbiditas_id,pasienmorbiditas_t.pendaftaran_id,pasienmorbiditas_t.kasusdiagnosa,
+            pendaftaran_t.tgl_pendaftaran, pendaftaran_t.pegawai_id,
+            diagnosa_m.diagnosa_id,diagnosa_m.diagnosa_nama,diagnosa_m.diagnosa_kode,
+            kelompokdiagnosa_m.kelompokdiagnosa_id,kelompokdiagnosa_m.kelompokdiagnosa_nama')
         )
         ->from('pasienmorbiditas_t')
         ->join('diagnosa_m', 'pasienmorbiditas_t.diagnosa_id',  '=', 'diagnosa_m.diagnosa_id')
         ->join('kelompokdiagnosa_m', 'pasienmorbiditas_t.kelompokdiagnosa_id',  '=', 'kelompokdiagnosa_m.kelompokdiagnosa_id')
+        ->join('pendaftaran_t', 'pasienmorbiditas_t.pendaftaran_id',  '=', 'pendaftaran_t.pendaftaran_id')
 
         ->where('pasienmorbiditas_t.pendaftaran_id','=', $pendaftaran_id)
         ->orderBy('kelompokdiagnosa_m.kelompokdiagnosa_id','asc');
