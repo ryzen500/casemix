@@ -378,6 +378,34 @@ class Inacbg extends Model
         }
     }
 
+    /**
+     * Summary of newClaim
+     * @param array $data  This is request data 
+     * @param string $key $this is for the key from iancbg
+     * @return array
+     * This function for Send New Claim 
+     */
+    public function deleteKlaim(array $data, string $key): array
+    {
+        try {
+            // validate The Payload
+            $this->validateSendKlaim($data);
+            $payload = $this->preparePayloadDeletedClaim($data);
+
+            $encryptedPayload = $this->inacbg_encrypt($payload, $key); // Tambahkan parameter $key
+
+            $response = $this->sendRequest($encryptedPayload, $key);
+            return $this->processResponse($response, $key);
+        } catch (Exception $e) {
+            // echo "<pre>";
+            // var_dump($e);die;
+            return [
+                'success' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
 
 
     public function printKlaim(array $data, string $key): array
@@ -557,6 +585,23 @@ class Inacbg extends Model
         ]);
     }
 
+
+       /**
+     * Summary of preparePayload Delete Klaim
+     * @param array $data
+     * @return string
+     * This Is Function For Prepare The payload after Validation the Request Already Valid
+     */
+    private function preparePayloadDeletedClaim(array $data): string
+    {
+        return json_encode([
+            'metadata' => ['method' => 'delete_claim'],
+            'data' => [
+                'nomor_sep' => $data['nomor_sep'] ?? null,
+                'coder_nik' => $data['coder_nik'] ?? null,
+            ],
+        ]);
+    }
 
 
     /**
