@@ -326,6 +326,30 @@ class InAcbgGrouperController extends Controller
 
 
 
+    public function deleteKlaim(Request $request){
+     
+        
+        // Ambil keynya dari  ENV 
+        $key = env('INACBG_KEY');
+
+
+        // dd($request->all);
+        $nomor_sep = $request->input('noSep') ?? null;
+        $coder_nik = $request->input('coder_nik') ?? null;
+
+        // Structur Payload 
+        $data = [
+            'nomor_sep' => $nomor_sep,
+            'coder_nik' => $coder_nik,
+        ];
+
+
+        // result kirim claim
+        $results = $this->inacbg->deleteKlaim($data, $key);
+
+        // Kembalikan hasil sebagai JSON response
+        return response()->json($results, 200);
+    }
 
     public function groupingStageSatu(Request $request)
     {

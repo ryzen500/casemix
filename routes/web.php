@@ -58,6 +58,8 @@ Route::middleware('auth')->group(function () {
     Route::post('groupingStageSatu', [InAcbgGrouperController::class, 'groupingStageSatu'])->name('groupingStageSatu');
     Route::post('Finalisasi', [InAcbgGrouperController::class, 'Finalisasi'])->name('Finalisasi');
     Route::post('printKlaim', [InAcbgGrouperController::class, 'printKlaim'])->name('printKlaim');
+    Route::post('deleteKlaim', [InAcbgGrouperController::class, 'deleteKlaim'])->name('deleteKlaim');
+
 
     // autocomplete
     Route::post('searchDiagnosa', [SearchDiagnosaController::class, 'autocompleteDiagnosa'])->name('searchDiagnosa');

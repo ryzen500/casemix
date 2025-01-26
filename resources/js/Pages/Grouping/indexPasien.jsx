@@ -1353,7 +1353,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, COB })
                                     <button className="btn btn-primary" style={{ float: 'right' }} onClick={handleSimpanKlaim}>Simpan</button>
                                     <button className="btn btn-secondary ml-2" style={{ float: 'right' }} onClick={handleSimpanGroupingStage1}>Groupper</button>
 
-                                    <button className="btn btn-secondary ml-2" style={{ float: 'right' }} >Hapus Klaim</button>
+                                    <button className="btn btn-secondary ml-2" style={{ float: 'right' }} onClick={handleHapusKlaim} >Hapus Klaim</button>
                                 </div>
 
                                 {/*  Hasil Grouping */}
@@ -1572,6 +1572,32 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, COB })
                 setHide(false);
                 setDataGrouper(response.data.data);
                 toast.current.show({ severity: 'success', summary: `Data  Berhasil Di Grouping`, detail: datas.noSep, life: 3000 });
+
+                // Handle the response from the backend
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    };
+
+
+    /**Hapus Klaim */
+    const handleHapusKlaim = (e) => {
+        e.preventDefault(); // Prevent page reload
+
+        console.log('Form Data Submitted:', datas);
+
+        // Perform API request with axios
+        const payload = {
+            nomor_sep: datas.noSep,
+            coder_nik: auth.user.coder_nik,
+        };
+        axios.post(route('deleteKlaim'), payload)
+            .then((response) => {
+                // console.log('Response:', response.data);
+                setHide(false);
+                setDataGrouper(response.data.data);
+                toast.current.show({ severity: 'success', summary: `Data  Berhasil Di Hapus`, detail: datas.noSep, life: 3000 });
 
                 // Handle the response from the backend
             })
