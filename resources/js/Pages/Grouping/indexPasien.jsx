@@ -390,12 +390,12 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, COB })
     };
     const calculate_total=()=>{
         const total_all= (
-            parseFloat(tarifs.prosedurenonbedah | 0)+parseFloat(tarifs.prosedurebedah | 0)+parseFloat(tarifs.konsultasi | 0)+
-            parseFloat(tarifs.tenagaahli | 0)+parseFloat(tarifs.keperawatan | 0)+parseFloat(tarifs.penunjang | 0)+
-            parseFloat(tarifs.radiologi | 0)+parseFloat(tarifs.laboratorium | 0)+parseFloat(tarifs.pelayanandarah | 0)+
-            parseFloat(tarifs.rehabilitasi | 0)+parseFloat(tarifs.kamar_akomodasi | 0)+parseFloat(tarifs.rawatintensif | 0)+
-            parseFloat(obats.obat | 0)+parseFloat(obats.obatkronis | 0)+parseFloat(obats.obatkemoterapi | 0)+
-            parseFloat(obats.alkes | 0)+parseFloat(obats.bmhp |0)+parseFloat(obats.sewaalat | 0));
+            parseFloat(tarifs.prosedurenonbedah || 0)+parseFloat(tarifs.prosedurebedah || 0)+parseFloat(tarifs.konsultasi || 0)+
+            parseFloat(tarifs.tenagaahli || 0)+parseFloat(tarifs.keperawatan || 0)+parseFloat(tarifs.penunjang || 0)+
+            parseFloat(tarifs.radiologi || 0)+parseFloat(tarifs.laboratorium || 0)+parseFloat(tarifs.pelayanandarah || 0)+
+            parseFloat(tarifs.rehabilitasi || 0)+parseFloat(tarifs.kamar_akomodasi || 0)+parseFloat(tarifs.rawatintensif || 0)+
+            parseFloat(obats.obat || 0)+parseFloat(obats.obatkronis || 0)+parseFloat(obats.obatkemoterapi || 0)+
+            parseFloat(obats.alkes || 0)+parseFloat(obats.bmhp ||0)+parseFloat(obats.sewaalat || 0));
         const name = 'total'; // Get name and value from the event
         // return total_all;
         setTotal((prevTotal) => ({
