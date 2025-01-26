@@ -64,6 +64,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, COB })
         bmhp: 0,
         sewaalat: 0,
     });
+    const [total, setTotal]=useState(0);
     const [profils, setProfil] = useState([]);
     const [selectedCaraMasuk, setCaraMasuk] = useState(null);
     const [selectedCOB, setCOB] = useState(null);
@@ -78,20 +79,11 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, COB })
     const [searchText, setSearchText] = useState('');
     const [searchTextIX, setSearchTextIX] = useState('');
 
+
     useEffect(() => {
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+        calculate_total();
+      }, [tarifs, obats]);
 
-    const onRowExpand1 = (event) => {
-        toast.current.show({ severity: 'info', summary: event.data.nosep, detail: event.data.nosep, life: 3000 });
-    };
-    const onRowEditComplete = (e) => {
-        // let _products = [...products];
-        // let { newData, index } = e;
-
-        // _products[index] = newData;
-
-        // setProducts(_products);
-    };
     // Function to fetch data from API
     const fetchSuggestions = async (query) => {
         try {
@@ -372,13 +364,13 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, COB })
                     setDPJP(defaultDPJP || null);
 
                     setPendaftarans(response.data.pendaftaran);
-                    console.log(response.data.tarif);
                     setTarifs(response.data.tarif);
                     setObats(response.data.obat);
                     setProfil(response.data.profil);
                     setDiagnosa(response.data.dataDiagnosa);
                     setDataIcd9cm(response.data.dataIcd9cm);
-                    setDiagnosaINA(response.data.dataDiagnosa)
+                    setDiagnosaINA(response.data.dataDiagnosa);
+                    calculate_total();
                     // console.log(response.data,tarifs.total);
                 } else {
                     toast.current.show({ severity: 'error', summary: 'Error', detail: response.data.model.metaData.message, life: 3000 });
@@ -396,6 +388,21 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, COB })
 
         }
     };
+    const calculate_total=()=>{
+        const total_all= (
+            parseFloat(tarifs.prosedurenonbedah | 0)+parseFloat(tarifs.prosedurebedah | 0)+parseFloat(tarifs.konsultasi | 0)+
+            parseFloat(tarifs.tenagaahli | 0)+parseFloat(tarifs.keperawatan | 0)+parseFloat(tarifs.penunjang | 0)+
+            parseFloat(tarifs.radiologi | 0)+parseFloat(tarifs.laboratorium | 0)+parseFloat(tarifs.pelayanandarah | 0)+
+            parseFloat(tarifs.rehabilitasi | 0)+parseFloat(tarifs.kamar_akomodasi | 0)+parseFloat(tarifs.rawatintensif | 0)+
+            parseFloat(obats.obat | 0)+parseFloat(obats.obatkronis | 0)+parseFloat(obats.obatkemoterapi | 0)+
+            parseFloat(obats.alkes | 0)+parseFloat(obats.bmhp |0)+parseFloat(obats.sewaalat | 0));
+        const name = 'total'; // Get name and value from the event
+        // return total_all;
+        setTotal((prevTotal) => ({
+            ...prevTotal,
+            [name]: (total_all), // Update the specific field dynamically
+        }));
+    }
     // Custom input renderer for hidden input
     const unuICDX = (rowData) => {
         return (
@@ -450,8 +457,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, COB })
             ...prevObats,
             [name]: (value), // Update the specific field dynamically
         }));
-       
-        //   setValue(e.value); // Set the value from the InputNumber component
+        calculate_total();
     };
 
     const removeRow = (index) => {
@@ -591,8 +597,9 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, COB })
                                         <td colSpan={3}>
                                             <div className="col-sm-12 text-center">
                                                 Tarif Rumah Sakit :
+                                                
                                                 <InputNumber
-                                                    value={parseFloat(tarifs.total) + parseFloat(obats.total)}
+                                                    value={parseFloat(total.total)}
                                                     onValueChange={handleValueChange}
                                                     mode="currency"
                                                     currency="IDR"
@@ -603,6 +610,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, COB })
                                                     max={100000000} // Optional: Set a maximum value
                                                     name='total_tarif_rs'
                                                     inputClassName='ml-2 form-control'
+                                                    readOnly
                                                 />
 
                                             </div>
