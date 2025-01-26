@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Casemix;
 
 use App\Http\Controllers\Controller;
+use App\Http\Services\Action\SaveDataGroupperService;
 use App\Http\Services\groupingService;
 use App\Http\Services\MonitoringHistoryService;
 use App\Http\Services\Action\SaveDataKlaimService;
@@ -334,6 +335,7 @@ class InAcbgGrouperController extends Controller
 
 
         $nomor_sep = $request->input('nomor_sep') ?? "";
+        $loginpemakai_id = $request->input(key: "loginpemakai_id") ?? "";
 
 
         // $diagnosa = explode(' ', $diagnosa);
@@ -343,19 +345,41 @@ class InAcbgGrouperController extends Controller
         //Pengecekan
         // dd($dataDiagnosa);
         // var_dump($dataDiagnosa);die;
-        // Structur Payload 
+
+        // Structur Payload  hit  api
         $data = [
             'nomor_sep' => $nomor_sep,
 
         ];
 
-        // GetData
+        // display data 
+
+        $dataAuthor = [
+            'create_loginpemakai_id'=>$loginpemakai_id
+        ];
+
 
         // result kirim claim
         $results = $this->inacbg->groupingStageSatu($data, $key);
 
+        // dd($results['data']['cbg']['code']);
+        $saveService = new SaveDataGroupperService();
+        $saveResult = $saveService->addDataInasiscbg($results,$data,$dataAuthor);
+
+        // dd($saveResult);
         // Kembalikan hasil sebagai JSON response
-        return response()->json($results, 200);
+
+
+        if ($saveResult['status'] === 'success') {
+            // Jika berhasil, kirim klaim
+            return response()->json($results, 200);
+        } else {
+            // Jika gagal, kembalikan pesan error
+            return response()->json([
+                'status' => 'error',
+                'message' => $saveResult['message']
+            ], 400);
+        }
     }
 
 
