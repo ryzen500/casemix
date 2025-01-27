@@ -5,6 +5,7 @@ namespace App\Http\Services\Action;
 use App\Models\Casemix\Inacbg;
 use App\Models\Inasiscbg;
 use App\Models\PendaftaranT;
+use DB;
 use Exception;
 
 class SaveDataGroupperService
@@ -41,6 +42,9 @@ class SaveDataGroupperService
             if ($inasiscbg) {
                 // Jika SEP ditemukan, lakukan update
                 $inasiscbg->update($inasiscbgData);
+                DB::table('inacbg_t')
+                ->where('inacbg_nosep', $data['nomor_sep'])
+                ->update(['tarifgruper' =>  $results['data']['cbg']['base_tariff']]);
                 $message = 'Data berhasil diperbarui';
 
             }else{
