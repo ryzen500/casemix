@@ -519,7 +519,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                                         <div className="float-end">
 
                                             <label htmlFor="ssn" className="font-bold block mb-2">Jaminan / Cara Bayar</label>
-                                            JKN
+                                            <span >JKN</span>
                                             <input type="hidden" className="form-control" name='carabayar_id' value={pendaftarans.carabayar_id} />
                                             <input type="hidden" className="form-control" name='carabayar_nama' value={pendaftarans.carabayar_nama} />
 
@@ -541,7 +541,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                                     </div>
 
                                 </div>
-                                <table className='table table-bordered' style={{ border: ' 1px solid black' }}>
+                                <table className='table table-bordered mt-3' style={{ border: ' 1px solid black' }}>
                                     <tr>
                                         <td width={"15%"}>
                                             Jenis Rawat
@@ -1664,7 +1664,15 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
         axios.post(route('updateNewKlaim'), payload)
             .then((response) => {
                 // Handle the response from the backend
-                toast.current.show({ severity: 'success', summary: `Data  Berhasil Di simpan`, detail: datas.noSep, life: 3000 });
+
+                console.log("Responses ", response);
+                if(response.data.success === false){
+                    toast.current.show({ severity: 'error', summary: response.data.message, detail: datas.noSep, life: 3000 });
+
+                }else{
+                    toast.current.show({ severity: 'success', summary: `Data  Berhasil Di simpan`, detail: datas.noSep, life: 3000 });
+
+                }
                 // {console.log("Display 2", hide)}
 
             })
