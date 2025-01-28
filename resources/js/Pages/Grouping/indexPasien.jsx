@@ -19,7 +19,7 @@ import { InputIcon } from 'primereact/inputicon';
 import { AutoComplete } from 'primereact/autocomplete';
 import { InputNumber } from 'primereact/inputnumber';
 import { Calendar } from 'primereact/calendar';
-export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisKasus, pegawai, COB }) {
+export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisKasus, pegawai, kelompokDiagnosa, COB }) {
     const [datas, setDatas] = useState([]);
     const [pendaftarans, setPendaftarans] = useState([]);
     const [dataDiagnosa, setDiagnosa] = useState([]);
@@ -30,7 +30,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
         diagnosa_id: null,
         diagnosa_kode: null,
         diagnosa_nama: null,
-        kelompokdiagnosa_nama: null
+        kelompokdiagnosa_nama: null,
+        kelompokdiagnosa_id: null
     };
     const [diagnosaTemp, setDiagnosaTemp] = useState(emptyDiagnosa);
     const [dataGrouper, setDataGrouper] = useState([]);
@@ -188,6 +189,20 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
         const handleInputChangeRow = (index, field, value) => {
             const updatedRows = [...dataDiagnosa];
             updatedRows[index][field] = value;
+            if (field == 'kelompokdiagnosa_id' && value == 2) {
+                dataDiagnosa.some((row, i) => {
+                    if(i !== index && row.kelompokdiagnosa_id === 2){
+                        console.log(row)
+                        const updatedRowstemp = [...dataDiagnosa];
+
+                        updatedRowstemp[i][field] = 3;
+                        setDiagnosa(updatedRowstemp);
+
+                        return i !== index && row.kelompokdiagnosa_id === 2;
+                    }
+                });
+            }
+            updatedRows.sort((a, b) => a.kelompokdiagnosa_id - b.kelompokdiagnosa_id);
             setDiagnosa(updatedRows);
             let length = value.length;
             if (length > 2) {
@@ -267,7 +282,15 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
         _diagnosa.pegawai_id = pendaftarans.pegawai_id;
         _diagnosa.diagnosa_nama = rowData.label;
         _diagnosa.diagnosa_kode = rowData.value;
+        const hasKelompokDiagnosaId2 = dataDiagnosa.some((row) => row.kelompokdiagnosa_id === 2);
+        if (hasKelompokDiagnosaId2) {
+            _diagnosa.kelompokdiagnosa_id = 3;
+        } else {
+            // If no row has kelompokdiagnosa_id === 2, set it to 2
+            _diagnosa.kelompokdiagnosa_id = 2;
+        }
         _dataDiagnosa.push(_diagnosa);
+        _dataDiagnosa.sort((a, b) => a.kelompokdiagnosa_id - b.kelompokdiagnosa_id);
         setDiagnosa(_dataDiagnosa);
         setDiagnosaTemp(emptyDiagnosa);
         setSearchText(null);
@@ -1142,13 +1165,15 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                                                     />
                                                     </td>
                                                     <td>
-                                                    <input
-                                                        type="text"
-                                                        value={row.kelompokdiagnosa_nama}
-                                                        onChange={(e) => handleInputChangeRow(index, 'kelompokdiagnosa_nama', e.target.value)}
-                                                        name={`[PasienmorbiditasT][${index}][kelompokdiagnosa_nama]`}
-                                                        id={`kelompokdiagnosa_nama_${index}`}
-                                                    />
+                                                        <Dropdown 
+                                                                value={row.kelompokdiagnosa_id} 
+                                                                onChange={(e) =>  handleInputChangeRow(index, 'kelompokdiagnosa_id', e.target.value)} 
+                                                                options={kelompokDiagnosa} optionLabel="name" 
+                                                                optionValue = "value"
+                                                                placeholder="Pilih Kelompok Diagnosa"  
+                                                                name={`[PasienmorbiditasT][${index}][kelompokdiagnosa_id]`}
+                                                                id={`kelompokdiagnosa_id_${index}`}
+                                                        />
                                                     </td>
                                                     <td style={{textAlign:'center'}}>
                                                     <button type="button" onClick={() => removeRow(index)} >
@@ -1335,13 +1360,15 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                                                     />
                                                     </td>
                                                     <td>
-                                                    <input
-                                                        type="text"
-                                                        value={row.kelompokdiagnosa_nama}
-                                                        onChange={(e) => handleInputChangeRow(index, 'kelompokdiagnosa_nama', e.target.value)}
-                                                        name={`[PasienmorbiditasTINA][${index}][kelompokdiagnosa_nama]`}
-                                                        id={`kelompokdiagnosa_nama_${index}`}
-                                                    />
+                                                        <Dropdown 
+                                                                value={row.kelompokdiagnosa_id} 
+                                                                onChange={(e) =>  handleInputChangeRow(index, 'kelompokdiagnosa_id', e.target.value)} 
+                                                                options={kelompokDiagnosa} optionLabel="name" 
+                                                                optionValue = "value"
+                                                                placeholder="Pilih Kelompok Diagnosa"  
+                                                                name={`[PasienmorbiditasTINA][${index}][kelompokdiagnosa_id]`}
+                                                                id={`kelompokdiagnosa_id_${index}`}
+                                                        />
                                                     </td>
                                                     <td style={{textAlign:'center'}}>
                                                     <button type="button" onClick={() => removeRow(index)}>
