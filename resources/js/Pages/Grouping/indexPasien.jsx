@@ -1606,11 +1606,6 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
     const handleSimpanKlaim = (e) => {
         e.preventDefault(); // Prevent page reload
 
-        // console.log('Form Data Submitted:', dataDiagnosa);
-
-        console.log('Total All', total.total);
-
-        console.log('Data inA', dataIcd9cm);
 
         // Perform API request with axios
         const payload = {
