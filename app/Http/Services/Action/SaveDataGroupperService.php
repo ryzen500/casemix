@@ -67,9 +67,11 @@ class SaveDataGroupperService
                 'message' => $message,
             ];
         } catch (Exception $e) {
+            $message = 'Data Gagal disimpan';
+
             return [
                 'status' => 'failed',
-                'message' => $e->getMessage(),
+                'message' => $message,
             ];
         }
     }
