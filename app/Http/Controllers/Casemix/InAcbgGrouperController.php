@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Casemix;
 
 use App\Http\Controllers\Controller;
+use App\Http\Services\Action\SaveDataFinalisasiService;
 use App\Http\Services\Action\SaveDataGroupperService;
 use App\Http\Services\groupingService;
 use App\Http\Services\MonitoringHistoryService;
@@ -474,6 +475,9 @@ class InAcbgGrouperController extends Controller
 
         // result kirim claim
         $results = $this->inacbg->finalisasi($data, $key);
+
+        $saveService = new SaveDataFinalisasiService();
+        $saveResult = $saveService->updateDataFinalisasi( $data);
 
         // Kembalikan hasil sebagai JSON response
         return response()->json($results, 200);
