@@ -16,6 +16,7 @@ use App\Models\PenjaminPasien;
 use Illuminate\Http\Request;
 use App\Models\Casemix\Inacbg;
 use App\Models\DiagnosaM;
+use App\Models\KelompokdiagnosaM;
 use App\Models\LoginPemakaiK;
 use App\Models\LookupM;
 use App\Models\Pasienicd9cmT;
@@ -676,6 +677,7 @@ class InAcbgGrouperController extends Controller
         // for dropdown
         $caraMasuk = LookupM::getLookupType('inacbgs_caramasuk');
         $jenisKasus = LookupM::getLookupType('kasusdiagnosa');
+        $kelompokDiagnosa = KelompokdiagnosaM::getKelompokDiagnosa();
         $COB = PenjaminPasien::getLookupType();
 
         // var_dump($COB);die;
@@ -689,6 +691,7 @@ class InAcbgGrouperController extends Controller
             'DPJP' => $DPJP,
             'jenisKasus' => $jenisKasus,
             'pegawai' => $pegawai,
+            'kelompokDiagnosa' => $kelompokDiagnosa,
             'COB' => $COB
         ]);
     }
