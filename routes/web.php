@@ -31,6 +31,14 @@ use Inertia\Inertia;
 // });
 Route::get('/', [AuthenticatedSessionController::class, 'create'])
 ->name('login');
+
+// Route::get('login', [AuthenticatedSessionController::class, 'create'])
+// ->name('login');
+
+Route::get('login', function () {
+    return Inertia::render('Auth/Login');
+});
+
 // Route::get('/dashboard', function () {
 //     return Inertia::render('Dashboard');
 // })->middleware(['auth'])->name('dashboard');

@@ -10,6 +10,7 @@ use DB;
 use Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class LoginController extends Controller
 {
@@ -27,33 +28,41 @@ class LoginController extends Controller
         ];
 
         $user = LoginPemakaiK::where('nama_pemakai', $request->input('username'))->first();
-
-        // var_dump($user);die;
-    if ($user) {
-        // Decrypt the stored password
-
-        $passwordService = new PasswordService($request->input('username'));
-        $seckey = env('SECKEY'); // Mengambil dari .env file
-
-        $isVerified = $passwordService->cekPassword3($request->input('password'),$user->katakunci_pemakai, $seckey);
-
-
-        // Compare the decrypted password with the user input
-        // var_dump($isVerified);die;
-
-        if ($isVerified) {
-            // Log the user in
-            Auth::login($user);
-
-            $request->session()->regenerate();
-
-            return redirect()->intended('/dashboard');
+        if (!$user) {
+            return Inertia::render('Auth/Login', [
+                'errors' => ['username' => 'Username tidak ditemukan.']
+            ]);
         }
-    }
+        // var_dump($user);die;
+        if ($user) {
+            // Decrypt the stored password
 
-        return back()->withErrors([
-            'username' => 'The provided credentials do not match our records.',
-        ]);
+            $passwordService = new PasswordService($request->input('username'));
+            $seckey = env('SECKEY'); // Mengambil dari .env file
+
+            $isVerified = $passwordService->cekPassword3($request->input('password'), $user->katakunci_pemakai, $seckey);
+
+
+            // Compare the decrypted password with the user input
+            // var_dump($isVerified);die;
+            if (!$isVerified) {
+                return Inertia::render('Auth/Login', [
+                    'errors' => ['password' => 'Password salah atau tidak sesuai.']
+                ]);
+            }
+            if ($isVerified) {
+                // Log the user in
+                Auth::login($user);
+
+                $request->session()->regenerate();
+
+                return redirect()->intended('/dashboard');
+            }
+        }
+
+        // return back()->withErrors([
+        //     'username' => 'The provided credentials do not match our records.',
+        // ]);
     }
     public function verifyPassword(Request $request)
     {
@@ -67,21 +76,21 @@ class LoginController extends Controller
             ->where('nama_pemakai', $namaPemakai)
             ->where('loginpemakai_aktif', true)
             ->first();
-            $katakunciPemakai =  $results->katakunci_pemakai;
+        $katakunciPemakai = $results->katakunci_pemakai;
 
         $passwordService = new PasswordService($namaPemakai);
 
-        $isVerified = $passwordService->cekPassword3($password,$katakunciPemakai, $seckey);
+        $isVerified = $passwordService->cekPassword3($password, $katakunciPemakai, $seckey);
 
-    
+
 
         if ($isVerified) {
-            $payloadToken =[
+            $payloadToken = [
                 'sub' => $namaPemakai, // Subject
                 'role' => 'admin'
             ];
             $token = JWTToken::createToken($payloadToken);
-            return response()->json(['message' => 'Password verified', 'token'=>$token], 200);
+            return response()->json(['message' => 'Password verified', 'token' => $token], 200);
         }
 
         return response()->json(['message' => 'Invalid password'], 401);
@@ -105,6 +114,6 @@ class LoginController extends Controller
         ], 401);
     }
 
-    
+
 
 }

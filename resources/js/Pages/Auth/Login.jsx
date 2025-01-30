@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect ,useState} from 'react';
 import Checkbox from '@/Components/Checkbox';
 import GuestLayout from '@/Layouts/GuestLayout';
 import InputError from '@/Components/InputError';
@@ -6,6 +6,7 @@ import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import { Head, Link, useForm } from '@inertiajs/react';
+import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai'; // Ikon mata dari React Icons
 
 export default function Login({ status, canResetPassword }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -13,7 +14,7 @@ export default function Login({ status, canResetPassword }) {
         katakunci_pemakai: '',
         remember: false,
     });
-
+    const [showPassword, setShowPassword] = useState(false); // State untuk mengontrol visibilitas password
     useEffect(() => {
         return () => {
             reset('password');
@@ -26,6 +27,10 @@ export default function Login({ status, canResetPassword }) {
         post(route('login'));
     };
 
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword); // Toggle password visibility
+    };
+
     return (
         <GuestLayout>
             <Head title="Log in" />
@@ -34,7 +39,7 @@ export default function Login({ status, canResetPassword }) {
 
             <form onSubmit={submit}>
                 <div>
-                    <InputLabel  value="username" />
+                    <InputLabel value="username" />
 
                     <TextInput
                         id="username"
@@ -47,25 +52,29 @@ export default function Login({ status, canResetPassword }) {
                         onChange={(e) => setData('username', e.target.value)}
                     />
 
-                    <InputError message={errors.email} className="mt-2" />
+                    {console.log("Errors", errors)}
+                    <InputError message={errors.username} className="mt-2" />
                 </div>
 
-                <div className="mt-4">
+                <div className="mt-4 relative">
                     <InputLabel htmlFor="password" value="Password" />
-
                     <TextInput
                         id="password"
-                        type="password"
+                        type={showPassword ? 'text' : 'password'} // Tampilkan atau sembunyikan password
                         name="password"
                         value={data.password}
                         className="mt-1 block w-full"
                         autoComplete="current-password"
                         onChange={(e) => setData('password', e.target.value)}
                     />
-
+                    <div
+                        className="absolute inset-y-0 right-0 pr-3 mt-4 flex items-center cursor-pointer"
+                        onClick={togglePasswordVisibility}
+                    >
+                        {showPassword ? <AiFillEyeInvisible size={24} /> : <AiFillEye size={24} />}
+                    </div>
                     <InputError message={errors.password} className="mt-2" />
                 </div>
-
                 <div className="block mt-4">
                     <label className="flex items-center">
                         <Checkbox
