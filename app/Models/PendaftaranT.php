@@ -63,6 +63,7 @@ class PendaftaranT extends Model
                 ); 
 
         }else{
+            
             $query = DB::table('pendaftaran_t as p')
             ->join('pasien_m as pa', 'pa.pasien_id', '=', 'p.pasien_id')
             ->join('sep_t as s', 's.sep_id', '=', 'p.sep_id')
