@@ -382,7 +382,7 @@ class InAcbgGrouperController extends Controller
 
 
         // dd($request->all);
-        $nomor_sep = $request->input('noSep') ?? null;
+        $nomor_sep = $request->input('nomor_sep') ?? null;
         $coder_nik = $request->input('coder_nik') ?? null;
 
         // Structur Payload 
