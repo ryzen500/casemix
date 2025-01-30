@@ -3,7 +3,6 @@
 namespace App\Http\Services\Action;
 
 use App\Models\Casemix\Inacbg;
-use App\Models\PasienMordibitasR;
 use App\Models\PendaftaranT;
 use DB;
 use Exception;
@@ -57,16 +56,16 @@ class SaveDataKlaimService
                 'tarif_sewa_alat' => !empty($data['sewa_alat']) ? $data['sewa_alat'] : 0,
                 'ruanganakhir_id' => !empty($RegisterData['ruangan_id']) ? $RegisterData['ruangan_id'] : null,
                 'create_ruangan_id' => 429,
-                'cob_id' => $data['cob_cd'] ?? null,
+                'cob_id' => $data['cob_cd'] ?? '',
                 'jenisrawat_inacbg' => !empty($data['jenis_rawat']) && $data['jenis_rawat'] !== '' ? $data['jenis_rawat'] : null,
                 'tglrawat_masuk' => $data['tgl_masuk'] ?? null,
                 'tglrawat_keluar' => $data['tgl_pulang'] ?? null,
                 'hak_kelasrawat_inacbg' => !empty($data['kelas_rawat']) && $data['kelas_rawat'] !== '' ? $data['kelas_rawat'] : null,
-                'umur_pasien' => !empty($pendaftaran['umur_pasien']) && $pendaftaran['umur_pasien'] !== '' ? $pendaftaran['umur_pasien'] : null,
-                'create_time' => date("Y-m-d H:i:s"),
+                'umur_pasien' => !empty($pendaftaran['umur_pasien']) && $pendaftaran['umur_pasien'] !== '' ? $pendaftaran['umur_pasien'] : 0,
+                'create_time' => date("Y-m-d"),
                 'create_loginpemakai_id' => !empty($pendaftaran['create_loginpemakai_id']) && $pendaftaran['create_loginpemakai_id'] !== '' ? $pendaftaran['create_loginpemakai_id'] : null,
                 'create_ruangan' => 429,
-                'create_tanggal' => date("Y-m-d H:i:s"),
+                'create_tanggal' => date("Y-m-d"),
                 'create_coder_nik' => $data['coder_nik'] ?? null,
                 'nama_dpjp' => $data['nama_dokter'] ?? null,
             ];

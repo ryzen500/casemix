@@ -67,10 +67,10 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
     });
     const [total, setTotal]=useState(0);
     const [profils, setProfil] = useState([]);
-    const [selectedCaraMasuk, setCaraMasuk] = useState(null);
-    const [selectedCOB, setCOB] = useState(null);
+    const [selectedCaraMasuk, setCaraMasuk] = useState({});
+    const [selectedCOB, setCOB] = useState({});
 
-    const [selectedDPJP, setDPJP] = useState(null);
+    const [selectedDPJP, setDPJP] = useState({});
     const [expandedRows, setExpandedRows] = useState(null);
     const [loading, setLoading] = useState(false); // Loading state for expanded row
     const [hide, setHide] = useState(false); // Loading state for expanded row
@@ -544,7 +544,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                                                     </div>
                                                     <div className="col-sm-6">
                                                         Pulang :
-                                                        <input type="date" name="tanggal_pulang" class="form-control" value={formatDate(pendaftarans.tglpulang)} />
+                                                        <input type="date" name="tanggal_pulang" class="form-control" value={formatDate(pendaftarans.tglsep)} />
 
                                                     </div>
                                                 </div>
@@ -1587,7 +1587,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
             nama_pasien: datas.peserta.nama,
             nomor_kartu: datas.peserta.noKartu,
             noSep: datas.noSep,
-            tgl_pulang: pendaftarans.tglpulang,
+            tgl_pulang: pendaftarans.tglsep,
             tgl_masuk: pendaftarans.tglsep,
             jenis_rawat: pendaftarans.jnspelayanan,
             kelas_rawat: datas.klsRawat.klsRawatHak,
@@ -1624,8 +1624,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
             carabayar_id: pendaftarans.carabayar_id,
             carabayar_nama: pendaftarans.carabayar_nama,
             pendaftaran_id: pendaftarans.pendaftaran_id,
-            umur_pasien : pendaftarans.umur,
-            cob_cd: selectedCOB.code,
+            umur_pasien : pendaftarans.umur ? pendaftarans.umur : null,
+            cob_cd: selectedCOB.code ? selectedCOB.code : null,
             loginpemakai_id : auth.user.loginpemakai_id,
             total_tarif_rs : total.total
         };
