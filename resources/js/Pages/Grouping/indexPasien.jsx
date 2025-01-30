@@ -373,7 +373,11 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                     setDatas(response.data.model.response);
 
                     // console.log("Responsess ", response.data.getGrouping.data.data.grouper.response);
-                    if (response.data.getGrouping.data.data.grouper.response === null) {
+                    if(response.data.getGrouping.success === false){
+                        setHide(true);
+
+                    }
+                    else if (response.data.getGrouping.data.data.grouper.response === null) {
                         setHide(true);
                         
                     }else{
@@ -488,9 +492,17 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
             ...prevObats,
             [name]: (value), // Update the specific field dynamically
         }));
+
         calculate_total();
     };
 
+
+    const handleChange = (e) => {
+        setPendaftarans({
+            ...pendaftarans,
+            [e.target.name]: e.target.value, // Memastikan input bisa diubah oleh user
+        });
+    };
     const removeRow = (index) => {
         const updatedRows = dataDiagnosa.filter((_, i) => i !== index);
         setDiagnosa(updatedRows); // Remove row and update state
@@ -563,11 +575,14 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                                                 <div className="row">
                                                     <div className="col-sm-6">
                                                         Masuk :
-                                                        <input type="date" name="tanggal_masuk" class="form-control" value={formatDate(pendaftarans.tglsep)} />
+                                                        <Calendar id="calendar-24h" value={pendaftarans.tanggal_masuk} name='tanggal_masuk' onChange={handleChange} showTime hourFormat="24" />
+                                                        {/* <input type="date" name="tanggal_masuk" class="form-control" value={formatDate(pendaftarans.tanggal_masuk)} onChange={handleChange} /> */}
                                                     </div>
                                                     <div className="col-sm-6">
                                                         Pulang :
-                                                        <input type="date" name="tanggal_pulang" class="form-control" value={formatDate(pendaftarans.tglsep)} />
+                                                        <Calendar id="calendar-24h" value={pendaftarans.tanggal_pulang} name='tanggal_pulang' onChange={handleChange} showTime hourFormat="24" />
+
+                                                        {/* <input type="date" name="tanggal_pulang" class="form-control" value={formatDate(pendaftarans.tanggal_pulang)} onChange={handleChange} /> */}
 
                                                     </div>
                                                 </div>
@@ -1614,8 +1629,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
             nama_pasien: datas.peserta.nama,
             nomor_kartu: datas.peserta.noKartu,
             noSep: datas.noSep,
-            tgl_pulang: pendaftarans.tglsep,
-            tgl_masuk: pendaftarans.tglsep,
+            tgl_pulang: pendaftarans.tanggal_pulang,
+            tgl_masuk: pendaftarans.tanggal_masuk,
             jenis_rawat: pendaftarans.jnspelayanan,
             kelas_rawat: datas.klsRawat.klsRawatHak,
             gender: datas.peserta.tglLahir,
@@ -1660,8 +1675,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
             .then((response) => {
                 // Handle the response from the backend
 
-                console.log("Responses ", response);
-                if(response.data.success === false){
+                console.log("Responses ", typeof response.data.success);
+                if(Boolean(response.data.success) === false){
                     toast.current.show({ severity: 'error', summary: response.data.message, detail: datas.noSep, life: 3000 });
 
                 }else{
