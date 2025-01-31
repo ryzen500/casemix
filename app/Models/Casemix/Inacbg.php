@@ -983,12 +983,6 @@ class Inacbg extends Model
 
 
         $query1 = self::buildBaseQuery();
-
-        // Penerapan Filters
-
-        // dd($filters);
-        // var_dump($filters);die;
-
         if (!empty($filters)) {
             if (!empty($filters['periode']) || !empty($filters['kelasRawat']) || !empty($filters['jenisrawat'])) {
                 if ($filters['periode'] == 'tanggal_pulang') {
@@ -1017,17 +1011,13 @@ class Inacbg extends Model
             } else {
                 if (isset($filters['query'])) {
                     $value = $filters['query'];
-                    $query1->where('pa.nama_pasien', 'like', "%$value%")
-                        ->orWhere('s.nosep', 'like', "%$value%")
-                        ->orWhere('pa.no_rekam_medik', 'like', "%$value%");
+                    $query1->whereRaw('LOWER(pa.nama_pasien) LIKE ?', ['%' . strtolower($value) . '%'])
+                        ->orWhereRaw('(s.nosep) LIKE ?', ['%' . ($value) . '%'])
+                        ->orWhereRaw('(pa.no_rekam_medik) LIKE ?', ['%' . ($value) . '%']);
+                    $query1->orderBy('pa.nama_pasien','asc');
                 }
             }
         }
-
-        // self::applyFilters($query1, $filters);
-        // self::applyFilters($query2, $filters);
-
-        // lalu tambahkan limit dan offset
         return $query1
             ->limit($limit)
             ->offset($offset)
@@ -1070,9 +1060,9 @@ class Inacbg extends Model
             } else {
                 if (isset($filters['query'])) {
                     $value = $filters['query'];
-                    $query1->where('pa.nama_pasien', 'like', "%$value%")
-                        ->orWhere('s.nosep', 'like', "%$value%")
-                        ->orWhere('pa.no_rekam_medik', 'like', "%$value%");
+                    $query1->whereRaw('LOWER(pa.nama_pasien) LIKE ?', ['%' . strtolower($value) . '%'])
+                        ->orWhereRaw('(s.nosep) LIKE ?', ['%' . ($value) . '%'])
+                        ->orWhereRaw('(pa.no_rekam_medik) LIKE ?', ['%' . ($value) . '%']);
                 }
             }
         }
