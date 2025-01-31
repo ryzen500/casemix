@@ -16,7 +16,7 @@ export default function Authenticated({ user, header, children }) {
      useEffect(() => {
         const handleResize = () => {
           const widthVal = window.innerWidth;
-          if (widthVal < 1200) {
+          if (widthVal <= 1500) {
             setShowingNavigationDropdown(false); // Remove 'active' class if width is less than 1200px
           } else {
             setShowingNavigationDropdown(true);  // Add 'active' class if width is 1200px or more
@@ -58,7 +58,7 @@ export default function Authenticated({ user, header, children }) {
                                     </Link>
                             </div>
                             <div className="toggler">
-                                <button onClick={() => setShowingNavigationDropdown((previousState) => !previousState)} className="sidebar-hide d-xl-none d-block"><i className="bi bi-x bi-middle"></i></button>
+                                <button onClick={() => setShowingNavigationDropdown((previousState) => !previousState)} className="sidebar-hide  d-block"><i className="bi bi-x bi-middle"></i></button>
                             </div>
                         </div>
                     </div>
@@ -91,8 +91,8 @@ export default function Authenticated({ user, header, children }) {
                     <div className="-me-2 flex items-center  burger-btn">
                         <div className="col-sm-12">
                             <div className="row">
-                                <div className={showingNavigationDropdown ? 'col-sm-6' : 'col-sm-6 active'}>
-                                    <button onClick={() => setShowingNavigationDropdown((previousState) => !previousState)} className="burger-btn d-block d-xl-none">
+                                <div className={showingNavigationDropdown ? 'col-sm-6 hidden' : 'col-sm-6 active'}>
+                                    <button onClick={() => setShowingNavigationDropdown((previousState) => !previousState)} className="burger-btn d-block">
                                         <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                                                 <path
                                                     className={!showingNavigationDropdown ? 'inline-flex' : 'hidden'}
