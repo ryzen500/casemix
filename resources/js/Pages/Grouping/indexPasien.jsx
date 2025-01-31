@@ -616,13 +616,19 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                                         <td>LOS</td>
                                         <td>- hari</td>
                                         <td>Berat Lahir(gram)</td>
-                                        <td>-</td>
+                                        <td>
+                                        <InputText name='umur'
+                                                value={pendaftarans.umur} />
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td>ADL Score</td>
                                         <td></td>
                                         <td>Cara Pulang</td>
-                                        <td></td>
+                                        <td>
+                                        <InputText name='umur'
+                                                value={pendaftarans.umur} />
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td>DPJP</td>
