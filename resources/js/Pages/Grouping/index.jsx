@@ -16,6 +16,14 @@ export default function CodingGrouping({ auth, pagination, data }) {
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [loading, setLoading] = useState(false);
     const [totalRecords, setTotalRecords] = useState(0);
+    const [lazyParams, setLazyParams] = useState({
+        first: 0,
+        rows: 5,
+        page: 0,
+        sortField: null,
+        sortOrder: null,
+
+    });
     const [lazyState, setLazyState] = useState({
         first: 0,
         rows: 10,
@@ -36,8 +44,9 @@ export default function CodingGrouping({ auth, pagination, data }) {
     };
     useEffect(() => {
         isMounted.current = true;
+        handleSearch();
         // ProductService.getProductsSmall().then((data) => setProducts(data));
-    }, []);
+    }, [lazyParams]);
     const onProductSelect = (e) => {
         setSelectedProduct(e.value);
     };
@@ -45,19 +54,24 @@ export default function CodingGrouping({ auth, pagination, data }) {
     const handleClick = (event) => {
         // Show the overlay relative to the clicked element
         op.current.toggle(event, event.currentTarget);
-        handleSearch(event);
+        setLazyParams((prevData) => ({
+            ...prevData,
+            ['page']: 1,
+            ['first']:1
+        }));
+        handleSearch();
     };
     // Handle form submission using axios
-    const handleSearch = (e) => {
-        e.preventDefault(); // Prevent page reload
-
-        console.log('Form Data Submitted:', formData);
+    const handleSearch = () => {
+        // console.log('Form Data Submitted:', formData);
         setLoading(true);
-
         // Perform API request with axios
-        axios.post(route('getSearchGroupperData'), formData)
+        axios.post(route('getSearchGroupperData'), {
+            ...formData,
+            page: lazyParams.page,
+        })
             .then((response) => {
-                console.log('Response:', response.data);
+                console.log('Response:', response.data,'>>>>>',lazyParams.page);
                 
                 setDatas(response.data.data); // The actual data from the API
                 setTotalRecords(response.data.pagination); // The actual data from the API
@@ -68,6 +82,11 @@ export default function CodingGrouping({ auth, pagination, data }) {
             .catch((error) => {
                 console.error('Error:', error);
             });
+    };
+    // Handle pagination event
+    const onPage = (event) => {
+        event.page = event.page+1;
+        setLazyParams(event);
     };
     const props = usePage().props;
     // State to handle form data
@@ -96,7 +115,18 @@ export default function CodingGrouping({ auth, pagination, data }) {
             [name]: value
         }));
     };
+    const handleKeyDown = (event) => {
+        if (event.key === "Enter") {
 
+            op.current.toggle(event, event.currentTarget);
+            setLazyParams((prevData) => ({
+                ...prevData,
+                ['page']: 1,
+                ['first']:1
+            }));
+            handleSearch();
+        }
+      };
     // Handle form submission using axios
     const handleSave = (e) => {
         e.preventDefault(); // Prevent page reload
@@ -168,6 +198,7 @@ export default function CodingGrouping({ auth, pagination, data }) {
                                                             name='query'
                                                             value={formData.query}
                                                             onChange={handleInputChange}
+                                                            onKeyDown={handleKeyDown}
                                                             className="form-control"
                                                             placeholder="Cari No. RM / No. SEP / Nama"
                                                             style={{
@@ -199,13 +230,14 @@ export default function CodingGrouping({ auth, pagination, data }) {
                                                             selectionMode="single" 
                                                             paginator 
                                                             rows={5} 
+                                                            first={lazyParams.first}
                                                             totalRecords={totalRecords.total_items}
                                                             selection={selectedProduct}
                                                             onSelectionChange={(e) => setSelectedProduct(e.value)} 
                                                             onRowClick={productSelect}
                                                             lazy 
                                                             loading={loading}
-                                                        
+                                                            onPage={onPage}
                                                         >
                                                             <Column field="nama_pasien" header="Name" body={customBodyTemplate}  style={{ minWidth: '12rem' }} />
 

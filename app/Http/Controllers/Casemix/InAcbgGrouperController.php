@@ -594,7 +594,7 @@ class InAcbgGrouperController extends Controller
     public function getSearchGroupperData(Request $request)
     {
         $currentPage = $request->input('page', 1);
-        $itemsPerPage = $request->input('items_per_page', 10);
+        $itemsPerPage = $request->input('items_per_page', 5);
 
         // dd($request);
 
