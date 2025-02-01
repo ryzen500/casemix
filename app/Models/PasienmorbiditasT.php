@@ -19,13 +19,13 @@ class PasienmorbiditasT extends Model
             kelompokdiagnosa_m.kelompokdiagnosa_id,kelompokdiagnosa_m.kelompokdiagnosa_nama')
         )
         ->from('pasienmorbiditas_t')
-        ->join('diagnosa_m', 'pasienmorbiditas_t.diagnosa_id',  '=', 'diagnosa_m.diagnosa_id')
-        ->join('kelompokdiagnosa_m', 'pasienmorbiditas_t.kelompokdiagnosa_id',  '=', 'kelompokdiagnosa_m.kelompokdiagnosa_id')
-        ->join('pendaftaran_t', 'pasienmorbiditas_t.pendaftaran_id',  '=', 'pendaftaran_t.pendaftaran_id')
+        ->leftJoin('diagnosa_m', 'pasienmorbiditas_t.diagnosa_id',  '=', 'diagnosa_m.diagnosa_id')
+        ->leftJoin('kelompokdiagnosa_m', 'pasienmorbiditas_t.kelompokdiagnosa_id',  '=', 'kelompokdiagnosa_m.kelompokdiagnosa_id')
+        ->leftJoin('pendaftaran_t', 'pasienmorbiditas_t.pendaftaran_id',  '=', 'pendaftaran_t.pendaftaran_id')
 
         ->where('pasienmorbiditas_t.pendaftaran_id','=', $pendaftaran_id)
         ->orderBy('kelompokdiagnosa_m.kelompokdiagnosa_id','asc');
-
+// dd($query->toRawSql());
         return $query->get();
     }
 
