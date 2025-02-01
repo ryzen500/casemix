@@ -19,6 +19,9 @@ import { InputIcon } from 'primereact/inputicon';
 import { AutoComplete } from 'primereact/autocomplete';
 import { InputNumber } from 'primereact/inputnumber';
 import { Calendar } from 'primereact/calendar';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUser, faHome, faCog, faEllipsis } from "@fortawesome/free-solid-svg-icons";
+
 export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisKasus, pegawai, kelompokDiagnosa, COB }) {
     const [datas, setDatas] = useState([]);
     const [pendaftarans, setPendaftarans] = useState([]);
@@ -192,7 +195,6 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
     // Handle input changes
     const handleInputChangeAutocompleteIXRow = (index, field, value,type) => {
         if(type =='icdix'){
-            console.log(value,'>>>>>>>>>><><><><');
             const updatedRows = [...dataIcd9cm];
             updatedRows[index][field] = value;
             setDataIcd9cm(updatedRows);
@@ -204,72 +206,78 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
     };
     const handleInputChangeRow = (index, field, value,type) => {
         if(type==='unu'){
-            const updatedRows = dataDiagnosa.map(row => ({ ...row })); 
+            const updatedRows = dataDiagnosa.map(row => ({ ...row }));
+
+            // Update the selected row
             updatedRows[index][field] = value;
-            if (field == 'kelompokdiagnosa_id' && value == 2) {
-                dataDiagnosa.some((row, i) => {
+
+            // If 'kelompokdiagnosa_id' is set to 2, update all others to 3
+            if (field === 'kelompokdiagnosa_id' && value === 2) {
+                updatedRows.forEach((row, i) => {
                     if (i !== index && row.kelompokdiagnosa_id === 2) {
-                        const updatedRowstemp =  dataDiagnosa.map(row1 => ({ ...row1 }));
-    
-                        updatedRowstemp[i][field] = 3;
-                        setDiagnosa(updatedRowstemp);
-    
-                        return i !== index && row.kelompokdiagnosa_id === 2;
+                        updatedRows[i].kelompokdiagnosa_id = 3;
                     }
                 });
             }
+
+            // Sort the updated array
             updatedRows.sort((a, b) => a.kelompokdiagnosa_id - b.kelompokdiagnosa_id);
+
+            // Update state
             setDiagnosa(updatedRows);
 
-            let length = value.length;
-            if (length > 2 && field =='diagnosa_kode') {
-                fetchSuggestionsCode(value);  // Fetch suggestions based on the input
+            // If field is 'diagnosa_kode' and length > 2, fetch suggestions
+            if (field === 'diagnosa_kode' && value.length > 2) {
+                fetchSuggestionsCode(value);
             }
         }else if(type=='ina'){
-            const updatedRows = dataDiagnosaINA.map(row => ({ ...row })); // Deep copy
-            updatedRows[index][field] = value;
-            if (field == 'kelompokdiagnosa_id' && value == 2) {
-                dataDiagnosaINA.some((row, i) => {
-                    if (i !== index && row.kelompokdiagnosa_id === 2) {
-                        console.log(row)
-                        const updatedRowstemp =  dataDiagnosaINA.map(row1 => ({ ...row1 }));
+            const updatedRows = dataDiagnosaINA.map(row => ({ ...row }));
 
-                        updatedRowstemp[i][field] = 3;
-                        setDiagnosaINA(updatedRowstemp);
-    
-                        return i !== index && row.kelompokdiagnosa_id === 2;
+            // Update the selected row
+            updatedRows[index][field] = value;
+
+            // If 'kelompokdiagnosa_id' is set to 2, update all others to 3
+            if (field === 'kelompokdiagnosa_id' && value === 2) {
+                updatedRows.forEach((row, i) => {
+                    if (i !== index && row.kelompokdiagnosa_id === 2) {
+                        updatedRows[i].kelompokdiagnosa_id = 3;
                     }
                 });
             }
+
+            // Sort the updated array
             updatedRows.sort((a, b) => a.kelompokdiagnosa_id - b.kelompokdiagnosa_id);
+
+            // Update state
             setDiagnosaINA(updatedRows);
 
-            let length = value.length;
-            if (length > 2 && field=='diagnosa_kode') {
-                fetchSuggestionsCode(value);  // Fetch suggestions based on the input
+            // If field is 'diagnosa_kode' and length > 2, fetch suggestions
+            if (field === 'diagnosa_kode' && value.length > 2) {
+                fetchSuggestionsCode(value);
             }
         }else if(type=='icdix'){
-            const updatedRows = dataIcd9cm.map(row => ({ ...row })); // Deep copy
-            updatedRows[index][field] = value;
-            if (field == 'kelompokdiagnosa_id' && value == 2) {
-                dataIcd9cm.some((row, i) => {
-                    if (i !== index && row.kelompokdiagnosa_id === 2) {
-                        console.log(row)
-                        const updatedRowstemp =  dataIcd9cm.map(row1 => ({ ...row1 }));
+            const updatedRows = dataIcd9cm.map(row => ({ ...row }));
 
-                        updatedRowstemp[i][field] = 3;
-                        setDataIcd9cm(updatedRowstemp);
-    
-                        return i !== index && row.kelompokdiagnosa_id === 2;
+            // Update the selected row
+            updatedRows[index][field] = value;
+
+            // If 'kelompokdiagnosa_id' is set to 2, update all others to 3
+            if (field === 'kelompokdiagnosa_id' && value === 2) {
+                updatedRows.forEach((row, i) => {
+                    if (i !== index && row.kelompokdiagnosa_id === 2) {
+                        updatedRows[i].kelompokdiagnosa_id = 3;
                     }
                 });
             }
+
+            // Sort the updated array
             updatedRows.sort((a, b) => a.kelompokdiagnosa_id - b.kelompokdiagnosa_id);
+
+            // Update state
             setDataIcd9cm(updatedRows);
 
-            let length = value.length;
-            if (length > 2 && field == 'diagnosaicdix_kode') {
-                console.log(value,'>>>>>>>>>>>>>')
+            // If field is 'diagnosa_kode' and length > 2, fetch suggestions
+            if (field === 'diagnosaicdix_kode' && value.length > 2) {
                 fetchSuggestionsCodeIX(value);  // Fetch suggestions based on the input
             }
         }
@@ -343,7 +351,16 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
         _diagnosa.pasienicd9cm_id = rowData.id;
         _diagnosa.diagnosaicdix_nama = rowData.label;
         _diagnosa.diagnosaicdix_kode = rowData.value;
+        const hasKelompokDiagnosaId2 = dataIcd9cm.some((row) => row.kelompokdiagnosa_id === 2);
+        if (hasKelompokDiagnosaId2) {
+            _diagnosa.kelompokdiagnosa_id = 3;
+        } else {
+            // If no row has kelompokdiagnosa_id === 2, set it to 2
+            _diagnosa.kelompokdiagnosa_id = 2;
+        }
         _dataDiagnosa.push(_diagnosa);
+        _dataDiagnosa.sort((a, b) => a.kelompokdiagnosa_id - b.kelompokdiagnosa_id);
+
         setDataIcd9cm(_dataDiagnosa);
         setDiagnosaTemp(emptyDiagnosa);
         setSearchTextIX(null);
@@ -1891,7 +1908,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
         >
             <>
                 <div className="card">
-                    <BreadCrumb model={items} separatorIcon={'pi pi-ellipsis-h'} />
+                    <BreadCrumb model={items} separatorIcon={<FontAwesomeIcon icon={faEllipsis} />} />
                 </div>
                 <Card>
                     <Toast ref={toast} />
