@@ -26,8 +26,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
     const [datas, setDatas] = useState([]);
     const [dataGrouping, setDataGrouping] = useState([]);
     const [beratLahir, setBeratLahir] = useState('');
-
-
+    const [sistole, setSistole] = useState('');
+    const [diastole, setDiastole] = useState('');
 
     const [pendaftarans, setPendaftarans] = useState([]);
     const [dataDiagnosa, setDiagnosa] = useState([]);
@@ -754,13 +754,16 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                                     </div>
 
                                 </div>
-                                <table className='table table-bordered mt-3' style={{ border: ' 1px solid black' }}>
+                                <table className='table  mt-3' style={{ border: ' 1px solid black' }}>
                                     <tr>
                                         <td width={"15%"}>
                                             Jenis Rawat
                                         </td>
                                         <td width={"60%"}>
+                                            <div className="ml-1">
                                             {datas.jnsPelayanan}
+
+                                            </div>
                                         </td>
                                         <td width={"10%"}>Kelas Hak</td>
                                         <td width={"15%"}>
@@ -814,7 +817,10 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                                         <td>Cara Masuk</td>
                                         <td >
                                             <Dropdown value={selectedCaraMasuk} onChange={(e) => setCaraMasuk(e.value)} options={caraMasuk} optionLabel="name"
-                                                placeholder="Pilih Cara Masuk" className="w-full md:w-14rem" />
+                                                placeholder="Pilih Cara Masuk"  className='ml-2'
+                                                style={{ width: '250px'  }}
+
+                                            />
                                         </td>
                                     </tr>
 
@@ -822,8 +828,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                                         <td>COB</td>
                                         <td >
 
-                                            <Dropdown value={selectedCOB} onChange={(e) => setCOB(e.value)} options={COB} optionLabel="name"
-                                                placeholder="Pilih COB" className="w-full md:w-14rem" />
+                                            <Dropdown value={selectedCOB} onChange={(e) => setCOB(e.value)} options={COB} optionLabel="name" className='ml-2'
+                                                placeholder="Pilih COB"style={{ width: '250px'  }} />
                                         </td>
                                     </tr>
                                     <tr>
@@ -838,7 +844,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                                                 min={0} // Optional: Set a minimum value
                                                 max={100000000} // Optional: Set a maximum value
                                                 name='los'
-                                                inputClassName='ml-2 form-control'
+                                                inputClassName=' form-control'
                                                 readOnly
                                             /> hari</td>
                                         <td>Berat Lahir(gram)</td>
@@ -864,7 +870,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                                         <td>DPJP</td>
                                         <td >
                                             <Dropdown value={selectedDPJP} onChange={(e) => setDPJP(e.value)} options={DPJP} optionLabel="nmdpjp"
-                                                placeholder="Pilih DPJP" className="w-full md:w-14rem" />
+                                                className='ml-2'
+                                                placeholder="Pilih DPJP" style={{ width: '250px'  }} />
                                         </td>
                                         <td>Jenis Tarif</td>
                                         <td><input type="text" className="form-control" name='nama_tarifinacbgs_1' value={profils.nama_tarifinacbgs_1} /></td>
@@ -872,33 +879,44 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                                     <tr>
                                         <td>Pasien TB</td>
                                         <td colSpan={3}>
-                                            <Checkbox
-                                                value="true"
-                                                name="pasien_tb"
-                                                checked={pasienTB}
-                                                onChange={handleCheckboxChange} />
-                                            <label htmlFor="ingredient1" className="ml-2">Ya</label>
-                                            {pasienTB && (
-                                                <>
-                                                    <div className='col-sm-3'>
-                                                        <input
-                                                            type="text"
-                                                            name="nomorRegister"
-                                                            value={nomorRegister}
-                                                            onChange={(e) => setNomorRegister(e.target.value)}
-                                                            placeholder="Nomor Register"
-                                                        />
+                                            <div className="col-sm-12">
+                                                <div className="row">
+                                                    <div className="col-sm-1">
+                                                        <Checkbox
+                                                            value="true"
+                                                            name="pasien_tb"
+                                                            checked={pasienTB}
+                                                            onChange={handleCheckboxChange} />
+                                                        <label htmlFor="ingredient1" className="ml-2">Ya</label>
                                                     </div>
-                                                    <button onClick={handleValidate}>Validasi</button>
-                                                </>
-                                            )}
+                                                    <div className="col-sm-11">
+                                                        {pasienTB && (
+                                                            <>
+                                                                <div className='col-sm-12'>
+                                                                    <input
+                                                                        type="text"
+                                                                        name="nomorRegister"
+                                                                        value={nomorRegister}
+                                                                        onChange={(e) => setNomorRegister(e.target.value)}
+                                                                        placeholder="Nomor Register"
+                                                                    />
+                                                                    <button className='ml-1 btn btn-primary' onClick={handleValidate}>Validasi</button>
+
+                                                                </div>
+                                                            </>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+
 
                                         </td>
                                     </tr>
                                 </table>
                                 {/* Tarif Rumah Sakit */}
-                                <table className='table table-bordered' style={{ border: ' 1px solid black', width: '100%' }}>
-                                    <tr>
+                                <table className='table table-borderless' style={{ border: ' 1px solid black', width: '100%' }}>
+                                    <tr style={{ border: ' 1px solid black' }}>
                                         <td colSpan={3}>
                                             <div className="col-sm-12 text-center">
                                                 Tarif Rumah Sakit :
@@ -1384,7 +1402,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                                                                 filterBy="nmdpjp"
                                                                 name={`[PasienmorbiditasT][${index}][pegawai_id]`}
                                                                 id={`pegawai_id_${index}`}
-                                                                style={{ width: '250px' }}
+                                                                style={{ width: '250px'  }}
                                                             />
                                                             <br />
                                                             <Dropdown
@@ -1650,6 +1668,45 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                                                 ))}
                                             </tbody>
                                         </table>
+                                    </div>
+                                </div>
+                                <div className="row mt-5">
+                                    <hr />
+                                    <div className="col-sm-12" style={{ textAlign: 'center' }}>
+                                        <div>Data Klinis</div>
+                                    </div>
+                                    <hr />
+                                    <div className="col-sm-12 mb-3" style={{ textAlign: 'center' }}>
+                                        <div>Tekanan Darah (mmHg) :</div>
+                                    </div>
+                                    <div className="col-sm-6" style={{ textAlign: 'right' }}>
+                                        <InputText
+                                            id="sistole"
+                                            name="sistole"
+                                            value={sistole}
+                                            onChange={(e) => setSistole(e.target.value)}
+                                            style={{ width: '150px' ,textAlign: 'center' }}
+                                        />
+                                    </div>
+                                    <div className="col-sm-6">
+                                        <InputText
+                                            id="diastole"
+                                            name="diastole"
+                                            value={diastole}
+                                            onChange={(e) => setDiastole(e.target.value)}
+                                            style={{ width: '150px' ,textAlign: 'center' }}
+                                        />
+                                    </div>
+                                    <div className="col-sm-6" style={{ textAlign: 'right' }}>
+                                        <div  style={{ float:'right',width: '150px' , textAlign: 'center' }}>
+                                            <label>Sistole</label>
+                                        </div>
+                                    </div>
+                                    <div className="col-sm-6">
+                                        <div  style={{ float:'left',width: '150px' , textAlign: 'center' }}>
+                                            <label>Diastole</label>
+                                        </div>
+
                                     </div>
                                 </div>
                                 <div className="col-md-6 d-flex mb-3 mt-5">

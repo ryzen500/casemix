@@ -57,6 +57,28 @@
         border-color: #06b6d4;
         color: #06b6d4;
     }
+    /* .table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    margin-bottom: 40px !important;
+    } */
+
+    /* .table td {
+    padding: 7px 10px;
+    border: 1px solid;
+    }
+
+    .word-break {
+    word-break: break-all;
+    } */
+    /* .table>:not(:last-child)>:last-child>* {
+        border : 1px solid black !important;
+    } */
+     /* Change the default border color */
+    .p-dropdown {
+        border: 1px solid black !important;
+        border-radius: 5px; /* Optional: Add rounded corners */
+    }
 </style>
 <body >
     @inertia
