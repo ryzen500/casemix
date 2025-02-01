@@ -27,6 +27,8 @@ class Inacbg extends Model
         'kodeinacbg',
         'tarifgruper',
         'totaltarif',
+        'cara_pulang',
+        'caramasuk',
         'ruanganakhir_id',
         'create_time',
         'tarif_prosedur_nonbedah',

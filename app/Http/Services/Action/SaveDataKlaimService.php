@@ -22,7 +22,7 @@ class SaveDataKlaimService
 
         // Periksa keberadaan SEP
         $SEP = Inacbg::where('inacbg_nosep', $data['nomor_sep'])->first();
-
+        // dd($pendaftaran['caramasuk_id']);
         try {
             $inacbgData = [
                 'jaminan_id' => !empty($pendaftaran['carabayar_id']) && $pendaftaran['carabayar_id'] !== '' ? $pendaftaran['carabayar_id'] : null,
@@ -60,6 +60,9 @@ class SaveDataKlaimService
                 'jenisrawat_inacbg' => !empty($data['jenis_rawat']) && $data['jenis_rawat'] !== '' ? $data['jenis_rawat'] : null,
                 'tglrawat_masuk' => $data['tgl_masuk'] ?? null,
                 'tglrawat_keluar' => $data['tgl_pulang'] ?? null,
+                'berat_lahir'=>!empty($pendaftaran['berat_lahir']) ? $pendaftaran['berat_lahir'] : null,
+                'caramasuk'=> !empty($pendaftaran['caramasuk_id']) ? $pendaftaran['caramasuk_id'] : null,
+                'cara_pulang'=> !empty($pendaftaran['carakeluar_id']) && $pendaftaran['carakeluar_id'] !== '' ? $pendaftaran['carakeluar_id'] : null,
                 'hak_kelasrawat_inacbg' => !empty($data['kelas_rawat']) && $data['kelas_rawat'] !== '' ? $data['kelas_rawat'] : null,
                 'umur_pasien' => !empty($pendaftaran['umur_pasien']) && $pendaftaran['umur_pasien'] !== '' ? $pendaftaran['umur_pasien'] : 0,
                 'create_time' => date("Y-m-d"),
@@ -169,18 +172,18 @@ class SaveDataKlaimService
             }
 
             // Hapus data berdasarkan pasienmorbiditas_id
-            $result = DB::table('pasienmorbiditas_t')
-                ->whereIn('pasienmorbiditas_id', $pasienMorbiditasIds)
-                ->delete();
+             DB::table('pasienmorbiditas_t')
+            ->where('pendaftaran_id', $RegisterData['pendaftaran_id'])
+            ->delete();
 
+            Log::info('Data berhasil dihapus dari tabel pasienmorbiditas_t', ['deleted_ids' => $pasienMorbiditasIds]);
             // Cek apakah delete berhasil
-            if ($result > 0) {
-                Log::info('Data berhasil dihapus dari tabel pasienmorbiditas_t', ['deleted_ids' => $pasienMorbiditasIds]);
+            // if ($result === 0) {
                 return response()->json(['success' => true, 'message' => 'Data berhasil dihapus']);
-            } else {
-                Log::warning('Tidak ada data yang dihapus. Periksa ID yang diberikan.', ['ids' => $pasienMorbiditasIds]);
-                return response()->json(['success' => false, 'message' => 'Tidak ada data yang dihapus']);
-            }
+            // } else {
+            //     Log::warning('Tidak ada data yang dihapus. Periksa ID yang diberikan.', ['ids' => $pasienMorbiditasIds]);
+            //     return response()->json(['success' => false, 'message' => 'Tidak ada data yang dihapus']);
+            // }
         } catch (\Exception $e) {
             // Log error jika terjadi exception
             Log::error('Terjadi error saat menghapus data dari tabel pasienmorbiditas_r', [
@@ -207,8 +210,7 @@ class SaveDataKlaimService
 
 
 
-        //  dd($dataDiagnosa);
-
+        // dd($dataDiagnosa);
         // Periksa keberadaan SEP
         $SEP = Inacbg::where('inacbg_nosep', $data['nomor_sep'])->first();
 
@@ -219,7 +221,9 @@ class SaveDataKlaimService
 
             foreach ($dataDiagnosa as $item) {
                 // Konversi setiap item menjadi array (jika bukan array)
-                $item = (array) $item;
+                $item = (array) $item;     
+                
+
 
                 // Manipulasi atau filter data sesuai kebutuhan
                 // Misalnya: hanya ambil field tertentu
@@ -254,6 +258,9 @@ class SaveDataKlaimService
                     // Tambahkan field lain sesuai kebutuhan
                 ];
             }
+            Log::info('Data Prepared:', $preparedData);
+            Log::info('Data Prepared X:', $preparedDataX);
+            
 
             // Lakukan insert batch ke tabel
             if (!empty($preparedData)) {
@@ -352,7 +359,7 @@ class SaveDataKlaimService
                     // Tambahkan field lain sesuai kebutuhan
                 ];
             }
-
+     
             // Lakukan insert batch ke tabel
             if (!empty($preparedData)) {
                 $result = DB::table('pasienmorbiditas_t')->insert($preparedData);

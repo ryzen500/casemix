@@ -198,10 +198,13 @@ class PendaftaranT extends Model
                 WHEN inacbg_t.is_finalisasi = false AND inacbg_t.is_terkirim = false THEN '-'::text
                 ELSE '-'::text
                 END AS status,
-                inacbg_t.cara_pulang
+                inacbg_t.cara_pulang,
+                p.tgl_pendaftaran as tanggal_masuk,
+                p.tgl_pendaftaran as tanggal_pulang
+
                 "),
             DB::raw('pg.nama_pegawai, inasiscbg_t.kodeprosedur AS cbg'),
-            DB::raw('p.umur,p.tgl_pendaftaran,p.pegawai_id'),
+            DB::raw("SPLIT_PART(p.umur, ' Thn', 1) AS umur, p.tgl_pendaftaran, p.pegawai_id"),
 
         )
         ->join('sep_t as s', 's.sep_id', '=', 'p.sep_id')

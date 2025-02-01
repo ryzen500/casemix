@@ -10,10 +10,12 @@ use App\Http\Services\MonitoringHistoryService;
 use App\Http\Services\Action\SaveDataKlaimService;
 
 use App\Http\Services\SearchSepService;
+use App\Models\CaraKeluarM;
 use App\Models\LaporanresepR;
 use App\Models\PasienMordibitasR;
 use App\Models\PegawaiM;
 use App\Models\PenjaminPasien;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Casemix\Inacbg;
 use App\Models\DiagnosaM;
@@ -162,9 +164,10 @@ class InAcbgGrouperController extends Controller
 
         $nomor_kartu = $request->input('nomor_kartu') ?? "";
         $nomor_sep = $request->input('noSep') ?? "";
-        $tgl_masuk = $request->input('tgl_masuk') ?? "";
+        $tgl_masuk = Carbon::parse($request->input('tgl_masuk') ?? "")->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s');
         $cara_masuk = $request->input('cara_masuk') ?? "";
-        $tgl_pulang = $request->input('tgl_pulang') ?? "";
+
+        $tgl_pulang = Carbon::parse($request->input('tgl_pulang') ?? "")->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s') ?? "";
         $jenis_rawat = $request->input('jenis_rawat') ?? "";
         $kelas_rawat = $request->input('kelas_rawat') ?? "";
         $adl_sub_acute = $request->input('adl_sub_acute') ?? "";
@@ -226,11 +229,19 @@ class InAcbgGrouperController extends Controller
         //Data DB
         $carabayar_id = $request->input(key: "carabayar_id") ?? "";
         $carabayar_nama = $request->input(key: "carabayar_nama") ?? "";
-        $umur_pasien = $request->input(key: "umur") ?? "";
+
+        $caramasuk_id = $request->input(key: "caramasuk_id") ?? "";
+        $carakeluar_id = $request->input(key: "carakeluar_id") ?? "";
+        $umur_pasien = $request->input(key: "umur_pasien") ?? "";
+
         $loginpemakai_id = $request->input(key: "loginpemakai_id") ?? "";
         $pendaftaran_id = $request->input(key: "pendaftaran_id") ?? "";
         $total_tarif_rs = $request->input(key: "total_tarif_rs") ?? "";
+        $berat_lahir = $request->input(key: "berat_lahir") ?? "";
 
+
+
+        // dd($years);
         // Structur Payload 
         $data = [
             'nomor_kartu' => $nomor_kartu,
@@ -307,59 +318,58 @@ class InAcbgGrouperController extends Controller
         $pendaftaran = [
             'carabayar_id' => $carabayar_id,
             'carabayar_nama' => $carabayar_nama,
+            'caramasuk_id' => $caramasuk_id,
+            'carakeluar_id' => $carakeluar_id,
             'umur_pasien' => $umur_pasien,
             'sep_id' => $dataSep['sep_id'],
             'create_loginpemakai_id' => $loginpemakai_id,
-            'total_tarif_rs' => $total_tarif_rs
+            'total_tarif_rs' => $total_tarif_rs,
+            'berat_lahir'=>$berat_lahir
         ];
 
 
         $saveService = new SaveDataKlaimService();
-        $saveResult = $saveService->addDataInacbgT($data, $pendaftaran);
-        $saveDiagnosa = $saveService->addDataPasienMordibitasRiwayat($data, $pendaftaran, $dataDiagnosa);
-        $deletePasienMordibitasT = $saveService->DeleteDataPasienMordibitas($data, $pendaftaran, $dataDiagnosa);
-
-
-        // Code Awalnya 
-        // if(!empty($diagnosa_array)){
-        //     $addDataPasienMordibitas = $saveService->addDataPasienMordibitasUNU($data, $pendaftaran, $decodedRiwayat);
-
-        // }
-
-        // if(!empty($diagnosaina_array)){
-        //     $addDataPasienMordibitasINA = $saveService->addDataPasienMordibitasINA($data, $pendaftaran, $decodedRiwayatINA);
-        // }
-
-        // if(!empty($procedure_ix)){
-        //     $addDataICDIX = $saveService->addDataPasienMordibitasIX($data, $pendaftaran, $decodedProcedure);
-        // }
-        // var_dump($saveResult['s']);die;
 
         //refactor code 
 
-        // Array of conditions and corresponding methods
-        $diagnoses = [
-            ['data' => $diagnosa_array, 'method' => 'addDataPasienMordibitasUNU', 'params' => [$data, $pendaftaran, $decodedRiwayat]],
-            ['data' => $diagnosaina_array, 'method' => 'addDataPasienMordibitasINA', 'params' => [$data, $pendaftaran, $decodedRiwayatINA]],
-            ['data' => $procedure_ix, 'method' => 'addDataPasienMordibitasIX', 'params' => [$data, $pendaftaran, $decodedProcedure]],
-        ];
 
-        // Loop through the array and perform actions
-        foreach ($diagnoses as $diagnosis) {
-            if (!empty($diagnosis['data'])) {
-                $saveService->{$diagnosis['method']}(...$diagnosis['params']);
+
+        // Endpoint
+        $results = $this->inacbg->updateDataKlaim($data, $key);
+
+        // dd($results);
+        if ($results['success'] === true) {
+
+            $saveResult = $saveService->addDataInacbgT($data, $pendaftaran);
+
+            // dd($dataDiagnosa);
+
+            if ($decodedRiwayat) {
+                $saveDiagnosa = $saveService->addDataPasienMordibitasRiwayat($data, $pendaftaran, $dataDiagnosa);
+
+                $deletePasienMordibitasT = $saveService->DeleteDataPasienMordibitas($data, $pendaftaran, $decodedRiwayat);
+
+                $addUNU = $saveService->addDataPasienMordibitasUNU($data, $pendaftaran, $decodedRiwayat);
             }
-        }
 
-        if ($saveResult['status'] === 'success') {
+            if ($decodedRiwayatINA) {
+                $addINA = $saveService->addDataPasienMordibitasINA($data, $pendaftaran, $decodedRiwayatINA);
+
+            }
+
+            if ($decodedProcedure) {
+                $addINA = $saveService->addDataPasienMordibitasIX($data, $pendaftaran, $decodedProcedure);
+
+            }
+
+
             // Jika berhasil, kirim klaim
-            $results = $this->inacbg->updateDataKlaim($data, $key);
             return response()->json($results, 200);
         } else {
             // Jika gagal, kembalikan pesan error
             return response()->json([
                 'status' => 'error',
-                'message' => $saveResult['message']
+                'message' => $results['message']
             ], 400);
         }
         // $saveResult = $saveService->addDataInacbgT($data, $pendaftaran);
@@ -435,21 +445,24 @@ class InAcbgGrouperController extends Controller
         $results = $this->inacbg->groupingStageSatu($data, $key);
 
         // dd($results['data']['cbg']['code']);
-        $saveService = new SaveDataGroupperService();
-        $saveResult = $saveService->addDataInasiscbg($results, $data, $dataAuthor);
 
         // dd($saveResult);
         // Kembalikan hasil sebagai JSON response
 
 
-        if ($saveResult['status'] === 'success') {
+        // if ($saveResult['status'] === 'success') {
+            if ($results['success'] === true) {
+
+                $saveService = new SaveDataGroupperService();
+                $saveResult = $saveService->addDataInasiscbg($results, $data, $dataAuthor);
+        
             // Jika berhasil, kirim klaim
             return response()->json($results, 200);
         } else {
             // Jika gagal, kembalikan pesan error
             return response()->json([
                 'status' => 'error',
-                'message' => $saveResult['message']
+                'message' => $results['message']
             ], 400);
         }
     }
@@ -476,8 +489,11 @@ class InAcbgGrouperController extends Controller
         // result kirim claim
         $results = $this->inacbg->finalisasi($data, $key);
 
-        $saveService = new SaveDataFinalisasiService();
-        $saveResult = $saveService->updateDataFinalisasi( $data);
+
+        if ($results['success'] === true) {
+            $saveService = new SaveDataFinalisasiService();
+            $saveResult = $saveService->updateDataFinalisasi($data);
+        }
 
         // Kembalikan hasil sebagai JSON response
         return response()->json($results, 200);
@@ -680,6 +696,8 @@ class InAcbgGrouperController extends Controller
         }
         // for dropdown
         $caraMasuk = LookupM::getLookupType('inacbgs_caramasuk');
+        $caraPulang = CaraKeluarM::getDataListKeluar();
+
         $jenisKasus = LookupM::getLookupType('kasusdiagnosa');
         $kelompokDiagnosa = KelompokdiagnosaM::getKelompokDiagnosa();
         $COB = PenjaminPasien::getLookupType();
@@ -692,6 +710,7 @@ class InAcbgGrouperController extends Controller
             'model' => $data,
             'pasien' => $pasien,
             'caraMasuk' => $caraMasuk,
+            'caraPulang' => $caraPulang,
             'DPJP' => $DPJP,
             'jenisKasus' => $jenisKasus,
             'pegawai' => $pegawai,
