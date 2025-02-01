@@ -26,9 +26,9 @@ class DiagnosaicdixM extends Model
         $query = DB::table('diagnosaicdix_m as d')
                 ->select('diagnosaicdix_id', 'diagnosaicdix_kode', 'diagnosaicdix_nama')
                 ->where('d.diagnosaicdix_aktif', true) // Ensuring that the diagnosa is active
-                ->where('d.diagnosaicdix_kode', $diagnosa_kode);
+               ->whereRaw('LOWER(d.diagnosaicdix_kode) LIKE ?', ['%' . strtolower($diagnosa_kode) . '%']);
                 // ->where('s.nosep', '=', "'".$nosep."'");
-        return $query->first();
+        return $query->get();
 
     }
 }

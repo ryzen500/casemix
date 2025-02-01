@@ -14,7 +14,7 @@ class Pasienicd9cmT extends Model
     {
         $query = DB::table('pasienicd9cm_t ')
         ->select(
-            DB::raw('diagnosaicdix_m.diagnosaicdix_nama,diagnosaicdix_m.diagnosaicdix_id,diagnosaicdix_m.diagnosaicdix_kode,pasienicd9cm_t.pasienicd9cm_id,pasienicd9cm_t.pendaftaran_id,kelompokdiagnosa_m.kelompokdiagnosa_nama')
+            DB::raw('diagnosaicdix_m.diagnosaicdix_nama,diagnosaicdix_m.diagnosaicdix_id,diagnosaicdix_m.diagnosaicdix_kode,pasienicd9cm_t.pasienicd9cm_id,pasienicd9cm_t.pendaftaran_id,kelompokdiagnosa_m.kelompokdiagnosa_id,kelompokdiagnosa_m.kelompokdiagnosa_nama')
         )
         ->from('pasienicd9cm_t')
         ->join('diagnosaicdix_m', 'pasienicd9cm_t.diagnosaicdix_id',  '=', 'diagnosaicdix_m.diagnosaicdix_id')
