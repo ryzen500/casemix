@@ -454,6 +454,7 @@ class SaveDataKlaimService
             if (!empty($preparedDataICDIX)) {
                 // $result = DB::table('pasienmorbiditas_t')->insert($preparedData);
                 $result = DB::table('pasienicd9cm_t')->insert($preparedDataICDIX);
+                $result2 = DB::table('pasienicd9cm_r')->insert($preparedDataICDIX);
 
                 // if ($result2) {
                 //     Log::info('Data inserted successfully', ['data' => $preparedDataX]);
