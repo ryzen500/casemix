@@ -324,7 +324,7 @@ class InAcbgGrouperController extends Controller
             'sep_id' => $dataSep['sep_id'],
             'create_loginpemakai_id' => $loginpemakai_id,
             'total_tarif_rs' => $total_tarif_rs,
-            'berat_lahir'=>$berat_lahir
+            'berat_lahir' => $berat_lahir
         ];
 
 
@@ -372,12 +372,7 @@ class InAcbgGrouperController extends Controller
                 'message' => $results['message']
             ], 400);
         }
-        // $saveResult = $saveService->addDataInacbgT($data, $pendaftaran);
-        //     // result kirim claim
-        //     $results = $this->inacbg->updateDataKlaim($data, $key);
 
-        //     // Kembalikan hasil sebagai JSON response
-        //     return response()->json($results, 200);
 
     }
 
@@ -451,11 +446,11 @@ class InAcbgGrouperController extends Controller
 
 
         // if ($saveResult['status'] === 'success') {
-            if ($results['success'] === true) {
+        if ($results['success'] === true) {
 
-                $saveService = new SaveDataGroupperService();
-                $saveResult = $saveService->addDataInasiscbg($results, $data, $dataAuthor);
-        
+            $saveService = new SaveDataGroupperService();
+            $saveResult = $saveService->addDataInasiscbg($results, $data, $dataAuthor);
+
             // Jika berhasil, kirim klaim
             return response()->json($results, 200);
         } else {
@@ -765,5 +760,29 @@ class InAcbgGrouperController extends Controller
 
         // result kirim claim
         return $this->inacbg->getClaim($data_ina, $key_ina);
+    }
+
+    public function validateSITB(Request $request)
+    {
+        // Ambil keynya dari  ENV 
+        $key_ina = env('INACBG_KEY');
+
+
+        // dd($request->all);
+        $nomor_sep = $request->input('nomor_sep') ?? null;
+
+        $nomor_register_sitb = $request->input('nomor_register_sitb') ?? null;
+
+        // Structur Payload 
+        $payload = [
+            'nomor_sep' => $nomor_sep,
+            'nomor_register_sitb' => $nomor_register_sitb,
+
+        ];
+
+
+        // result kirim claim
+        return $this->inacbg->validateSITB($payload, $key_ina);
+
     }
 }

@@ -91,6 +91,45 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
     const [searchText, setSearchText] = useState('');
     const [searchTextIX, setSearchTextIX] = useState('');
 
+    const [pasienTB, setPasienTB] = useState(false); // Track the checkbox state
+    const [nomorRegister, setNomorRegister] = useState(''); // Track the nomor register
+
+    const handleCheckboxChange = () => {
+        setPasienTB(!pasienTB);
+    };
+
+    const handleValidate = () => {
+        // Handle validation logic here
+        e.preventDefault(); // Prevent page reload
+
+
+        // Perform API request with axios
+        const payload = {
+
+            nomor_sep: datas.noSep,
+            nomor_register_sitb: nomorRegister,
+        };
+        axios.post(route('validateSITB'), payload)
+            .then((response) => {
+                // Handle the response from the backend
+
+                console.log("Responses ", typeof response.data.success);
+                if (Boolean(response.data.success) === false) {
+                    toast.current.show({ severity: 'error', summary: response.data.message, detail: datas.noSep, life: 3000 });
+
+                } else {
+                    toast.current.show({ severity: 'success', summary: `Data  Berhasil Di simpan`, detail: datas.noSep, life: 3000 });
+
+                }
+                // {console.log("Display 2", hide)}
+
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+
+    };
+
 
     useEffect(() => {
         calculate_total();
@@ -833,8 +872,27 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                                     <tr>
                                         <td>Pasien TB</td>
                                         <td colSpan={3}>
-                                            <Checkbox name="pasien_tb" value="true" />
+                                            <Checkbox
+                                                value="true"
+                                                name="pasien_tb"
+                                                checked={pasienTB}
+                                                onChange={handleCheckboxChange} />
                                             <label htmlFor="ingredient1" className="ml-2">Ya</label>
+                                            {pasienTB && (
+                                                <>
+                                                    <div className='col-sm-3'>
+                                                        <input
+                                                            type="text"
+                                                            name="nomorRegister"
+                                                            value={nomorRegister}
+                                                            onChange={(e) => setNomorRegister(e.target.value)}
+                                                            placeholder="Nomor Register"
+                                                        />
+                                                    </div>
+                                                    <button onClick={handleValidate}>Validasi</button>
+                                                </>
+                                            )}
+
                                         </td>
                                     </tr>
                                 </table>

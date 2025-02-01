@@ -752,12 +752,37 @@ class Inacbg extends Model
             throw new Exception(implode(', ', $validator->errors()->all()));
         }
     }
+
+
+    public function validateTB(array $data)
+    {
+        $validator = Validator::make($data, [
+            'no_sep' => 'required|string',
+            'nomor_register_sitb' => 'required|string'
+        ]);
+
+        if ($validator->fails()) {
+            throw new Exception(implode(', ', $validator->errors()->all()));
+        }
+    }
     private function preparePayloadGetClaim(array $data): string
     {
         return json_encode([
             'metadata' => ['method' => 'get_claim_data'],
             'data' => [
                 'nomor_sep' => $data['nomor_sep'] ?? "",
+            ],
+        ]);
+    }
+
+
+    private function preparePayloadGetSITB(array $data): string
+    {
+        return json_encode([
+            'metadata' => ['method' => 'sitb_validate'],
+            'data' => [
+                'nomor_sep' => $data['nomor_sep'] ?? "",
+                'nomor_register_sitb'=>$data['nomor_register_sitb'] ?? "",
             ],
         ]);
     }
@@ -774,6 +799,32 @@ class Inacbg extends Model
             // validate The Payload
             $this->validateDataClaim($data);
             $payload = $this->preparePayloadGetClaim($data);
+ 
+            $encryptedPayload = $this->inacbg_encrypt($payload, $key); // Tambahkan parameter $key
+
+            $response = $this->sendRequest($encryptedPayload, $key);
+            return $this->processResponse($response, $key);
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+
+    /**
+     * Summary of getClaim
+     * @param array $data
+     * @return string
+     * get claim from nomor_sep
+     */
+    public function validateSITB(array $data, string $key): array
+    {
+        try {
+            // validate The Payload
+            $this->validateTB($data);
+            $payload = $this->preparePayloadGetSITB($data);
  
             $encryptedPayload = $this->inacbg_encrypt($payload, $key); // Tambahkan parameter $key
 
@@ -864,6 +915,8 @@ class Inacbg extends Model
         ];
     }
 
+
+    
     private function processResponsePrint(string $response, string $key): array
     {
         $decodedResponse = json_decode($response, true);
