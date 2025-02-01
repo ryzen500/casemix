@@ -20,7 +20,7 @@ import { AutoComplete } from 'primereact/autocomplete';
 import { InputNumber } from 'primereact/inputnumber';
 import { Calendar } from 'primereact/calendar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faHome, faCog, faEllipsis } from "@fortawesome/free-solid-svg-icons";
+import { faUser, faHome, faCog, faEllipsis, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 
 export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisKasus, pegawai, kelompokDiagnosa, COB }) {
     const [datas, setDatas] = useState([]);
@@ -1350,7 +1350,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                                                     </td>
                                                     <td style={{textAlign:'center'}}>
                                                     <button type="button" onClick={() => removeRow(index,'unu')} >
-                                                        <i className="pi pi-trash"></i>
+                                                        <FontAwesomeIcon icon={faTrashCan} />
                                                     </button>
                                                     </td>
                                                 </tr>
@@ -1463,7 +1463,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                                                     </td>
                                                     <td style={{textAlign:'center'}}>
                                                     <button type="button" onClick={() => removeRow(index,'ina')}>
-                                                        <i className="pi pi-trash"></i>
+                                                        <FontAwesomeIcon icon={faTrashCan} />
                                                     </button>
                                                     </td>
                                                 </tr>
@@ -1546,7 +1546,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                                                     </td>
                                                     <td style={{textAlign:'center'}}>
                                                     <button type="button" onClick={() => removeRowIX(index)}>
-                                                        <i className="pi pi-trash"></i>
+                                                        <FontAwesomeIcon icon={faTrashCan} />
                                                     </button>
                                                     </td>
                                                 </tr>
