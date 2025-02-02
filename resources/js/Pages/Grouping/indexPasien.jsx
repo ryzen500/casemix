@@ -1600,7 +1600,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                                                     <th>No</th>
                                                     <th>Diagnosa Kode</th>
                                                     <th>Diagnosa Nama</th>
-                                                    <th>Kelompok Diagnosa</th>
+                                                    {/* <th>Kelompok Diagnosa</th> */}
                                                     <th>Actions</th>
                                                 </tr>
                                             </thead>
@@ -1647,7 +1647,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                                                                 id={`diagnosaicdix_nama_${index}`}
                                                             />
                                                         </td>
-                                                        <td>
+                                                        {/* <td>
                                                             <Dropdown
                                                                 value={row.kelompokdiagnosa_id}
                                                                 onChange={(e) => handleInputChangeRow(index, 'kelompokdiagnosa_id', e.target.value, 'icdix')}
@@ -1658,7 +1658,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                                                                 id={`kelompokdiagnosa_id_${index}`}
                                                             />
 
-                                                        </td>
+                                                        </td> */}
                                                         <td style={{ textAlign: 'center' }}>
                                                             <button type="button" onClick={() => removeRowIX(index)}>
                                                                 <FontAwesomeIcon icon={faTrashCan} />
@@ -1908,7 +1908,12 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
             cob_cd: selectedCOB.code ? selectedCOB.code : null,
             berat_lahir: beratLahir,
             loginpemakai_id: auth.user.loginpemakai_id,
-            total_tarif_rs: total.total
+            total_tarif_rs: total.total,
+            sistole : sistole,
+            diastole : diastole,
+            is_tb : pasienTB,
+            nomor_register_sitb : nomorRegister
+
         };
         axios.post(route('updateNewKlaim'), payload)
             .then((response) => {
