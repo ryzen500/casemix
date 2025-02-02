@@ -225,7 +225,8 @@ class InAcbgGrouperController extends Controller
         $coder_nik = $request->input(key: "coder_nik") ?? "";
         $sistole = $request->input(key: "sistole") ?? "";
         $diastole = $request->input(key: "diastole") ?? "";
-
+        $is_tb = $request->input(key: "is_tb") ?? "";
+        $nomor_register_sitb = $request->input('nomor_register_sitb') ?? null;
         //Data DB
         $carabayar_id = $request->input(key: "carabayar_id") ?? "";
         $carabayar_nama = $request->input(key: "carabayar_nama") ?? "";
@@ -324,7 +325,9 @@ class InAcbgGrouperController extends Controller
             'sep_id' => $dataSep['sep_id'],
             'create_loginpemakai_id' => $loginpemakai_id,
             'total_tarif_rs' => $total_tarif_rs,
-            'berat_lahir' => $berat_lahir
+            'berat_lahir' => $berat_lahir,
+            'is_tb'=>$is_tb,
+            'nomor_register_sitb'=>$nomor_register_sitb
         ];
 
 
