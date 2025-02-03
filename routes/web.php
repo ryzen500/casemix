@@ -5,6 +5,7 @@ use App\Http\Controllers\Casemix\InAcbgGrouperController;
 use App\Http\Controllers\Casemix\SearchDiagnosaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Laporan\LaporanSEPController;
+use App\Http\Controllers\PasienmorbiditasT\PasienmorbiditasTController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -76,6 +77,11 @@ Route::middleware('auth')->group(function () {
     Route::post('searchDiagnosaCode', [SearchDiagnosaController::class, 'autocompleteDiagnosa'])->name('searchDiagnosaCode');
     Route::post('searchDiagnosaIX', [SearchDiagnosaController::class, 'autocompleteDiagnosaIX'])->name('searchDiagnosaIX');
     Route::post('searchDiagnosaCodeIX', [SearchDiagnosaController::class, 'autocompleteDiagnosaIXCode'])->name('searchDiagnosaCodeIX');
+
+    // pasienmorbiditasT
+    Route::post('insertMorbiditasT', [PasienmorbiditasTController::class, 'insertMorbiditasT'])->name('insertMorbiditasT');
+    Route::post('removeMorbiditasT', [PasienmorbiditasTController::class, 'removeMorbiditasT'])->name('removeMorbiditasT');
+    Route::post('updateMorbiditasT', [PasienmorbiditasTController::class, 'updateMorbiditasT'])->name('updateMorbiditasT');
 
 });
 

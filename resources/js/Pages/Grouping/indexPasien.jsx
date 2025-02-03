@@ -182,19 +182,19 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
     // Function to fetch data from API search diagnosa_kode
     const fetchSuggestionsCode = async (query) => {
         try {
-            // Replace with your API 
-            console.log(query)
-            const response = await axios.post(route('searchDiagnosaCode'), {
-                keyword: query, // Send the expandedProduct.noSep data
-            });
-            const res = response.data;
-            // let query = event.query;
-            let _filteredItems = [];
-            for (let i = 0; i < res.length; i++) {
-                _filteredItems.push({ 'label': res[i].diagnosa_nama, 'value': res[i].diagnosa_kode, 'id': res[i].diagnosa_id })
+            if(query.query.length>2){
+                const response = await axios.post(route('searchDiagnosaCode'), {
+                    keyword: query.query, // Send the expandedProduct.noSep data
+                });
+                const res = response.data;
+                // let query = event.query;
+                let _filteredItems = [];
+                for (let i = 0; i < res.length; i++) {
+                    _filteredItems.push({ 'label': res[i].diagnosa_nama, 'value': res[i].diagnosa_kode, 'id': res[i].diagnosa_id })
+                }
+                // const data = await response.json();
+                setSuggestions(_filteredItems);  // Set your data here
             }
-            // const data = await response.json();
-            setSuggestions(_filteredItems);  // Set your data here
         } catch (error) {
             console.error('Error fetching data:', error);
         }
@@ -202,18 +202,20 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
     // Function to fetch data from API search diagnosa_kode
     const fetchSuggestionsCodeIX = async (query) => {
         try {
-            // Replace with your API
-            const response = await axios.post(route('searchDiagnosaCodeIX'), {
-                keyword: query.query, // Send the expandedProduct.noSep data
-            });
-            const res = response.data;
-            // let query = event.query;
-            let _filteredItems = [];
-            for (let i = 0; i < res.length; i++) {
-                _filteredItems.push({ 'label': res[i].diagnosaicdix_nama, 'value': res[i].diagnosaicdix_kode, 'id': res[i].diagnosaicdix_id })
+            if(query.query.length>2){
+                // Replace with your API
+                const response = await axios.post(route('searchDiagnosaCodeIX'), {
+                    keyword: query.query, // Send the expandedProduct.noSep data
+                });
+                const res = response.data;
+                // let query = event.query;
+                let _filteredItems = [];
+                for (let i = 0; i < res.length; i++) {
+                    _filteredItems.push({ 'label': res[i].diagnosaicdix_nama, 'value': res[i].diagnosaicdix_kode, 'id': res[i].diagnosaicdix_id })
+                }
+                // const data = await response.json();
+                setSuggestions(_filteredItems);  // Set your data here
             }
-            // const data = await response.json();
-            setSuggestions(_filteredItems);  // Set your data here
         } catch (error) {
             console.error('Error fetching data:', error);
         }
@@ -252,27 +254,47 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
             }
         }
     };
-    const handleInputChangeRow = (index, field, value, type) => {
+    const handleInputChangeRow = async (index, field, value, type) => {
         if (type === 'unu') {
             const updatedRows = dataDiagnosa.map(row => ({ ...row }));
 
             // Update the selected row
             updatedRows[index][field] = value;
+            updatedRows[index]['loginpemakai_id']=auth.user.loginpemakai_id;
+            let temp = [];
+            temp.push({ ...updatedRows[index] });
 
             // If 'kelompokdiagnosa_id' is set to 2, update all others to 3
             if (field === 'kelompokdiagnosa_id' && value === 2) {
                 updatedRows.forEach((row, i) => {
                     if (i !== index && row.kelompokdiagnosa_id === 2) {
                         updatedRows[i].kelompokdiagnosa_id = 3;
+                        updatedRows[i]['loginpemakai_id']=auth.user.loginpemakai_id;
+
+                        temp.push({ ...updatedRows[i] });
+
                     }
                 });
             }
+            try {
+                const response = await axios.post(route('updateMorbiditasT'), {
+                    payload: temp, // Send the expandedProduct.noSep data
+                });
+                if(response.data.success){
+                    // Sort the updated array
+                    updatedRows.sort((a, b) => a.kelompokdiagnosa_id - b.kelompokdiagnosa_id);
 
-            // Sort the updated array
-            updatedRows.sort((a, b) => a.kelompokdiagnosa_id - b.kelompokdiagnosa_id);
+                    // Update state
+                    setDiagnosa(updatedRows);
+                    toast.current.show({ severity: 'success', summary: `Success`, detail: response.data.message, life: 3000 });
+    
+                }else{
+                    toast.current.show({ severity: 'error', summary: 'Error', detail: response.data.message, life: 3000 });
+                }
+            } catch (error) {
+                toast.current.show({ severity: 'error', summary: 'Error', detail: response.data.message, life: 3000 });
+            } 
 
-            // Update state
-            setDiagnosa(updatedRows);
 
             // If field is 'diagnosa_kode' and length > 2, fetch suggestions
             if (field === 'diagnosa_kode' && value.length > 2) {
@@ -330,12 +352,32 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
             }
         }
     };
-    const updateRow = (index, value, type) => {
+    const updateRow =async (index, value, type) => {
         if (type === 'unu') {
             const updatedRows = dataDiagnosa.map(row => ({ ...row }));
             updatedRows[index]['diagnosa_id'] = value.id;
             updatedRows[index]['diagnosa_kode'] = value.value;
             updatedRows[index]['diagnosa_nama'] = value.label;
+            let temp = [];
+            temp.push({ ...updatedRows[index] });
+            try {
+                const response = await axios.post(route('updateMorbiditasT'), {
+                    payload: temp, // Send the expandedProduct.noSep data
+                });
+                if(response.data.success){
+                    // Sort the updated array
+                    updatedRows.sort((a, b) => a.kelompokdiagnosa_id - b.kelompokdiagnosa_id);
+
+                    // Update state
+                    setDiagnosa(updatedRows);
+                    toast.current.show({ severity: 'success', summary: `Success`, detail: response.data.message, life: 3000 });
+    
+                }else{
+                    toast.current.show({ severity: 'error', summary: 'Error', detail: response.data.message, life: 3000 });
+                }
+            } catch (error) {
+                toast.current.show({ severity: 'error', summary: 'Error', detail: response.data.message, life: 3000 });
+            } 
             setDiagnosa(updatedRows);
             let length = value.length;
             if (length > 2) {
@@ -417,7 +459,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
     const allowEdit = (rowData) => {
         return rowData.name !== 'Blue Band';
     };
-    const addRowDiagnosaX = (rowData) => {
+    const addRowDiagnosaX = async(rowData) => {
         const _dataDiagnosa = dataDiagnosa.map(row => ({ ...row })); // Deep copy
 
         let _diagnosa = { ...diagnosaTemp };
@@ -428,8 +470,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
         _diagnosa.diagnosa_nama = rowData.label;
         _diagnosa.diagnosa_kode = rowData.value;
         _diagnosa.kasusdiagnosa = 'KASUS LAMA';
-
-
+        _diagnosa.loginpemakai_id = auth.user.loginpemakai_id;
+        _diagnosa.pendaftaran_id = pendaftarans.pendaftaran_id;
         const hasKelompokDiagnosaId2 = dataDiagnosa.some((row) => row.kelompokdiagnosa_id === 2);
         if (hasKelompokDiagnosaId2) {
             _diagnosa.kelompokdiagnosa_id = 3;
@@ -437,11 +479,26 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
             // If no row has kelompokdiagnosa_id === 2, set it to 2
             _diagnosa.kelompokdiagnosa_id = 2;
         }
-        _dataDiagnosa.push(_diagnosa);
-        _dataDiagnosa.sort((a, b) => a.kelompokdiagnosa_id - b.kelompokdiagnosa_id);
-        setDiagnosa(_dataDiagnosa);
-        setDiagnosaTemp(emptyDiagnosa);
-        setSearchText(null);
+        try {
+            const response = await axios.post(route('insertMorbiditasT'), {
+                payload: _diagnosa, // Send the expandedProduct.noSep data
+            });
+            if(response.data.success){
+                _diagnosa.pasienmorbiditas_id= response.data.pasienmorbiditasT.pasienmorbiditas_id;
+                _dataDiagnosa.push(_diagnosa);
+                _dataDiagnosa.sort((a, b) => a.kelompokdiagnosa_id - b.kelompokdiagnosa_id);
+                setDiagnosa(_dataDiagnosa);
+                setDiagnosaTemp(emptyDiagnosa);
+                setSearchText(null);
+                toast.current.show({ severity: 'success', summary: `Success`, detail: response.data.message, life: 3000 });
+
+            }else{
+                toast.current.show({ severity: 'error', summary: 'Error', detail: response.data.message, life: 3000 });
+            }
+        } catch (error) {
+            toast.current.show({ severity: 'error', summary: 'Error', detail: response.data.message, life: 3000 });
+
+        } 
         // setDiagnosa(response.data.dataDiagnosa);
 
     }
@@ -545,12 +602,10 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
         if (isNaN(date)) return ''; // Handle invalid date
         return date.toISOString().split('T')[0]; // Format as YYYY-MM-DD
     };
-
     const onRowExpand = async (event) => {
         const expandedProduct = event.data;
         // Set loading to true when starting the API request
         setLoading(true);
-
         if (expandedProduct.pendaftaran_id == null) {
             toast.current.show({ severity: 'error', summary: 'Error', detail: 'No SEP belum di sinkron!', life: 3000 });
             setExpandedRows(null);
@@ -564,7 +619,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                 });
                 // const response = await axios.get(`/getGroupperPasien/${expandedProduct.noSep}`);
                 // setExpandedRowData(response.data); // Store the data
-                console.log("Log ", expandedProduct);
+
                 if (response.data.model.metaData.code == 200) {
                     console.log("Sub 2")
 
@@ -596,7 +651,6 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                     setDiagnosaINA(response.data.dataDiagnosa);
                     setDataIcd9cm(response.data.dataIcd9cm);
                     calculate_total();
-                    console.log("Kiccc", typeof response.data.getGrouping.success);
                     if (Boolean(response.data.getGrouping.success) === false || response.data.getGrouping.data.data.grouper.response === null) {
                         setHide(true);
 
@@ -610,7 +664,6 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
 
                     }
 
-                    console.log("Kick 2222");
 
                     // setInterval(() => {
 
@@ -762,10 +815,29 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
             [e.target.name]: e.target.value, // Memastikan input bisa diubah oleh user
         });
     };
-    const removeRow = (index, type) => {
+    const removeRow = async(index, type) => {
         if (type === 'unu') {
-            const updatedRows = dataDiagnosa.filter((_, i) => i !== index);
-            setDiagnosa(updatedRows); // Remove row and update state
+            let updatedRows = dataDiagnosa.filter((_, i) => i === index);
+            updatedRows[0].update_loginpemakai_id = auth.user.loginpemakai_id;
+
+            // console.log(updateRows)
+            try {
+                const response = await axios.post(route('removeMorbiditasT'), {
+                    payload: updatedRows, // Send the expandedProduct.noSep data
+                });
+                if(response.data.success){
+                    toast.current.show({ severity: 'success', summary: `Success`, detail: response.data.message, life: 3000 });
+                    const updatedRowDelete = dataDiagnosa.filter((_, i) => i !== index);
+                    setDiagnosa(updatedRowDelete); 
+
+                }else{
+                    toast.current.show({ severity: 'error', summary: 'Error', detail: response.data.message, life: 3000 });
+                }
+            } catch (error) {
+                toast.current.show({ severity: 'error', summary: 'Error', detail: response.data.message, life: 3000 });
+
+            }
+            // setDiagnosa(updatedRows); // Remove row and update state
         } else if (type === 'ina') {
             const updatedRows = dataDiagnosaINA.filter((_, i) => i !== index);
             setDiagnosaINA(updatedRows); // Remove row and update state
@@ -1486,6 +1558,13 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                                                                 onChange={(e) => handleInputChange(index, 'diagnosa_id', e.target.value, 'unu')}
                                                                 name={`[PasienmorbiditasT][${index}][diagnosa_id]`}
                                                                 id={`diagnosa_id_${index}`}
+                                                            />
+                                                            <input
+                                                                type="hidden"
+                                                                value={row.pasienmorbiditas_id}
+                                                                onChange={(e) => handleInputChange(index, 'pasienmorbiditas_id', e.target.value, 'unu')}
+                                                                name={`[PasienmorbiditasT][${index}][pasienmorbiditas_id]`}
+                                                                id={`pasienmorbiditas_id_${index}`}
                                                             />
                                                             <AutoComplete
                                                                 value={row.diagnosa_kode}
