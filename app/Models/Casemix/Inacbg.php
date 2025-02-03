@@ -365,7 +365,6 @@ class Inacbg extends Model
             // validate The Payload
             $this->validateData($data);
             $payload = $this->preparePayloadNewKlaim($data);
-
             $encryptedPayload = $this->inacbg_encrypt($payload, $key); // Tambahkan parameter $key
 
             $response = $this->sendRequest($encryptedPayload, $key);

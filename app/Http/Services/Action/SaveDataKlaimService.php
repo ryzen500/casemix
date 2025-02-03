@@ -6,6 +6,7 @@ use App\Models\Casemix\Inacbg;
 use App\Models\PendaftaranT;
 use DB;
 use Exception;
+use Illuminate\Http\JsonResponse;
 use Log;
 
 class SaveDataKlaimService
@@ -311,7 +312,7 @@ class SaveDataKlaimService
      * @param array $dataDiagnosa
      * @return mixed|\Illuminate\Http\JsonResponse
      */
-    public function addDataPasienMordibitasINA(array $data = [], array $pendaftaran = [], array $dataDiagnosa = [])
+    public function addDataPasienMordibitasINA(array $data = [], array $pendaftaran = [], array $dataDiagnosa = []): mixed
     {
         $RegisterData = PendaftaranT::where('sep_id', $pendaftaran['sep_id'])->first();
 
@@ -402,13 +403,14 @@ class SaveDataKlaimService
     }
 
 
-    public function addDataPasienMordibitasIX(array $data = [], array $pendaftaran = [], array $dataDiagnosa = [])
+    public function addDataPasienMordibitasIX(array $data = [], array $pendaftaran = [], array $dataDiagnosa = [], array $procedural = []):mixed
     {
         $RegisterData = PendaftaranT::where('sep_id', $pendaftaran['sep_id'])->first();
 
 
-
-        //  dd($dataDiagnosa);
+        $dataProcedural = [];
+        $dataProcedural[]= $procedural;
+        //  dd($dataProcedural);
 
         // Periksa keberadaan SEP
         $SEP = Inacbg::where('inacbg_nosep', $data['nomor_sep'])->first();
@@ -460,13 +462,13 @@ class SaveDataKlaimService
                 $result = DB::table('pasienicd9cm_t')->insert($preparedDataICDIX);
                 $result2 = DB::table('pasienicd9cm_r')->insert($preparedDataICDIX);
 
-                // if ($result2) {
-                //     Log::info('Data inserted successfully', ['data' => $preparedDataX]);
-                //     // dd('Data inserted successfully');
-                // } else {
-                //     Log::error('Data insertion failed', ['data' => $preparedDataX]);
-                //     // dd('Data insertion failed');
-                // }
+                if ($result2) {
+                    Log::info('Data inserted successfully IX', ['data' => $procedural]);
+                    // dd('Data inserted successfully');
+                } else {
+                    Log::error('Data insertion failed IX', ['data' => $procedural]);
+                    // dd('Data insertion failed');
+                }
 
                 if ($result) {
                     return response()->json(['message' => 'Data berhasil disimpan'], 200);
