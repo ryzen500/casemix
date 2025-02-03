@@ -545,10 +545,12 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
         if (isNaN(date)) return ''; // Handle invalid date
         return date.toISOString().split('T')[0]; // Format as YYYY-MM-DD
     };
+
     const onRowExpand = async (event) => {
         const expandedProduct = event.data;
         // Set loading to true when starting the API request
         setLoading(true);
+
         if (expandedProduct.pendaftaran_id == null) {
             toast.current.show({ severity: 'error', summary: 'Error', detail: 'No SEP belum di sinkron!', life: 3000 });
             setExpandedRows(null);
@@ -562,31 +564,14 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                 });
                 // const response = await axios.get(`/getGroupperPasien/${expandedProduct.noSep}`);
                 // setExpandedRowData(response.data); // Store the data
-
+                console.log("Log ", expandedProduct);
                 if (response.data.model.metaData.code == 200) {
                     console.log("Sub 2")
 
                     toast.current.show({ severity: 'info', summary: event.data.noSep, detail: event.data.noSep, life: 3000 });
                     setDatas(response.data.model.response);
-                    // console.log("Responsess ", response.data.getGrouping.data.data.grouper.response);
-                    if (response.data.getGrouping.success === false) {
-                        console.log("Sub 1")
-                        setHide(true);
-                        setDataGrouping(null);
-
-                    }
-                    else if (response.data.getGrouping.data.data.grouper.response === null) {
-                        setHide(true);
-                        console.log("Sub 3")
-
-
-                    } else {
-                        console.log("Sub 4")
-
-                        setHide(false);
-                        setDataGrouping(response.data.getGrouping.data.data);
-
-                    }
+                    handleNewClaim(response.data.model.response);
+                
                     const defaultCaraMasuk = caraMasuk.find(
                         (caramasuk) => caramasuk.code === "gp"
                     );
@@ -611,6 +596,26 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                     setDiagnosaINA(response.data.dataDiagnosa);
                     setDataIcd9cm(response.data.dataIcd9cm);
                     calculate_total();
+                    console.log("Kiccc", typeof response.data.getGrouping.success);
+                    if (Boolean(response.data.getGrouping.success) === false || response.data.getGrouping.data.data.grouper.response === null) {
+                        setHide(true);
+
+                    }
+
+                    else {
+                        console.log("Sub 4")
+
+                        setHide(false);
+                        setDataGrouping(response.data.getGrouping.data.data);
+
+                    }
+
+                    console.log("Kick 2222");
+
+                    // setInterval(() => {
+
+                    // }, 3000);
+
                     // console.log(response.data,tarifs.total);
                 } else {
                     console.log("Kick 1")
@@ -622,7 +627,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
             } catch (error) {
                 console.log("Kick 2")
                 toast.current.show({ severity: 'error', summary: 'Error', detail: error, life: 3000 });
-                setExpandedRows(null); // Optionally, handle error state
+                // setExpandedRows(null); // Optionally, handle error state
+
             } finally {
                 // Set loading to false when the API request finishes
                 setLoading(false);
@@ -630,6 +636,52 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
 
         }
     };
+
+
+    const handleNewClaim = async (data) => {
+
+        console.log("handle new klaim" , data);
+        const payload = {
+            no_rekam_medik: data.peserta.noMr,
+            nama_pasien: data.peserta.nama,
+            nomor_kartu: data.peserta.noKartu,
+            noSep: data.noSep,
+            tgl_lahir: data.peserta.tglLahir,
+            gender: data.peserta.kelamin,
+        };
+
+        // console.log("Payload ", payload);
+
+        await axios.post(route('newClaim'), payload)
+            .then((response) => {
+                console.log('Response:', response.data);
+                setHide(false);
+                if (Boolean(response.data.success) === false) {
+                    toast.current.show({ severity: 'error', summary: response.data.message, detail: datas.noSep, life: 3000 });
+
+                } else {
+                    toast.current.show({ severity: 'success', summary: `Data  Berhasil Di simpan`, detail: datas.noSep, life: 3000 });
+
+                }
+
+                // Handle the response from the backend
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        // try {
+        //     const response = axios.post(route('newClaim'), payload);
+
+        //     if (Boolean(response.data.success) === false) {
+        //         toast.current.show({ severity: 'error', summary: response.data.message || 'Gagal menyimpan data', detail: datas.noSep, life: 3000 });
+        //     } else {
+        //         toast.current.show({ severity: 'success', summary: 'Data Berhasil Disimpan', detail: datas.noSep, life: 3000 });
+        //     }
+
+        // } catch (error) {
+        //     toast.current.show({ severity: 'error', summary: 'Error', detail: error.message || 'Terjadi kesalahan saat menyimpan data.', life: 3000 });
+        // }
+    }
     const calculate_total = () => {
         const total_all = (
             parseFloat(tarifs.prosedurenonbedah || 0) + parseFloat(tarifs.prosedurebedah || 0) + parseFloat(tarifs.konsultasi || 0) +
@@ -1864,6 +1916,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
         );
     };
 
+
     /**Simpan Klaim */
     const handleSimpanKlaim = (e) => {
         e.preventDefault(); // Prevent page reload
@@ -1935,6 +1988,10 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                 if (Boolean(response.data.success) === false) {
                     toast.current.show({ severity: 'error', summary: response.data.message, detail: datas.noSep, life: 3000 });
 
+                    // setInterval(() => {
+                    //     handleNewClaim();
+                    // }, 2000);
+
                 } else {
                     toast.current.show({ severity: 'success', summary: `Data  Berhasil Di simpan`, detail: datas.noSep, life: 3000 });
 
@@ -1946,6 +2003,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                 console.error('Error:', error);
             });
     };
+
 
     /**Simpan Grouping */
     const handleSimpanGroupingStage1 = (e) => {
@@ -2028,10 +2086,6 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
             .then((response) => {
                 console.log('response', response);
 
-                if (Boolean(response.data.success) === false) {
-                    toast.current.show({ severity: 'error', summary: `Klaim Belum Final`, detail: datas.noSep, life: 3000 });
-
-                } else {
 
                     toast.current.show({ severity: 'success', summary: `Data Berhasil Diunduh`, detail: datas.noSep, life: 3000 });
 
@@ -2043,7 +2097,6 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                     link.click(); // Memulai proses unduhan
 
 
-                }
 
             })
             .catch((error) => {
@@ -2069,7 +2122,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
             .then((response) => {
                 console.log('Response:', response.data);
                 setDataFinalisasi(response.data.data);
-                toast.current.show({ severity: 'success', summary: `Data  Berhasil Di Grouping`, detail: datas.noSep, life: 3000 });
+                toast.current.show({ severity: 'success', summary: `Data  Berhasil Di Finalisasi`, detail: datas.noSep, life: 3000 });
 
                 // Handle the response from the backend
             })
