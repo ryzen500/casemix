@@ -120,9 +120,9 @@ class InAcbgGrouperController extends Controller
         // result kirim claim
         $results = $this->inacbg->printKlaim($data, $key);
 
+            // dd($results ===false);die;
 
         if ($results['success'] === false) {
-            // dd($results);die;
 
             return response()->json(['data'=>$results], 200);
         } else {
@@ -379,10 +379,7 @@ class InAcbgGrouperController extends Controller
             return response()->json($results, 200);
         } else {
             // Jika gagal, kembalikan pesan error
-            return response()->json([
-                'status' => 'error',
-                'message' => $results['message']
-            ], 400);
+            return response()->json( $results, 200);
         }
 
 
