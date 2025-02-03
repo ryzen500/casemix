@@ -24,7 +24,9 @@ import { faUser, faHome, faCog, faEllipsis, faTrashCan } from "@fortawesome/free
 
 export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisKasus, pegawai, kelompokDiagnosa, COB, caraPulang }) {
     const [datas, setDatas] = useState([]);
-    const [dataGrouping, setDataGrouping] = useState([]);
+    const [dataGrouping, setDataGrouping] = useState({
+        los: 0
+    });
     const [beratLahir, setBeratLahir] = useState('');
     const [sistole, setSistole] = useState('');
     const [diastole, setDiastole] = useState('');
@@ -562,20 +564,27 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                 // setExpandedRowData(response.data); // Store the data
 
                 if (response.data.model.metaData.code == 200) {
+                    console.log("Sub 2")
+
                     toast.current.show({ severity: 'info', summary: event.data.noSep, detail: event.data.noSep, life: 3000 });
                     setDatas(response.data.model.response);
-                    setDataGrouping(response.data.getGrouping.data.data);
-                    console.log("Data Grouping", response.data.getGrouping.data.data);
                     // console.log("Responsess ", response.data.getGrouping.data.data.grouper.response);
                     if (response.data.getGrouping.success === false) {
+                        console.log("Sub 1")
                         setHide(true);
+                        setDataGrouping(null);
 
                     }
                     else if (response.data.getGrouping.data.data.grouper.response === null) {
                         setHide(true);
+                        console.log("Sub 3")
+
 
                     } else {
+                        console.log("Sub 4")
+
                         setHide(false);
+                        setDataGrouping(response.data.getGrouping.data.data);
 
                     }
                     const defaultCaraMasuk = caraMasuk.find(
@@ -604,12 +613,14 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                     calculate_total();
                     // console.log(response.data,tarifs.total);
                 } else {
+                    console.log("Kick 1")
                     toast.current.show({ severity: 'error', summary: 'Error', detail: response.data.model.metaData.message, life: 3000 });
                     setExpandedRows(null);
                 }
 
 
             } catch (error) {
+                console.log("Kick 2")
                 toast.current.show({ severity: 'error', summary: 'Error', detail: error, life: 3000 });
                 setExpandedRows(null); // Optionally, handle error state
             } finally {
@@ -761,7 +772,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                                         </td>
                                         <td width={"60%"}>
                                             <div className="ml-1">
-                                            {datas.jnsPelayanan}
+                                                {datas.jnsPelayanan}
 
                                             </div>
                                         </td>
@@ -817,8 +828,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                                         <td>Cara Masuk</td>
                                         <td >
                                             <Dropdown value={selectedCaraMasuk} onChange={(e) => setCaraMasuk(e.value)} options={caraMasuk} optionLabel="name"
-                                                placeholder="Pilih Cara Masuk"  className='ml-2'
-                                                style={{ width: '250px'  }}
+                                                placeholder="Pilih Cara Masuk" className='ml-2'
+                                                style={{ width: '250px' }}
 
                                             />
                                         </td>
@@ -829,14 +840,15 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                                         <td >
 
                                             <Dropdown value={selectedCOB} onChange={(e) => setCOB(e.value)} options={COB} optionLabel="name" className='ml-2'
-                                                placeholder="Pilih COB"style={{ width: '250px'  }} />
+                                                placeholder="Pilih COB" style={{ width: '250px' }} />
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>LOS</td>
                                         <td>
                                             <InputNumber
-                                                value={dataGrouping.los ? parseFloat(dataGrouping.los) : 0}
+                                                value={dataGrouping ? (dataGrouping.los ? parseFloat(dataGrouping.los) : 0) : 0}
+
                                                 onValueChange={handleValueChange}
                                                 locale="id-ID" // Set the locale for Indonesia (Rupiah)
                                                 showSymbol
@@ -871,7 +883,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                                         <td >
                                             <Dropdown value={selectedDPJP} onChange={(e) => setDPJP(e.value)} options={DPJP} optionLabel="nmdpjp"
                                                 className='ml-2'
-                                                placeholder="Pilih DPJP" style={{ width: '250px'  }} />
+                                                placeholder="Pilih DPJP" style={{ width: '250px' }} />
                                         </td>
                                         <td>Jenis Tarif</td>
                                         <td><input type="text" className="form-control" name='nama_tarifinacbgs_1' value={profils.nama_tarifinacbgs_1} /></td>
@@ -908,7 +920,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                                                     </div>
                                                 </div>
                                             </div>
-                                            
+
 
 
                                         </td>
@@ -1402,7 +1414,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                                                                 filterBy="nmdpjp"
                                                                 name={`[PasienmorbiditasT][${index}][pegawai_id]`}
                                                                 id={`pegawai_id_${index}`}
-                                                                style={{ width: '250px'  }}
+                                                                style={{ width: '250px' }}
                                                             />
                                                             <br />
                                                             <Dropdown
@@ -1685,7 +1697,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                                             name="sistole"
                                             value={sistole}
                                             onChange={(e) => setSistole(e.target.value)}
-                                            style={{ width: '150px' ,textAlign: 'center' }}
+                                            style={{ width: '150px', textAlign: 'center' }}
                                         />
                                     </div>
                                     <div className="col-sm-6">
@@ -1694,16 +1706,16 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                                             name="diastole"
                                             value={diastole}
                                             onChange={(e) => setDiastole(e.target.value)}
-                                            style={{ width: '150px' ,textAlign: 'center' }}
+                                            style={{ width: '150px', textAlign: 'center' }}
                                         />
                                     </div>
                                     <div className="col-sm-6" style={{ textAlign: 'right' }}>
-                                        <div  style={{ float:'right',width: '150px' , textAlign: 'center' }}>
+                                        <div style={{ float: 'right', width: '150px', textAlign: 'center' }}>
                                             <label>Sistole</label>
                                         </div>
                                     </div>
                                     <div className="col-sm-6">
-                                        <div  style={{ float:'left',width: '150px' , textAlign: 'center' }}>
+                                        <div style={{ float: 'left', width: '150px', textAlign: 'center' }}>
                                             <label>Diastole</label>
                                         </div>
 
@@ -1909,10 +1921,10 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
             berat_lahir: beratLahir,
             loginpemakai_id: auth.user.loginpemakai_id,
             total_tarif_rs: total.total,
-            sistole : sistole,
-            diastole : diastole,
-            is_tb : pasienTB,
-            nomor_register_sitb : nomorRegister
+            sistole: sistole,
+            diastole: diastole,
+            is_tb: pasienTB,
+            nomor_register_sitb: nomorRegister
 
         };
         axios.post(route('updateNewKlaim'), payload)
@@ -1951,8 +1963,14 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
             .then((response) => {
                 // console.log('Response:', response.data);
                 setHide(false);
-                setDataGrouper(response.data.data);
-                toast.current.show({ severity: 'success', summary: `Data  Berhasil Di Grouping`, detail: datas.noSep, life: 3000 });
+                if (Boolean(response.data.success) === false) {
+                    toast.current.show({ severity: 'error', summary: response.data.message, detail: datas.noSep, life: 3000 });
+
+                } else {
+                    toast.current.show({ severity: 'success', summary: `Data  Berhasil Di Grouping`, detail: datas.noSep, life: 3000 });
+                    setDataGrouper(response.data.data);
+
+                }
 
                 // Handle the response from the backend
             })
@@ -1977,8 +1995,14 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
             .then((response) => {
                 // console.log('Response:', response.data);
                 setHide(false);
-                setDataGrouper(response.data.data);
-                toast.current.show({ severity: 'success', summary: `Data  Berhasil Di Hapus`, detail: datas.noSep, life: 3000 });
+
+                if (Boolean(response.data.success) === false) {
+                    toast.current.show({ severity: 'error', summary: response.data.message, detail: datas.noSep, life: 3000 });
+
+                } else {
+                    toast.current.show({ severity: 'success', summary: `Data  Berhasil Di Hapus`, detail: datas.noSep, life: 3000 });
+
+                }
 
                 // Handle the response from the backend
             })
@@ -2003,14 +2027,24 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
         axios.post(route('printKlaim'), payload, { responseType: 'blob' })
             .then((response) => {
                 console.log('response', response);
-                // Mendapatkan file PDF yang diunduh
-                const file = new Blob([response.data], { type: 'application/pdf' });
-                const link = document.createElement('a');
-                link.href = URL.createObjectURL(file);
-                link.download = `klaim_${datas.noSep}.pdf`; // Nama file PDF yang akan diunduh
-                link.click(); // Memulai proses unduhan
 
-                toast.current.show({ severity: 'success', summary: `Data Berhasil Diunduh`, detail: datas.noSep, life: 3000 });
+                if (Boolean(response.data.success) === false) {
+                    toast.current.show({ severity: 'error', summary: `Klaim Belum Final`, detail: datas.noSep, life: 3000 });
+
+                } else {
+
+                    toast.current.show({ severity: 'success', summary: `Data Berhasil Diunduh`, detail: datas.noSep, life: 3000 });
+
+                    // Mendapatkan file PDF yang diunduh
+                    const file = new Blob([response.data], { type: 'application/pdf' });
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(file);
+                    link.download = `klaim_${datas.noSep}.pdf`; // Nama file PDF yang akan diunduh
+                    link.click(); // Memulai proses unduhan
+
+
+                }
+
             })
             .catch((error) => {
                 console.error('Error:', error);

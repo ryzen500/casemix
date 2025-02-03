@@ -120,31 +120,40 @@ class InAcbgGrouperController extends Controller
         // result kirim claim
         $results = $this->inacbg->printKlaim($data, $key);
 
-        // var_dump($results["data"]);die;
-        $base64Data = $this->getBase64FromNoSep($results["data"]);  // Ganti dengan logika Anda untuk mengambil base64
 
-        // Menghilangkan prefix base64 jika ada
-        if (preg_match('/^data:application\/pdf;base64,/', $base64Data)) {
-            $base64Data = substr($base64Data, strpos($base64Data, ',') + 1);
+        if ($results['success'] === false) {
+            // dd($results);die;
+
+            return response()->json(['data'=>$results], 200);
+        } else {
+
+            // var_dump($results["data"]);die;
+            $base64Data = $this->getBase64FromNoSep($results["data"]);  // Ganti dengan logika Anda untuk mengambil base64
+
+            // Menghilangkan prefix base64 jika ada
+            if (preg_match('/^data:application\/pdf;base64,/', $base64Data)) {
+                $base64Data = substr($base64Data, strpos($base64Data, ',') + 1);
+            }
+
+            // Decode base64 menjadi data binar
+            $pdfData = base64_decode($base64Data);
+
+            // Tentukan nama file PDF
+            $fileName = 'klaim_' . $nomor_sep . '.pdf';
+
+            // Kembalikan file PDF untuk diunduh
+            return response()->stream(
+                function () use ($pdfData) {
+                    echo $pdfData;  // Menulis data PDF
+                },
+                200,
+                [
+                    'Content-Type' => 'application/pdf',
+                    'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
+                ]
+            );
         }
 
-        // Decode base64 menjadi data binar
-        $pdfData = base64_decode($base64Data);
-
-        // Tentukan nama file PDF
-        $fileName = 'klaim_' . $nomor_sep . '.pdf';
-
-        // Kembalikan file PDF untuk diunduh
-        return response()->stream(
-            function () use ($pdfData) {
-                echo $pdfData;  // Menulis data PDF
-            },
-            200,
-            [
-                'Content-Type' => 'application/pdf',
-                'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
-            ]
-        );
     }
 
     private function getBase64FromNoSep($results)
@@ -300,7 +309,7 @@ class InAcbgGrouperController extends Controller
         $dataDiagnosa = PasienmorbiditasT::insertMorbiditasByPendaftaran($pendaftaran_id)->toArray();
 
         //Procedural
-        $dataIcd9cm = Pasienicd9cmT::getIcdIX($pendaftaran_id);
+        $dataIcd9cm = Pasienicd9cmT::getIcdIX($pendaftaran_id)->toArray();
 
         // $diagnosa_explode = explode('#', $diagnosa);
 
@@ -326,8 +335,8 @@ class InAcbgGrouperController extends Controller
             'create_loginpemakai_id' => $loginpemakai_id,
             'total_tarif_rs' => $total_tarif_rs,
             'berat_lahir' => $berat_lahir,
-            'is_tb'=>$is_tb,
-            'nomor_register_sitb'=>$nomor_register_sitb
+            'is_tb' => $is_tb,
+            'nomor_register_sitb' => $nomor_register_sitb
         ];
 
 
@@ -361,7 +370,7 @@ class InAcbgGrouperController extends Controller
             }
 
             if ($decodedProcedure) {
-                $addINA = $saveService->addDataPasienMordibitasIX($data, $pendaftaran, $decodedProcedure);
+                $addINA = $saveService->addDataPasienMordibitasIX($data, $pendaftaran, $decodedProcedure, $dataIcd9cm);
 
             }
 
@@ -458,10 +467,8 @@ class InAcbgGrouperController extends Controller
             return response()->json($results, 200);
         } else {
             // Jika gagal, kembalikan pesan error
-            return response()->json([
-                'status' => 'error',
-                'message' => $results['message']
-            ], 400);
+            return response()->json($results, 400);
+
         }
     }
 
