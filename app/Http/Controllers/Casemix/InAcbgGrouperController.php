@@ -194,14 +194,14 @@ class InAcbgGrouperController extends Controller
         $discharge_status = $request->input("discharge_status") ?? "";
         $diagnosa = $request->input("diagnosa") ?? "";
         $diagnosa_inagrouper = $request->input("diagnosa_inagrouper") ?? "";
+        
         $diagnosa_array = $request->input("diagnosa_array") ?? "";
-
         $diagnosaina_array = $request->input("diagnosaina_array") ?? "";
+        $procedure_ix = $request->input("procedure_ix") ?? "";
+        $procedureina_ix = $request->input("procedureina_ix") ?? "";
 
 
         $procedure = $request->input("procedure") ?? "";
-        $procedure_ix = $request->input("procedure_ix") ?? "";
-
         $procedure_inagrouper = $request->input("procedure_inagrouper") ?? "";
 
 
@@ -274,6 +274,7 @@ class InAcbgGrouperController extends Controller
             'discharge_status' => $discharge_status,
             'diagnosa' => $diagnosa,
             'diagnosa_inagrouper' => $diagnosa_inagrouper,
+            'procedure' => $procedure,
             'procedure_inagrouper' => $procedure_inagrouper,
             'sistole' => $sistole,
             'diastole' => $diastole,
@@ -301,7 +302,8 @@ class InAcbgGrouperController extends Controller
             'payor_id' => $payor_id,
             'payor_cd' => $payor_cd,
             'cob_cd' => $cob_cd,
-            'coder_nik' => $coder_nik
+            'coder_nik' => $coder_nik,
+            'loginpemakai_id' => $loginpemakai_id
         ];
 
         // Payload Pendaftaran 
@@ -321,6 +323,7 @@ class InAcbgGrouperController extends Controller
         $decodedRiwayat = json_decode($diagnosa_array, true);
         $decodedRiwayatINA = json_decode($diagnosaina_array, true);
         $decodedProcedure = json_decode($procedure_ix, true);
+        $decodedProcedureINA = json_decode($procedureina_ix,true);
         // dd(json_decode($diagnosa_array,true));
 
         // // echo "<pre>"; var_dump($dataDiagnosa);die;
@@ -357,9 +360,9 @@ class InAcbgGrouperController extends Controller
             // dd($dataDiagnosa);
 
             if ($decodedRiwayat) {
-                $saveDiagnosa = $saveService->addDataPasienMordibitasRiwayat($data, $pendaftaran, $dataDiagnosa);
+                // $saveDiagnosa = $saveService->addDataPasienMordibitasRiwayat($data, $pendaftaran, $dataDiagnosa);
 
-                $deletePasienMordibitasT = $saveService->DeleteDataPasienMordibitas($data, $pendaftaran, $decodedRiwayat);
+                // $deletePasienMordibitasT = $saveService->DeleteDataPasienMordibitas($data, $pendaftaran, $decodedRiwayat);
 
                 $addUNU = $saveService->addDataPasienMordibitasUNU($data, $pendaftaran, $decodedRiwayat);
             }
@@ -370,10 +373,13 @@ class InAcbgGrouperController extends Controller
             }
 
             if ($decodedProcedure) {
-                $addINA = $saveService->addDataPasienMordibitasIX($data, $pendaftaran, $decodedProcedure, $dataIcd9cm);
+                $addIXUNU = $saveService->addDataPasienMordibitasIXUNU($data, $pendaftaran, $decodedProcedure);
 
             }
+            if ($decodedProcedureINA) {
+                $addIXINA = $saveService->addDataPasienMordibitasIXINA($data, $pendaftaran, $decodedProcedureINA);
 
+            }
 
             // Jika berhasil, kirim klaim
             return response()->json($results, 200);

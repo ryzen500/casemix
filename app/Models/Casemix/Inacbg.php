@@ -650,6 +650,7 @@ class Inacbg extends Model
                 'discharge_status' => $data['discharge_status'] ?? null,
                 'diagnosa' => $data['diagnosa'] ?? null,
                 'diagnosa_inagrouper' => $data['diagnosa_inagrouper'] ?? null,
+                'procedure' => $data['procedure'] ?? null,
                 'procedure_inagrouper' => $data['procedure_inagrouper'] ?? null,
                 'tarif_rs' => [
                     'prosedur_non_bedah' => $data['prosedur_non_bedah'] ?? null,

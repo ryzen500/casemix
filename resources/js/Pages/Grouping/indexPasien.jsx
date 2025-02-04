@@ -237,6 +237,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
             const updatedRows = dataDiagnosa.map(row => ({ ...row }));
 
             updatedRows[index][field] = value;
+            updatedRows[index]['loginpemakai_id']=auth.user.loginpemakai_id;
             setDiagnosa(updatedRows);
             let length = value.length;
             if (length > 2) {
@@ -405,6 +406,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
             updatedRows[index]['diagnosa_id'] = value.id;
             updatedRows[index]['diagnosa_kode'] = value.value;
             updatedRows[index]['diagnosa_nama'] = value.label;
+            updatedRows[index]['loginpemakai_id']=auth.user.loginpemakai_id;
+
             let temp = [];
             temp.push({ ...updatedRows[index] });
             try {
@@ -471,9 +474,11 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
             });
         }else if(type='icdixina'){
             const updatedRows = dataIcd9cmINA.map(row => ({ ...row }));
-            updatedRows[index]['pasienicd9cm_id'] = value.id;
+            updatedRows[index]['diagnosaicdix_id'] = value.id;
             updatedRows[index]['diagnosaicdix_kode'] = value.value;
             updatedRows[index]['diagnosaicdix_nama'] = value.label;
+            updatedRows[index]['pendaftaran_id']=pendaftarans.pendaftaran_id;
+
             setDataIcd9cmINA(updatedRows);
             let length = value.length;
             if (length > 2) {
@@ -553,9 +558,10 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
             let _dataDiagnosa = dataIcd9cmINA.map(row => ({ ...row }));
             let _diagnosa = { ...diagnosaixTemp };
 
-            _diagnosa.pasienicd9cm_id = rowData.id;
+            _diagnosa.diagnosaicdix_id = rowData.id;
             _diagnosa.diagnosaicdix_nama = rowData.label;
             _diagnosa.diagnosaicdix_kode = rowData.value;
+            _diagnosa.pendaftaran_id = pendaftarans.pendaftaran_id;
             const hasKelompokDiagnosaId2 = dataIcd9cmINA.some((row) => row.kelompokdiagnosa_id === 2);
             if (hasKelompokDiagnosaId2) {
                 _diagnosa.kelompokdiagnosa_id = 3;
@@ -2003,14 +2009,14 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                                                                 type="hidden"
                                                                 value={row.diagnosaicdix_id}
                                                                 onChange={(e) => handleInputChange(index, 'diagnosaicdix_id', e.target.value)}
-                                                                name={`[Pasienicd9cmT][${index}][diagnosaicdix_id]`}
+                                                                name={`[Pasienicd9cmTINA][${index}][diagnosaicdix_id]`}
                                                                 id={`diagnosaicdix_id_${index}`}
                                                             />
                                                             <input
                                                                 type="hidden"
                                                                 value={row.pasienicd9cm_id}
                                                                 onChange={(e) => handleInputChange(index, 'pasienicd9cm_id', e.target.value)}
-                                                                name={`[Pasienicd9cmT][${index}][pasienicd9cm_id]`}
+                                                                name={`[Pasienicd9cmTINA][${index}][pasienicd9cm_id]`}
                                                                 id={`pasienicd9cm_id_${index}`}
                                                             />
                                                             <AutoComplete
@@ -2019,7 +2025,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                                                                 completeMethod={fetchSuggestionsCodeIX}
                                                                 field="name"
                                                                 onChange={(e) => handleInputChangeAutocompleteIXRow(index, 'diagnosaicdix_kode', e.value,'icdixina')}
-                                                                name={`[Pasienicd9cmT][${index}][diagnosaicdix_kode]`}
+                                                                name={`[Pasienicd9cmTINA][${index}][diagnosaicdix_kode]`}
                                                                 id={`diagnosaicdix_kode_${index}`}
                                                                 onSelect={(e) => updateIXRow(index, e.value,'icdixina')}  // Update input field
                                                                 // loading={loading}
@@ -2038,7 +2044,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                                                                 type="text"
                                                                 value={row.diagnosaicdix_nama}
                                                                 onChange={(e) => handleInputChangeRow(index, 'diagnosaicdix_nama', e.target.value, 'icdixina')}
-                                                                name={`[Pasienicd9cmT][${index}][diagnosaicdix_nama]`}
+                                                                name={`[Pasienicd9cmTINA][${index}][diagnosaicdix_nama]`}
                                                                 id={`diagnosaicdix_nama_${index}`}
                                                             />
                                                         </td>
@@ -2288,11 +2294,13 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
             sewa_alat: obats.sewaalat,
             payor_id: 3,
             diagnosa: `${dataDiagnosa.map(item => item.diagnosa_kode).join('#')}`,
-            procedure: `${dataIcd9cm.map(item => item.diagnosa_kode).join('#')}`,
+            procedure: `${dataIcd9cm.map(item => item.diagnosaicdix_kode).join('#')}`,
             procedure_ix: JSON.stringify(dataIcd9cm),
+            procedureina_ix: JSON.stringify(dataIcd9cmINA),
 
             diagnosa_array: JSON.stringify(dataDiagnosa),
             diagnosa_inagrouper: `${dataDiagnosaINA.map(item => item.diagnosa_kode).join('#')}`,
+            procedure_inagrouper: `${dataIcd9cmINA.map(item => item.diagnosaicdix_kode).join('#')}`,
             diagnosaina_array: JSON.stringify(dataDiagnosaINA),
             carabayar_id: pendaftarans.carabayar_id,
             carabayar_nama: pendaftarans.carabayar_nama,
