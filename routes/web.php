@@ -5,6 +5,7 @@ use App\Http\Controllers\Casemix\InAcbgGrouperController;
 use App\Http\Controllers\Casemix\SearchDiagnosaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Laporan\LaporanSEPController;
+use App\Http\Controllers\Pasienicd9\Pasienicd9cmTController;
 use App\Http\Controllers\PasienmorbiditasT\PasienmorbiditasTController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
@@ -83,6 +84,10 @@ Route::middleware('auth')->group(function () {
     Route::post('removeMorbiditasT', [PasienmorbiditasTController::class, 'removeMorbiditasT'])->name('removeMorbiditasT');
     Route::post('updateMorbiditasT', [PasienmorbiditasTController::class, 'updateMorbiditasT'])->name('updateMorbiditasT');
 
+    // pasienicd9cmT
+    Route::post('insertPasienicd9T', [Pasienicd9cmTController::class, 'insertPasienicd9T'])->name('insertPasienicd9T');
+    Route::post('removePasienicd9T', [Pasienicd9cmTController::class, 'removePasienicd9T'])->name('removePasienicd9T');
+    Route::post('updatePasienicd9T', [Pasienicd9cmTController::class, 'updatePasienicd9T'])->name('updatePasienicd9T');
 });
 
 require __DIR__.'/auth.php';
