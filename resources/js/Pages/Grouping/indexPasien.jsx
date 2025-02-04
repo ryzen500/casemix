@@ -34,6 +34,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
     const [pendaftarans, setPendaftarans] = useState([]);
     const [dataDiagnosa, setDiagnosa] = useState([]);
     const [dataIcd9cm, setDataIcd9cm] = useState([]);
+    const [dataIcd9cmINA, setDataIcd9cmINA] = useState([]);
+
     const [dataDiagnosaINA, setDiagnosaINA] = useState([]);
 
     let emptyDiagnosa = {
@@ -43,7 +45,16 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
         kelompokdiagnosa_nama: null,
         kelompokdiagnosa_id: null
     };
+    let emptyDiagnosaIx = {
+        pasienicd9cm_id: null,
+        diagnosa_kode: null,
+        diagnosa_nama: null,
+        kelompokdiagnosa_nama: null,
+        kelompokdiagnosa_id: null
+    };
     const [diagnosaTemp, setDiagnosaTemp] = useState(emptyDiagnosa);
+    const [diagnosaixTemp, setDiagnosaixTemp] = useState(emptyDiagnosaIx);
+
     const [dataGrouper, setDataGrouper] = useState([]);
 
     const [dataFinalisasi, setDataFinalisasi] = useState([]);
@@ -244,10 +255,18 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
     };
     // Handle input changes
     const handleInputChangeAutocompleteIXRow = (index, field, value, type) => {
-        if (type == 'icdix') {
-            const updatedRows = [...dataIcd9cm];
+        if (type == 'icdixunu') {
+            const updatedRows = dataIcd9cm.map(row => ({ ...row }));
             updatedRows[index][field] = value;
             setDataIcd9cm(updatedRows);
+            let length = value.length;
+            if (length > 2) {
+                fetchSuggestionsCodeIX(value);  // Fetch suggestions based on the input
+            }
+        }else if(type == 'icdixina'){
+            const updatedRows = dataIcd9cmINA.map(row => ({ ...row }));
+            updatedRows[index][field] = value;
+            setDataIcd9cmINA(updatedRows);
             let length = value.length;
             if (length > 2) {
                 fetchSuggestionsCodeIX(value);  // Fetch suggestions based on the input
@@ -325,8 +344,37 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
             if (field === 'diagnosa_kode' && value.length > 2) {
                 fetchSuggestionsCode(value);
             }
-        } else if (type == 'icdix') {
+        } else if (type == 'icdixunu') {
             const updatedRows = dataIcd9cm.map(row => ({ ...row }));
+
+            // Update the selected row
+            updatedRows[index][field] = value;
+            updatedRows[index]['loginpemakai_id']=auth.user.loginpemakai_id;
+            let temp = [];
+            temp.push({ ...updatedRows[index] });
+            await axios.post(route('updatePasienicd9T'),{ payload:temp})
+            .then((response) => {
+                if (Boolean(response.data.success) !== false) {
+                    setDataIcd9cm(updatedRows);
+
+                    toast.current.show({ severity: 'success', summary: `Success`, detail: response.data.message, life: 3000 });
+
+                } else {
+                    toast.current.show({ severity: 'error', summary: 'Error', detail: response.data.message, life: 3000 });
+
+                }
+
+                // Handle the response from the backend
+            }) 
+            // Update state
+            setDataIcd9cm(updatedRows);
+
+            // If field is 'diagnosa_kode' and length > 2, fetch suggestions
+            if (field === 'diagnosaicdix_kode' && value.length > 2) {
+                fetchSuggestionsCodeIX(value);  // Fetch suggestions based on the input
+            }
+        }else if(type == 'icdixina'){
+            const updatedRows = dataDiagnosaINA.map(row => ({ ...row }));
 
             // Update the selected row
             updatedRows[index][field] = value;
@@ -342,9 +390,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
 
             // Sort the updated array
             updatedRows.sort((a, b) => a.kelompokdiagnosa_id - b.kelompokdiagnosa_id);
-
             // Update state
-            setDataIcd9cm(updatedRows);
+            setDiagnosaINA(updatedRows);
 
             // If field is 'diagnosa_kode' and length > 2, fetch suggestions
             if (field === 'diagnosaicdix_kode' && value.length > 2) {
@@ -396,15 +443,42 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
 
         }
     };
-    const updateIXRow = (index, value) => {
-        const updatedRows = [...dataIcd9cm];
-        updatedRows[index]['pasienicd9cm_id'] = value.id;
-        updatedRows[index]['diagnosaicdix_kode'] = value.value;
-        updatedRows[index]['diagnosaicdix_nama'] = value.label;
-        setDataIcd9cm(updatedRows);
-        let length = value.length;
-        if (length > 2) {
-            fetchSuggestionsCode(value);  // Fetch suggestions based on the input
+    const updateIXRow = async(index, value,type) => {
+        if(type =='icdixunu'){
+            const updatedRows = dataIcd9cm.map(row => ({ ...row }));
+            updatedRows[index]['diagnosaicdix_id'] = value.id;
+            updatedRows[index]['diagnosaicdix_kode'] = value.value;
+            updatedRows[index]['diagnosaicdix_nama'] = value.label;
+            updatedRows[index]['loginpemakai_id']=auth.user.loginpemakai_id;
+            let temp = [];
+            temp.push({ ...updatedRows[index] });
+            await axios.post(route('updatePasienicd9T'),{ payload:temp})
+                .then((response) => {    
+                    if (Boolean(response.data.success) !== false) {
+                        setDataIcd9cm(updatedRows);
+    
+                        toast.current.show({ severity: 'success', summary: `Success`, detail: response.data.message, life: 3000 });
+    
+                    } else {
+                        toast.current.show({ severity: 'error', summary: 'Error', detail: response.data.message, life: 3000 });
+    
+                    }
+    
+                    // Handle the response from the backend
+            })
+            .catch((error) => {
+                toast.current.show({ severity: 'error', summary: 'Error', detail: response.data.message, life: 3000 });
+            });
+        }else if(type='icdixina'){
+            const updatedRows = dataIcd9cmINA.map(row => ({ ...row }));
+            updatedRows[index]['pasienicd9cm_id'] = value.id;
+            updatedRows[index]['diagnosaicdix_kode'] = value.value;
+            updatedRows[index]['diagnosaicdix_nama'] = value.label;
+            setDataIcd9cmINA(updatedRows);
+            let length = value.length;
+            if (length > 2) {
+                fetchSuggestionsCode(value);  // Fetch suggestions based on the input
+            }
         }
     };
     // Handle change in input field
@@ -434,28 +508,71 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
         const formattedDate = new Date(dateString.replace(" ", "T"));
         return isNaN(formattedDate) ? null : formattedDate;
     };
+    const addRowDiagnosaIX = async(rowData,type) => {
+        if(type=='unu'){
+            let _dataDiagnosa = dataIcd9cm.map(row => ({ ...row }));
+            let _diagnosa = { ...diagnosaixTemp };
 
-    const addRowDiagnosaIX = (rowData) => {
-        let _dataDiagnosa = [...dataIcd9cm];
-        let _diagnosa = { ...diagnosaTemp };
-        _diagnosa.pasienicd9cm_id = rowData.id;
-        _diagnosa.diagnosaicdix_nama = rowData.label;
-        _diagnosa.diagnosaicdix_kode = rowData.value;
-        const hasKelompokDiagnosaId2 = dataIcd9cm.some((row) => row.kelompokdiagnosa_id === 2);
-        if (hasKelompokDiagnosaId2) {
-            _diagnosa.kelompokdiagnosa_id = 3;
-        } else {
-            // If no row has kelompokdiagnosa_id === 2, set it to 2
-            _diagnosa.kelompokdiagnosa_id = 2;
+            _diagnosa.diagnosaicdix_id = rowData.id;
+            _diagnosa.diagnosaicdix_nama = rowData.label;
+            _diagnosa.diagnosaicdix_kode = rowData.value;
+            _diagnosa.loginpemakai_id = auth.user.loginpemakai_id;
+            _diagnosa.pendaftaran_id = pendaftarans.pendaftaran_id;
+            _diagnosa.tgl_pendaftaran = pendaftarans.tgl_pendaftaran;
+            _diagnosa.pegawai_id = pendaftarans.pegawai_id;
+            const hasKelompokDiagnosaId2 = dataIcd9cm.some((row) => row.kelompokdiagnosa_id === 2);
+            if (hasKelompokDiagnosaId2) {
+                _diagnosa.kelompokdiagnosa_id = 3;
+            } else {
+                // If no row has kelompokdiagnosa_id === 2, set it to 2
+                _diagnosa.kelompokdiagnosa_id = 2;
+            }
+            _dataDiagnosa.push(_diagnosa);
+            _dataDiagnosa.sort((a, b) => a.kelompokdiagnosa_id - b.kelompokdiagnosa_id);
+            await axios.post(route('insertPasienicd9T'),{ payload:_diagnosa})
+            .then((response) => {    
+                if (Boolean(response.data.success) !== false) {
+                    _diagnosa.pasienicd9cm_id= response.data.Pasienicd9cmT.pasienicd9cm_id;
+    
+                    setDataIcd9cm(_dataDiagnosa);
+                    setDiagnosaixTemp(emptyDiagnosa);
+                    setSearchTextIX(null);
+                    toast.current.show({ severity: 'success', summary: `Success`, detail: response.data.message, life: 3000 });
+    
+                } else {
+                    toast.current.show({ severity: 'error', summary: 'Error', detail: response.data.message, life: 3000 });
+    
+                }
+    
+                // Handle the response from the backend
+            })
+            .catch((error) => {
+                toast.current.show({ severity: 'error', summary: 'Error', detail: response.data.message, life: 3000 });
+            });
+        }else if(type=='ina'){
+            let _dataDiagnosa = dataIcd9cmINA.map(row => ({ ...row }));
+            let _diagnosa = { ...diagnosaixTemp };
+
+            _diagnosa.pasienicd9cm_id = rowData.id;
+            _diagnosa.diagnosaicdix_nama = rowData.label;
+            _diagnosa.diagnosaicdix_kode = rowData.value;
+            const hasKelompokDiagnosaId2 = dataIcd9cmINA.some((row) => row.kelompokdiagnosa_id === 2);
+            if (hasKelompokDiagnosaId2) {
+                _diagnosa.kelompokdiagnosa_id = 3;
+            } else {
+                // If no row has kelompokdiagnosa_id === 2, set it to 2
+                _diagnosa.kelompokdiagnosa_id = 2;
+            }
+            _dataDiagnosa.push(_diagnosa);
+            _dataDiagnosa.sort((a, b) => a.kelompokdiagnosa_id - b.kelompokdiagnosa_id);
+    
+            setDataIcd9cmINA(_dataDiagnosa);
+            setDiagnosaixTemp(emptyDiagnosa);
+            setSearchTextIX(null);
+            // setDiagnosa(response.data.dataDiagnosa);
         }
-        _dataDiagnosa.push(_diagnosa);
-        _dataDiagnosa.sort((a, b) => a.kelompokdiagnosa_id - b.kelompokdiagnosa_id);
-
-        setDataIcd9cm(_dataDiagnosa);
-        setDiagnosaTemp(emptyDiagnosa);
-        setSearchTextIX(null);
-        // setDiagnosa(response.data.dataDiagnosa);
     }
+
     const allowEdit = (rowData) => {
         return rowData.name !== 'Blue Band';
     };
@@ -579,7 +696,27 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                     suggestions={suggestions}
                     completeMethod={onSearchChangeIX}  // Trigger search on typing
                     field="search-icdix"  // Field to display in the suggestion (adjust based on your API response)
-                    onSelect={(e) => addRowDiagnosaIX(e.value)}  // Update input field
+                    onSelect={(e) => addRowDiagnosaIX(e.value,'unu')}  // Update input field
+                    itemTemplate={(item) => (
+                        <div>
+                            <span>{item.label} ({item.value})</span>  {/* Custom template to display both label and value */}
+                        </div>
+                    )}
+                />
+            </IconField>
+        </div>
+    );
+        const headerInaICDIX = (
+        <div className="flex flex-wrap gap-2 align-items-center justify-content-between">
+            <h4 className="m-0">Diagnosa (ICD IX)</h4>
+            <IconField iconPosition="left">
+
+                <AutoComplete
+                    value={searchTextIX}
+                    suggestions={suggestions}
+                    completeMethod={onSearchChangeIX}  // Trigger search on typing
+                    field="search-icdix"  // Field to display in the suggestion (adjust based on your API response)
+                    onSelect={(e) => addRowDiagnosaIX(e.value,'ina')}  // Update input field
                     itemTemplate={(item) => (
                         <div>
                             <span>{item.label} ({item.value})</span>  {/* Custom template to display both label and value */}
@@ -650,6 +787,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                     setDiagnosa(response.data.dataDiagnosa);
                     setDiagnosaINA(response.data.dataDiagnosa);
                     setDataIcd9cm(response.data.dataIcd9cm);
+                    setDataIcd9cmINA(response.data.dataIcd9cm)
                     calculate_total();
                     if (Boolean(response.data.getGrouping.success) === false || response.data.getGrouping.data.data.grouper.response === null) {
                         setHide(true);
@@ -843,9 +981,32 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
             setDiagnosaINA(updatedRows); // Remove row and update state
         }
     };
-    const removeRowIX = (index) => {
-        const updatedRows = dataIcd9cm.filter((_, i) => i !== index);
-        setDataIcd9cm(updatedRows); // Remove row and update state
+    const removeRowIX = async(index,type) => {
+        if (type === 'icdixunu') {
+            let updatedRows = dataIcd9cm.filter((_, i) => i === index);
+            updatedRows[0].update_loginpemakai_id = auth.user.loginpemakai_id;
+            await axios.post(route('removePasienicd9T'),{ payload:updatedRows})
+            .then((response) => {
+                if (Boolean(response.data.success) !== false) {
+                    const updatedRowDelete = dataIcd9cm.filter((_, i) => i !== index);
+                    setDataIcd9cm(updatedRowDelete); 
+                    toast.current.show({ severity: 'success', summary: `Success`, detail: response.data.message, life: 3000 });
+
+                } else {
+                    toast.current.show({ severity: 'error', summary: 'Error', detail: response.data.message, life: 3000 });
+
+                }
+
+                // Handle the response from the backend
+            })
+            .catch((error) => {
+                toast.current.show({ severity: 'error', summary: 'Error', detail: response.data.message, life: 3000 });
+            });
+
+        }else if (type === 'icdixina') {
+            const updatedRows = dataIcd9cmINA.filter((_, i) => i !== index);
+            setDataIcd9cmINA(updatedRows); // Remove row and update state
+        }
     };
     // end onchange tarif
     const rowExpansionTemplate = (data) => {
@@ -1615,6 +1776,93 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                                                 ))}
                                             </tbody>
                                         </table>
+
+                                        <div className="p-datatable-header mt-5">
+                                            {
+                                                headerUnuICDIX
+                                            }
+                                        </div>
+                                        <table className="p-datatable-table ">
+                                            <thead className='p-datatable-thead'>
+                                                <tr>
+                                                    <th>No</th>
+                                                    <th>Diagnosa Kode</th>
+                                                    <th>Diagnosa Nama</th>
+                                                    {/* <th>Kelompok Diagnosa</th> */}
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {dataIcd9cm.map((row, index) => (
+                                                    <tr key={index}>
+                                                        <td>
+                                                            {index + 1}
+                                                        </td>
+                                                        <td>
+                                                            <input
+                                                                type="hidden"
+                                                                value={row.diagnosaicdix_id}
+                                                                onChange={(e) => handleInputChange(index, 'diagnosaicdix_id', e.target.value)}
+                                                                name={`[Pasienicd9cmT][${index}][diagnosaicdix_id]`}
+                                                                id={`diagnosaicdix_id_${index}`}
+                                                            />
+                                                            <input
+                                                                type="hidden"
+                                                                value={row.pasienicd9cm_id}
+                                                                onChange={(e) => handleInputChange(index, 'pasienicd9cm_id', e.target.value)}
+                                                                name={`[Pasienicd9cmT][${index}][pasienicd9cm_id]`}
+                                                                id={`pasienicd9cm_id_${index}`}
+                                                            />
+                                                            <AutoComplete
+                                                                value={row.diagnosaicdix_kode}
+                                                                suggestions={suggestions}
+                                                                completeMethod={fetchSuggestionsCodeIX}
+                                                                field="name"
+                                                                onChange={(e) => handleInputChangeAutocompleteIXRow(index, 'diagnosaicdix_kode', e.value,'icdixunu')}
+                                                                name={`[Pasienicd9cmT][${index}][diagnosaicdix_kode]`}
+                                                                id={`diagnosaicdix_kode_${index}`}
+                                                                onSelect={(e) => updateIXRow(index, e.value,'icdixunu')}  // Update input field
+                                                                // loading={loading}
+                                                                minLength={3}
+                                                                placeholder="Enter Diagnosa Kode"
+                                                                itemTemplate={(item) => (
+                                                                    <div>
+                                                                        <span>{item.label} ({item.value})</span>  {/* Custom template to display both label and value */}
+                                                                    </div>
+                                                                )}
+                                                            />
+
+                                                        </td>
+                                                        <td>
+                                                            <input
+                                                                type="text"
+                                                                value={row.diagnosaicdix_nama}
+                                                                onChange={(e) => handleInputChangeRow(index, 'diagnosaicdix_nama', e.target.value, 'icdixunu')}
+                                                                name={`[Pasienicd9cmT][${index}][diagnosaicdix_nama]`}
+                                                                id={`diagnosaicdix_nama_${index}`}
+                                                            />
+                                                        </td>
+                                                        {/* <td>
+                                                            <Dropdown
+                                                                value={row.kelompokdiagnosa_id}
+                                                                onChange={(e) => handleInputChangeRow(index, 'kelompokdiagnosa_id', e.target.value, 'icdix')}
+                                                                options={kelompokDiagnosa} optionLabel="name"
+                                                                optionValue="value"
+                                                                placeholder="Pilih Kelompok Diagnosa"
+                                                                name={`[Pasienicd9cmT][${index}][kelompokdiagnosa_id]`}
+                                                                id={`kelompokdiagnosa_id_${index}`}
+                                                            />
+
+                                                        </td> */}
+                                                        <td style={{ textAlign: 'center' }}>
+                                                            <button type="button" onClick={() => removeRowIX(index,'icdixunu')}>
+                                                                <FontAwesomeIcon icon={faTrashCan} />
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
                                     </TabPanel>
                                     <TabPanel header="Coding INA Grouper">
                                         <div className="p-datatable-header">
@@ -1728,13 +1976,10 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                                                 ))}
                                             </tbody>
                                         </table>
-                                    </TabPanel>
-                                </TabView>
-                                <div className="row">
-                                    <div className="col-sm-12">
+
                                         <div className="p-datatable-header mt-5">
                                             {
-                                                headerUnuICDIX
+                                                headerInaICDIX
                                             }
                                         </div>
                                         <table className="p-datatable-table ">
@@ -1748,7 +1993,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {dataIcd9cm.map((row, index) => (
+                                                {dataIcd9cmINA.map((row, index) => (
                                                     <tr key={index}>
                                                         <td>
                                                             {index + 1}
@@ -1761,15 +2006,22 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                                                                 name={`[Pasienicd9cmT][${index}][diagnosaicdix_id]`}
                                                                 id={`diagnosaicdix_id_${index}`}
                                                             />
+                                                            <input
+                                                                type="hidden"
+                                                                value={row.pasienicd9cm_id}
+                                                                onChange={(e) => handleInputChange(index, 'pasienicd9cm_id', e.target.value)}
+                                                                name={`[Pasienicd9cmT][${index}][pasienicd9cm_id]`}
+                                                                id={`pasienicd9cm_id_${index}`}
+                                                            />
                                                             <AutoComplete
                                                                 value={row.diagnosaicdix_kode}
                                                                 suggestions={suggestions}
                                                                 completeMethod={fetchSuggestionsCodeIX}
                                                                 field="name"
-                                                                onChange={(e) => handleInputChangeAutocompleteIXRow(index, 'diagnosaicdix_kode', e.value)}
+                                                                onChange={(e) => handleInputChangeAutocompleteIXRow(index, 'diagnosaicdix_kode', e.value,'icdixina')}
                                                                 name={`[Pasienicd9cmT][${index}][diagnosaicdix_kode]`}
                                                                 id={`diagnosaicdix_kode_${index}`}
-                                                                onSelect={(e) => updateIXRow(index, e.value)}  // Update input field
+                                                                onSelect={(e) => updateIXRow(index, e.value,'icdixina')}  // Update input field
                                                                 // loading={loading}
                                                                 minLength={3}
                                                                 placeholder="Enter Diagnosa Kode"
@@ -1785,7 +2037,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                                                             <input
                                                                 type="text"
                                                                 value={row.diagnosaicdix_nama}
-                                                                onChange={(e) => handleInputChangeRow(index, 'diagnosaicdix_nama', e.target.value, 'icdix')}
+                                                                onChange={(e) => handleInputChangeRow(index, 'diagnosaicdix_nama', e.target.value, 'icdixina')}
                                                                 name={`[Pasienicd9cmT][${index}][diagnosaicdix_nama]`}
                                                                 id={`diagnosaicdix_nama_${index}`}
                                                             />
@@ -1803,7 +2055,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
 
                                                         </td> */}
                                                         <td style={{ textAlign: 'center' }}>
-                                                            <button type="button" onClick={() => removeRowIX(index)}>
+                                                            <button type="button" onClick={() => removeRowIX(index,'icdixina')}>
                                                                 <FontAwesomeIcon icon={faTrashCan} />
                                                             </button>
                                                         </td>
@@ -1811,8 +2063,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                                                 ))}
                                             </tbody>
                                         </table>
-                                    </div>
-                                </div>
+                                    </TabPanel>
+                                </TabView>
                                 <div className="row mt-5">
                                     <hr />
                                     <div className="col-sm-12" style={{ textAlign: 'center' }}>
