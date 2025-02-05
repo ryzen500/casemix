@@ -871,11 +871,19 @@ export default function Dashboard({ auth, model, pasien, caraMasuk,Jaminan, DPJP
                             tanggal_masuk : response.data.inacbg.tglrawat_masuk,
                             tanggal_pulang : response.data.inacbg.tglrawat_masuk,
                             umur : response.data.inacbg.umur_pasien,
+                            umur : response.data.inacbg.pendaftaran_id,
 
                         }
                         setCaraMasuk(response.data.inacbg.hak_kelasrawat_inacbg);
                         setCOB(response.data.inacbg.cob_id);
-                        setPendaftarans(setPendaftaran)
+                        // setPendaftarans(setPendaftaran)
+                        setPendaftarans((prevTotal) => ({
+                            ...prevTotal,
+                            tanggal_masuk : response.data.inacbg.tglrawat_masuk,
+                            tanggal_pulang : response.data.inacbg.tglrawat_masuk,
+                            umur : response.data.inacbg.umur_pasien,
+                            umur : response.data.inacbg.pendaftaran_id,// Update the specific field dynamically
+                        }));
                         setTarifs(setTarifInacbg);
                         setObats(setObatInacbg);
                         setSistole(setKlinis.sistole);
