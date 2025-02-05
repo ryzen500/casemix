@@ -705,6 +705,7 @@ class InAcbgGrouperController extends Controller
         // for dropdown
         $caraMasuk = LookupM::getLookupType('inacbgs_caramasuk');
         $caraPulang = CaraKeluarM::getDataListKeluar();
+        $Jaminan = LookupM::getLookupType('jaminanklaim');
 
         $jenisKasus = LookupM::getLookupType('kasusdiagnosa');
         $kelompokDiagnosa = KelompokdiagnosaM::getKelompokDiagnosa();
@@ -718,6 +719,7 @@ class InAcbgGrouperController extends Controller
             'model' => $data,
             'pasien' => $pasien,
             'caraMasuk' => $caraMasuk,
+            'Jaminan'=>$Jaminan,
             'caraPulang' => $caraPulang,
             'DPJP' => $DPJP,
             'jenisKasus' => $jenisKasus,

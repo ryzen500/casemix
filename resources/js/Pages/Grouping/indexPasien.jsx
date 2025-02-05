@@ -22,7 +22,7 @@ import { Calendar } from 'primereact/calendar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faHome, faCog, faEllipsis, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 
-export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisKasus, pegawai, kelompokDiagnosa, COB, caraPulang }) {
+export default function Dashboard({ auth, model, pasien, caraMasuk,Jaminan, DPJP, jenisKasus, pegawai, kelompokDiagnosa, COB, caraPulang }) {
     const [datas, setDatas] = useState([]);
     const [dataGrouping, setDataGrouping] = useState({
         los: 0
@@ -76,6 +76,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
         rehabilitasi: 0,
         kamar_akomodasi: 0,
         rawatintensif: 0,
+        tarif_poli_eks: 0
     });
 
     const [obats, setObats] = useState({
@@ -92,6 +93,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
     const [selectedCaraMasuk, setCaraMasuk] = useState({});
     const [selectedCaraPulang, setCaraPulang] = useState({});
 
+    const [selectedJaminan, setJaminan] = useState({});
     const [selectedCOB, setCOB] = useState({});
 
     const [selectedDPJP, setDPJP] = useState({});
@@ -105,10 +107,16 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
     const [searchTextIX, setSearchTextIX] = useState('');
 
     const [pasienTB, setPasienTB] = useState(false); // Track the checkbox state
+    const [kelasEksekutif, setKelasEksekutif] = useState(false); // Track the checkbox state
+
     const [nomorRegister, setNomorRegister] = useState(''); // Track the nomor register
 
     const handleCheckboxChange = () => {
         setPasienTB(!pasienTB);
+    };
+
+    const handleCheckboxKelasEksekutifChange = () => {
+        setKelasEksekutif(!kelasEksekutif);
     };
 
     const handleValidate = () => {
@@ -146,6 +154,11 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
 
     useEffect(() => {
         calculate_total();
+
+        setCaraMasuk("gp");
+        setCaraPulang("1");
+        console.log("Cara Pulang ", selectedCaraPulang);
+
     }, [tarifs, obats]);
 
     // Function to fetch data from API
@@ -193,7 +206,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
     // Function to fetch data from API search diagnosa_kode
     const fetchSuggestionsCode = async (query) => {
         try {
-            if(query.query.length>2){
+            if (query.query.length > 2) {
                 const response = await axios.post(route('searchDiagnosaCode'), {
                     keyword: query.query, // Send the expandedProduct.noSep data
                 });
@@ -213,7 +226,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
     // Function to fetch data from API search diagnosa_kode
     const fetchSuggestionsCodeIX = async (query) => {
         try {
-            if(query.query.length>2){
+            if (query.query.length > 2) {
                 // Replace with your API
                 const response = await axios.post(route('searchDiagnosaCodeIX'), {
                     keyword: query.query, // Send the expandedProduct.noSep data
@@ -237,7 +250,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
             const updatedRows = dataDiagnosa.map(row => ({ ...row }));
 
             updatedRows[index][field] = value;
-            updatedRows[index]['loginpemakai_id']=auth.user.loginpemakai_id;
+            updatedRows[index]['loginpemakai_id'] = auth.user.loginpemakai_id;
             setDiagnosa(updatedRows);
             let length = value.length;
             if (length > 2) {
@@ -264,7 +277,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
             if (length > 2) {
                 fetchSuggestionsCodeIX(value);  // Fetch suggestions based on the input
             }
-        }else if(type == 'icdixina'){
+        } else if (type == 'icdixina') {
             const updatedRows = dataIcd9cmINA.map(row => ({ ...row }));
             updatedRows[index][field] = value;
             setDataIcd9cmINA(updatedRows);
@@ -280,7 +293,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
 
             // Update the selected row
             updatedRows[index][field] = value;
-            updatedRows[index]['loginpemakai_id']=auth.user.loginpemakai_id;
+            updatedRows[index]['loginpemakai_id'] = auth.user.loginpemakai_id;
             let temp = [];
             temp.push({ ...updatedRows[index] });
 
@@ -289,7 +302,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                 updatedRows.forEach((row, i) => {
                     if (i !== index && row.kelompokdiagnosa_id === 2) {
                         updatedRows[i].kelompokdiagnosa_id = 3;
-                        updatedRows[i]['loginpemakai_id']=auth.user.loginpemakai_id;
+                        updatedRows[i]['loginpemakai_id'] = auth.user.loginpemakai_id;
 
                         temp.push({ ...updatedRows[i] });
 
@@ -300,20 +313,20 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                 const response = await axios.post(route('updateMorbiditasT'), {
                     payload: temp, // Send the expandedProduct.noSep data
                 });
-                if(response.data.success){
+                if (response.data.success) {
                     // Sort the updated array
                     updatedRows.sort((a, b) => a.kelompokdiagnosa_id - b.kelompokdiagnosa_id);
 
                     // Update state
                     setDiagnosa(updatedRows);
                     toast.current.show({ severity: 'success', summary: `Success`, detail: response.data.message, life: 3000 });
-    
-                }else{
+
+                } else {
                     toast.current.show({ severity: 'error', summary: 'Error', detail: response.data.message, life: 3000 });
                 }
             } catch (error) {
                 toast.current.show({ severity: 'error', summary: 'Error', detail: response.data.message, life: 3000 });
-            } 
+            }
 
 
             // If field is 'diagnosa_kode' and length > 2, fetch suggestions
@@ -350,23 +363,23 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
 
             // Update the selected row
             updatedRows[index][field] = value;
-            updatedRows[index]['loginpemakai_id']=auth.user.loginpemakai_id;
+            updatedRows[index]['loginpemakai_id'] = auth.user.loginpemakai_id;
             let temp = [];
             temp.push({ ...updatedRows[index] });
-            await axios.post(route('updatePasienicd9T'),{ payload:temp})
-            .then((response) => {
-                if (Boolean(response.data.success) !== false) {
-                    setDataIcd9cm(updatedRows);
+            await axios.post(route('updatePasienicd9T'), { payload: temp })
+                .then((response) => {
+                    if (Boolean(response.data.success) !== false) {
+                        setDataIcd9cm(updatedRows);
 
-                    toast.current.show({ severity: 'success', summary: `Success`, detail: response.data.message, life: 3000 });
+                        toast.current.show({ severity: 'success', summary: `Success`, detail: response.data.message, life: 3000 });
 
-                } else {
-                    toast.current.show({ severity: 'error', summary: 'Error', detail: response.data.message, life: 3000 });
+                    } else {
+                        toast.current.show({ severity: 'error', summary: 'Error', detail: response.data.message, life: 3000 });
 
-                }
+                    }
 
-                // Handle the response from the backend
-            }) 
+                    // Handle the response from the backend
+                })
             // Update state
             setDataIcd9cm(updatedRows);
 
@@ -374,7 +387,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
             if (field === 'diagnosaicdix_kode' && value.length > 2) {
                 fetchSuggestionsCodeIX(value);  // Fetch suggestions based on the input
             }
-        }else if(type == 'icdixina'){
+        } else if (type == 'icdixina') {
             const updatedRows = dataDiagnosaINA.map(row => ({ ...row }));
 
             // Update the selected row
@@ -400,13 +413,13 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
             }
         }
     };
-    const updateRow =async (index, value, type) => {
+    const updateRow = async (index, value, type) => {
         if (type === 'unu') {
             const updatedRows = dataDiagnosa.map(row => ({ ...row }));
             updatedRows[index]['diagnosa_id'] = value.id;
             updatedRows[index]['diagnosa_kode'] = value.value;
             updatedRows[index]['diagnosa_nama'] = value.label;
-            updatedRows[index]['loginpemakai_id']=auth.user.loginpemakai_id;
+            updatedRows[index]['loginpemakai_id'] = auth.user.loginpemakai_id;
 
             let temp = [];
             temp.push({ ...updatedRows[index] });
@@ -414,20 +427,20 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                 const response = await axios.post(route('updateMorbiditasT'), {
                     payload: temp, // Send the expandedProduct.noSep data
                 });
-                if(response.data.success){
+                if (response.data.success) {
                     // Sort the updated array
                     updatedRows.sort((a, b) => a.kelompokdiagnosa_id - b.kelompokdiagnosa_id);
 
                     // Update state
                     setDiagnosa(updatedRows);
                     toast.current.show({ severity: 'success', summary: `Success`, detail: response.data.message, life: 3000 });
-    
-                }else{
+
+                } else {
                     toast.current.show({ severity: 'error', summary: 'Error', detail: response.data.message, life: 3000 });
                 }
             } catch (error) {
                 toast.current.show({ severity: 'error', summary: 'Error', detail: response.data.message, life: 3000 });
-            } 
+            }
             setDiagnosa(updatedRows);
             let length = value.length;
             if (length > 2) {
@@ -446,38 +459,38 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
 
         }
     };
-    const updateIXRow = async(index, value,type) => {
-        if(type =='icdixunu'){
+    const updateIXRow = async (index, value, type) => {
+        if (type == 'icdixunu') {
             const updatedRows = dataIcd9cm.map(row => ({ ...row }));
             updatedRows[index]['diagnosaicdix_id'] = value.id;
             updatedRows[index]['diagnosaicdix_kode'] = value.value;
             updatedRows[index]['diagnosaicdix_nama'] = value.label;
-            updatedRows[index]['loginpemakai_id']=auth.user.loginpemakai_id;
+            updatedRows[index]['loginpemakai_id'] = auth.user.loginpemakai_id;
             let temp = [];
             temp.push({ ...updatedRows[index] });
-            await axios.post(route('updatePasienicd9T'),{ payload:temp})
-                .then((response) => {    
+            await axios.post(route('updatePasienicd9T'), { payload: temp })
+                .then((response) => {
                     if (Boolean(response.data.success) !== false) {
                         setDataIcd9cm(updatedRows);
-    
+
                         toast.current.show({ severity: 'success', summary: `Success`, detail: response.data.message, life: 3000 });
-    
+
                     } else {
                         toast.current.show({ severity: 'error', summary: 'Error', detail: response.data.message, life: 3000 });
-    
+
                     }
-    
+
                     // Handle the response from the backend
-            })
-            .catch((error) => {
-                toast.current.show({ severity: 'error', summary: 'Error', detail: response.data.message, life: 3000 });
-            });
-        }else if(type='icdixina'){
+                })
+                .catch((error) => {
+                    toast.current.show({ severity: 'error', summary: 'Error', detail: response.data.message, life: 3000 });
+                });
+        } else if (type = 'icdixina') {
             const updatedRows = dataIcd9cmINA.map(row => ({ ...row }));
             updatedRows[index]['diagnosaicdix_id'] = value.id;
             updatedRows[index]['diagnosaicdix_kode'] = value.value;
             updatedRows[index]['diagnosaicdix_nama'] = value.label;
-            updatedRows[index]['pendaftaran_id']=pendaftarans.pendaftaran_id;
+            updatedRows[index]['pendaftaran_id'] = pendaftarans.pendaftaran_id;
 
             setDataIcd9cmINA(updatedRows);
             let length = value.length;
@@ -513,8 +526,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
         const formattedDate = new Date(dateString.replace(" ", "T"));
         return isNaN(formattedDate) ? null : formattedDate;
     };
-    const addRowDiagnosaIX = async(rowData,type) => {
-        if(type=='unu'){
+    const addRowDiagnosaIX = async (rowData, type) => {
+        if (type == 'unu') {
             let _dataDiagnosa = dataIcd9cm.map(row => ({ ...row }));
             let _diagnosa = { ...diagnosaixTemp };
 
@@ -534,27 +547,27 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
             }
             _dataDiagnosa.push(_diagnosa);
             _dataDiagnosa.sort((a, b) => a.kelompokdiagnosa_id - b.kelompokdiagnosa_id);
-            await axios.post(route('insertPasienicd9T'),{ payload:_diagnosa})
-            .then((response) => {    
-                if (Boolean(response.data.success) !== false) {
-                    _diagnosa.pasienicd9cm_id= response.data.Pasienicd9cmT.pasienicd9cm_id;
-    
-                    setDataIcd9cm(_dataDiagnosa);
-                    setDiagnosaixTemp(emptyDiagnosa);
-                    setSearchTextIX(null);
-                    toast.current.show({ severity: 'success', summary: `Success`, detail: response.data.message, life: 3000 });
-    
-                } else {
+            await axios.post(route('insertPasienicd9T'), { payload: _diagnosa })
+                .then((response) => {
+                    if (Boolean(response.data.success) !== false) {
+                        _diagnosa.pasienicd9cm_id = response.data.Pasienicd9cmT.pasienicd9cm_id;
+
+                        setDataIcd9cm(_dataDiagnosa);
+                        setDiagnosaixTemp(emptyDiagnosa);
+                        setSearchTextIX(null);
+                        toast.current.show({ severity: 'success', summary: `Success`, detail: response.data.message, life: 3000 });
+
+                    } else {
+                        toast.current.show({ severity: 'error', summary: 'Error', detail: response.data.message, life: 3000 });
+
+                    }
+
+                    // Handle the response from the backend
+                })
+                .catch((error) => {
                     toast.current.show({ severity: 'error', summary: 'Error', detail: response.data.message, life: 3000 });
-    
-                }
-    
-                // Handle the response from the backend
-            })
-            .catch((error) => {
-                toast.current.show({ severity: 'error', summary: 'Error', detail: response.data.message, life: 3000 });
-            });
-        }else if(type=='ina'){
+                });
+        } else if (type == 'ina') {
             let _dataDiagnosa = dataIcd9cmINA.map(row => ({ ...row }));
             let _diagnosa = { ...diagnosaixTemp };
 
@@ -571,7 +584,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
             }
             _dataDiagnosa.push(_diagnosa);
             _dataDiagnosa.sort((a, b) => a.kelompokdiagnosa_id - b.kelompokdiagnosa_id);
-    
+
             setDataIcd9cmINA(_dataDiagnosa);
             setDiagnosaixTemp(emptyDiagnosa);
             setSearchTextIX(null);
@@ -582,7 +595,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
     const allowEdit = (rowData) => {
         return rowData.name !== 'Blue Band';
     };
-    const addRowDiagnosaX = async(rowData) => {
+    const addRowDiagnosaX = async (rowData) => {
         const _dataDiagnosa = dataDiagnosa.map(row => ({ ...row })); // Deep copy
 
         let _diagnosa = { ...diagnosaTemp };
@@ -606,8 +619,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
             const response = await axios.post(route('insertMorbiditasT'), {
                 payload: _diagnosa, // Send the expandedProduct.noSep data
             });
-            if(response.data.success){
-                _diagnosa.pasienmorbiditas_id= response.data.pasienmorbiditasT.pasienmorbiditas_id;
+            if (response.data.success) {
+                _diagnosa.pasienmorbiditas_id = response.data.pasienmorbiditasT.pasienmorbiditas_id;
                 _dataDiagnosa.push(_diagnosa);
                 _dataDiagnosa.sort((a, b) => a.kelompokdiagnosa_id - b.kelompokdiagnosa_id);
                 setDiagnosa(_dataDiagnosa);
@@ -615,13 +628,13 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                 setSearchText(null);
                 toast.current.show({ severity: 'success', summary: `Success`, detail: response.data.message, life: 3000 });
 
-            }else{
+            } else {
                 toast.current.show({ severity: 'error', summary: 'Error', detail: response.data.message, life: 3000 });
             }
         } catch (error) {
             toast.current.show({ severity: 'error', summary: 'Error', detail: response.data.message, life: 3000 });
 
-        } 
+        }
         // setDiagnosa(response.data.dataDiagnosa);
 
     }
@@ -702,7 +715,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                     suggestions={suggestions}
                     completeMethod={onSearchChangeIX}  // Trigger search on typing
                     field="search-icdix"  // Field to display in the suggestion (adjust based on your API response)
-                    onSelect={(e) => addRowDiagnosaIX(e.value,'unu')}  // Update input field
+                    onSelect={(e) => addRowDiagnosaIX(e.value, 'unu')}  // Update input field
                     itemTemplate={(item) => (
                         <div>
                             <span>{item.label} ({item.value})</span>  {/* Custom template to display both label and value */}
@@ -712,7 +725,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
             </IconField>
         </div>
     );
-        const headerInaICDIX = (
+    const headerInaICDIX = (
         <div className="flex flex-wrap gap-2 align-items-center justify-content-between">
             <h4 className="m-0">Diagnosa (ICD IX)</h4>
             <IconField iconPosition="left">
@@ -722,7 +735,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                     suggestions={suggestions}
                     completeMethod={onSearchChangeIX}  // Trigger search on typing
                     field="search-icdix"  // Field to display in the suggestion (adjust based on your API response)
-                    onSelect={(e) => addRowDiagnosaIX(e.value,'ina')}  // Update input field
+                    onSelect={(e) => addRowDiagnosaIX(e.value, 'ina')}  // Update input field
                     itemTemplate={(item) => (
                         <div>
                             <span>{item.label} ({item.value})</span>  {/* Custom template to display both label and value */}
@@ -769,11 +782,12 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                     toast.current.show({ severity: 'info', summary: event.data.noSep, detail: event.data.noSep, life: 3000 });
                     setDatas(response.data.model.response);
                     handleNewClaim(response.data.model.response);
-                
+                    setCOB(response.data.model.response.cob);
                     const defaultCaraMasuk = caraMasuk.find(
                         (caramasuk) => caramasuk.code === "gp"
                     );
 
+                    console.log("Default cara masuk ", defaultCaraMasuk);
                     setCaraMasuk(defaultCaraMasuk || null);
 
 
@@ -785,6 +799,12 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                     setDPJP(defaultDPJP || null);
 
 
+                    const defaultCaraPulang = caraPulang.find(
+                        (carapulang) => carapulang.value === "1"
+                    );
+
+                    console.log("Default cara pulang ", defaultCaraPulang);
+                    setCaraPulang(defaultCaraPulang || null);
 
                     setPendaftarans(response.data.pendaftaran);
                     setTarifs(response.data.tarif);
@@ -837,7 +857,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
 
     const handleNewClaim = async (data) => {
 
-        console.log("handle new klaim" , data);
+        console.log("handle new klaim", data);
         const payload = {
             no_rekam_medik: data.peserta.noMr,
             nama_pasien: data.peserta.nama,
@@ -959,7 +979,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
             [e.target.name]: e.target.value, // Memastikan input bisa diubah oleh user
         });
     };
-    const removeRow = async(index, type) => {
+    const removeRow = async (index, type) => {
         if (type === 'unu') {
             let updatedRows = dataDiagnosa.filter((_, i) => i === index);
             updatedRows[0].update_loginpemakai_id = auth.user.loginpemakai_id;
@@ -969,12 +989,12 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                 const response = await axios.post(route('removeMorbiditasT'), {
                     payload: updatedRows, // Send the expandedProduct.noSep data
                 });
-                if(response.data.success){
+                if (response.data.success) {
                     toast.current.show({ severity: 'success', summary: `Success`, detail: response.data.message, life: 3000 });
                     const updatedRowDelete = dataDiagnosa.filter((_, i) => i !== index);
-                    setDiagnosa(updatedRowDelete); 
+                    setDiagnosa(updatedRowDelete);
 
-                }else{
+                } else {
                     toast.current.show({ severity: 'error', summary: 'Error', detail: response.data.message, life: 3000 });
                 }
             } catch (error) {
@@ -987,29 +1007,29 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
             setDiagnosaINA(updatedRows); // Remove row and update state
         }
     };
-    const removeRowIX = async(index,type) => {
+    const removeRowIX = async (index, type) => {
         if (type === 'icdixunu') {
             let updatedRows = dataIcd9cm.filter((_, i) => i === index);
             updatedRows[0].update_loginpemakai_id = auth.user.loginpemakai_id;
-            await axios.post(route('removePasienicd9T'),{ payload:updatedRows})
-            .then((response) => {
-                if (Boolean(response.data.success) !== false) {
-                    const updatedRowDelete = dataIcd9cm.filter((_, i) => i !== index);
-                    setDataIcd9cm(updatedRowDelete); 
-                    toast.current.show({ severity: 'success', summary: `Success`, detail: response.data.message, life: 3000 });
+            await axios.post(route('removePasienicd9T'), { payload: updatedRows })
+                .then((response) => {
+                    if (Boolean(response.data.success) !== false) {
+                        const updatedRowDelete = dataIcd9cm.filter((_, i) => i !== index);
+                        setDataIcd9cm(updatedRowDelete);
+                        toast.current.show({ severity: 'success', summary: `Success`, detail: response.data.message, life: 3000 });
 
-                } else {
+                    } else {
+                        toast.current.show({ severity: 'error', summary: 'Error', detail: response.data.message, life: 3000 });
+
+                    }
+
+                    // Handle the response from the backend
+                })
+                .catch((error) => {
                     toast.current.show({ severity: 'error', summary: 'Error', detail: response.data.message, life: 3000 });
+                });
 
-                }
-
-                // Handle the response from the backend
-            })
-            .catch((error) => {
-                toast.current.show({ severity: 'error', summary: 'Error', detail: response.data.message, life: 3000 });
-            });
-
-        }else if (type === 'icdixina') {
+        } else if (type === 'icdixina') {
             const updatedRows = dataIcd9cmINA.filter((_, i) => i !== index);
             setDataIcd9cmINA(updatedRows); // Remove row and update state
         }
@@ -1034,7 +1054,10 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                                         <div className="float-end">
 
                                             <label htmlFor="ssn" className="font-bold block mb-2">Jaminan / Cara Bayar</label>
-                                            <span >JKN</span>
+                                            <Dropdown value={selectedJaminan} onChange={(e) => setJaminan(e.value)} options={Jaminan} optionLabel="name"
+                                                placeholder="Pilih Jaminan / Cara Bayar" className='ml-2'
+                                                style={{ width: '250px' }}/>
+
                                             <input type="hidden" className="form-control" name='carabayar_id' value={pendaftarans.carabayar_id} />
                                             <input type="hidden" className="form-control" name='carabayar_nama' value={pendaftarans.carabayar_nama} />
 
@@ -1067,6 +1090,17 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
 
                                             </div>
                                         </td>
+                                        <td width={"10%"}>
+                                            <div className="col-sm-1">
+                                                <Checkbox
+                                                    value="true"
+                                                    name="kelas_eksekutif"
+                                                    checked={kelasEksekutif}
+                                                    onChange={handleCheckboxKelasEksekutifChange} />
+                                                <label htmlFor="ingredient1" className="ml-2">Kelas Eksekutif</label>
+                                            </div>
+                                        </td>
+
                                         <td width={"10%"}>Kelas Hak</td>
                                         <td width={"15%"}>
                                             <input type="text" className="form-control" name='hakKelas' value={datas.peserta.hakKelas} />
@@ -1136,7 +1170,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                                     </tr>
                                     <tr>
                                         <td>LOS</td>
-                                        <td>
+                                        <td colSpan={2}>
                                             <InputNumber
                                                 value={dataGrouping ? (dataGrouping.los ? parseFloat(dataGrouping.los) : 0) : 0}
 
@@ -1162,8 +1196,13 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                                     </tr>
                                     <tr>
                                         <td>ADL Score</td>
-                                        <td></td>
-                                        <td>Cara Pulang</td>
+                                        <td colSpan="2">
+                                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                                <span>Sub Acute : {dataGrouping ? (dataGrouping.adl_sub_acute  ? parseFloat(dataGrouping.adl_sub_acute) : '-') : '-'}</span>
+                                                <span>Chronic : {dataGrouping ? (dataGrouping.adl_chronic  ? parseFloat(dataGrouping.adl_chronic) : '-') : '-'}</span>
+                                            </div>
+                                        </td>
+                                        <td style={{textAlign:'center'}}>Cara Pulang</td>
                                         <td>
                                             <Dropdown value={selectedCaraPulang} onChange={(e) => setCaraPulang(e.value)} options={caraPulang} optionLabel="name"
                                                 placeholder="Pilih Cara Pulang" className="w-full md:w-14rem" />
@@ -1242,6 +1281,44 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                                             </div>
                                         </td>
                                     </tr>
+                                    {kelasEksekutif && (
+                                        <tr>
+                                            <td width={"35%"}>
+                                                <div className="col-sm-12">
+                                                    <div className="row">
+                                                        <div className="col-sm-5" style={{ alignContent: 'center' }}>
+                                                            Poli Eksekutif
+                                                        </div>
+                                                        <div className="col-sm-7">
+                                                            <InputNumber
+                                                                value={parseFloat(tarifs.tarif_poli_eks) || 0}
+                                                                onValueChange={handleValueChange}
+                                                                mode="currency"
+                                                                currency="IDR"
+                                                                locale="id-ID" // Set the locale for Indonesia (Rupiah)
+                                                                showSymbol
+                                                                prefix="" // Adds the Rp prefix to the input value
+                                                                min={0} // Optional: Set a minimum value
+                                                                max={100000000} // Optional: Set a maximum value
+                                                                name='tarif_poli_eks'
+                                                                inputClassName='ml-2 form-control'
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </td>
+                                            <td width={"35%"}>
+
+                                            </td>
+                                            <td width={"30%"}>
+
+                                            </td>
+                                        </tr>
+                                    )}
+                                    {/* Procedur Non Bedah */}
+
+
                                     <tr>
                                         <td width={"35%"}>
                                             <div className="col-sm-12">
@@ -1824,10 +1901,10 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                                                                 suggestions={suggestions}
                                                                 completeMethod={fetchSuggestionsCodeIX}
                                                                 field="name"
-                                                                onChange={(e) => handleInputChangeAutocompleteIXRow(index, 'diagnosaicdix_kode', e.value,'icdixunu')}
+                                                                onChange={(e) => handleInputChangeAutocompleteIXRow(index, 'diagnosaicdix_kode', e.value, 'icdixunu')}
                                                                 name={`[Pasienicd9cmT][${index}][diagnosaicdix_kode]`}
                                                                 id={`diagnosaicdix_kode_${index}`}
-                                                                onSelect={(e) => updateIXRow(index, e.value,'icdixunu')}  // Update input field
+                                                                onSelect={(e) => updateIXRow(index, e.value, 'icdixunu')}  // Update input field
                                                                 // loading={loading}
                                                                 minLength={3}
                                                                 placeholder="Enter Diagnosa Kode"
@@ -1861,7 +1938,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
 
                                                         </td> */}
                                                         <td style={{ textAlign: 'center' }}>
-                                                            <button type="button" onClick={() => removeRowIX(index,'icdixunu')}>
+                                                            <button type="button" onClick={() => removeRowIX(index, 'icdixunu')}>
                                                                 <FontAwesomeIcon icon={faTrashCan} />
                                                             </button>
                                                         </td>
@@ -2024,10 +2101,10 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                                                                 suggestions={suggestions}
                                                                 completeMethod={fetchSuggestionsCodeIX}
                                                                 field="name"
-                                                                onChange={(e) => handleInputChangeAutocompleteIXRow(index, 'diagnosaicdix_kode', e.value,'icdixina')}
+                                                                onChange={(e) => handleInputChangeAutocompleteIXRow(index, 'diagnosaicdix_kode', e.value, 'icdixina')}
                                                                 name={`[Pasienicd9cmTINA][${index}][diagnosaicdix_kode]`}
                                                                 id={`diagnosaicdix_kode_${index}`}
-                                                                onSelect={(e) => updateIXRow(index, e.value,'icdixina')}  // Update input field
+                                                                onSelect={(e) => updateIXRow(index, e.value, 'icdixina')}  // Update input field
                                                                 // loading={loading}
                                                                 minLength={3}
                                                                 placeholder="Enter Diagnosa Kode"
@@ -2061,7 +2138,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
 
                                                         </td> */}
                                                         <td style={{ textAlign: 'center' }}>
-                                                            <button type="button" onClick={() => removeRowIX(index,'icdixina')}>
+                                                            <button type="button" onClick={() => removeRowIX(index, 'icdixina')}>
                                                                 <FontAwesomeIcon icon={faTrashCan} />
                                                             </button>
                                                         </td>
@@ -2309,14 +2386,14 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
             pendaftaran_id: pendaftarans.pendaftaran_id,
             umur_pasien: pendaftarans.umur ? pendaftarans.umur : null,
             cob_cd: selectedCOB.code ? selectedCOB.code : null,
-            cob_cd: selectedCOB.code ? selectedCOB.code : null,
             berat_lahir: beratLahir,
             loginpemakai_id: auth.user.loginpemakai_id,
             total_tarif_rs: total.total,
             sistole: sistole,
             diastole: diastole,
             is_tb: pasienTB,
-            nomor_register_sitb: nomorRegister
+            nomor_register_sitb: nomorRegister,
+            tarif_poli_eks: tarifs.tarif_poli_eks
 
         };
         axios.post(route('updateNewKlaim'), payload)
@@ -2426,14 +2503,14 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, DPJP, jenisK
                 console.log('response', response);
 
 
-                    toast.current.show({ severity: 'success', summary: `Data Berhasil Diunduh`, detail: datas.noSep, life: 3000 });
+                toast.current.show({ severity: 'success', summary: `Data Berhasil Diunduh`, detail: datas.noSep, life: 3000 });
 
-                    // Mendapatkan file PDF yang diunduh
-                    const file = new Blob([response.data], { type: 'application/pdf' });
-                    const link = document.createElement('a');
-                    link.href = URL.createObjectURL(file);
-                    link.download = `klaim_${datas.noSep}.pdf`; // Nama file PDF yang akan diunduh
-                    link.click(); // Memulai proses unduhan
+                // Mendapatkan file PDF yang diunduh
+                const file = new Blob([response.data], { type: 'application/pdf' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(file);
+                link.download = `klaim_${datas.noSep}.pdf`; // Nama file PDF yang akan diunduh
+                link.click(); // Memulai proses unduhan
 
 
 
