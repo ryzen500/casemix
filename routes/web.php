@@ -68,6 +68,9 @@ Route::middleware('auth')->group(function () {
     Route::post('getGroupperPasien/', [InAcbgGrouperController::class, 'getGroupperPasien'])->name('getGroupperPasien');
     Route::post('groupingStageSatu', [InAcbgGrouperController::class, 'groupingStageSatu'])->name('groupingStageSatu');
     Route::post('Finalisasi', [InAcbgGrouperController::class, 'Finalisasi'])->name('Finalisasi');
+    Route::post('editUlangKlaim', [InAcbgGrouperController::class, 'EditUlangKlaim'])->name('editUlangKlaim');
+    Route::post('kirimIndividualKlaim', [InAcbgGrouperController::class, 'kirimIndividualKlaim'])->name('kirimIndividualKlaim');
+
     Route::post('printKlaim', [InAcbgGrouperController::class, 'printKlaim'])->name('printKlaim');
     Route::post('deleteKlaim', [InAcbgGrouperController::class, 'deleteKlaim'])->name('deleteKlaim');
     Route::post('validateSITB', [InAcbgGrouperController::class, 'validateSITB'])->name('validateSITB');

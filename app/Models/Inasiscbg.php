@@ -24,6 +24,8 @@ class Inasiscbg extends Model
         'plafonprosedur',
         'create_time',
         'create_loginpemakai_id',
-        'create_ruangan'
+        'create_ruangan',
+        'update_time',
+        'update_loginpemakai_id'
     ];
 }

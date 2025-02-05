@@ -22,7 +22,7 @@ import { Calendar } from 'primereact/calendar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faHome, faCog, faEllipsis, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 
-export default function Dashboard({ auth, model, pasien, caraMasuk,Jaminan, DPJP, jenisKasus, pegawai, kelompokDiagnosa, COB, caraPulang }) {
+export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJP, jenisKasus, pegawai, kelompokDiagnosa, COB, caraPulang }) {
     const [datas, setDatas] = useState([]);
     const [dataGrouping, setDataGrouping] = useState({
         los: 0
@@ -831,7 +831,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk,Jaminan, DPJP
 
                     console.log("Default cara pulang ", defaultCaraPulang);
                     setCaraPulang(defaultCaraPulang || null);
-
+                    setDataFinalisasi(response.data.inacbg)
                     setPendaftarans(response.data.pendaftaran);
                     setProfil(response.data.profil);
                     setDiagnosa(response.data.dataDiagnosa);
@@ -989,7 +989,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk,Jaminan, DPJP
                 console.log('Response:', response.data);
                 setHide(false);
                 if (Boolean(response.data.success) === false) {
-                    toast.current.show({ severity: 'error', summary: response.data.message, detail: datas.noSep, life: 3000 });
+                    // toast.current.show({ severity: 'error', summary: response.data.message, detail: datas.noSep, life: 3000 });
 
                 } else {
                     toast.current.show({ severity: 'success', summary: `Data  Berhasil Di simpan`, detail: datas.noSep, life: 3000 });
@@ -1183,7 +1183,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk,Jaminan, DPJP
                                             <label htmlFor="ssn" className="font-bold block mb-2">Jaminan / Cara Bayar</label>
                                             <Dropdown value={selectedJaminan} onChange={(e) => setJaminan(e.value)} options={Jaminan} optionLabel="name"
                                                 placeholder="Pilih Jaminan / Cara Bayar" className='ml-2'
-                                                style={{ width: '250px' }}/>
+                                                style={{ width: '250px' }} />
 
                                             <input type="hidden" className="form-control" name='carabayar_id' value={pendaftarans.carabayar_id} />
                                             <input type="hidden" className="form-control" name='carabayar_nama' value={pendaftarans.carabayar_nama} />
@@ -1269,8 +1269,10 @@ export default function Dashboard({ auth, model, pasien, caraMasuk,Jaminan, DPJP
                                                 </div>
                                             </div>
                                         </td>
-                                        <td width={"10%"}>Umur</td>
-                                        <td width={"10%"}>
+                                        <td width={"10%"} style={{ textAlign: 'center' }}></td>
+
+                                        <td width={"10%"} style={{ textAlign: 'center' }}>Umur</td>
+                                        <td width={"20%"}>
                                             <InputText name='umur'
                                                 value={pendaftarans.umur} className='col-sm-3' /> Tahun
                                         </td>
@@ -1325,11 +1327,11 @@ export default function Dashboard({ auth, model, pasien, caraMasuk,Jaminan, DPJP
                                         <td>ADL Score</td>
                                         <td colSpan="2">
                                             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                                <span>Sub Acute : {dataGrouping ? (dataGrouping.adl_sub_acute  ? parseFloat(dataGrouping.adl_sub_acute) : '-') : '-'}</span>
-                                                <span>Chronic : {dataGrouping ? (dataGrouping.adl_chronic  ? parseFloat(dataGrouping.adl_chronic) : '-') : '-'}</span>
+                                                <span>Sub Acute : {dataGrouping ? (dataGrouping.adl_sub_acute ? parseFloat(dataGrouping.adl_sub_acute) : '-') : '-'}</span>
+                                                <span>Chronic : {dataGrouping ? (dataGrouping.adl_chronic ? parseFloat(dataGrouping.adl_chronic) : '-') : '-'}</span>
                                             </div>
                                         </td>
-                                        <td style={{textAlign:'center'}}>Cara Pulang</td>
+                                        <td style={{ textAlign: 'center' }}>Cara Pulang</td>
                                         <td>
                                             <Dropdown value={selectedCaraPulang} onChange={(e) => setCaraPulang(e.value)} options={caraPulang} optionLabel="name"
                                                 placeholder="Pilih Cara Pulang" className="w-full md:w-14rem" />
@@ -2315,10 +2317,20 @@ export default function Dashboard({ auth, model, pasien, caraMasuk,Jaminan, DPJP
                                     </div>
                                 </div>
                                 <div className="col-md-6 d-flex mb-3 mt-5">
-                                    <button className="btn btn-primary" style={{ float: 'right' }} onClick={handleSimpanKlaim}>Simpan</button>
-                                    <button className="btn btn-secondary ml-2" style={{ float: 'right' }} onClick={handleSimpanGroupingStage1}>Groupper</button>
+                                    {!dataFinalisasi.is_finalisasi && (
+                                        <>
+                                            <button className="btn btn-primary" style={{ float: 'right' }} onClick={handleSimpanKlaim}>
+                                                Simpan
+                                            </button>
+                                            <button className="btn btn-secondary ml-2" style={{ float: 'right' }} onClick={handleSimpanGroupingStage1}>
+                                                Groupper
+                                            </button>
+                                            <button className="btn btn-secondary ml-2" style={{ float: 'right' }} onClick={handleHapusKlaim}>
+                                                Hapus Klaim
+                                            </button>
+                                        </>
+                                    )}
 
-                                    <button className="btn btn-secondary ml-2" style={{ float: 'right' }} onClick={handleHapusKlaim} >Hapus Klaim</button>
                                 </div>
 
                                 {/*  Hasil Grouping */}
@@ -2462,9 +2474,29 @@ export default function Dashboard({ auth, model, pasien, caraMasuk,Jaminan, DPJP
                                     </table>
 
                                     {/* Button Finalisasi */}
-                                    <div className="col-md-6 d-flex mb-3">
-                                        <button className="btn btn-primary ml-2" style={{ float: 'right' }} onClick={handleSimpanFinalisasi}>Finalisasi</button>
-                                        <button className="btn btn-secondary ml-2" style={{ float: 'left' }} onClick={handleCetak}>Cetak Klaim</button>
+                                    <div className="col-md-12 d-flex mb-3">
+                                        {!dataFinalisasi.is_finalisasi && (
+                                            <>
+                                                <button className="btn btn-primary ml-2" onClick={handleSimpanFinalisasi}>
+                                                    Finalisasi
+                                                </button>
+                                            </>
+                                        )}
+
+                                        {dataFinalisasi.is_finalisasi && (
+                                            <>
+                                                <button className="btn btn-secondary ml-2" onClick={handleCetak}>
+                                                    Cetak Klaim
+                                                </button>
+                                                <button className="btn btn-secondary ml-2 " onClick={handleKirimOnlineKlaim}>
+                                                    Kirim Online
+                                                </button>
+
+                                                <button className="btn btn-secondary ml-2 ms-auto" onClick={handleEditUlangKlaim}>
+                                                    Edit Ulang Klaim
+                                                </button>
+                                            </>
+                                        )}
 
                                     </div>
 
@@ -2551,6 +2583,9 @@ export default function Dashboard({ auth, model, pasien, caraMasuk,Jaminan, DPJP
             is_tb: pasienTB,
             nomor_register_sitb: nomorRegister,
             tarif_poli_eks: tarifs.tarif_poli_eks,
+            adl_sub_acute: dataGrouping.adl_sub_acute ? dataGrouping.adl_sub_acute : 0,
+            adl_chronic: dataGrouping.adl_chronic ? dataGrouping.adl_chronic : 0,
+            los: dataGrouping.los ? dataGrouping.los : 0,
             jaminan_id:selectedJaminan
         };
         axios.post(route('updateNewKlaim'), payload)
@@ -2642,6 +2677,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk,Jaminan, DPJP
 
                 } else {
                     toast.current.show({ severity: 'success', summary: `Data  Berhasil Di Hapus`, detail: datas.noSep, life: 3000 });
+                    setExpandedRows(null);
 
                 }
 
@@ -2688,8 +2724,65 @@ export default function Dashboard({ auth, model, pasien, caraMasuk,Jaminan, DPJP
             });
     };
 
+    const handleKirimOnlineKlaim = (e) => {
+        e.preventDefault(); // Prevent page reload
 
-    /**Simpan Grouping */
+        // console.log("Auth", auth);
+        // console.log('Form Data Submitted:', datas);
+
+        // Perform API request with axios
+        toast.current.show({ severity: 'success', summary: 'Comming Soon', detail: 'Silahkan Menunggu Fitur Ini Release', life: 3000 });
+
+        // const payload = {
+        //     nomor_sep: datas.noSep,
+        //     coder_nik: auth.user.coder_nik
+        // };
+        // axios.post(route('kirimIndividualKlaim'), payload)
+        //     .then((response) => {
+        //         // setDataFinalisasi(response.data.data);
+        //         if (Boolean(response.data.success) === false) {
+        //             toast.current.show({ severity: 'error', summary: response.data.message, detail: datas.noSep, life: 3000 });
+
+        //         } else {
+        //             toast.current.show({ severity: 'success', summary: `Data  Berhasil Di edit ulang`, detail: datas.noSep, life: 3000 });
+
+        //         }
+        //         // Handle the response from the backend
+        //     })
+        //     .catch((error) => {
+        //         console.error('Error:', error);
+        //     });
+    }
+
+    const handleEditUlangKlaim = (e) => {
+        e.preventDefault(); // Prevent page reload
+
+        // console.log("Auth", auth);
+        // console.log('Form Data Submitted:', datas);
+
+        // Perform API request with axios
+        const payload = {
+            nomor_sep: datas.noSep,
+            coder_nik: auth.user.coder_nik
+        };
+        axios.post(route('editUlangKlaim'), payload)
+            .then((response) => {
+                // setDataFinalisasi(response.data.data);
+                if (Boolean(response.data.success) === false) {
+                    toast.current.show({ severity: 'error', summary: response.data.message, detail: datas.noSep, life: 3000 });
+
+                } else {
+                    toast.current.show({ severity: 'success', summary: `Data  Berhasil Di edit ulang`, detail: datas.noSep, life: 3000 });
+                    setExpandedRows(null);
+                }
+                // Handle the response from the backend
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    };
+
+    /**Simpan Finalisasi */
     const handleSimpanFinalisasi = (e) => {
         e.preventDefault(); // Prevent page reload
 
@@ -2703,9 +2796,14 @@ export default function Dashboard({ auth, model, pasien, caraMasuk,Jaminan, DPJP
         };
         axios.post(route('Finalisasi'), payload)
             .then((response) => {
-                console.log('Response:', response.data);
-                setDataFinalisasi(response.data.data);
-                toast.current.show({ severity: 'success', summary: `Data  Berhasil Di Finalisasi`, detail: datas.noSep, life: 3000 });
+                // setDataFinalisasi(response.data.data);
+                if (Boolean(response.data.success) === false) {
+                    toast.current.show({ severity: 'error', summary: response.data.message, detail: datas.noSep, life: 3000 });
+
+                } else {
+                    toast.current.show({ severity: 'success', summary: `Data  Berhasil Di Finalisasi`, detail: datas.noSep, life: 3000 });
+
+                }
 
                 // Handle the response from the backend
             })
