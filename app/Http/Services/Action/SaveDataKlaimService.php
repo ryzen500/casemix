@@ -25,8 +25,8 @@ class SaveDataKlaimService
         $SEP = Inacbg::where('inacbg_nosep', $data['nomor_sep'])->first();
         try {
             $inacbgData = [
-                'jaminan_id' => !empty($pendaftaran['carabayar_id']) && $pendaftaran['carabayar_id'] !== '' ? $pendaftaran['carabayar_id'] : null,
-                'jaminan_nama' => $pendaftaran['carabayar_nama'] ?? null,
+                'jaminan_id' => !empty($data['jaminan_id']) && $data['jaminan_id'] !== '' ? $data['jaminan_id'] : null,
+                'jaminan_nama' => $data['jaminan_nama'] ?? null,
                 'inacbg_nosep' => $data['nomor_sep'] ?? null,
                 'sep_id' => !empty($pendaftaran['sep_id']) && $pendaftaran['sep_id'] !== '' ? $pendaftaran['sep_id'] : null,
                 'pasien_id' => !empty($RegisterData['pasien_id']) ? $RegisterData['pasien_id'] : null,
