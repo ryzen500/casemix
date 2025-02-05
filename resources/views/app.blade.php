@@ -79,6 +79,11 @@
         border: 1px solid black !important;
         border-radius: 5px; /* Optional: Add rounded corners */
     }
+    /* Center the OverlayPanel */
+    .p-overlaypanel {
+        position: absolute;
+        transform: translate(0%, 0%);
+    }
 </style>
 <body >
     @inertia

@@ -6,7 +6,6 @@ use App\Models\Casemix\Inacbg;
 use App\Models\PendaftaranT;
 use DB;
 use Exception;
-use Illuminate\Http\JsonResponse;
 use Log;
 
 class SaveDataKlaimService
@@ -241,7 +240,7 @@ class SaveDataKlaimService
                     'kasusdiagnosa' => $item['kasusdiagnosa'] ?? null, // Tambahkan tanggal saat ini
                     'ruangan_id' => $RegisterData['ruangan_id'] ?? null, // Tambahkan tanggal saat ini
                     'create_time' => date('Y-m-d H:i:s'), // Tambahkan tanggal saat ini
-                    'create_loginpemakai_id' => 1, // Tambahkan tanggal saat ini
+                    'create_loginpemakai_id' =>  $data['loginpemakai_id'], // Tambahkan tanggal saat ini
                     'create_ruangan' => 429,
                     'kelompokdiagnosa_id' => $item['kelompokdiagnosa_id'] ?? null,
                     'jeniskasuspenyakit_id' => $RegisterData['jeniskasuspenyakit_id'] ?? null,
@@ -258,7 +257,7 @@ class SaveDataKlaimService
                     'diagnosax_nama' => $item['diagnosa_nama'] ?? null,
                     'diagnosax_type' => $item['kelompokdiagnosa_id'] ?? null,
                     'create_time' => date('Y-m-d H:i:s'), // Tambahkan tanggal saat ini
-                    'create_loginpemakai_id' => 1, // Tambahkan tanggal saat ini
+                    'create_loginpemakai_id' =>  $data['loginpemakai_id'], // Tambahkan tanggal saat ini
                     'create_ruangan_id' => 429,
                     // Tambahkan field lain sesuai kebutuhan
                 ];
@@ -269,7 +268,7 @@ class SaveDataKlaimService
 
             // Lakukan insert batch ke tabel
             if (!empty($preparedData)) {
-                $result = DB::table('pasienmorbiditas_t')->insert($preparedData);
+                // $result = DB::table('pasienmorbiditas_t')->insert($preparedData);
                 $result2 = DB::table('diagnosax_inacbgs_t')->insert($preparedDataX);
 
                 // if ($result2) {
@@ -280,12 +279,12 @@ class SaveDataKlaimService
                 //     // dd('Data insertion failed');
                 // }
 
-                if ($result && $result2) {
+                if ( $result2) {
                     return response()->json(['message' => 'Data berhasil disimpan'], 200);
                 }
             }
             // Cek apakah insert berhasil
-            if ($result && $result2) {
+            if ( $result2) {
                 Log::info('Data berhasil disimpan ke tabel pasienmorbiditas_t', ['data' => $dataDiagnosa]);
                 return response()->json(['success' => true, 'message' => 'Data berhasil disimpan']);
             } else {
@@ -312,7 +311,7 @@ class SaveDataKlaimService
      * @param array $dataDiagnosa
      * @return mixed|\Illuminate\Http\JsonResponse
      */
-    public function addDataPasienMordibitasINA(array $data = [], array $pendaftaran = [], array $dataDiagnosa = []): mixed
+    public function addDataPasienMordibitasINA(array $data = [], array $pendaftaran = [], array $dataDiagnosa = [])
     {
         $RegisterData = PendaftaranT::where('sep_id', $pendaftaran['sep_id'])->first();
 
@@ -343,7 +342,7 @@ class SaveDataKlaimService
                     'kasusdiagnosa' => $item['kasusdiagnosa'] ?? null, // Tambahkan tanggal saat ini
                     'ruangan_id' => $RegisterData['ruangan_id'] ?? null, // Tambahkan tanggal saat ini
                     'create_time' => date('Y-m-d H:i:s'), // Tambahkan tanggal saat ini
-                    'create_loginpemakai_id' => 1, // Tambahkan tanggal saat ini
+                    'create_loginpemakai_id' =>  $data['loginpemakai_id'], // Tambahkan tanggal saat ini
                     'create_ruangan' => 429,
                     'kelompokdiagnosa_id' => $item['kelompokdiagnosa_id'] ?? null,
                     'jeniskasuspenyakit_id' => $RegisterData['jeniskasuspenyakit_id'] ?? null,
@@ -359,7 +358,7 @@ class SaveDataKlaimService
                     'kodediagnosainacbg' => $item['diagnosa_kode'] ?? null,
                     'namadiagnosainacbg' => $item['diagnosa_nama'] ?? null,
                     'create_time' => date('Y-m-d H:i:s'), // Tambahkan tanggal saat ini
-                    'create_loginpemakai_id' => 1, // Tambahkan tanggal saat ini
+                    'create_loginpemakai_id' =>  $data['loginpemakai_id'], // Tambahkan tanggal saat ini
                     'create_ruangan' => 429,
                     // Tambahkan field lain sesuai kebutuhan
                 ];
@@ -367,7 +366,7 @@ class SaveDataKlaimService
      
             // Lakukan insert batch ke tabel
             if (!empty($preparedData)) {
-                $result = DB::table('pasienmorbiditas_t')->insert($preparedData);
+                // $result = DB::table('pasienmorbiditas_t')->insert($preparedData);
                 $result2 = DB::table('diagnosainacbg_t')->insert($preparedDataINAX);
 
                 // if ($result2) {
@@ -378,12 +377,12 @@ class SaveDataKlaimService
                 //     // dd('Data insertion failed');
                 // }
 
-                if ($result && $result2) {
+                if ( $result2) {
                     return response()->json(['message' => 'Data berhasil disimpan'], 200);
                 }
             }
             // Cek apakah insert berhasil
-            if ($result && $result2) {
+            if ( $result2) {
                 Log::info('Data berhasil disimpan ke tabel pasienmorbiditas_t', ['data' => $dataDiagnosa]);
                 return response()->json(['success' => true, 'message' => 'Data berhasil disimpan']);
             } else {
@@ -403,14 +402,13 @@ class SaveDataKlaimService
     }
 
 
-    public function addDataPasienMordibitasIX(array $data = [], array $pendaftaran = [], array $dataDiagnosa = [], array $procedural = []):mixed
+    public function addDataPasienMordibitasIXUNU(array $data = [], array $pendaftaran = [], array $dataDiagnosa = [])
     {
         $RegisterData = PendaftaranT::where('sep_id', $pendaftaran['sep_id'])->first();
 
 
-        $dataProcedural = [];
-        $dataProcedural[]= $procedural;
-        //  dd($dataProcedural);
+
+        //  dd($dataDiagnosa);
 
         // Periksa keberadaan SEP
         $SEP = Inacbg::where('inacbg_nosep', $data['nomor_sep'])->first();
@@ -444,31 +442,45 @@ class SaveDataKlaimService
                 //     // Tambahkan field lain sesuai kebutuhan
                 // ];
 
-                $preparedDataICDIX[] = [
-                    'pasienmorbiditas_id' => $item['pasienmorbiditas_id'] ?? null,
+                // $preparedDataICDIX[] = [
+                //     'pasienmorbiditas_id' => $item['pasienmorbiditas_id'] ?? null,
+                //     'pendaftaran_id' => $RegisterData['pendaftaran_id'] ?? null,
+                //     'diagnosaicdix_id' => $item['pasienicd9cm_id'] ?? null,
+                //     'pegawai_id' => $RegisterData['pegawai_id'] ?? null,
+                //     'create_time' => date('Y-m-d H:i:s'), // Tambahkan tanggal saat ini
+                //     'create_loginpemakai_id' => $data['loginpemakai_id'], // Tambahkan tanggal saat ini
+                //     'create_ruangan_id' => 429,
+                //     // Tambahkan field lain sesuai kebutuhan
+                // ];
+                
+                $preparedDataIX[] = [
+                    'inacbg_id' => $SEP['inacbg_id'] ?? null,
+                    'sep_id' => $SEP['sep_id'] ?? null,
                     'pendaftaran_id' => $RegisterData['pendaftaran_id'] ?? null,
-                    'diagnosaicdix_id' => $item['pasienicd9cm_id'] ?? null,
-                    'pegawai_id' => $RegisterData['pegawai_id'] ?? null,
+                    'diagnosax_kode' => $item['diagnosa_kode'] ?? null,
+                    'diagnosax_nama' => $item['diagnosa_nama'] ?? null,
+                    'diagnosax_type' => $item['kelompokdiagnosa_id'] ?? null,
                     'create_time' => date('Y-m-d H:i:s'), // Tambahkan tanggal saat ini
-                    'create_loginpemakai_id' => 1, // Tambahkan tanggal saat ini
+                    'create_loginpemakai_id' => $data['loginpemakai_id'], // Tambahkan tanggal saat ini
                     'create_ruangan_id' => 429,
                     // Tambahkan field lain sesuai kebutuhan
                 ];
             }
 
             // Lakukan insert batch ke tabel
-            if (!empty($preparedDataICDIX)) {
+            if (!empty($preparedDataIX)) {
                 // $result = DB::table('pasienmorbiditas_t')->insert($preparedData);
-                $result = DB::table('pasienicd9cm_t')->insert($preparedDataICDIX);
-                $result2 = DB::table('pasienicd9cm_r')->insert($preparedDataICDIX);
+                // $result = DB::table('pasienicd9cm_t')->insert($preparedDataICDIX);
+                // $result2 = DB::table('pasienicd9cm_r')->insert($preparedDataICDIX);
+                $result = DB::table('diagnosaix_inacbg_t')->insert($preparedDataIX);
 
-                if ($result2) {
-                    Log::info('Data inserted successfully IX', ['data' => $procedural]);
-                    // dd('Data inserted successfully');
-                } else {
-                    Log::error('Data insertion failed IX', ['data' => $procedural]);
-                    // dd('Data insertion failed');
-                }
+                // if ($result2) {
+                //     Log::info('Data inserted successfully', ['data' => $preparedDataX]);
+                //     // dd('Data inserted successfully');
+                // } else {
+                //     Log::error('Data insertion failed', ['data' => $preparedDataX]);
+                //     // dd('Data insertion failed');
+                // }
 
                 if ($result) {
                     return response()->json(['message' => 'Data berhasil disimpan'], 200);
@@ -487,6 +499,83 @@ class SaveDataKlaimService
             Log::error('Terjadi error saat menyimpan data ke tabel pasienmorbiditas_t', [
                 'error' => $e->getMessage(),
                 'data' => $preparedDataICDIX,
+            ]);
+
+            // Kembalikan pesan error ke frontend atau log
+            return response()->json(['success' => false, 'message' => 'Terjadi error saat menyimpan data', 'error' => $e->getMessage()]);
+        }
+    }
+
+        /**
+     * Summary of addDataPasienMordibitasIXINA (Adding data to pasienmordibitas_t and diagnosax_inacbgs_t)
+     * @param array $data
+     * @param array $pendaftaran
+     * @param array $dataDiagnosa
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
+    public function addDataPasienMordibitasIXINA(array $data = [], array $pendaftaran = [], array $dataDiagnosa = [])
+    {
+        $RegisterData = PendaftaranT::where('sep_id', $pendaftaran['sep_id'])->first();
+
+
+
+        // dd($dataDiagnosa);
+        // Periksa keberadaan SEP
+        $SEP = Inacbg::where('inacbg_nosep', $data['nomor_sep'])->first();
+
+        try {
+
+            $preparedData = []; // Array untuk menampung data yang sudah dimodifikasi
+            $preparedDataIX = []; // Array untuk menampung data yang sudah dimodifikasi
+
+            foreach ($dataDiagnosa as $item) {
+                // Konversi setiap item menjadi array (jika bukan array)
+                $item = (array) $item;     
+
+                $preparedDataIX[] = [
+                    'inacbg_id' => $SEP['inacbg_id'] ?? null,
+                    'pendaftaran_id' => $RegisterData['pendaftaran_id'] ?? null,
+                    'kodediagnosainacbgix,' => $item['diagnosa_kode'] ?? null,
+                    'namadiagnosainacbgix,' => $item['diagnosa_nama'] ?? null,
+                    'create_time' => date('Y-m-d H:i:s'), // Tambahkan tanggal saat ini
+                    'create_loginpemakai_id' => $data['loginpemakai_id'], // Tambahkan tanggal saat ini
+                    'create_ruangan_id' => 429,
+                    // Tambahkan field lain sesuai kebutuhan
+                ];
+            }
+            Log::info('Data Prepared IX:', $preparedDataIX);
+            
+
+            // Lakukan insert batch ke tabel
+            if (!empty($preparedDataIX)) {
+                // $result = DB::table('pasienmorbiditas_t')->insert($preparedData);
+                $result = DB::table('diagnosainacbgix_t')->insert($preparedDataIX);
+
+                // if ($result2) {
+                //     Log::info('Data inserted successfully', ['data' => $preparedDataX]);
+                //     // dd('Data inserted successfully');
+                // } else {
+                //     Log::error('Data insertion failed', ['data' => $preparedDataX]);
+                //     // dd('Data insertion failed');
+                // }
+
+                if ( $result) {
+                    return response()->json(['message' => 'Data berhasil disimpan'], 200);
+                }
+            }
+            // Cek apakah insert berhasil
+            if ( $result) {
+                Log::info('Data berhasil disimpan ke tabel pasienmorbiditas_t', ['data' => $dataDiagnosa]);
+                return response()->json(['success' => true, 'message' => 'Data berhasil disimpan']);
+            } else {
+                Log::warning('Proses penyimpanan gagal tanpa error SQL.', ['data' => $dataDiagnosa]);
+                return response()->json(['success' => false, 'message' => 'Proses penyimpanan gagal']);
+            }
+        } catch (\Exception $e) {
+            // Log error jika terjadi exception
+            Log::error('Terjadi error saat menyimpan data ke tabel pasienmorbiditas_t', [
+                'error' => $e->getMessage(),
+                'data' => $preparedDataIX,
             ]);
 
             // Kembalikan pesan error ke frontend atau log

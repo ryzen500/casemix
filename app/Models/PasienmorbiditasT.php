@@ -25,8 +25,27 @@ class PasienmorbiditasT extends Model
 
         ->where('pasienmorbiditas_t.pendaftaran_id','=', $pendaftaran_id)
         ->orderBy('kelompokdiagnosa_m.kelompokdiagnosa_id','asc');
-// dd($query->toRawSql());
+        // dd($query->toRawSql());
         return $query->get();
+    }
+    public static function getMorbiditasDesc($pendaftaran_id)
+    {
+        $query = DB::table('pasienmorbiditas_t ')
+        ->select(
+            DB::raw('pasienmorbiditas_t.pasienmorbiditas_id,pasienmorbiditas_t.pendaftaran_id,pasienmorbiditas_t.kasusdiagnosa,
+            pendaftaran_t.tgl_pendaftaran, pendaftaran_t.pegawai_id,
+            diagnosa_m.diagnosa_id,diagnosa_m.diagnosa_nama,diagnosa_m.diagnosa_kode,
+            kelompokdiagnosa_m.kelompokdiagnosa_id,kelompokdiagnosa_m.kelompokdiagnosa_nama')
+        )
+        ->from('pasienmorbiditas_t')
+        ->leftJoin('diagnosa_m', 'pasienmorbiditas_t.diagnosa_id',  '=', 'diagnosa_m.diagnosa_id')
+        ->leftJoin('kelompokdiagnosa_m', 'pasienmorbiditas_t.kelompokdiagnosa_id',  '=', 'kelompokdiagnosa_m.kelompokdiagnosa_id')
+        ->leftJoin('pendaftaran_t', 'pasienmorbiditas_t.pendaftaran_id',  '=', 'pendaftaran_t.pendaftaran_id')
+
+        ->where('pasienmorbiditas_t.pendaftaran_id','=', $pendaftaran_id)
+        ->orderBy('pasienmorbiditas_t.pasienmorbiditas_id','desc');
+        // dd($query->toRawSql());
+        return $query->first();
     }
 
 
