@@ -79,7 +79,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk,Jaminan, DPJP
         special_drug_code : '-',
         special_drug_tarif : 0,
         kemenkes_dc_status_cd :'',
-        klaim_status_cd : ''
+        klaim_status_cd : '',
+        total : 0
     });
 
     const [dataFinalisasi, setDataFinalisasi] = useState([]);
@@ -183,8 +184,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk,Jaminan, DPJP
         setCaraMasuk("gp");
         setCaraPulang("1");
         console.log("Cara Pulang ", selectedCaraPulang);
-
-    }, [tarifs, obats]);
+        calculate_total_grouper();
+    }, [tarifs, obats,dataGrouper]);
 
     // Function to fetch data from API
     const fetchSuggestions = async (query) => {
@@ -1024,6 +1025,18 @@ export default function Dashboard({ auth, model, pasien, caraMasuk,Jaminan, DPJP
         const name = 'total'; // Get name and value from the event
         // return total_all;
         setTotal((prevTotal) => ({
+            ...prevTotal,
+            [name]: (total_all), // Update the specific field dynamically
+        }));
+    }
+    const calculate_total_grouper = () => {
+        const total_all = (
+            parseFloat(dataGrouper.group_tarif  || 0) + parseFloat(dataGrouper.sub_acute_tarif  || 0) + parseFloat(dataGrouper.chronic_tarif   || 0) 
+            + parseFloat(dataGrouper.special_procedure_tarif    || 0)  + parseFloat(dataGrouper.special_prosthesis_tarif     || 0)
+            + parseFloat(dataGrouper.special_investigation_tarif  || 0) + parseFloat(dataGrouper.special_drug_tarif || 0) );
+        const name = 'total'; // Get name and value from the event
+        // return total_all;
+        setDataGrouper((prevTotal) => ({
             ...prevTotal,
             [name]: (total_all), // Update the specific field dynamically
         }));
@@ -2441,7 +2454,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk,Jaminan, DPJP
                                             <td width={"15%"}></td>
                                             <td width={"35%"} style={{ textAlign: 'left' }}></td>
                                             <td width={"30%"} style={{ textAlign: 'center' }}>Total</td>
-                                            <td width={"30%"} style={{ textAlign: 'right' }}>Rp 0 </td>
+                                            <td width={"30%"} style={{ textAlign: 'right' }}><FormatRupiah value={dataGrouper.total} /> </td>
 
                                         </tr>
 
@@ -2586,13 +2599,18 @@ export default function Dashboard({ auth, model, pasien, caraMasuk,Jaminan, DPJP
 
                 } else {
                     toast.current.show({ severity: 'success', summary: `Data  Berhasil Di Grouping`, detail: datas.noSep, life: 3000 });
-                    let grouping_res = {
+                    // let grouping_res = {
+                    //     group_description: response.data.data.cbg?.description || '-',
+                    //     group_code : response.data.data.cbg?.code || '-',
+                    //     group_tarif : response.data.data.cbg?.base_tariff || 0
+                    // };
+                    // setDataGrouper(grouping_res);
+                    setDataGrouper((prevTotal) => ({
+                        ...prevTotal,
                         group_description: response.data.data.cbg?.description || '-',
                         group_code : response.data.data.cbg?.code || '-',
-                        group_tarif : response.data.data.cbg?.base_tariff || 0
-                    };
-                    setDataGrouper(grouping_res);
-
+                        group_tarif : response.data.data.cbg?.base_tariff || 0// Update the specific field dynamically
+                    }));
                 }
 
                 // Handle the response from the backend
