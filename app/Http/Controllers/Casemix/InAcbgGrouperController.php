@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Casemix;
 use App\Http\Controllers\Controller;
 use App\Http\Services\Action\SaveDataFinalisasiService;
 use App\Http\Services\Action\SaveDataGroupperService;
+use App\Http\Services\Action\SaveDataReeditKlaimService;
 use App\Http\Services\groupingService;
 use App\Http\Services\MonitoringHistoryService;
 use App\Http\Services\Action\SaveDataKlaimService;
@@ -234,7 +235,7 @@ class InAcbgGrouperController extends Controller
         $coder_nik = $request->input(key: "coder_nik") ?? "";
         $sistole = $request->input(key: "sistole") ?? "";
         $diastole = $request->input(key: "diastole") ?? "";
-        $is_tb = $request->input(key: "is_tb") ?? "";
+        $is_tb = $request->input(key: "is_tb");
         $nomor_register_sitb = $request->input('nomor_register_sitb') ?? null;
         //Data DB
         $carabayar_id = $request->input(key: "carabayar_id") ?? "";
@@ -248,6 +249,7 @@ class InAcbgGrouperController extends Controller
         $pendaftaran_id = $request->input(key: "pendaftaran_id") ?? "";
         $total_tarif_rs = $request->input(key: "total_tarif_rs") ?? "";
         $berat_lahir = $request->input(key: "berat_lahir") ?? "";
+        $los= $request->input(key: "los") ?? "";
 
 
 
@@ -339,7 +341,8 @@ class InAcbgGrouperController extends Controller
             'total_tarif_rs' => $total_tarif_rs,
             'berat_lahir' => $berat_lahir,
             'is_tb' => $is_tb,
-            'nomor_register_sitb' => $nomor_register_sitb
+            'nomor_register_sitb' => $nomor_register_sitb,
+            'los'=>$los
         ];
 
 
@@ -357,7 +360,7 @@ class InAcbgGrouperController extends Controller
 
             $saveResult = $saveService->addDataInacbgT($data, $pendaftaran);
 
-            // dd($dataDiagnosa);
+            // dd($saveResult);
 
             if ($decodedRiwayat) {
                 // $saveDiagnosa = $saveService->addDataPasienMordibitasRiwayat($data, $pendaftaran, $dataDiagnosa);
@@ -476,6 +479,72 @@ class InAcbgGrouperController extends Controller
     }
 
 
+
+    public function kirimIndividualKlaim(Request $request)
+    {
+
+        // Ambil keynya dari  ENV 
+        $key = env('INACBG_KEY');
+
+
+        $nomor_sep = $request->input('nomor_sep') ?? "";
+        $coder_nik = $request->input('coder_nik') ?? "";
+
+        $getLoginPemakai[] = LoginPemakaiK::where(['coder_nik'=>$coder_nik])->first();
+        // dd($getLoginPemakai['loginpemakai_id']);
+        // Structur Payload 
+        $data = [
+            'nomor_sep' => $nomor_sep,
+
+        ];
+
+
+        // result kirim claim
+        $results = $this->inacbg->kirimOnlineKlaim($data, $key);
+
+
+        // if ($results['success'] === true) {
+        //     // $saveService = new SaveDataReeditKlaimService();
+        //     // $saveResult = $saveService->deleteFlagDataFinalisasi($data, $getLoginPemakai);
+        // }
+
+        // Kembalikan hasil sebagai JSON response
+        return response()->json($results, 200);
+    }
+
+    public function EditUlangKlaim(Request $request)
+    {
+
+        // Ambil keynya dari  ENV 
+        $key = env('INACBG_KEY');
+
+
+        $nomor_sep = $request->input('nomor_sep') ?? "";
+        $coder_nik = $request->input('coder_nik') ?? "";
+
+        $getLoginPemakai[] = LoginPemakaiK::where(['coder_nik'=>$coder_nik])->first();
+        // dd($getLoginPemakai['loginpemakai_id']);
+        // Structur Payload 
+        $data = [
+            'nomor_sep' => $nomor_sep,
+
+        ];
+
+
+        // result kirim claim
+        $results = $this->inacbg->reeditclaim($data, $key);
+
+
+        if ($results['success'] === true) {
+            $saveService = new SaveDataReeditKlaimService();
+            $saveResult = $saveService->deleteFlagDataFinalisasi($data, $getLoginPemakai);
+        }
+
+        // Kembalikan hasil sebagai JSON response
+        return response()->json($results, 200);
+    }
+
+
     public function Finalisasi(Request $request)
     {
 
@@ -486,6 +555,8 @@ class InAcbgGrouperController extends Controller
         $nomor_sep = $request->input('nomor_sep') ?? "";
         $coder_nik = $request->input('coder_nik') ?? "";
 
+        $getLoginPemakai[] = LoginPemakaiK::where(['coder_nik'=>$coder_nik])->first();
+        // dd($getLoginPemakai['loginpemakai_id']);
         // Structur Payload 
         $data = [
             'nomor_sep' => $nomor_sep,
@@ -500,7 +571,7 @@ class InAcbgGrouperController extends Controller
 
         if ($results['success'] === true) {
             $saveService = new SaveDataFinalisasiService();
-            $saveResult = $saveService->updateDataFinalisasi($data);
+            $saveResult = $saveService->updateDataFinalisasi($data, $getLoginPemakai);
         }
 
         // Kembalikan hasil sebagai JSON response

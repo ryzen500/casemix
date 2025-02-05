@@ -8,7 +8,7 @@ use App\Models\PendaftaranT;
 use DB;
 use Exception;
 
-class SaveDataFinalisasiService
+class SaveDataReeditKlaimService
 {
 
 
@@ -17,7 +17,7 @@ class SaveDataFinalisasiService
      */
 
 
-    public function updateDataFinalisasi(array $data = [], array $getLoginPemakai =[])
+    public function deleteFlagDataFinalisasi(array $data = [], array $getLoginPemakai =[])
     {
 
         // dd();
@@ -28,7 +28,7 @@ class SaveDataFinalisasiService
             // Update the finalization status
             DB::table('inacbg_t')
                 ->where('inacbg_nosep', $data['nomor_sep'])
-                ->update(['is_finalisasi' => true , 'pegfinalisasi_id'=>$getLoginPemakai[0]['loginpemakai_id'] , 'tglfinalisasi'=>date("Y-m-d H:i:s")]);
+                ->update(['is_finalisasi' => false , 'pegfinalisasi_id'=>null, 'tglfinalisasi'=>null]);
 
             return [
                 'status' => 'success',

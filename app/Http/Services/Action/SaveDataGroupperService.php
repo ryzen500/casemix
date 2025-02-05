@@ -34,13 +34,14 @@ class SaveDataGroupperService
              'kodeprosedur'=> $results['data']['cbg']['code'],
              'namaprosedur'=> $results['data']['cbg']['description'],
              'plafonprosedur'=> $results['data']['cbg']['base_tariff'],
-             'create_time'=> date('Y-m-d H:i:s'),
-            'create_loginpemakai_id'=>$dataAuthor['create_loginpemakai_id'],
             'create_ruangan'=>429
             ];
 
             if ($inasiscbg) {
                 // Jika SEP ditemukan, lakukan update
+                $inasiscbgData['update_time'] = date("Y-m-d H:i:s");
+                $inasiscbgData['update_loginpemakai_id'] =!empty($dataAuthor['create_loginpemakai_id']) && $dataAuthor['create_loginpemakai_id'] !== '' ? $dataAuthor['create_loginpemakai_id'] : null;
+                
                 $inasiscbg->update($inasiscbgData);
                 DB::table('inacbg_t')
                 ->where('inacbg_nosep', $data['nomor_sep'])
@@ -48,7 +49,9 @@ class SaveDataGroupperService
                 $message = 'Data berhasil diperbarui';
 
             }else{
-
+                $inasiscbgData['create_time'] = date("Y-m-d H:i:s");
+                $inasiscbgData['create_loginpemakai_id'] =!empty($dataAuthor['create_loginpemakai_id']) && $dataAuthor['create_loginpemakai_id'] !== '' ? $dataAuthor['create_loginpemakai_id'] : null;
+                
 
                 Inasiscbg::create($inasiscbgData);
                 \Log::info('Data Berhasil Disimpan:', $inasiscbgData);

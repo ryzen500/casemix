@@ -27,6 +27,12 @@ class Inacbg extends Model
         'kodeinacbg',
         'tarifgruper',
         'totaltarif',
+        'total_tarif_rs',
+        'adlscore_subaccute',
+        'adlscore_chronic',
+        'total_lamarawat',
+        'is_pasientb',
+        'nomor_register_sitb',
         'cara_pulang',
         'caramasuk',
         'ruanganakhir_id',
@@ -67,7 +73,12 @@ class Inacbg extends Model
         'cara_pulang',
         'no_reg_sitb',
         'sistole',
-        'diastole'
+        'diastole',
+        'update_time',
+        'update_loginpemakai_id',
+        'pegfinalisasi_id',
+        'is_finalisasi',
+        'tglfinalisasi'
     ];
 
     protected $casts = [
@@ -89,6 +100,7 @@ class Inacbg extends Model
         'tarif_alkes' => 'float',
         'tarif_bhp' => 'float',
         'tarif_sewa_alat' => 'float',
+        'is_pasientb' => 'boolean',
     ];
     
     /**
@@ -300,6 +312,17 @@ class Inacbg extends Model
         }
     }
 
+    public function validatereeditKlaim(array $data)
+    {
+        $validator = Validator::make($data, [
+            'nomor_sep' => 'required|string',
+
+        ]);
+
+        if ($validator->fails()) {
+            throw new Exception(implode(', ', $validator->errors()->all()));
+        }
+    }
 
     public function validateSendKlaim(array $data)
     {
@@ -486,6 +509,46 @@ class Inacbg extends Model
         }
     }
 
+
+
+    public function kirimOnlineKlaim(array $data, string $key): array
+    {
+        try {
+            // validate The Payload
+            $this->validatereeditKlaim(data: $data);
+            $payload = $this->preparePayloadKirimIndividuClaim($data);
+
+            $encryptedPayload = $this->inacbg_encrypt($payload, $key); // Tambahkan parameter $key
+
+            $response = $this->sendRequest($encryptedPayload, $key);
+            return $this->processResponse($response, $key);
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+
+    public function reeditclaim(array $data, string $key): array
+    {
+        try {
+            // validate The Payload
+            $this->validatereeditKlaim($data);
+            $payload = $this->preparePayloadReeditClaim($data);
+
+            $encryptedPayload = $this->inacbg_encrypt($payload, $key); // Tambahkan parameter $key
+
+            $response = $this->sendRequest($encryptedPayload, $key);
+            return $this->processResponse($response, $key);
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
 
 
     public function finalisasi(array $data, string $key): array
@@ -695,6 +758,27 @@ class Inacbg extends Model
     }
 
 
+    private function preparePayloadKirimIndividuClaim(array $data): string
+    {
+        return json_encode([
+            'metadata' => ['method' => 'send_claim_invidual'],
+            'data' => [
+                'nomor_sep' => $data['nomor_sep'] ?? ""
+
+            ],
+        ]);
+    }
+
+    private function preparePayloadReeditClaim(array $data): string
+    {
+        return json_encode([
+            'metadata' => ['method' => 'reedit_claim'],
+            'data' => [
+                'nomor_sep' => $data['nomor_sep'] ?? ""
+
+            ],
+        ]);
+    }
 
     private function preparePayloadSendFinalisasi(array $data): string
     {

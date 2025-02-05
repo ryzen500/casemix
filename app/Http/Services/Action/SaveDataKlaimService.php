@@ -19,10 +19,10 @@ class SaveDataKlaimService
     public function addDataInacbgT(array $data = [], array $pendaftaran = [])
     {
         $RegisterData = PendaftaranT::where('sep_id', $pendaftaran['sep_id'])->first();
+        DB::enableQueryLog();
 
         // Periksa keberadaan SEP
         $SEP = Inacbg::where('inacbg_nosep', $data['nomor_sep'])->first();
-        // dd($pendaftaran['caramasuk_id']);
         try {
             $inacbgData = [
                 'jaminan_id' => !empty($pendaftaran['carabayar_id']) && $pendaftaran['carabayar_id'] !== '' ? $pendaftaran['carabayar_id'] : null,
@@ -34,10 +34,12 @@ class SaveDataKlaimService
                 'inacbg_tgl' => date("Y-m-d H:i:s"),
                 'kodeinacbg' => 'AB',
                 'tarifgruper' => 0,
-                'sistole'=>!empty($data['sistole']) ? $data['sistole'] : 0,
-                'is_pasientb'=>!empty($pendaftaran['is_tb']) ? $pendaftaran['is_tb'] : 0,
-                'nomor_register_sitb'=>!empty($pendaftaran['nomor_register_sitb']) ? $pendaftaran['nomor_register_sitb'] : 0,
-                'diastole'=>!empty($data['diastole']) ? $data['diastole'] : 0,
+                'sistole' => !empty($data['sistole']) ? $data['sistole'] : 0,
+                'is_pasientb' => !empty($pendaftaran['is_tb']) ? (int)(bool)$pendaftaran['is_tb'] : 0,
+                'adlscore_subaccute' => !empty($data['adl_sub_acute']) ? $data['adl_sub_acute'] : 0,
+                'adlscore_chronic' => !empty($data['adl_chronic']) ? $data['adl_chronic'] : 0,
+                'no_reg_sitb' => !empty($pendaftaran['nomor_register_sitb']) ? $pendaftaran['nomor_register_sitb'] : '-',
+                'diastole' => !empty($data['diastole']) ? $data['diastole'] : 0,
                 'totaltarif' => !empty($pendaftaran['total_tarif_rs']) ? $pendaftaran['total_tarif_rs'] : 0,
                 'total_tarif_rs' => !empty($pendaftaran['total_tarif_rs']) ? $pendaftaran['total_tarif_rs'] : 0,
                 'tarif_prosedur_nonbedah' => !empty($data['prosedur_non_bedah']) ? $data['prosedur_non_bedah'] : 0,
@@ -64,13 +66,12 @@ class SaveDataKlaimService
                 'jenisrawat_inacbg' => !empty($data['jenis_rawat']) && $data['jenis_rawat'] !== '' ? $data['jenis_rawat'] : null,
                 'tglrawat_masuk' => $data['tgl_masuk'] ?? null,
                 'tglrawat_keluar' => $data['tgl_pulang'] ?? null,
-                'berat_lahir'=>!empty($pendaftaran['berat_lahir']) ? $pendaftaran['berat_lahir'] : 0,
-                'caramasuk'=> !empty($pendaftaran['caramasuk_id']) ? $pendaftaran['caramasuk_id'] : null,
-                'cara_pulang'=> !empty($pendaftaran['carakeluar_id']) && $pendaftaran['carakeluar_id'] !== '' ? $pendaftaran['carakeluar_id'] : null,
+                'berat_lahir' => !empty($pendaftaran['berat_lahir']) ? $pendaftaran['berat_lahir'] : 0,
+                'caramasuk' => !empty($pendaftaran['caramasuk_id']) ? $pendaftaran['caramasuk_id'] : null,
+                'cara_pulang' => !empty($pendaftaran['carakeluar_id']) && $pendaftaran['carakeluar_id'] !== '' ? $pendaftaran['carakeluar_id'] : null,
                 'hak_kelasrawat_inacbg' => !empty($data['kelas_rawat']) && $data['kelas_rawat'] !== '' ? $data['kelas_rawat'] : null,
                 'umur_pasien' => !empty($pendaftaran['umur_pasien']) && $pendaftaran['umur_pasien'] !== '' ? $pendaftaran['umur_pasien'] : 0,
-                'create_time' => date("Y-m-d"),
-                'create_loginpemakai_id' => !empty($pendaftaran['create_loginpemakai_id']) && $pendaftaran['create_loginpemakai_id'] !== '' ? $pendaftaran['create_loginpemakai_id'] : null,
+                'total_lamarawat' => !empty($pendaftaran['los']) ? $pendaftaran['los'] : 0,
                 'create_ruangan' => 429,
                 'create_tanggal' => date("Y-m-d"),
                 'create_coder_nik' => $data['coder_nik'] ?? null,
@@ -78,15 +79,31 @@ class SaveDataKlaimService
             ];
 
             if ($SEP) {
+                // dd($inacbgData);
+                $inacbgData['update_time'] = date("Y-m-d H:i:s");
+                $inacbgData['update_loginpemakai_id'] =!empty($pendaftaran['create_loginpemakai_id']) && $pendaftaran['create_loginpemakai_id'] !== '' ? $pendaftaran['create_loginpemakai_id'] : null;
+                
+                \Log::info('Nilai akhir is_pasientb:', ['is_pasientb' => $inacbgData['is_pasientb']]);
+
                 // Jika SEP ditemukan, lakukan update
                 $SEP->update($inacbgData);
+             
+                \Log::info(DB::getQueryLog());
+
+                //update sep
                 DB::table('sep_t')
                     ->where('nosep', $data['nomor_sep'])
                     ->update(['inacbg_id' => $SEP->inacbg_id]);
                 $message = 'Data berhasil diperbarui';
                 \Log::info('Data yang akan diupdate:', $inacbgData);
 
+
             } else {
+                
+                $inacbgData['create_time'] = date("Y-m-d H:i:s");
+                $inacbgData['create_loginpemakai_id'] =!empty($pendaftaran['create_loginpemakai_id']) && $pendaftaran['create_loginpemakai_id'] !== '' ? $pendaftaran['create_loginpemakai_id'] : null;
+
+
                 // Jika SEP tidak ditemukan, lakukan create
                 Inacbg::create($inacbgData);
                 $message = 'Data berhasil disimpan';
@@ -176,14 +193,14 @@ class SaveDataKlaimService
             }
 
             // Hapus data berdasarkan pasienmorbiditas_id
-             DB::table('pasienmorbiditas_t')
-            ->where('pendaftaran_id', $RegisterData['pendaftaran_id'])
-            ->delete();
+            DB::table('pasienmorbiditas_t')
+                ->where('pendaftaran_id', $RegisterData['pendaftaran_id'])
+                ->delete();
 
             Log::info('Data berhasil dihapus dari tabel pasienmorbiditas_t', ['deleted_ids' => $pasienMorbiditasIds]);
             // Cek apakah delete berhasil
             // if ($result === 0) {
-                return response()->json(['success' => true, 'message' => 'Data berhasil dihapus']);
+            return response()->json(['success' => true, 'message' => 'Data berhasil dihapus']);
             // } else {
             //     Log::warning('Tidak ada data yang dihapus. Periksa ID yang diberikan.', ['ids' => $pasienMorbiditasIds]);
             //     return response()->json(['success' => false, 'message' => 'Tidak ada data yang dihapus']);
@@ -225,8 +242,8 @@ class SaveDataKlaimService
 
             foreach ($dataDiagnosa as $item) {
                 // Konversi setiap item menjadi array (jika bukan array)
-                $item = (array) $item;     
-                
+                $item = (array) $item;
+
 
 
                 // Manipulasi atau filter data sesuai kebutuhan
@@ -240,7 +257,7 @@ class SaveDataKlaimService
                     'kasusdiagnosa' => $item['kasusdiagnosa'] ?? null, // Tambahkan tanggal saat ini
                     'ruangan_id' => $RegisterData['ruangan_id'] ?? null, // Tambahkan tanggal saat ini
                     'create_time' => date('Y-m-d H:i:s'), // Tambahkan tanggal saat ini
-                    'create_loginpemakai_id' =>  $data['loginpemakai_id'], // Tambahkan tanggal saat ini
+                    'create_loginpemakai_id' => $data['loginpemakai_id'], // Tambahkan tanggal saat ini
                     'create_ruangan' => 429,
                     'kelompokdiagnosa_id' => $item['kelompokdiagnosa_id'] ?? null,
                     'jeniskasuspenyakit_id' => $RegisterData['jeniskasuspenyakit_id'] ?? null,
@@ -257,14 +274,14 @@ class SaveDataKlaimService
                     'diagnosax_nama' => $item['diagnosa_nama'] ?? null,
                     'diagnosax_type' => $item['kelompokdiagnosa_id'] ?? null,
                     'create_time' => date('Y-m-d H:i:s'), // Tambahkan tanggal saat ini
-                    'create_loginpemakai_id' =>  $data['loginpemakai_id'], // Tambahkan tanggal saat ini
+                    'create_loginpemakai_id' => $data['loginpemakai_id'], // Tambahkan tanggal saat ini
                     'create_ruangan_id' => 429,
                     // Tambahkan field lain sesuai kebutuhan
                 ];
             }
             Log::info('Data Prepared:', $preparedData);
             Log::info('Data Prepared X:', $preparedDataX);
-            
+
 
             // Lakukan insert batch ke tabel
             if (!empty($preparedData)) {
@@ -279,12 +296,12 @@ class SaveDataKlaimService
                 //     // dd('Data insertion failed');
                 // }
 
-                if ( $result2) {
+                if ($result2) {
                     return response()->json(['message' => 'Data berhasil disimpan'], 200);
                 }
             }
             // Cek apakah insert berhasil
-            if ( $result2) {
+            if ($result2) {
                 Log::info('Data berhasil disimpan ke tabel pasienmorbiditas_t', ['data' => $dataDiagnosa]);
                 return response()->json(['success' => true, 'message' => 'Data berhasil disimpan']);
             } else {
@@ -342,7 +359,7 @@ class SaveDataKlaimService
                     'kasusdiagnosa' => $item['kasusdiagnosa'] ?? null, // Tambahkan tanggal saat ini
                     'ruangan_id' => $RegisterData['ruangan_id'] ?? null, // Tambahkan tanggal saat ini
                     'create_time' => date('Y-m-d H:i:s'), // Tambahkan tanggal saat ini
-                    'create_loginpemakai_id' =>  $data['loginpemakai_id'], // Tambahkan tanggal saat ini
+                    'create_loginpemakai_id' => $data['loginpemakai_id'], // Tambahkan tanggal saat ini
                     'create_ruangan' => 429,
                     'kelompokdiagnosa_id' => $item['kelompokdiagnosa_id'] ?? null,
                     'jeniskasuspenyakit_id' => $RegisterData['jeniskasuspenyakit_id'] ?? null,
@@ -358,12 +375,12 @@ class SaveDataKlaimService
                     'kodediagnosainacbg' => $item['diagnosa_kode'] ?? null,
                     'namadiagnosainacbg' => $item['diagnosa_nama'] ?? null,
                     'create_time' => date('Y-m-d H:i:s'), // Tambahkan tanggal saat ini
-                    'create_loginpemakai_id' =>  $data['loginpemakai_id'], // Tambahkan tanggal saat ini
+                    'create_loginpemakai_id' => $data['loginpemakai_id'], // Tambahkan tanggal saat ini
                     'create_ruangan' => 429,
                     // Tambahkan field lain sesuai kebutuhan
                 ];
             }
-     
+
             // Lakukan insert batch ke tabel
             if (!empty($preparedData)) {
                 // $result = DB::table('pasienmorbiditas_t')->insert($preparedData);
@@ -377,12 +394,12 @@ class SaveDataKlaimService
                 //     // dd('Data insertion failed');
                 // }
 
-                if ( $result2) {
+                if ($result2) {
                     return response()->json(['message' => 'Data berhasil disimpan'], 200);
                 }
             }
             // Cek apakah insert berhasil
-            if ( $result2) {
+            if ($result2) {
                 Log::info('Data berhasil disimpan ke tabel pasienmorbiditas_t', ['data' => $dataDiagnosa]);
                 return response()->json(['success' => true, 'message' => 'Data berhasil disimpan']);
             } else {
@@ -452,7 +469,7 @@ class SaveDataKlaimService
                 //     'create_ruangan_id' => 429,
                 //     // Tambahkan field lain sesuai kebutuhan
                 // ];
-                
+
                 $preparedDataIX[] = [
                     'inacbg_id' => $SEP['inacbg_id'] ?? null,
                     'sep_id' => $SEP['sep_id'] ?? null,
@@ -506,7 +523,7 @@ class SaveDataKlaimService
         }
     }
 
-        /**
+    /**
      * Summary of addDataPasienMordibitasIXINA (Adding data to pasienmordibitas_t and diagnosax_inacbgs_t)
      * @param array $data
      * @param array $pendaftaran
@@ -530,7 +547,7 @@ class SaveDataKlaimService
 
             foreach ($dataDiagnosa as $item) {
                 // Konversi setiap item menjadi array (jika bukan array)
-                $item = (array) $item;     
+                $item = (array) $item;
 
                 $preparedDataIX[] = [
                     'inacbg_id' => $SEP['inacbg_id'] ?? null,
@@ -544,7 +561,7 @@ class SaveDataKlaimService
                 ];
             }
             Log::info('Data Prepared IX:', $preparedDataIX);
-            
+
 
             // Lakukan insert batch ke tabel
             if (!empty($preparedDataIX)) {
@@ -559,12 +576,12 @@ class SaveDataKlaimService
                 //     // dd('Data insertion failed');
                 // }
 
-                if ( $result) {
+                if ($result) {
                     return response()->json(['message' => 'Data berhasil disimpan'], 200);
                 }
             }
             // Cek apakah insert berhasil
-            if ( $result) {
+            if ($result) {
                 Log::info('Data berhasil disimpan ke tabel pasienmorbiditas_t', ['data' => $dataDiagnosa]);
                 return response()->json(['success' => true, 'message' => 'Data berhasil disimpan']);
             } else {
