@@ -54,8 +54,33 @@ export default function Dashboard({ auth, model, pasien, caraMasuk,Jaminan, DPJP
     };
     const [diagnosaTemp, setDiagnosaTemp] = useState(emptyDiagnosa);
     const [diagnosaixTemp, setDiagnosaixTemp] = useState(emptyDiagnosaIx);
+    const [dataGrouper2, setDataGrouper2] = useState([]);
 
-    const [dataGrouper, setDataGrouper] = useState([]);
+    const [dataGrouper, setDataGrouper] = useState({
+        group_description: '-',
+        group_code : '-',
+        group_tarif : 0,
+        sub_acute_description: '-',
+        sub_acute_code : '-',
+        sub_acute_tarif : 0,
+        chronic_description: '-',
+        chronic_code : '-',
+        chronic_tarif : 0,
+        special_procedure_description: '-',
+        special_procedure_code : '-',
+        special_procedure_tarif : 0,
+        special_prosthesis_description: '-',
+        special_prosthesis_code : '-',
+        special_prosthesis_tarif : 0,
+        special_investigation_description: '-',
+        special_investigation_code : '-',
+        special_investigation_tarif : 0,
+        special_drug_description: '-',
+        special_drug_code : '-',
+        special_drug_tarif : 0,
+        kemenkes_dc_status_cd :'',
+        klaim_status_cd : ''
+    });
 
     const [dataFinalisasi, setDataFinalisasi] = useState([]);
 
@@ -807,26 +832,107 @@ export default function Dashboard({ auth, model, pasien, caraMasuk,Jaminan, DPJP
                     setCaraPulang(defaultCaraPulang || null);
 
                     setPendaftarans(response.data.pendaftaran);
-                    setTarifs(response.data.tarif);
-                    setObats(response.data.obat);
                     setProfil(response.data.profil);
                     setDiagnosa(response.data.dataDiagnosa);
                     setDiagnosaINA(response.data.dataDiagnosa);
                     setDataIcd9cm(response.data.dataIcd9cm);
-                    setDataIcd9cmINA(response.data.dataIcd9cm)
-                    calculate_total();
+                    setDataIcd9cmINA(response.data.dataIcd9cm);
+
+                    if(response.data.inacbg !== null){
+                        let setTarifInacbg = {
+                            total: 0,
+                            prosedurenonbedah: response.data.inacbg.tarif_prosedur_nonbedah,
+                            prosedurebedah: response.data.inacbg.tarif_prosedur_bedah,
+                            konsultasi:  response.data.inacbg.tarif_konsultasi,
+                            tenagaahli: response.data.inacbg.tarif_tenaga_ahli,
+                            keperawatan: response.data.inacbg.tarif_keperawatan,
+                            penunjang: response.data.inacbg.tarif_penunjang,
+                            radiologi:  response.data.inacbg.tarif_radiologi,
+                            laboratorium:  response.data.inacbg.tarif_laboratorium,
+                            pelayanandarah:  response.data.inacbg.tarif_pelayanan_darah,
+                            rehabilitasi: response.data.inacbg.tarif_rehabilitasi,
+                            kamar_akomodasi: response.data.inacbg.tarif_akomodasi,
+                            rawatintensif:  response.data.inacbg.tarif_rawat_intensif,
+                        };
+                        let setObatInacbg = {
+                            total: 0,
+                            obat: response.data.inacbg.tarif_obat,
+                            obatkronis: response.data.inacbg.tarif_obat_kronis,
+                            obatkemoterapi: response.data.inacbg.tarif_obat_kemoterapi,
+                            alkes: response.data.inacbg.tarif_alkes,
+                            bmhp: response.data.inacbg.tarif_bhp,
+                            sewaalat: response.data.inacbg.tarif_sewa_alat,
+                        };
+                        let setKlinis = {
+                            sistole	: response.data.inacbg.sistole,
+                            diastole	:response.data.inacbg.diastole,
+                        };
+                        let setPendaftaran = {
+                            tanggal_masuk : response.data.inacbg.tglrawat_masuk,
+                            tanggal_pulang : response.data.inacbg.tglrawat_masuk,
+                            umur : response.data.inacbg.umur_pasien,
+
+                        }
+                        setCaraMasuk(response.data.inacbg.hak_kelasrawat_inacbg);
+                        setCOB(response.data.inacbg.cob_id);
+                        setPendaftarans(setPendaftaran)
+                        setTarifs(setTarifInacbg);
+                        setObats(setObatInacbg);
+                        setSistole(setKlinis.sistole);
+                        setDiastole(setKlinis.diastole);
+                        setBeratLahir(response.data.inacbg.berat_lahir);
+                        setCaraPulang(response.data.inacbg.cara_pulang);
+                        // setDPJP(response.data.inacbg.nama_dpjp);
+                    }else{
+                        let setKlinis = {
+                            sistole	 : 0,
+                            diastole : 0,
+                        };
+                        setTarifs(response.data.tarif);
+                        setObats(response.data.obat);
+                        setSistole(setKlinis);
+                        setSistole(setKlinis.sistole);
+                        setDiastole(setKlinis.diastole);
+                        setBeratLahir(0)
+                    }
                     if (Boolean(response.data.getGrouping.success) === false || response.data.getGrouping.data.data.grouper.response === null) {
                         setHide(true);
-
                     }
-
                     else {
                         console.log("Sub 4")
 
                         setHide(false);
                         setDataGrouping(response.data.getGrouping.data.data);
+                        let setTarifGrouping = {
+                            total: 0,
+                            prosedurenonbedah: response.data.getGrouping.data.data.tarif_rs.prosedur_non_bedah,
+                            prosedurebedah: response.data.getGrouping.data.data.tarif_rs.prosedur_bedah,
+                            konsultasi:  response.data.getGrouping.data.data.tarif_rs.konsultasi,
+                            tenagaahli: response.data.getGrouping.data.data.tarif_rs.tenaga_ahli,
+                            keperawatan: response.data.getGrouping.data.data.tarif_rs.keperawatan,
+                            penunjang: response.data.getGrouping.data.data.tarif_rs.penunjang,
+                            radiologi:  response.data.getGrouping.data.data.tarif_rs.radiologi,
+                            laboratorium:  response.data.getGrouping.data.data.tarif_rs.laboratorium,
+                            pelayanandarah:  response.data.getGrouping.data.data.tarif_rs.pelayanan_darah,
+                            rehabilitasi: response.data.getGrouping.data.data.tarif_rs.rehabilitasi,
+                            kamar_akomodasi: response.data.getGrouping.data.data.tarif_rs.kamar,
+                            rawatintensif:  response.data.getGrouping.data.data.tarif_rs.rawat_intensif,
+                        };
+                        let setObatGrouping = {
+                            total: 0,
+                            obat: response.data.getGrouping.data.data.tarif_rs.obat,
+                            obatkronis: response.data.getGrouping.data.data.tarif_rs.obat_kronis,
+                            obatkemoterapi: response.data.getGrouping.data.data.tarif_rs.obat_kemoterapi,
+                            alkes: response.data.getGrouping.data.data.tarif_rs.alkes,
+                            bmhp: response.data.getGrouping.data.data.tarif_rs.bmhp,
+                            sewaalat: response.data.getGrouping.data.data.tarif_rs.sewa_alat,
+                        };
+
+                        setTarifs(setTarifGrouping);
+                        setObats(setObatGrouping);
 
                     }
+                    calculate_total();
 
 
                     // setInterval(() => {
@@ -2216,7 +2322,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk,Jaminan, DPJP
                                             <td width={"30%"}></td>
 
                                         </tr>
-                                        <tr>
+                                        {/* <tr>
                                             <td width={"15%"}>Group</td>
                                             <td width="35%" style={{ textAlign: 'left' }}>
                                                 {dataGrouper.cbg?.description || '-'}
@@ -2227,72 +2333,102 @@ export default function Dashboard({ auth, model, pasien, caraMasuk,Jaminan, DPJP
                                             <td width="30%" style={{ textAlign: 'right' }}>
                                                 <FormatRupiah value={dataGrouper.cbg?.base_tariff || 0} />
                                             </td>
+                                        </tr> */}
+                                        <tr>
+                                            <td width={"15%"}>Group</td>
+                                            <td width="35%" style={{ textAlign: 'left' }}>
+                                                {dataGrouper.group_description}
+                                            </td>
+                                            <td width="30%" style={{ textAlign: 'center' }}>
+                                                {dataGrouper.group_code}
+                                            </td>
+                                            <td width="30%" style={{ textAlign: 'right' }}>
+                                                <FormatRupiah value={dataGrouper.group_tarif} />
+                                            </td>
                                         </tr>
                                         <tr>
                                             <td width={"15%"}>Sub Acute</td>
-                                            <td width={"35%"} style={{ textAlign: 'left' }}>-</td>
-                                            <td width={"30%"} style={{ textAlign: 'center' }}>-</td>
-                                            <td width={"30%"} style={{ textAlign: 'right' }}>Rp 0 </td>
-
+                                            <td width="35%" style={{ textAlign: 'left' }}>
+                                                {dataGrouper.sub_acute_description}
+                                            </td>
+                                            <td width="30%" style={{ textAlign: 'center' }}>
+                                                {dataGrouper.sub_acute_code}
+                                            </td>
+                                            <td width="30%" style={{ textAlign: 'right' }}>
+                                                <FormatRupiah value={dataGrouper.sub_acute_tarif} />
+                                            </td>
                                         </tr>
                                         <tr>
                                             <td width={"15%"}>Chronic</td>
-                                            <td width={"35%"} style={{ textAlign: 'left' }}>-</td>
-                                            <td width={"30%"} style={{ textAlign: 'center' }}>-</td>
-                                            <td width={"30%"} style={{ textAlign: 'right' }}>Rp 0 </td>
-
+                                            <td width="35%" style={{ textAlign: 'left' }}>
+                                                {dataGrouper.chronic_description}
+                                            </td>
+                                            <td width="30%" style={{ textAlign: 'center' }}>
+                                                {dataGrouper.chronic_code}
+                                            </td>
+                                            <td width="30%" style={{ textAlign: 'right' }}>
+                                                <FormatRupiah value={dataGrouper.chronic_tarif} />
+                                            </td>
                                         </tr>
                                         <tr>
                                             <td width={"15%"}>Special Procedure</td>
-                                            <td width={"35%"} style={{ textAlign: 'left' }}>-</td>
-                                            <td width={"30%"} style={{ textAlign: 'center' }}>-</td>
-                                            <td width={"30%"} style={{ textAlign: 'right' }}>Rp 0 </td>
-
+                                            <td width="35%" style={{ textAlign: 'left' }}>
+                                                {dataGrouper.special_procedure_description}
+                                            </td>
+                                            <td width="30%" style={{ textAlign: 'center' }}>
+                                                {dataGrouper.special_procedure_code}
+                                            </td>
+                                            <td width="30%" style={{ textAlign: 'right' }}>
+                                                <FormatRupiah value={dataGrouper.special_procedure_tarif} />
+                                            </td>
                                         </tr>
-
                                         <tr>
                                             <td width={"15%"}>Special Prosthesis</td>
-                                            <td width={"35%"} style={{ textAlign: 'left' }}>-</td>
-                                            <td width={"30%"} style={{ textAlign: 'center' }}>-</td>
-                                            <td width={"30%"} style={{ textAlign: 'right' }}>Rp 0 </td>
-
+                                            <td width="35%" style={{ textAlign: 'left' }}>
+                                                {dataGrouper.special_prosthesis_description}
+                                            </td>
+                                            <td width="30%" style={{ textAlign: 'center' }}>
+                                                {dataGrouper.special_prosthesis_code}
+                                            </td>
+                                            <td width="30%" style={{ textAlign: 'right' }}>
+                                                <FormatRupiah value={dataGrouper.special_prosthesis_tarif} />
+                                            </td>
                                         </tr>
-
-
                                         <tr>
                                             <td width={"15%"}>Special Investigation</td>
-                                            <td width={"35%"} style={{ textAlign: 'left' }}>-</td>
-                                            <td width={"30%"} style={{ textAlign: 'center' }}>-</td>
-                                            <td width={"30%"} style={{ textAlign: 'right' }}>Rp 0 </td>
-
+                                            <td width="35%" style={{ textAlign: 'left' }}>
+                                                {dataGrouper.special_investigation_description}
+                                            </td>
+                                            <td width="30%" style={{ textAlign: 'center' }}>
+                                                {dataGrouper.special_investigation_code}
+                                            </td>
+                                            <td width="30%" style={{ textAlign: 'right' }}>
+                                                <FormatRupiah value={dataGrouper.special_investigation_tarif} />
+                                            </td>
                                         </tr>
-
-
                                         <tr>
                                             <td width={"15%"}>Special Drug</td>
-                                            <td width={"35%"} style={{ textAlign: 'left' }}>-</td>
-                                            <td width={"30%"} style={{ textAlign: 'center' }}>-</td>
-                                            <td width={"30%"} style={{ textAlign: 'right' }}>Rp 0 </td>
-
+                                            <td width="35%" style={{ textAlign: 'left' }}>
+                                                {dataGrouper.special_drug_description}
+                                            </td>
+                                            <td width="30%" style={{ textAlign: 'center' }}>
+                                                {dataGrouper.special_drug_code}
+                                            </td>
+                                            <td width="30%" style={{ textAlign: 'right' }}>
+                                                <FormatRupiah value={dataGrouper.special_drug_tarif} />
+                                            </td>
                                         </tr>
-
                                         <tr>
                                             <td width={"15%"}>Status DC Kemkes</td>
-                                            <td width={"35%"} style={{ textAlign: 'left' }}>Klaim belum terkirim ke Pusat Data Kementerian Kesehatan</td>
-                                            <td width={"30%"} style={{ textAlign: 'center' }}></td>
-                                            <td width={"30%"} style={{ textAlign: 'right' }}>Rp 0 </td>
+                                            <td colSpan={3} style={{ textAlign: 'left' }}>{dataGrouper.kemenkes_dc_status_cd}</td>
+
 
                                         </tr>
 
                                         <tr>
                                             <td width={"15%"}>Status Klaim</td>
-                                            <td width={"35%"} style={{ textAlign: 'left' }}>-</td>
-                                            <td width={"30%"} style={{ textAlign: 'center' }}></td>
-                                            <td width={"30%"} style={{ textAlign: 'right' }}>Rp 0 </td>
-
+                                            <td colSpan={3} style={{ textAlign: 'left' }}>{dataGrouper.klaim_status_cd}</td>
                                         </tr>
-
-
                                         <tr>
                                             <td width={"15%"}></td>
                                             <td width={"35%"} style={{ textAlign: 'left' }}></td>
@@ -2393,8 +2529,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk,Jaminan, DPJP
             diastole: diastole,
             is_tb: pasienTB,
             nomor_register_sitb: nomorRegister,
-            tarif_poli_eks: tarifs.tarif_poli_eks
-
+            tarif_poli_eks: tarifs.tarif_poli_eks,
+            jaminan_id:selectedJaminan
         };
         axios.post(route('updateNewKlaim'), payload)
             .then((response) => {
@@ -2442,7 +2578,12 @@ export default function Dashboard({ auth, model, pasien, caraMasuk,Jaminan, DPJP
 
                 } else {
                     toast.current.show({ severity: 'success', summary: `Data  Berhasil Di Grouping`, detail: datas.noSep, life: 3000 });
-                    setDataGrouper(response.data.data);
+                    let grouping_res = {
+                        group_description: response.data.data.cbg?.description || '-',
+                        group_code : response.data.data.cbg?.code || '-',
+                        group_tarif : response.data.data.cbg?.base_tariff || 0
+                    };
+                    setDataGrouper(grouping_res);
 
                 }
 

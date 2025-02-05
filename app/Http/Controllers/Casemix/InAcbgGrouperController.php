@@ -10,6 +10,7 @@ use App\Http\Services\MonitoringHistoryService;
 use App\Http\Services\Action\SaveDataKlaimService;
 
 use App\Http\Services\SearchSepService;
+use App\Models\CarabayarM;
 use App\Models\CaraKeluarM;
 use App\Models\LaporanresepR;
 use App\Models\PasienMordibitasR;
@@ -249,7 +250,8 @@ class InAcbgGrouperController extends Controller
         $total_tarif_rs = $request->input(key: "total_tarif_rs") ?? "";
         $berat_lahir = $request->input(key: "berat_lahir") ?? "";
 
-
+        $jaminan_id = $request->input(key: "jaminan_id") ?? "";
+        $carabayar = CarabayarM::getCarabayarById($jaminan_id);
 
         // dd($years);
         // Structur Payload 
@@ -303,7 +305,9 @@ class InAcbgGrouperController extends Controller
             'payor_cd' => $payor_cd,
             'cob_cd' => $cob_cd,
             'coder_nik' => $coder_nik,
-            'loginpemakai_id' => $loginpemakai_id
+            'loginpemakai_id' => $loginpemakai_id,
+            'jaminan_id' => $carabayar->carabayar_id,
+            'jaminan_nama' => $carabayar->carabayar_nama
         ];
 
         // Payload Pendaftaran 
@@ -705,7 +709,7 @@ class InAcbgGrouperController extends Controller
         // for dropdown
         $caraMasuk = LookupM::getLookupType('inacbgs_caramasuk');
         $caraPulang = CaraKeluarM::getDataListKeluar();
-        $Jaminan = LookupM::getLookupType('jaminanklaim');
+        $Jaminan = CarabayarM::getCarabayar();
 
         $jenisKasus = LookupM::getLookupType('kasusdiagnosa');
         $kelompokDiagnosa = KelompokdiagnosaM::getKelompokDiagnosa();
