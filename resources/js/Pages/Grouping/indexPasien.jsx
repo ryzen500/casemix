@@ -875,7 +875,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk,Jaminan, DPJP
 
                         }
                         setCaraMasuk(response.data.inacbg.hak_kelasrawat_inacbg);
-                        setCOB(response.data.inacbg.cob_id);
+                        // setCOB(response.data.inacbg.cob_id);
                         // setPendaftarans(setPendaftaran)
                         setPendaftarans((prevTotal) => ({
                             ...prevTotal,
