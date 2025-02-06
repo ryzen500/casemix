@@ -2341,10 +2341,10 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                             <button className="btn btn-primary" style={{ float: 'right' }} onClick={handleSimpanKlaim}>
                                                 Simpan
                                             </button>
-                                            <button className="btn btn-secondary ml-2" style={{ float: 'right' }} onClick={handleSimpanGroupingStage1}>
+                                            <button className="btn btn-primary ml-2" style={{ float: 'right' }} onClick={handleSimpanGroupingStage1}>
                                                 Groupper
                                             </button>
-                                            <button className="btn btn-secondary ml-2" style={{ float: 'right' }} onClick={handleHapusKlaim}>
+                                            <button className="btn btn-danger ml-2" style={{ float: 'right' }} onClick={handleHapusKlaim}>
                                                 Hapus Klaim
                                             </button>
                                         </>
@@ -2359,7 +2359,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                     <table className='table table-bordered' style={{ border: ' 1px solid black', width: '100%' }}>
                                         <tbody>
                                             <tr>
-                                                <td colSpan={4}><p className='text-center'>Hasil Grouper E-Klaim v5 </p></td>
+                                                <td colSpan={4}><p className='text-center font-bold'>Hasil Grouper E-Klaim v5 </p></td>
                                             </tr>
                                             <tr>
                                                 <td width={"15%"}  style={{ textAlign: 'right',paddingLeft:'10px;' }}>Info</td>
@@ -2497,7 +2497,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                     <table className='table table-bordered' style={{ border: ' 1px solid black', width: '100%' }}>
                                         <tbody>
                                             <tr>
-                                                <td colSpan={4}><p className='text-center'>Hasil Grouper E-Klaim v6 </p></td>
+                                                <td colSpan={4}><p className='text-center font-bold'>Hasil Grouper E-Klaim v6 </p></td>
                                             </tr>
                                             <tr>
                                                 <td width={"15%"} style={{ textAlign: 'right',paddingLeft:'10px;' }}>Info</td>
