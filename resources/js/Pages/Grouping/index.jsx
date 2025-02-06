@@ -6,6 +6,8 @@ import { Button } from 'primereact/button';
 import { OverlayPanel } from 'primereact/overlaypanel';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
+import { ColumnGroup } from 'primereact/columngroup';
+import { Row } from 'primereact/row';
 import { Toast } from 'primereact/toast';
 
 export default function CodingGrouping({ auth, pagination, data }) {
@@ -26,7 +28,7 @@ export default function CodingGrouping({ auth, pagination, data }) {
     });
     const [lazyState, setLazyState] = useState({
         first: 0,
-        rows: 10,
+        rows: 100,
         page: 0,
         sortField: null,
         sortOrder: null,
@@ -45,12 +47,84 @@ export default function CodingGrouping({ auth, pagination, data }) {
     useEffect(() => {
         isMounted.current = true;
         handleSearch();
+        loadLazyData();
+
         // ProductService.getProductsSmall().then((data) => setProducts(data));
-    }, [lazyParams]);
+    }, [lazyParams,lazyState]);
     const onProductSelect = (e) => {
         setSelectedProduct(e.value);
     };
 
+    const [users, setUsers] = useState([]);
+    const [paginations, setPaginations] = useState([]);
+    const headerGroup = (
+        <ColumnGroup>
+
+
+            <Row>
+
+                <Column header="No" rowSpan={2} />
+                <Column header="Tanggal Masuk" rowSpan={2} />
+                <Column header="Tanggal Pulang" rowSpan={2} />
+                <Column header="No SEP" rowSpan={2} />
+                <Column header="Nama Pasien" rowSpan={2} />
+                <Column header="INACBG" colSpan={2} style={{ textAlign: "center" }} />
+                <Column header="Billing RS" rowSpan={2} />
+                <Column header="Rawat" rowSpan={2} />
+                <Column header="Status Klaim" rowSpan={2} />
+                <Column header="Petugas" rowSpan={2} />
+
+            </Row>
+            <Row>
+                <Column header="Kode" />
+                <Column header="Tarif Total" />
+            </Row>
+        </ColumnGroup>
+    );
+    let networkTimeout = null;
+
+    const tglMasukBody = (rowData) => {
+        return (
+        <>
+        <a   style={{ textDecoration: 'underline',color :'blue' }}  href={route('searchGroupperPasien',rowData.nokartuasuransi)} className="submenu-item">{rowData.tgl_masuk} </a>
+        </>)
+        ;
+
+    };
+
+    const tglPulangBody = (rowData) => {
+        return rowData.tgl_pulang;
+    };
+
+    // Fetch lazy data
+    const loadLazyData = () => {
+        setLoading(true);
+
+        if (networkTimeout) {
+            clearTimeout(networkTimeout);
+        }
+
+        networkTimeout = setTimeout(() => {
+            const fetchUrl = `${route("getSearchGroupper")}/?page=${lazyState.page + 1}&per_page=${lazyState.rows}`;            
+            axios.post(fetchUrl, formData)
+                .then((response) => {
+                    setUsers(response.data.data); // The actual data from the API
+                    setPaginations(response.data.pagination);
+                    // setTotalRecords(response.data.totalRecords);
+                    setLoading(false);
+                })
+                .catch((error) => {
+                    console.error("Error fetching data:", error);
+                    setLoading(false);
+                });
+        }, Math.random() * 1000 + 250); // Simulate a delay
+    };
+    const onPageTable = (event) => {
+        setLazyState(event);
+    };
+    const rowNumberTemplate = (rowData, { rowIndex }) => {
+        return <>{rowIndex + 1}</>; // rowIndex is 0-based, so we add 1 to start from 1
+    };
     const handleClick = (event) => {
         // Show the overlay relative to the clicked element
         op.current.toggle(event, event.currentTarget);
@@ -88,17 +162,25 @@ export default function CodingGrouping({ auth, pagination, data }) {
         event.page = event.page+1;
         setLazyParams(event);
     };
+    // Handle pagination event
+    const onPage2 = (event) => {
+        event.page = event.page;
+        setLazyState(event);
+    };
     const props = usePage().props;
+    // set default date now
+    const currentDate = new Date();
+    const formattedDate = currentDate.toISOString().split('T')[0];
     // State to handle form data
     const [formData, setFormData] = useState({
         _token: props.csrf_token, 
         query: '',
-        tanggal_mulai: '',
-        tanggal_selesai: '',
-        periode: '',
+        tanggal_mulai: formattedDate,
+        tanggal_selesai: formattedDate,
+        periode: 'tanggal_pulang',
         jenisRawat: '',
         statusKlaim: '',
-        kelasRawat: '',
+        kelasRawat: 'Semua Kelas',
         metodePembayaran: ''
     });
 
@@ -134,9 +216,14 @@ export default function CodingGrouping({ auth, pagination, data }) {
         console.log('Form Data Submitted:', formData);
 
         // Perform API request with axios
-        axios.post(route('getSearchGroupper'), formData)
+        const fetchUrl = `${route("getSearchGroupper")}/?page=${1}&per_page=${lazyState.rows}`;            
+
+        axios.post(fetchUrl, formData)
             .then((response) => {
-                console.log('Response:', response.data);
+                setUsers(response.data.data); // The actual data from the API
+                setPaginations(response.data.pagination);
+                // setTotalRecords(response.data.totalRecords);
+                setLoading(false);
                 // Handle the response from the backend
             })
             .catch((error) => {
@@ -325,19 +412,21 @@ export default function CodingGrouping({ auth, pagination, data }) {
                                                     <div className="form-check mr-2">
                                                         <input type="radio" name="kelasRawat" className="form-check-input"
                                                             value={formData.kelasRawat}
+                                                            checked={formData.kelasRawat === "1"}
                                                             onChange={handleInputChange} />
                                                         <label className="form-check-label">Kelas 1</label>
                                                     </div>
                                                     <div className="form-check mr-2">
                                                         <input type="radio" name="kelasRawat" className="form-check-input"
                                                             value={formData.kelasRawat}
-
+                                                            checked={formData.kelasRawat === "2"}
                                                             onChange={handleInputChange} />
                                                         <label className="form-check-label">Kelas 2</label>
                                                     </div>
                                                     <div className="form-check mr-2">
                                                         <input type="radio" name="kelasRawat" className="form-check-input"
                                                             value={formData.kelasRawat}
+                                                            checked={formData.kelasRawat === "3"}
 
                                                             onChange={handleInputChange} />
                                                         <label className="form-check-label">Kelas 3</label>
@@ -345,6 +434,7 @@ export default function CodingGrouping({ auth, pagination, data }) {
                                                     <div className="form-check">
                                                         <input type="radio" name="kelasRawat" className="form-check-input"
                                                             value={formData.kelasRawat}
+                                                            checked={formData.kelasRawat === "Semua Kelas"}
 
                                                             onChange={handleInputChange} />
                                                         <label className="form-check-label">Semua Kelas</label>
@@ -371,7 +461,7 @@ export default function CodingGrouping({ auth, pagination, data }) {
                                     <div className="row">
                                         {/* Buttons */}
                                         <div className="col-md-6 d-flex align-items-end">
-                                            <button className="btn btn-primary">Cari</button>
+                                            <button className="btn btn-primary" onClick={handleSave}>Cari</button>
                                             <button className="btn btn-secondary ml-2" onClick={toggleCriteria}>Tutup</button>
                                         </div>
                                     </div>
@@ -393,6 +483,40 @@ export default function CodingGrouping({ auth, pagination, data }) {
                             <div className="card-body">
                                 <div className="table-responsive">
                                     {/* <DataTable url="/getSearchGroupper" columns={columns} /> */}
+                                    <DataTable
+                                        paginator
+                                        dataKey="idq"
+                                        first={lazyState.first}
+                                        rows={parseInt(paginations.items_per_page)}
+                                        totalRecords={paginations.total_items}
+                                        headerColumnGroup={headerGroup}
+                                        lazy
+                                        value={users}
+                                        loading={loading}
+                                        stripedRows
+                                        rowsPerPageOptions={[100, 200, 300]}
+                                        onPage={onPage2}
+                                    >
+                                        <Column body={rowNumberTemplate} header="No." style={{ width: '50px', alignItems: 'center' }} />
+                                        <Column header="Tanggal Masuk" body={tglMasukBody} style={{ alignItems: 'center' }} ></Column>
+                                        <Column header="Tanggal Pulang" body={tglPulangBody} style={{ alignItems: 'center' }} ></Column>
+                                        <Column field="nosep"    body={(rowData) => (
+                                                <>
+                                                {rowData.nosep} <br /> {rowData.nokartuasuransi}
+                                                </>
+                                            )}  header="No SEP" style={{ alignItems: 'center' }} ></Column>
+                                        <Column field="nama_pasien"    body={(rowData) => (
+                                                <>
+                                                {rowData.nama_pasien} <br /> {rowData.no_rekam_medik}
+                                                </>
+                                            )}  header="Pasien" style={{ alignItems: 'center' }} ></Column>
+                                        <Column field="kodeprosedur" header="Kode" style={{ alignItems: 'center' }} ></Column>
+                                        <Column field="plafonprosedur" header="Tarif Total" style={{ alignItems: 'center' }} ></Column>
+                                        <Column field="total_tarif_rs" header="Billing RS" style={{ alignItems: 'center' }} ></Column>
+                                        <Column field="jnspelayanan" header="Rawat" style={{ alignItems: 'center' }} ></Column>
+                                        <Column field="status" header="Status Klaim" style={{ alignItems: 'center' }} ></Column>
+                                        <Column field="nama_pegawai" header="Petugas" style={{ alignItems: 'center' }} ></Column>
+                                    </DataTable>
                                 </div>
                             </div>
                         </div>
