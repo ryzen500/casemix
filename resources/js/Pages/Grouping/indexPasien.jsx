@@ -20,7 +20,7 @@ import { AutoComplete } from 'primereact/autocomplete';
 import { InputNumber } from 'primereact/inputnumber';
 import { Calendar } from 'primereact/calendar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faHome, faCog, faEllipsis, faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import { faUser, faHome, faCog, faEllipsis, faArrowLeft, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 
 export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJP, jenisKasus, pegawai, kelompokDiagnosa, COB, caraPulang }) {
     const [datas, setDatas] = useState([]);
@@ -58,29 +58,29 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
 
     const [dataGrouper, setDataGrouper] = useState({
         group_description: '-',
-        group_code : '-',
-        group_tarif : 0,
+        group_code: '-',
+        group_tarif: 0,
         sub_acute_description: '-',
-        sub_acute_code : '-',
-        sub_acute_tarif : 0,
+        sub_acute_code: '-',
+        sub_acute_tarif: 0,
         chronic_description: '-',
-        chronic_code : '-',
-        chronic_tarif : 0,
+        chronic_code: '-',
+        chronic_tarif: 0,
         special_procedure_description: '-',
-        special_procedure_code : '-',
-        special_procedure_tarif : 0,
+        special_procedure_code: '-',
+        special_procedure_tarif: 0,
         special_prosthesis_description: '-',
-        special_prosthesis_code : '-',
-        special_prosthesis_tarif : 0,
+        special_prosthesis_code: '-',
+        special_prosthesis_tarif: 0,
         special_investigation_description: '-',
-        special_investigation_code : '-',
-        special_investigation_tarif : 0,
+        special_investigation_code: '-',
+        special_investigation_tarif: 0,
         special_drug_description: '-',
-        special_drug_code : '-',
-        special_drug_tarif : 0,
-        kemenkes_dc_status_cd :'',
-        klaim_status_cd : '',
-        total : 0
+        special_drug_code: '-',
+        special_drug_tarif: 0,
+        kemenkes_dc_status_cd: '',
+        klaim_status_cd: '',
+        total: 0
     });
 
     const [dataFinalisasi, setDataFinalisasi] = useState([]);
@@ -117,6 +117,9 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
     const [total, setTotal] = useState(0);
     const [totalGrouper, setTotalGrouper] = useState(0);
 
+    const handleBackClick = () => {
+        window.history.back();
+    };
     const [profils, setProfil] = useState([]);
     const [selectedCaraMasuk, setCaraMasuk] = useState({});
     const [selectedCaraPulang, setCaraPulang] = useState({});
@@ -187,7 +190,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
         setCaraPulang("1");
         console.log("Cara Pulang ", selectedCaraPulang);
         calculate_total_grouper();
-    }, [tarifs, obats,dataGrouper]);
+    }, [tarifs, obats, dataGrouper]);
 
     // Function to fetch data from API
     const fetchSuggestions = async (query) => {
@@ -826,6 +829,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
 
                     setDPJP(defaultDPJP || null);
 
+                    setJaminan(response.data.pendaftaran.carabayar_id);
+
 
                     const defaultCaraPulang = caraPulang.find(
                         (carapulang) => carapulang.value === "1"
@@ -841,40 +846,40 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                     setDataIcd9cm(response.data.dataIcd9cm);
                     setDataIcd9cmINA(response.data.dataIcd9cm);
 
-                    if(response.data.inacbg !== null){
+                    if (response.data.inacbg !== null) {
                         let setTarifInacbg = {
                             total: 0,
-                            prosedurenonbedah: response.data.inacbg.tarif_prosedur_nonbedah ||0,
-                            prosedurebedah: response.data.inacbg.tarif_prosedur_bedah ||0,
-                            konsultasi:  response.data.inacbg.tarif_konsultasi ||0,
-                            tenagaahli: response.data.inacbg.tarif_tenaga_ahli ||0,
-                            keperawatan: response.data.inacbg.tarif_keperawatan ||0,
-                            penunjang: response.data.inacbg.tarif_penunjang ||0,
-                            radiologi:  response.data.inacbg.tarif_radiologi ||0,
-                            laboratorium:  response.data.inacbg.tarif_laboratorium ||0,
-                            pelayanandarah:  response.data.inacbg.tarif_pelayanan_darah ||0,
-                            rehabilitasi: response.data.inacbg.tarif_rehabilitasi ||0,
-                            kamar_akomodasi: response.data.inacbg.tarif_akomodasi ||0,
-                            rawatintensif:  response.data.inacbg.tarif_rawat_intensif ||0,
+                            prosedurenonbedah: response.data.inacbg.tarif_prosedur_nonbedah || 0,
+                            prosedurebedah: response.data.inacbg.tarif_prosedur_bedah || 0,
+                            konsultasi: response.data.inacbg.tarif_konsultasi || 0,
+                            tenagaahli: response.data.inacbg.tarif_tenaga_ahli || 0,
+                            keperawatan: response.data.inacbg.tarif_keperawatan || 0,
+                            penunjang: response.data.inacbg.tarif_penunjang || 0,
+                            radiologi: response.data.inacbg.tarif_radiologi || 0,
+                            laboratorium: response.data.inacbg.tarif_laboratorium || 0,
+                            pelayanandarah: response.data.inacbg.tarif_pelayanan_darah || 0,
+                            rehabilitasi: response.data.inacbg.tarif_rehabilitasi || 0,
+                            kamar_akomodasi: response.data.inacbg.tarif_akomodasi || 0,
+                            rawatintensif: response.data.inacbg.tarif_rawat_intensif || 0,
                         };
                         let setObatInacbg = {
                             total: 0,
                             obat: response.data.inacbg.tarif_obat || 0,
-                            obatkronis: response.data.inacbg.tarif_obat_kronis ||0,
-                            obatkemoterapi: response.data.inacbg.tarif_obat_kemoterapi ||0,
-                            alkes: response.data.inacbg.tarif_alkes ||0,
-                            bmhp: response.data.inacbg.tarif_bhp ||0,
-                            sewaalat: response.data.inacbg.tarif_sewa_alat ||0,
+                            obatkronis: response.data.inacbg.tarif_obat_kronis || 0,
+                            obatkemoterapi: response.data.inacbg.tarif_obat_kemoterapi || 0,
+                            alkes: response.data.inacbg.tarif_alkes || 0,
+                            bmhp: response.data.inacbg.tarif_bhp || 0,
+                            sewaalat: response.data.inacbg.tarif_sewa_alat || 0,
                         };
                         let setKlinis = {
-                            sistole	: response.data.inacbg.sistole,
-                            diastole	:response.data.inacbg.diastole,
+                            sistole: response.data.inacbg.sistole,
+                            diastole: response.data.inacbg.diastole,
                         };
                         let pendaftaran_data = {
-                            tanggal_masuk : response.data.inacbg.tglrawat_masuk,
-                            tanggal_pulang : response.data.inacbg.tglrawat_masuk,
-                            umur : response.data.inacbg.umur_pasien,
-                            pendaftaran_id : response.data.inacbg.pendaftaran_id,
+                            tanggal_masuk: response.data.inacbg.tglrawat_masuk,
+                            tanggal_pulang: response.data.inacbg.tglrawat_masuk,
+                            umur: response.data.inacbg.umur_pasien,
+                            pendaftaran_id: response.data.inacbg.pendaftaran_id,
 
                         }
                         setCaraMasuk(response.data.inacbg.hak_kelasrawat_inacbg);
@@ -882,10 +887,10 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                         // setPendaftarans(setPendaftaran)
                         setPendaftarans((prevTotal) => ({
                             ...prevTotal,
-                            tanggal_masuk : response.data.inacbg.tglrawat_masuk,
-                            tanggal_pulang : response.data.inacbg.tglrawat_masuk,
-                            umur : response.data.inacbg.umur_pasien,
-                            pendaftaran_id : response.data.inacbg.pendaftaran_id,// Update the specific field dynamically
+                            tanggal_masuk: response.data.inacbg.tglrawat_masuk,
+                            tanggal_pulang: response.data.inacbg.tglrawat_masuk,
+                            umur: response.data.inacbg.umur_pasien,
+                            pendaftaran_id: response.data.inacbg.pendaftaran_id,// Update the specific field dynamically
                         }));
                         setTarifs(setTarifInacbg);
                         setObats(setObatInacbg);
@@ -894,13 +899,13 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                         setBeratLahir(response.data.inacbg.berat_lahir);
                         setCaraPulang(response.data.inacbg.cara_pulang);
                         // setDPJP(response.data.inacbg.nama_dpjp);
-                    }else{
+                    } else {
                         let setKlinis = {
-                            sistole	 : 0,
-                            diastole : 0,
+                            sistole: 0,
+                            diastole: 0,
                         };
                         setTarifs(response.data.tarif);
-                        if(response.data.obat!==null){
+                        if (response.data.obat !== null) {
                             setObats(response.data.obat);
                         }
                         setSistole(setKlinis);
@@ -920,16 +925,16 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                             total: 0,
                             prosedurenonbedah: response.data.getGrouping.data.data.tarif_rs.prosedur_non_bedah,
                             prosedurebedah: response.data.getGrouping.data.data.tarif_rs.prosedur_bedah,
-                            konsultasi:  response.data.getGrouping.data.data.tarif_rs.konsultasi,
+                            konsultasi: response.data.getGrouping.data.data.tarif_rs.konsultasi,
                             tenagaahli: response.data.getGrouping.data.data.tarif_rs.tenaga_ahli,
                             keperawatan: response.data.getGrouping.data.data.tarif_rs.keperawatan,
                             penunjang: response.data.getGrouping.data.data.tarif_rs.penunjang,
-                            radiologi:  response.data.getGrouping.data.data.tarif_rs.radiologi,
-                            laboratorium:  response.data.getGrouping.data.data.tarif_rs.laboratorium,
-                            pelayanandarah:  response.data.getGrouping.data.data.tarif_rs.pelayanan_darah,
+                            radiologi: response.data.getGrouping.data.data.tarif_rs.radiologi,
+                            laboratorium: response.data.getGrouping.data.data.tarif_rs.laboratorium,
+                            pelayanandarah: response.data.getGrouping.data.data.tarif_rs.pelayanan_darah,
                             rehabilitasi: response.data.getGrouping.data.data.tarif_rs.rehabilitasi,
                             kamar_akomodasi: response.data.getGrouping.data.data.tarif_rs.kamar,
-                            rawatintensif:  response.data.getGrouping.data.data.tarif_rs.rawat_intensif,
+                            rawatintensif: response.data.getGrouping.data.data.tarif_rs.rawat_intensif,
                         };
                         let setObatGrouping = {
                             total: 0,
@@ -1035,9 +1040,9 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
     }
     const calculate_total_grouper = () => {
         const total_all = (
-            parseFloat(dataGrouper.group_tarif  || 0) + parseFloat(dataGrouper.sub_acute_tarif  || 0) + parseFloat(dataGrouper.chronic_tarif   || 0) 
-            + parseFloat(dataGrouper.special_procedure_tarif    || 0)  + parseFloat(dataGrouper.special_prosthesis_tarif     || 0)
-            + parseFloat(dataGrouper.special_investigation_tarif  || 0) + parseFloat(dataGrouper.special_drug_tarif || 0) );
+            parseFloat(dataGrouper.group_tarif || 0) + parseFloat(dataGrouper.sub_acute_tarif || 0) + parseFloat(dataGrouper.chronic_tarif || 0)
+            + parseFloat(dataGrouper.special_procedure_tarif || 0) + parseFloat(dataGrouper.special_prosthesis_tarif || 0)
+            + parseFloat(dataGrouper.special_investigation_tarif || 0) + parseFloat(dataGrouper.special_drug_tarif || 0));
         const name = 'total'; // Get name and value from the event
         // return total_all;
         setTotalGrouper((prevTotal) => ({
@@ -1305,7 +1310,9 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                         <td>LOS</td>
                                         <td colSpan={2}>
                                             <InputNumber
-                                                value={dataGrouping ? (dataGrouping.los ? parseFloat(dataGrouping.los) : 0) : 0}
+                                                value={pendaftarans && dataGrouping ?
+                                                    (dataGrouping.tanggal_masuk === dataGrouping.tanggal_pulang ? 1 : (dataGrouping.los ? parseFloat(dataGrouping.los) :   Math.ceil((new Date(dataGrouping.tanggal_pulang) - new Date(dataGrouping.tanggal_masuk)) / (1000 * 3600 * 24))))
+                                                    :   Math.ceil((new Date(dataGrouping.tanggal_pulang) - new Date(dataGrouping.tanggal_masuk)) / (1000 * 3600 * 24))}
 
                                                 onValueChange={handleValueChange}
                                                 locale="id-ID" // Set the locale for Indonesia (Rupiah)
@@ -2590,7 +2597,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
             adl_sub_acute: dataGrouping.adl_sub_acute ? dataGrouping.adl_sub_acute : 0,
             adl_chronic: dataGrouping.adl_chronic ? dataGrouping.adl_chronic : 0,
             los: dataGrouping.los ? dataGrouping.los : 0,
-            jaminan_id:selectedJaminan
+            jaminan_id: selectedJaminan
         };
         axios.post(route('updateNewKlaim'), payload)
             .then((response) => {
@@ -2647,8 +2654,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                     setDataGrouper((prevTotal) => ({
                         ...prevTotal,
                         group_description: response.data.data.cbg?.description || '-',
-                        group_code : response.data.data.cbg?.code || '-',
-                        group_tarif : response.data.data.cbg?.base_tariff || 0// Update the specific field dynamically
+                        group_code: response.data.data.cbg?.code || '-',
+                        group_tarif: response.data.data.cbg?.base_tariff || 0// Update the specific field dynamically
                     }));
                 }
 
@@ -2842,9 +2849,26 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
             user={auth.user}
         >
             <>
-                <div className="card">
+                <div className="card ">
+
                     <BreadCrumb model={items} separatorIcon={<FontAwesomeIcon icon={faEllipsis} />} />
+
+                    <div className='p-4 flex items-center space-x-3 bg-gray-100'>
+                        {/* Button dengan fa-arrow-left */}
+                        <button
+                            onClick={handleBackClick}
+                            className="flex items-center justify-center p-2 rounded bg-gray-200 hover:bg-gray-300 transition">
+                            <FontAwesomeIcon icon={faArrowLeft} />
+                        </button>
+
+
+                    </div>
+
+
+                    {/* Breadcrumb Component */}
                 </div>
+
+
                 <Card>
                     <Toast ref={toast} />
                     <DataTable value={model} expandedRows={expandedRows} onRowToggle={(e) => setExpandedRows(e.data)}
