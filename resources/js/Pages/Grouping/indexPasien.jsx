@@ -83,6 +83,14 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
         total: 0
     });
 
+    const [dataGrouperv6, setDataGrouperv6] = useState({
+        mdc_number: '-',
+        mdc_description: '-',
+        drg_code: '-',
+        drg_description: '-',
+
+        total: 0
+    });
     const [dataFinalisasi, setDataFinalisasi] = useState([]);
 
     // const [tarifs, setTarifs] = useState([]);
@@ -2488,7 +2496,39 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
 
 
                                     </table>
-
+                                    <table className='table table-bordered' style={{ border: ' 1px solid black', width: '100%' }}>
+                                        <tbody>
+                                            <tr>
+                                                <td colSpan={4}><p className='text-center'>Hasil Grouper E-Klaim v6 </p></td>
+                                            </tr>
+                                            <tr>
+                                                <td width={"15%"} style={{ textAlign: 'right',paddingLeft:'10px;' }}>Info</td>
+                                                <td width={"35%"} style={{ textAlign: 'left' }} colSpan={3} >{dataGrouping.coder_nm}</td>
+                                            </tr>
+                                            <tr>
+                                                <td width={"15%"} style={{ textAlign: 'right',paddingLeft:'10px;' }}>Jenis Rawat</td>
+                                                <td width={"35%"} style={{ textAlign: 'left' }} colSpan={3}>Rawat Jalan Regular </td>
+                                            </tr>
+                                            <tr>
+                                                <td width={"15%"} style={{ textAlign: 'right',paddingLeft:'10px;' }}>MDC</td>
+                                                <td width="35%" style={{ textAlign: 'left',paddingRight:'10px;' }} colSpan={2}>
+                                                    {dataGrouperv6.mdc_description}
+                                                </td>
+                                                <td width="30%" style={{ textAlign: 'left',paddingRight:'10px;' }}>
+                                                    {dataGrouperv6.mdc_number}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td width={"15%"} style={{ textAlign: 'right',paddingLeft:'10px;' }}>DRG</td>
+                                                <td width="35%" style={{ textAlign: 'left',paddingRight:'10px;' }} colSpan={2}>
+                                                    {dataGrouperv6.drg_description}
+                                                </td>
+                                                <td width="30%" style={{ textAlign: 'left',paddingRight:'10px;' }}>
+                                                    {dataGrouperv6.drg_code}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                     {/* Button Finalisasi */}
                                     <div className="col-md-12 d-flex mb-3">
                                         {!dataFinalisasi.is_finalisasi && (
@@ -2658,10 +2698,11 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                     // setDataGrouper(grouping_res);
                     setDataGrouper((prevTotal) => ({
                         ...prevTotal,
-                        group_description: response.data.data.cbg?.description || '-',
-                        group_code: response.data.data.cbg?.code || '-',
-                        group_tarif: response.data.data.cbg?.base_tariff || 0// Update the specific field dynamically
+                        group_description: response.data.data.response.cbg?.description || '-',
+                        group_code: response.data.data.response.cbg?.code || '-',
+                        group_tarif: response.data.data.response.cbg?.base_tariff || 0
                     }));
+                    setDataGrouperv6(response.data.data.response_inagrouper);
                 }
 
                 // Handle the response from the backend
