@@ -115,6 +115,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
         sewaalat: 0,
     });
     const [total, setTotal] = useState(0);
+    const [totalGrouper, setTotalGrouper] = useState(0);
+
     const [profils, setProfil] = useState([]);
     const [selectedCaraMasuk, setCaraMasuk] = useState({});
     const [selectedCaraPulang, setCaraPulang] = useState({});
@@ -831,7 +833,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
 
                     console.log("Default cara pulang ", defaultCaraPulang);
                     setCaraPulang(defaultCaraPulang || null);
-                    setDataFinalisasi(response.data.inacbg)
+                    setDataFinalisasi(response.data.inacbg || false)
                     setPendaftarans(response.data.pendaftaran);
                     setProfil(response.data.profil);
                     setDiagnosa(response.data.dataDiagnosa);
@@ -842,37 +844,37 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                     if(response.data.inacbg !== null){
                         let setTarifInacbg = {
                             total: 0,
-                            prosedurenonbedah: response.data.inacbg.tarif_prosedur_nonbedah,
-                            prosedurebedah: response.data.inacbg.tarif_prosedur_bedah,
-                            konsultasi:  response.data.inacbg.tarif_konsultasi,
-                            tenagaahli: response.data.inacbg.tarif_tenaga_ahli,
-                            keperawatan: response.data.inacbg.tarif_keperawatan,
-                            penunjang: response.data.inacbg.tarif_penunjang,
-                            radiologi:  response.data.inacbg.tarif_radiologi,
-                            laboratorium:  response.data.inacbg.tarif_laboratorium,
-                            pelayanandarah:  response.data.inacbg.tarif_pelayanan_darah,
-                            rehabilitasi: response.data.inacbg.tarif_rehabilitasi,
-                            kamar_akomodasi: response.data.inacbg.tarif_akomodasi,
-                            rawatintensif:  response.data.inacbg.tarif_rawat_intensif,
+                            prosedurenonbedah: response.data.inacbg.tarif_prosedur_nonbedah ||0,
+                            prosedurebedah: response.data.inacbg.tarif_prosedur_bedah ||0,
+                            konsultasi:  response.data.inacbg.tarif_konsultasi ||0,
+                            tenagaahli: response.data.inacbg.tarif_tenaga_ahli ||0,
+                            keperawatan: response.data.inacbg.tarif_keperawatan ||0,
+                            penunjang: response.data.inacbg.tarif_penunjang ||0,
+                            radiologi:  response.data.inacbg.tarif_radiologi ||0,
+                            laboratorium:  response.data.inacbg.tarif_laboratorium ||0,
+                            pelayanandarah:  response.data.inacbg.tarif_pelayanan_darah ||0,
+                            rehabilitasi: response.data.inacbg.tarif_rehabilitasi ||0,
+                            kamar_akomodasi: response.data.inacbg.tarif_akomodasi ||0,
+                            rawatintensif:  response.data.inacbg.tarif_rawat_intensif ||0,
                         };
                         let setObatInacbg = {
                             total: 0,
-                            obat: response.data.inacbg.tarif_obat,
-                            obatkronis: response.data.inacbg.tarif_obat_kronis,
-                            obatkemoterapi: response.data.inacbg.tarif_obat_kemoterapi,
-                            alkes: response.data.inacbg.tarif_alkes,
-                            bmhp: response.data.inacbg.tarif_bhp,
-                            sewaalat: response.data.inacbg.tarif_sewa_alat,
+                            obat: response.data.inacbg.tarif_obat || 0,
+                            obatkronis: response.data.inacbg.tarif_obat_kronis ||0,
+                            obatkemoterapi: response.data.inacbg.tarif_obat_kemoterapi ||0,
+                            alkes: response.data.inacbg.tarif_alkes ||0,
+                            bmhp: response.data.inacbg.tarif_bhp ||0,
+                            sewaalat: response.data.inacbg.tarif_sewa_alat ||0,
                         };
                         let setKlinis = {
                             sistole	: response.data.inacbg.sistole,
                             diastole	:response.data.inacbg.diastole,
                         };
-                        let setPendaftaran = {
+                        let pendaftaran_data = {
                             tanggal_masuk : response.data.inacbg.tglrawat_masuk,
                             tanggal_pulang : response.data.inacbg.tglrawat_masuk,
                             umur : response.data.inacbg.umur_pasien,
-                            umur : response.data.inacbg.pendaftaran_id,
+                            pendaftaran_id : response.data.inacbg.pendaftaran_id,
 
                         }
                         setCaraMasuk(response.data.inacbg.hak_kelasrawat_inacbg);
@@ -898,7 +900,9 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                             diastole : 0,
                         };
                         setTarifs(response.data.tarif);
-                        setObats(response.data.obat);
+                        if(response.data.obat!==null){
+                            setObats(response.data.obat);
+                        }
                         setSistole(setKlinis);
                         setSistole(setKlinis.sistole);
                         setDiastole(setKlinis.diastole);
@@ -1036,7 +1040,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
             + parseFloat(dataGrouper.special_investigation_tarif  || 0) + parseFloat(dataGrouper.special_drug_tarif || 0) );
         const name = 'total'; // Get name and value from the event
         // return total_all;
-        setDataGrouper((prevTotal) => ({
+        setTotalGrouper((prevTotal) => ({
             ...prevTotal,
             [name]: (total_all), // Update the specific field dynamically
         }));
@@ -2466,7 +2470,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                             <td width={"15%"}></td>
                                             <td width={"35%"} style={{ textAlign: 'left' }}></td>
                                             <td width={"30%"} style={{ textAlign: 'center' }}>Total</td>
-                                            <td width={"30%"} style={{ textAlign: 'right' }}><FormatRupiah value={dataGrouper.total} /> </td>
+                                            <td width={"30%"} style={{ textAlign: 'right' }}><FormatRupiah value={totalGrouper.total} /> </td>
 
                                         </tr>
 

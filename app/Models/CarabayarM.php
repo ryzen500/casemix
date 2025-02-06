@@ -14,7 +14,7 @@ class CarabayarM extends Model
     {
         $query = DB::table('carabayar_m')
         ->select(
-            DB::raw('carabayar_nama as name,carabayar_id as value')
+            DB::raw('kode_carabayar_inacbg as name,carabayar_id as value')
         )
         ->from('carabayar_m')
         ->where('carabayar_m.carabayar_aktif', true) // Ensuring that the diagnosa is active

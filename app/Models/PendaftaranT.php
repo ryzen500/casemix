@@ -249,7 +249,7 @@ class PendaftaranT extends Model
                 DB::raw(" CASE WHEN daftartindakan_m.kelompoktindakanbpjs_id = 13 THEN tindakanpelayanan_t.tarif_tindakan ELSE 0 :: double precision END AS rawatintensif"),
                 DB::raw("0 AS bmhp"),
                 DB::raw(" pembayaranpelayanan_t.jasaembalase AS obat"),
-                DB::raw("tandabuktibayar_t.biayaadministrasi AS biayaadmin"),
+                DB::raw("CASE WHEN tandabuktibayar_t.tandabuktibayar_ID IS not null then  tandabuktibayar_t.biayaadministrasi ELSE 0 :: double precision END  AS biayaadmin"),
                 DB::raw("0 AS alkes"),
                 DB::raw("0 AS obat_kemoterapi"),
                 DB::raw("0 AS obat_kronis")
