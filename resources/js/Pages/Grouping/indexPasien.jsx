@@ -2813,7 +2813,9 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
 
                 } else {
                     toast.current.show({ severity: 'success', summary: `Data  Berhasil Di Finalisasi`, detail: datas.noSep, life: 3000 });
-
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 500); // 500 ms delay
                 }
 
                 // Handle the response from the backend
