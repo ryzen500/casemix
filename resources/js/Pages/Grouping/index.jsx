@@ -310,7 +310,7 @@ export default function CodingGrouping({ auth, pagination, data }) {
                                                 <Toast ref={toast} />
 
                                                     <Button type="button" label="Cari" onClick={handleClick} className="btn btn-secondary ml-2"  />
-                                                    <button className="btn btn-primary ml-2">Pasien Baru</button>
+                                                    {/* <button className="btn btn-primary ml-2">Pasien Baru</button> */}
                                                     <OverlayPanel ref={op} showCloseIcon closeOnEscape dismissable={false} style={{ width: '70%' }}>
                                                         <DataTable 
                                                             value={datas} 

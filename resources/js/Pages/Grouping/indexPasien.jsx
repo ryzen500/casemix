@@ -188,7 +188,6 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
 
         setCaraMasuk("gp");
         setCaraPulang("1");
-        console.log("Cara Pulang ", selectedCaraPulang);
         calculate_total_grouper();
     }, [tarifs, obats, dataGrouper]);
 
@@ -831,6 +830,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
 
                     setJaminan(response.data.pendaftaran.carabayar_id);
 
+                        setDataGrouping(response.data.getGrouping.data.data);
 
                     const defaultCaraPulang = caraPulang.find(
                         (carapulang) => carapulang.value === "1"
@@ -914,7 +914,11 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                         setBeratLahir(0)
                     }
                     if (Boolean(response.data.getGrouping.success) === false || response.data.getGrouping.data.data.grouper.response === null) {
+                      console.log("Sub 3");
+                    //   if(response.data.inacbg !== null) { 
                         setHide(true);
+
+                    //   }
                     }
                     else {
                         console.log("Sub 4")
@@ -996,7 +1000,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
         await axios.post(route('newClaim'), payload)
             .then((response) => {
                 console.log('Response:', response.data);
-                setHide(false);
+                // setHide(false);
                 if (Boolean(response.data.success) === false) {
                     // toast.current.show({ severity: 'error', summary: response.data.message, detail: datas.noSep, life: 3000 });
 
@@ -1877,7 +1881,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                     </tr>
                                 </table>
                                 {/* Checkbox Tarif */}
-                                <div className='text-center'><Checkbox></Checkbox> Menyatakan benar bahwa data tarif yang tersebut di atas adalah benar sesuai dengan kondisi yang sesungguhnya.</div>
+                                <div className='text-center'><Checkbox defaultChecked></Checkbox> Menyatakan benar bahwa data tarif yang tersebut di atas adalah benar sesuai dengan kondisi yang sesungguhnya.</div>
                                 <TabView>
                                     <TabPanel header="Coding UNU Grouper">
                                         <div className="p-datatable-header">
@@ -1889,7 +1893,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                             <thead className='p-datatable-thead'>
                                                 <tr>
                                                     <th>No</th>
-                                                    <th>Tgl. Diagnosa <br />/ Dokter<br /> / Jenis Kasus</th>
+                                                    {/* <th>Tgl. Diagnosa <br />/ Dokter<br /> / Jenis Kasus</th> */}
                                                     <th>Diagnosa Kode</th>
                                                     <th>Diagnosa Nama</th>
                                                     <th>Kelompok Diagnosa</th>
@@ -1902,7 +1906,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                         <td>
                                                             {index + 1}
                                                         </td>
-                                                        <td>
+                                                        <td style={{display:'none'}}>
                                                             {console.log(row.tgl_pendaftaran)}
                                                             <Calendar
                                                                 value={formatDateTime(row.tgl_pendaftaran)} // Pass a valid Date object
@@ -2096,8 +2100,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                         <table className="p-datatable-table">
                                             <thead className='p-datatable-thead'>
                                                 <tr>
-                                                    <th>No</th>
-                                                    <th>Tgl. Diagnosa <br />/ Dokter<br /> / Jenis Kasus</th>
+                                                    <th style={{textAlign:'center'}}>No</th>
+                                                    {/* <th>Tgl. Diagnosa <br />/ Dokter<br /> / Jenis Kasus</th> */}
                                                     <th>Diagnosa Kode</th>
                                                     <th>Diagnosa Nama</th>
                                                     <th>Kelompok Diagnosa</th>
@@ -2107,10 +2111,10 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                             <tbody>
                                                 {dataDiagnosaINA.map((row, index) => (
                                                     <tr key={index}>
-                                                        <td>
+                                                        <td style={{textAlign:'center'}}>
                                                             {index + 1}
                                                         </td>
-                                                        <td>
+                                                        <td style={{display:'none'}}>
                                                             <Calendar
                                                                 value={formatDateTime(row.tgl_pendaftaran)} // Pass a valid Date object
                                                                 //  value={row.tgl_pendaftaran} 
@@ -2465,7 +2469,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                         <tr>
                                             <td width={"15%"}>Status DC Kemkes</td>
                                             <td colSpan={3} style={{ color: (dataGrouping.kemenkes_dc_status_cd === "unsent" || dataGrouper.kemenkes_dc_status_cd === "unset") ? "red" : "black" }}>
-
+                                            {console.log("Data Grouping" , dataGrouping)}
                                                 {dataGrouper.kemenkes_dc_status_cd ? dataGrouper.kemenkes_dc_status_cd :
                                                     (dataGrouping.kemenkes_dc_status_cd === "unsent") ?
                                                         "Klaim belum terkirim ke Pusat Data Kementerian Kesehatan" : "Terkirim"}
