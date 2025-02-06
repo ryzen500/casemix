@@ -1311,8 +1311,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                         <td colSpan={2}>
                                             <InputNumber
                                                 value={pendaftarans && dataGrouping ?
-                                                    (dataGrouping.tanggal_masuk === dataGrouping.tanggal_pulang ? 1 : (dataGrouping.los ? parseFloat(dataGrouping.los) :   Math.ceil((new Date(dataGrouping.tanggal_pulang) - new Date(dataGrouping.tanggal_masuk)) / (1000 * 3600 * 24))))
-                                                    :   Math.ceil((new Date(dataGrouping.tanggal_pulang) - new Date(dataGrouping.tanggal_masuk)) / (1000 * 3600 * 24))}
+                                                    (dataGrouping.tanggal_masuk === dataGrouping.tanggal_pulang ? 1 : (dataGrouping.los ? parseFloat(dataGrouping.los) : Math.ceil((new Date(dataGrouping.tanggal_pulang) - new Date(dataGrouping.tanggal_masuk)) / (1000 * 3600 * 24))))
+                                                    : Math.ceil((new Date(dataGrouping.tanggal_pulang) - new Date(dataGrouping.tanggal_masuk)) / (1000 * 3600 * 24))}
 
                                                 onValueChange={handleValueChange}
                                                 locale="id-ID" // Set the locale for Indonesia (Rupiah)
@@ -2464,14 +2464,19 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                         </tr>
                                         <tr>
                                             <td width={"15%"}>Status DC Kemkes</td>
-                                            <td colSpan={3} style={{ textAlign: 'left' }}>{dataGrouper.kemenkes_dc_status_cd}</td>
+                                            <td colSpan={3} style={{ color: (dataGrouping.kemenkes_dc_status_cd === "unsent" || dataGrouper.kemenkes_dc_status_cd === "unset") ? "red" : "black" }}>
 
+                                                {dataGrouper.kemenkes_dc_status_cd ? dataGrouper.kemenkes_dc_status_cd :
+                                                    (dataGrouping.kemenkes_dc_status_cd === "unsent") ?
+                                                        "Klaim belum terkirim ke Pusat Data Kementerian Kesehatan" : "Terkirim"}
 
+                                            </td>
                                         </tr>
 
                                         <tr>
                                             <td width={"15%"}>Status Klaim</td>
-                                            <td colSpan={3} style={{ textAlign: 'left' }}>{dataGrouper.klaim_status_cd}</td>
+                                            <td colSpan={3} style={{ textAlign: 'left' }}>
+                                                {dataGrouper.klaim_status_cd}</td>
                                         </tr>
                                         <tr>
                                             <td width={"15%"}></td>
