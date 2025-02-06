@@ -83,6 +83,14 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
         total: 0
     });
 
+    const [dataGrouperv6, setDataGrouperv6] = useState({
+        mdc_number: '-',
+        mdc_description: '-',
+        drg_code: '-',
+        drg_description: '-',
+
+        total: 0
+    });
     const [dataFinalisasi, setDataFinalisasi] = useState([]);
 
     // const [tarifs, setTarifs] = useState([]);
@@ -2337,10 +2345,10 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                             <button className="btn btn-primary" style={{ float: 'right' }} onClick={handleSimpanKlaim}>
                                                 Simpan
                                             </button>
-                                            <button className="btn btn-secondary ml-2" style={{ float: 'right' }} onClick={handleSimpanGroupingStage1}>
+                                            <button className="btn btn-primary ml-2" style={{ float: 'right' }} onClick={handleSimpanGroupingStage1}>
                                                 Groupper
                                             </button>
-                                            <button className="btn btn-secondary ml-2" style={{ float: 'right' }} onClick={handleHapusKlaim}>
+                                            <button className="btn btn-danger ml-2" style={{ float: 'right' }} onClick={handleHapusKlaim}>
                                                 Hapus Klaim
                                             </button>
                                         </>
@@ -2353,146 +2361,176 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                 {console.log("Display", hide)}
                                 <div style={{ display: hide === true ? 'none' : 'block' }}>
                                     <table className='table table-bordered' style={{ border: ' 1px solid black', width: '100%' }}>
-                                        <tr>
-                                            <td colSpan={4}><p className='text-center'>Hasil Grouper E-Klaim v5 </p></td>
-                                        </tr>
-                                        <tr>
-                                            <td width={"15%"}>Info</td>
-                                            <td width={"35%"} style={{ textAlign: 'left' }} >-</td>
-                                            <td width={"30%"}></td>
-                                            <td width={"30%"}></td>
+                                        <tbody>
+                                            <tr>
+                                                <td colSpan={4}><p className='text-center font-bold'>Hasil Grouper E-Klaim v5 </p></td>
+                                            </tr>
+                                            <tr>
+                                                <td width={"15%"}  style={{ textAlign: 'right',paddingLeft:'10px;' }}>Info</td>
+                                                <td width={"35%"} style={{ textAlign: 'left',paddingRight:'10px;' }} colSpan={3}>{dataGrouping.coder_nm}</td>
 
-                                        </tr>
-                                        <tr>
-                                            <td width={"15%"}>Jenis Rawat</td>
-                                            <td width={"35%"} style={{ textAlign: 'left' }}>Rawat Jalan Regular </td>
-                                            <td width={"30%"}></td>
-                                            <td width={"30%"}></td>
 
-                                        </tr>
-                                        {/* <tr>
-                                            <td width={"15%"}>Group</td>
-                                            <td width="35%" style={{ textAlign: 'left' }}>
-                                                {dataGrouper.cbg?.description || '-'}
-                                            </td>
-                                            <td width="30%" style={{ textAlign: 'center' }}>
-                                                {dataGrouper.cbg?.code || '-'}
-                                            </td>
-                                            <td width="30%" style={{ textAlign: 'right' }}>
-                                                <FormatRupiah value={dataGrouper.cbg?.base_tariff || 0} />
-                                            </td>
-                                        </tr> */}
-                                        <tr>
-                                            <td width={"15%"}>Group</td>
-                                            <td width="35%" style={{ textAlign: 'left' }}>
-                                                {dataGrouper.group_description}
-                                            </td>
-                                            <td width="30%" style={{ textAlign: 'center' }}>
-                                                {dataGrouper.group_code}
-                                            </td>
-                                            <td width="30%" style={{ textAlign: 'right' }}>
-                                                <FormatRupiah value={dataGrouper.group_tarif} />
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td width={"15%"}>Sub Acute</td>
-                                            <td width="35%" style={{ textAlign: 'left' }}>
-                                                {dataGrouper.sub_acute_description}
-                                            </td>
-                                            <td width="30%" style={{ textAlign: 'center' }}>
-                                                {dataGrouper.sub_acute_code}
-                                            </td>
-                                            <td width="30%" style={{ textAlign: 'right' }}>
-                                                <FormatRupiah value={dataGrouper.sub_acute_tarif} />
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td width={"15%"}>Chronic</td>
-                                            <td width="35%" style={{ textAlign: 'left' }}>
-                                                {dataGrouper.chronic_description}
-                                            </td>
-                                            <td width="30%" style={{ textAlign: 'center' }}>
-                                                {dataGrouper.chronic_code}
-                                            </td>
-                                            <td width="30%" style={{ textAlign: 'right' }}>
-                                                <FormatRupiah value={dataGrouper.chronic_tarif} />
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td width={"15%"}>Special Procedure</td>
-                                            <td width="35%" style={{ textAlign: 'left' }}>
-                                                {dataGrouper.special_procedure_description}
-                                            </td>
-                                            <td width="30%" style={{ textAlign: 'center' }}>
-                                                {dataGrouper.special_procedure_code}
-                                            </td>
-                                            <td width="30%" style={{ textAlign: 'right' }}>
-                                                <FormatRupiah value={dataGrouper.special_procedure_tarif} />
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td width={"15%"}>Special Prosthesis</td>
-                                            <td width="35%" style={{ textAlign: 'left' }}>
-                                                {dataGrouper.special_prosthesis_description}
-                                            </td>
-                                            <td width="30%" style={{ textAlign: 'center' }}>
-                                                {dataGrouper.special_prosthesis_code}
-                                            </td>
-                                            <td width="30%" style={{ textAlign: 'right' }}>
-                                                <FormatRupiah value={dataGrouper.special_prosthesis_tarif} />
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td width={"15%"}>Special Investigation</td>
-                                            <td width="35%" style={{ textAlign: 'left' }}>
-                                                {dataGrouper.special_investigation_description}
-                                            </td>
-                                            <td width="30%" style={{ textAlign: 'center' }}>
-                                                {dataGrouper.special_investigation_code}
-                                            </td>
-                                            <td width="30%" style={{ textAlign: 'right' }}>
-                                                <FormatRupiah value={dataGrouper.special_investigation_tarif} />
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td width={"15%"}>Special Drug</td>
-                                            <td width="35%" style={{ textAlign: 'left' }}>
-                                                {dataGrouper.special_drug_description}
-                                            </td>
-                                            <td width="30%" style={{ textAlign: 'center' }}>
-                                                {dataGrouper.special_drug_code}
-                                            </td>
-                                            <td width="30%" style={{ textAlign: 'right' }}>
-                                                <FormatRupiah value={dataGrouper.special_drug_tarif} />
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td width={"15%"}>Status DC Kemkes</td>
-                                            <td colSpan={3} style={{ color: (dataGrouping.kemenkes_dc_status_cd === "unsent" || dataGrouper.kemenkes_dc_status_cd === "unset") ? "red" : "black" }}>
-                                            {console.log("Data Grouping" , dataGrouping)}
-                                                {dataGrouper.kemenkes_dc_status_cd ? dataGrouper.kemenkes_dc_status_cd :
-                                                    (dataGrouping.kemenkes_dc_status_cd === "unsent") ?
-                                                        "Klaim belum terkirim ke Pusat Data Kementerian Kesehatan" : "Terkirim"}
+                                            </tr>
+                                            <tr>
+                                                <td width={"15%"} style={{ textAlign: 'right',paddingLeft:'10px;' }}>Jenis Rawat</td>
+                                                <td width={"35%"} style={{ textAlign: 'left',paddingRight:'10px;' }}  colSpan={3}>Rawat Jalan Regular </td>
 
-                                            </td>
-                                        </tr>
+                                            </tr>
+                                            {/* <tr>
+                                                <td width={"15%"}>Group</td>
+                                                <td width="35%" style={{ textAlign: 'left' }}>
+                                                    {dataGrouper.cbg?.description || '-'}
+                                                </td>
+                                                <td width="30%" style={{ textAlign: 'center' }}>
+                                                    {dataGrouper.cbg?.code || '-'}
+                                                </td>
+                                                <td width="30%" style={{ textAlign: 'right' }}>
+                                                    <FormatRupiah value={dataGrouper.cbg?.base_tariff || 0} />
+                                                </td>
+                                            </tr> */}
+                                            <tr>
+                                                <td width={"15%"} style={{ textAlign: 'right',paddingLeft:'10px;' }}>Group</td>
+                                                <td width="35%" style={{ textAlign: 'left',paddingRight:'10px;' }}>
+                                                    {dataGrouper.group_description}
+                                                </td>
+                                                <td width="30%" style={{ textAlign: 'center' }}>
+                                                    {dataGrouper.group_code}
+                                                </td>
+                                                <td width="30%" style={{ textAlign: 'right' }}>
+                                                    <FormatRupiah value={dataGrouper.group_tarif} />
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td width={"15%"} style={{ textAlign: 'right',paddingLeft:'10px;' }}>Sub Acute</td>
+                                                <td width="35%" style={{ textAlign: 'left',paddingRight:'10px;' }}>
+                                                    {dataGrouper.sub_acute_description}
+                                                </td>
+                                                <td width="30%" style={{ textAlign: 'center' }}>
+                                                    {dataGrouper.sub_acute_code}
+                                                </td>
+                                                <td width="30%" style={{ textAlign: 'right' }}>
+                                                    <FormatRupiah value={dataGrouper.sub_acute_tarif} />
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td width={"15%"} style={{ textAlign: 'right',paddingLeft:'10px;' }}>Chronic</td>
+                                                <td width="35%" style={{ textAlign: 'left',paddingRight:'10px;' }}>
+                                                    {dataGrouper.chronic_description}
+                                                </td>
+                                                <td width="30%" style={{ textAlign: 'center' }}>
+                                                    {dataGrouper.chronic_code}
+                                                </td>
+                                                <td width="30%" style={{ textAlign: 'right' }}>
+                                                    <FormatRupiah value={dataGrouper.chronic_tarif} />
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td width={"15%"} style={{ textAlign: 'right',paddingLeft:'10px;' }}>Special Procedure</td>
+                                                <td width="35%" style={{ textAlign: 'left',paddingRight:'10px;' }}>
+                                                    {dataGrouper.special_procedure_description}
+                                                </td>
+                                                <td width="30%" style={{ textAlign: 'center' }}>
+                                                    {dataGrouper.special_procedure_code}
+                                                </td>
+                                                <td width="30%" style={{ textAlign: 'right' }}>
+                                                    <FormatRupiah value={dataGrouper.special_procedure_tarif} />
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td width={"15%"} style={{ textAlign: 'right',paddingLeft:'10px;' }}>Special Prosthesis</td>
+                                                <td width="35%" style={{ textAlign: 'left',paddingRight:'10px;' }}>
+                                                    {dataGrouper.special_prosthesis_description}
+                                                </td>
+                                                <td width="30%" style={{ textAlign: 'center' }}>
+                                                    {dataGrouper.special_prosthesis_code}
+                                                </td>
+                                                <td width="30%" style={{ textAlign: 'right' }}>
+                                                    <FormatRupiah value={dataGrouper.special_prosthesis_tarif} />
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td width={"15%"} style={{ textAlign: 'right',paddingLeft:'10px;' }}>Special Investigation</td>
+                                                <td width="35%" style={{ textAlign: 'left',paddingRight:'10px;' }}>
+                                                    {dataGrouper.special_investigation_description}
+                                                </td>
+                                                <td width="30%" style={{ textAlign: 'center' }}>
+                                                    {dataGrouper.special_investigation_code}
+                                                </td>
+                                                <td width="30%" style={{ textAlign: 'right' }}>
+                                                    <FormatRupiah value={dataGrouper.special_investigation_tarif} />
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td width={"15%"} style={{ textAlign: 'right',paddingLeft:'10px;' }}>Special Drug</td>
+                                                <td width="35%" style={{ textAlign: 'left',paddingRight:'10px;' }}>
+                                                    {dataGrouper.special_drug_description}
+                                                </td>
+                                                <td width="30%" style={{ textAlign: 'center' }}>
+                                                    {dataGrouper.special_drug_code}
+                                                </td>
+                                                <td width="30%" style={{ textAlign: 'right' }}>
+                                                    <FormatRupiah value={dataGrouper.special_drug_tarif} />
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td width={"15%"} style={{ textAlign: 'right',paddingLeft:'10px;' }}>Status DC Kemkes</td>
+                                                <td colSpan={3} style={{ color: (dataGrouping.kemenkes_dc_status_cd === "unsent" || dataGrouper.kemenkes_dc_status_cd === "unset") ? "red" : "black" }}>
 
-                                        <tr>
-                                            <td width={"15%"}>Status Klaim</td>
-                                            <td colSpan={3} style={{ textAlign: 'left' }}>
-                                                {dataGrouper.klaim_status_cd}</td>
-                                        </tr>
-                                        <tr>
-                                            <td width={"15%"}></td>
-                                            <td width={"35%"} style={{ textAlign: 'left' }}></td>
-                                            <td width={"30%"} style={{ textAlign: 'center' }}>Total</td>
-                                            <td width={"30%"} style={{ textAlign: 'right' }}><FormatRupiah value={totalGrouper.total} /> </td>
+                                                    {dataGrouper.kemenkes_dc_status_cd ? dataGrouper.kemenkes_dc_status_cd :
+                                                        (dataGrouping.kemenkes_dc_status_cd === "unsent") ?
+                                                            "Klaim belum terkirim ke Pusat Data Kementerian Kesehatan" : "Terkirim"}
 
-                                        </tr>
+                                                </td>
+                                            </tr>
 
+                                            <tr>
+                                                <td width={"15%"} style={{ textAlign: 'right',paddingLeft:'10px;' }}>Status Klaim</td>
+                                                <td colSpan={3} style={{ textAlign: 'left' }}>
+                                                    {dataGrouper.klaim_status_cd}</td>
+                                            </tr>
+                                            <tr>
+
+                                                <td width={"30%"} style={{ textAlign: 'right' }} colSpan={3}>Total</td>
+                                                <td width={"30%"} style={{ textAlign: 'right' }}><FormatRupiah value={totalGrouper.total} /> </td>
+
+                                            </tr>
+
+                                        </tbody>
 
                                     </table>
-
+                                    <table className='table table-bordered' style={{ border: ' 1px solid black', width: '100%' }}>
+                                        <tbody>
+                                            <tr>
+                                                <td colSpan={4}><p className='text-center font-bold'>Hasil Grouper E-Klaim v6 </p></td>
+                                            </tr>
+                                            <tr>
+                                                <td width={"15%"} style={{ textAlign: 'right',paddingLeft:'10px;' }}>Info</td>
+                                                <td width={"35%"} style={{ textAlign: 'left' }} colSpan={3} >{dataGrouping.coder_nm}</td>
+                                            </tr>
+                                            <tr>
+                                                <td width={"15%"} style={{ textAlign: 'right',paddingLeft:'10px;' }}>Jenis Rawat</td>
+                                                <td width={"35%"} style={{ textAlign: 'left' }} colSpan={3}>Rawat Jalan Regular </td>
+                                            </tr>
+                                            <tr>
+                                                <td width={"15%"} style={{ textAlign: 'right',paddingLeft:'10px;' }}>MDC</td>
+                                                <td width="35%" style={{ textAlign: 'left',paddingRight:'10px;' }} colSpan={2}>
+                                                    {dataGrouperv6.mdc_description}
+                                                </td>
+                                                <td width="30%" style={{ textAlign: 'left',paddingRight:'10px;' }}>
+                                                    {dataGrouperv6.mdc_number}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td width={"15%"} style={{ textAlign: 'right',paddingLeft:'10px;' }}>DRG</td>
+                                                <td width="35%" style={{ textAlign: 'left',paddingRight:'10px;' }} colSpan={2}>
+                                                    {dataGrouperv6.drg_description}
+                                                </td>
+                                                <td width="30%" style={{ textAlign: 'left',paddingRight:'10px;' }}>
+                                                    {dataGrouperv6.drg_code}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                     {/* Button Finalisasi */}
                                     <div className="col-md-12 d-flex mb-3">
                                         {!dataFinalisasi.is_finalisasi && (
@@ -2662,10 +2700,11 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                     // setDataGrouper(grouping_res);
                     setDataGrouper((prevTotal) => ({
                         ...prevTotal,
-                        group_description: response.data.data.cbg?.description || '-',
-                        group_code: response.data.data.cbg?.code || '-',
-                        group_tarif: response.data.data.cbg?.base_tariff || 0// Update the specific field dynamically
+                        group_description: response.data.data.response.cbg?.description || '-',
+                        group_code: response.data.data.response.cbg?.code || '-',
+                        group_tarif: response.data.data.response.cbg?.base_tariff || 0
                     }));
+                    setDataGrouperv6(response.data.data.response_inagrouper);
                 }
 
                 // Handle the response from the backend
