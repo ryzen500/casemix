@@ -81,8 +81,9 @@
     }
     /* Center the OverlayPanel */
     .p-overlaypanel {
-        position: absolute;
-        transform: translate(0%, 0%);
+        position: fixed;
+        /* transform: translate(0%, 0%); */
+        top : 180px !important;
     }
 </style>
 <body >

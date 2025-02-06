@@ -473,6 +473,11 @@ class InAcbgGrouperController extends Controller
             $saveService = new SaveDataGroupperService();
             $saveResult = $saveService->addDataInasiscbg($results, $data, $dataAuthor);
 
+            // if(isset($results['special_cmg_option'])){
+            //     $results = $this->inacbg->groupingStageDua($data, $key);
+
+            //     $saveResultinasiscmg = $saveService->addDataInasiscmg( $results, $data, $dataAuthor);
+            // }
             // Jika berhasil, kirim klaim
             return response()->json($results, 200);
         } else {
@@ -650,7 +655,7 @@ class InAcbgGrouperController extends Controller
     public function getSearchGroupper(Request $request)
     {
         $currentPage = $request->input('page', 1);
-        $itemsPerPage = request()->get('per_page', 10);
+        $itemsPerPage = request()->get('per_page', 100);
 
         // dd(vars: $itemsPerPage);
 
@@ -666,8 +671,8 @@ class InAcbgGrouperController extends Controller
         ];
 
         // Hitung total data
-
-        $totalItems = Inacbg::dataListSepCount($filters);
+        // dd($filters);
+        $totalItems = SepT::dataListSepCount($filters);
 
         // Inisialisasi pagination
         $pagination = new Pagination($totalItems, $itemsPerPage, $currentPage);
@@ -675,8 +680,8 @@ class InAcbgGrouperController extends Controller
         // dd($filters['tanggal_mulai']);
 
         // Ambil data berdasarkan pagination
-        $data = Inacbg::dataListSep($pagination->getLimit(), $pagination->getOffset(), $filters);
-
+        // $data = Inacbg::dataListSep($pagination->getLimit(), $pagination->getOffset(), $filters);
+        $data = SepT::dataListSep( $pagination->getLimit(), $pagination->getOffset(), $filters);
         // Kembalikan response JSON
         return response()->json([
             'pagination' => $pagination->getPaginationInfo(),
@@ -829,6 +834,14 @@ class InAcbgGrouperController extends Controller
             'dataDiagnosa' => $dataDiagnosa,
             'dataIcd9cm' => $dataIcd9cm,
             'inacbg' => $SEP,
+            'getGrouping' => $getGrouping
+        ]);
+    }
+    public function getClaimData(Request $request){
+        $noSep = $request->input('noSep');
+        $serviceGrouping = new groupingService($this->inacbg);
+        $getGrouping = $serviceGrouping->callDataGrouping($noSep);
+        return response()->json([
             'getGrouping' => $getGrouping
         ]);
     }
