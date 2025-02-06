@@ -9,6 +9,22 @@ export default function Sidebar({ className = '', children, ...props }) {
     };
     var menuItems = props.menuItems;
 
+    const handleLink = async (subItem) => {
+        if (subItem.method === "post") {
+            try {
+                // Send POST request for logout (or any other action)
+                await axios.post(route('logout'));  // Make sure 'logout' is the correct route name
+                // Redirect to login page (or wherever you need)
+                window.open(route('login'), '_parent');
+
+            } catch (error) {
+                console.error('Logout failed', error);
+            }
+        } else {
+            // Handle other link types, e.g., simple navigation
+            window.location.href = subItem.link;
+        }
+    };
     return (
         <>
             {menuItems.map((item) => (
@@ -21,7 +37,7 @@ export default function Sidebar({ className = '', children, ...props }) {
                             {item.submenu.map((subItem, index) => (
 
                                 <li key={index} className={"submenu-item " + (route().current(subItem.link) ? 'active' : '')}  > {subItem.method === "post" ?
-                                    <Link href={subItem.link} method={subItem.method} className="submenu-item">
+                                    <Link onClick={() => handleLink(subItem)} className="submenu-item">
                                         {subItem.label}
                                     </Link> : <a href={subItem.link} className="submenu-item">{subItem.label} </a>}</li>
                             ))}
