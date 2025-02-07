@@ -667,7 +667,9 @@ class InAcbgGrouperController extends Controller
             'metodePembayaran' => $request->input('metodePembayaran') ?? null,
             'kelasRawat' => $request->input('kelasRawat') ?? null,
             'status' => $request->input('statusKlaim') ?? null,
-            'jenisrawat' => $request->input('jenisrawat') ?? null
+            'jenisrawat' => $request->input('jenisRawat') ?? null,
+            'nosep' => $request->input('nosep') ?? null,
+            'nama_pasien' => $request->input('nama_pasien') ?? null,
         ];
 
         // Hitung total data
