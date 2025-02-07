@@ -797,22 +797,22 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
         if (isNaN(date)) return ''; // Handle invalid date
         return date.toISOString().split('T')[0]; // Format as YYYY-MM-DD
     };
-    
+
     const onRowExpand = async (event) => {
         const expandedProduct = event.data;
         // Set loading to true when starting the API request
         setLoading(true);
         console.log("expanded Product ", expandedProduct.pendaftaran_id);
-        setExpandedRows(null);
+        // setExpandedRows(null);
 
         if (expandedProduct.pendaftaran_id == null) {
             console.log("<<>>");
 
             toast.current.show({ severity: 'error', summary: 'Error', detail: 'No SEP belum di sinkron!', life: 3000 });
             setExpandedRows(null);
-            console.log("expanded ",expandedRows)
+            console.log("expanded ", expandedRows)
         }
-        
+
         // if (!expandedProduct.pendaftaran_id) { 
         //     toast.current.show({
         //         severity: 'error', 
@@ -824,7 +824,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
         //     setExpandedRows(null);
         //     return;
         // }
-        
+
         else {
             try {
                 // Fetch detailed data (e.g., reviews) for the expanded row
@@ -860,7 +860,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
 
                     setJaminan(response.data.pendaftaran.carabayar_id);
 
-                        setDataGrouping(response.data.getGrouping.data.data);
+                    setDataGrouping(response.data.getGrouping.data.data);
 
                     const defaultCaraPulang = caraPulang.find(
                         (carapulang) => carapulang.value === "1"
@@ -944,11 +944,11 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                         setBeratLahir(0)
                     }
                     if (Boolean(response.data.getGrouping.success) === false || response.data.getGrouping.data.data.grouper.response === null) {
-                      console.log("Sub 3");
-                    //   if(response.data.inacbg !== null) { 
+                        console.log("Sub 3");
+                        //   if(response.data.inacbg !== null) { 
                         setHide(true);
 
-                    //   }
+                        //   }
                     }
                     else {
                         console.log("Sub 4")
@@ -1936,7 +1936,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                         <td>
                                                             {index + 1}
                                                         </td>
-                                                        <td style={{display:'none'}}>
+                                                        <td style={{ display: 'none' }}>
                                                             {console.log(row.tgl_pendaftaran)}
                                                             <Calendar
                                                                 value={formatDateTime(row.tgl_pendaftaran)} // Pass a valid Date object
@@ -2130,7 +2130,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                         <table className="p-datatable-table">
                                             <thead className='p-datatable-thead'>
                                                 <tr>
-                                                    <th style={{textAlign:'center'}}>No</th>
+                                                    <th style={{ textAlign: 'center' }}>No</th>
                                                     {/* <th>Tgl. Diagnosa <br />/ Dokter<br /> / Jenis Kasus</th> */}
                                                     <th>Diagnosa Kode</th>
                                                     <th>Diagnosa Nama</th>
@@ -2141,10 +2141,10 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                             <tbody>
                                                 {dataDiagnosaINA.map((row, index) => (
                                                     <tr key={index}>
-                                                        <td style={{textAlign:'center'}}>
+                                                        <td style={{ textAlign: 'center' }}>
                                                             {index + 1}
                                                         </td>
-                                                        <td style={{display:'none'}}>
+                                                        <td style={{ display: 'none' }}>
                                                             <Calendar
                                                                 value={formatDateTime(row.tgl_pendaftaran)} // Pass a valid Date object
                                                                 //  value={row.tgl_pendaftaran} 
@@ -2381,21 +2381,21 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                 {/*  Hasil Grouping */}
 
                                 {console.log("Display", hide)}
-                                <div style={{ display: hide === true ? 'none' : 'block' }}
-                                    <table className='table table-bordered' style={{ border: ' 1px solid black', width: '100%' ,backgroundColor: dataFinalisasi.is_finalisasi ? '#ffdd99' : '#ffff' }}>
+                                <div style={{ display: hide === true ? 'none' : 'block' }}>
+                                    <table className='table table-bordered' style={{ border: ' 1px solid black', width: '100%', backgroundColor: dataFinalisasi.is_finalisasi ? '#ffdd99' : '#ffff' }}>
                                         <tbody>
                                             <tr>
                                                 <td colSpan={4}><p className='text-center font-bold'>Hasil Grouper E-Klaim v5 </p></td>
                                             </tr>
                                             <tr>
-                                                <td width={"15%"}  style={{ textAlign: 'right',paddingLeft:'10px;' }}>Info</td>
-                                                <td width={"35%"} style={{ textAlign: 'left',paddingRight:'10px;' }} colSpan={3}>{dataGrouping.coder_nm}</td>
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;' }}>Info</td>
+                                                <td width={"35%"} style={{ textAlign: 'left', paddingRight: '10px;' }} colSpan={3}>{dataGrouping.coder_nm}</td>
 
 
                                             </tr>
                                             <tr>
-                                                <td width={"15%"} style={{ textAlign: 'right',paddingLeft:'10px;' }}>Jenis Rawat</td>
-                                                <td width={"35%"} style={{ textAlign: 'left',paddingRight:'10px;' }}  colSpan={3}>Rawat Jalan Regular </td>
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;' }}>Jenis Rawat</td>
+                                                <td width={"35%"} style={{ textAlign: 'left', paddingRight: '10px;' }} colSpan={3}>Rawat Jalan Regular </td>
 
                                             </tr>
                                             {/* <tr>
@@ -2411,20 +2411,23 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                 </td>
                                             </tr> */}
                                             <tr>
-                                                <td width={"15%"} style={{ textAlign: 'right',paddingLeft:'10px;' }}>Group</td>
-                                                <td width="35%" style={{ textAlign: 'left',paddingRight:'10px;' }}>
-                                                    {dataGrouper.group_description}
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;' }}>Group</td>
+                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;' }}>
+                                                    {console.log("Yest", dataGrouper)}
+                                                    {dataGrouper.group_description !== "-" ? dataGrouper.group_description : (dataGrouping.grouper.response !== null) ? dataGrouping.grouper.response.cbg.description : '-'}
                                                 </td>
                                                 <td width="30%" style={{ textAlign: 'center' }}>
-                                                    {dataGrouper.group_code}
+                                                    {dataGrouper.group_code !== "-" ? dataGrouper.group_code : (dataGrouping.grouper.response !== null) ? dataGrouping.grouper.response.cbg.code : '-'}
+
+                                                    {/* {dataGrouper.group_code} */}
                                                 </td>
                                                 <td width="30%" style={{ textAlign: 'right' }}>
-                                                    <FormatRupiah value={dataGrouper.group_tarif} />
+                                                    <FormatRupiah value={dataGrouper.group_tarif ? dataGrouper.group_tarif : (dataGrouping.grouper.response !== null) ? dataGrouping.grouper.response.cbg.base_tariff : ' -'} />
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td width={"15%"} style={{ textAlign: 'right',paddingLeft:'10px;' }}>Sub Acute</td>
-                                                <td width="35%" style={{ textAlign: 'left',paddingRight:'10px;' }}>
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;' }}>Sub Acute</td>
+                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;' }}>
                                                     {dataGrouper.sub_acute_description}
                                                 </td>
                                                 <td width="30%" style={{ textAlign: 'center' }}>
@@ -2435,8 +2438,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td width={"15%"} style={{ textAlign: 'right',paddingLeft:'10px;' }}>Chronic</td>
-                                                <td width="35%" style={{ textAlign: 'left',paddingRight:'10px;' }}>
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;' }}>Chronic</td>
+                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;' }}>
                                                     {dataGrouper.chronic_description}
                                                 </td>
                                                 <td width="30%" style={{ textAlign: 'center' }}>
@@ -2447,8 +2450,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td width={"15%"} style={{ textAlign: 'right',paddingLeft:'10px;' }}>Special Procedure</td>
-                                                <td width="35%" style={{ textAlign: 'left',paddingRight:'10px;' }}>
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;' }}>Special Procedure</td>
+                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;' }}>
                                                     {dataGrouper.special_procedure_description}
                                                 </td>
                                                 <td width="30%" style={{ textAlign: 'center' }}>
@@ -2459,8 +2462,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td width={"15%"} style={{ textAlign: 'right',paddingLeft:'10px;' }}>Special Prosthesis</td>
-                                                <td width="35%" style={{ textAlign: 'left',paddingRight:'10px;' }}>
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;' }}>Special Prosthesis</td>
+                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;' }}>
                                                     {dataGrouper.special_prosthesis_description}
                                                 </td>
                                                 <td width="30%" style={{ textAlign: 'center' }}>
@@ -2471,8 +2474,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td width={"15%"} style={{ textAlign: 'right',paddingLeft:'10px;' }}>Special Investigation</td>
-                                                <td width="35%" style={{ textAlign: 'left',paddingRight:'10px;' }}>
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;' }}>Special Investigation</td>
+                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;' }}>
                                                     {dataGrouper.special_investigation_description}
                                                 </td>
                                                 <td width="30%" style={{ textAlign: 'center' }}>
@@ -2483,8 +2486,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td width={"15%"} style={{ textAlign: 'right',paddingLeft:'10px;' }}>Special Drug</td>
-                                                <td width="35%" style={{ textAlign: 'left',paddingRight:'10px;' }}>
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;' }}>Special Drug</td>
+                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;' }}>
                                                     {dataGrouper.special_drug_description}
                                                 </td>
                                                 <td width="30%" style={{ textAlign: 'center' }}>
@@ -2495,7 +2498,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td width={"15%"} style={{ textAlign: 'right',paddingLeft:'10px;' }}>Status DC Kemkes</td>
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;' }}>Status DC Kemkes</td>
                                                 <td colSpan={3} style={{ color: (dataGrouping.kemenkes_dc_status_cd === "unsent" || dataGrouper.kemenkes_dc_status_cd === "unset") ? "red" : "black" }}>
 
                                                     {dataGrouper.kemenkes_dc_status_cd ? dataGrouper.kemenkes_dc_status_cd :
@@ -2506,14 +2509,15 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                             </tr>
 
                                             <tr>
-                                                <td width={"15%"} style={{ textAlign: 'right',paddingLeft:'10px;' }}>Status Klaim</td>
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;' }}>Status Klaim</td>
                                                 <td colSpan={3} style={{ textAlign: 'left' }}>
                                                     {dataGrouper.klaim_status_cd}</td>
                                             </tr>
                                             <tr>
 
                                                 <td width={"30%"} style={{ textAlign: 'right' }} colSpan={3}>Total</td>
-                                                <td width={"30%"} style={{ textAlign: 'right' }}><FormatRupiah value={totalGrouper.total} /> </td>
+                                                {/* {console.log("Data ",dataGrouping.grouper.tarif_alt.filter(item => item.kelas.includes(`kelas_${datas.klsRawat.klsRawatHak}`))[0].tarif_inacbg)} */}
+                                                <td width={"30%"} style={{ textAlign: 'right' }}><FormatRupiah value={(totalGrouper.total) ? totalGrouper.total : (dataGrouping.grouper.tarif_alt !== null) ? dataGrouping.grouper.tarif_alt.filter(item => item.kelas.includes(`kelas_${datas.klsRawat.klsRawatHak}`))[0].tarif_inacbg : 0} /> </td>
 
                                             </tr>
 
@@ -2526,28 +2530,28 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                 <td colSpan={4}><p className='text-center font-bold'>Hasil Grouper E-Klaim v6 </p></td>
                                             </tr>
                                             <tr>
-                                                <td width={"15%"} style={{ textAlign: 'right',paddingLeft:'10px;' }}>Info</td>
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;' }}>Info</td>
                                                 <td width={"35%"} style={{ textAlign: 'left' }} colSpan={3} >{dataGrouping.coder_nm}</td>
                                             </tr>
                                             <tr>
-                                                <td width={"15%"} style={{ textAlign: 'right',paddingLeft:'10px;' }}>Jenis Rawat</td>
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;' }}>Jenis Rawat</td>
                                                 <td width={"35%"} style={{ textAlign: 'left' }} colSpan={3}>Rawat Jalan Regular </td>
                                             </tr>
                                             <tr>
-                                                <td width={"15%"} style={{ textAlign: 'right',paddingLeft:'10px;' }}>MDC</td>
-                                                <td width="35%" style={{ textAlign: 'left',paddingRight:'10px;' }} colSpan={2}>
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;' }}>MDC</td>
+                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;' }} colSpan={2}>
                                                     {dataGrouperv6.mdc_description}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'left',paddingRight:'10px;' }}>
+                                                <td width="30%" style={{ textAlign: 'left', paddingRight: '10px;' }}>
                                                     {dataGrouperv6.mdc_number}
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td width={"15%"} style={{ textAlign: 'right',paddingLeft:'10px;' }}>DRG</td>
-                                                <td width="35%" style={{ textAlign: 'left',paddingRight:'10px;' }} colSpan={2}>
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;' }}>DRG</td>
+                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;' }} colSpan={2}>
                                                     {dataGrouperv6.drg_description}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'left',paddingRight:'10px;' }}>
+                                                <td width="30%" style={{ textAlign: 'left', paddingRight: '10px;' }}>
                                                     {dataGrouperv6.drg_code}
                                                 </td>
                                             </tr>
@@ -2709,6 +2713,9 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
             .then((response) => {
                 // console.log('Response:', response.data);
                 setHide(false);
+
+                console.log("Expanded PRoduct >>" , pendaftarans.pendaftaran_id );
+
                 if (Boolean(response.data.success) === false) {
                     toast.current.show({ severity: 'error', summary: response.data.message, detail: datas.noSep, life: 3000 });
 
@@ -2727,6 +2734,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                         group_tarif: response.data.data.response.cbg?.base_tariff || 0
                     }));
                     setDataGrouperv6(response.data.data.response_inagrouper);
+
                 }
 
                 // Handle the response from the backend
@@ -2895,9 +2903,9 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
             });
     };
     const allowExpansion = (rowData) => {
-        return rowData.pendaftaran_id !== null; 
+        return rowData.pendaftaran_id !== null;
     };
-    
+
 
     const items = [
         { label: pasien ? pasien['no_rekam_medik'] : null },
