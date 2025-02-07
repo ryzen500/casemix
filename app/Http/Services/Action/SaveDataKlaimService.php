@@ -285,6 +285,10 @@ class SaveDataKlaimService
 
             // Lakukan insert batch ke tabel
             if (!empty($preparedData)) {
+                DB::table('diagnosax_inacbgs_t')
+                ->where('pendaftaran_id', $RegisterData['pendaftaran_id'])
+                ->delete();
+
                 // $result = DB::table('pasienmorbiditas_t')->insert($preparedData);
                 $result2 = DB::table('diagnosax_inacbgs_t')->insert($preparedDataX);
 
@@ -384,6 +388,10 @@ class SaveDataKlaimService
             // Lakukan insert batch ke tabel
             if (!empty($preparedData)) {
                 // $result = DB::table('pasienmorbiditas_t')->insert($preparedData);
+
+                DB::table('diagnosainacbg_t')
+                ->where('pendaftaran_id', $RegisterData['pendaftaran_id'])
+                ->delete();
                 $result2 = DB::table('diagnosainacbg_t')->insert($preparedDataINAX);
 
                 // if ($result2) {
@@ -489,6 +497,10 @@ class SaveDataKlaimService
                 // $result = DB::table('pasienmorbiditas_t')->insert($preparedData);
                 // $result = DB::table('pasienicd9cm_t')->insert($preparedDataICDIX);
                 // $result2 = DB::table('pasienicd9cm_r')->insert($preparedDataICDIX);
+                
+                DB::table('diagnosaix_inacbg_t')
+                ->where('pendaftaran_id', $RegisterData['pendaftaran_id'])
+                ->delete();
                 $result = DB::table('diagnosaix_inacbg_t')->insert($preparedDataIX);
 
                 // if ($result2) {
@@ -566,6 +578,9 @@ class SaveDataKlaimService
             // Lakukan insert batch ke tabel
             if (!empty($preparedDataIX)) {
                 // $result = DB::table('pasienmorbiditas_t')->insert($preparedData);
+                DB::table('diagnosainacbgix_t')
+                ->where('pendaftaran_id', $RegisterData['pendaftaran_id'])
+                ->delete();
                 $result = DB::table('diagnosainacbgix_t')->insert($preparedDataIX);
 
                 // if ($result2) {
