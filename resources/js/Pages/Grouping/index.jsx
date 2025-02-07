@@ -105,7 +105,14 @@ export default function CodingGrouping({ auth, pagination, data }) {
         }
 
         networkTimeout = setTimeout(() => {
-            const fetchUrl = `${route("getSearchGroupper")}/?page=${lazyState.page + 1}&per_page=${lazyState.rows}`;            
+            // const fetchUrl = `${route("/getSearchGroupper")}/?page=${lazyState.page + 1}&per_page=${lazyState.rows}`;            
+            const fetchUrl = route("getSearchGroupper"); // Just the URL without query parameters
+
+            axios.post(fetchUrl, {
+                page: lazyState.page + 1,
+                per_page: lazyState.rows,
+                ...formData // If you need to send more data
+            })
             axios.post(fetchUrl, formData)
                 .then((response) => {
                     setUsers(response.data.data); // The actual data from the API
@@ -216,9 +223,14 @@ export default function CodingGrouping({ auth, pagination, data }) {
         console.log('Form Data Submitted:', formData);
 
         // Perform API request with axios
-        const fetchUrl = `${route("getSearchGroupper")}/?page=${1}&per_page=${lazyState.rows}`;            
+        // const fetchUrl = `${route("/getSearchGroupper")}/?page=${1}&per_page=${lazyState.rows}`;            
+        const fetchUrl = route("getSearchGroupper"); // Just the URL without query parameters
 
-        axios.post(fetchUrl, formData)
+        axios.post(fetchUrl, {
+            page: 1,
+            per_page: lazyState.rows,
+            ...formData // If you need to send more data
+        })
             .then((response) => {
                 setUsers(response.data.data); // The actual data from the API
                 setPaginations(response.data.pagination);
