@@ -44,17 +44,27 @@ export default function CodingGrouping({ auth, pagination, data }) {
 
         toast.current.show({ severity: 'info', summary: 'Data Sudah Dipilih', detail:e.data.name, life: 3000 }); 
     };
+
     useEffect(() => {
         isMounted.current = true;
-        handleSearch();
         loadLazyData();
-
         // ProductService.getProductsSmall().then((data) => setProducts(data));
-    }, [lazyParams,lazyState]);
+    }, [lazyState]);
     const onProductSelect = (e) => {
         setSelectedProduct(e.value);
     };
+    const formatDateTime = (dateString) => {
+        // Convert the date string to a Date object
+        const date = new Date(dateString.replace(" ", "T"));
+          // Get the day, month, and year
+        const day = String(date.getDate()).padStart(2, '0'); // Adds leading zero if day is < 10
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based, so add 1
+        const year = date.getFullYear();
 
+        // Return formatted date in dd-mm-yyyy format
+        return `${day}-${month}-${year}`;
+
+    };
     const [users, setUsers] = useState([]);
     const [paginations, setPaginations] = useState([]);
     const headerGroup = (
@@ -86,16 +96,22 @@ export default function CodingGrouping({ auth, pagination, data }) {
     const tglMasukBody = (rowData) => {
         return (
         <>
-        <a   style={{ textDecoration: 'underline',color :'blue' }}  href={route('searchGroupperPasien',rowData.nokartuasuransi)} className="submenu-item">{rowData.tgl_masuk} </a>
-        </>)
-        ;
+            <a   style={{ textDecoration: 'underline',color :'blue' }}  href={route('searchGroupperPasien',rowData.nokartuasuransi)} className="submenu-item">{rowData.tgl_masuk?formatDateTime(rowData.tgl_masuk):''} </a>
+        </>);
 
     };
 
     const tglPulangBody = (rowData) => {
-        return rowData.tgl_pulang;
+        return rowData.tgl_pulang?formatDateTime(rowData.tgl_pulang):'';
     };
-
+    
+    const jnspelayananBody = (rowData) => {
+        if(rowData.jnspelayanan == 1){
+            return 'Rawat Inap';
+        }else if(rowData.jnspelayanan == 2){
+            return 'Rawat Jalan';
+        }
+    };
     // Fetch lazy data
     const loadLazyData = () => {
         setLoading(true);
@@ -144,7 +160,6 @@ export default function CodingGrouping({ auth, pagination, data }) {
     };
     // Handle form submission using axios
     const handleSearch = () => {
-        // console.log('Form Data Submitted:', formData);
         setLoading(true);
         // Perform API request with axios
         axios.post(route('getSearchGroupperData'), {
@@ -152,7 +167,6 @@ export default function CodingGrouping({ auth, pagination, data }) {
             page: lazyParams.page,
         })
             .then((response) => {
-                console.log('Response:', response.data,'>>>>>',lazyParams.page);
                 
                 setDatas(response.data.data); // The actual data from the API
                 setTotalRecords(response.data.pagination); // The actual data from the API
@@ -188,7 +202,9 @@ export default function CodingGrouping({ auth, pagination, data }) {
         jenisRawat: '',
         statusKlaim: '',
         kelasRawat: 'Semua Kelas',
-        metodePembayaran: ''
+        metodePembayaran: '',
+        nosep: '',
+        nama_pasien:''
     });
 
     // Function to toggle criteria card visibility
@@ -220,7 +236,6 @@ export default function CodingGrouping({ auth, pagination, data }) {
     const handleSave = (e) => {
         e.preventDefault(); // Prevent page reload
 
-        console.log('Form Data Submitted:', formData);
 
         // Perform API request with axios
         // const fetchUrl = `${route("/getSearchGroupper")}/?page=${1}&per_page=${lazyState.rows}`;            
@@ -394,8 +409,8 @@ export default function CodingGrouping({ auth, pagination, data }) {
                                                     value={formData.jenisrawat}
                                                 >
                                                     <option value='semua'>Semua</option>
-                                                    <option value='kelas_1'>Kelas 1</option>
-                                                    <option value='kelas_2'>Kelas 2</option>
+                                                    <option value='RI'>Rawat Inap</option>
+                                                    <option value='RJ'>Rawat Jalan</option>
                                                 </select>
                                             </div>
 
@@ -406,9 +421,10 @@ export default function CodingGrouping({ auth, pagination, data }) {
                                                 <select name='statusKlaim' onChange={handleInputChange}
                                                     value={formData.statusKlaim} className="form-control">
                                                     <option value='semua'>Semua</option>
-                                                    <option value='pending'>Pending</option>
-                                                    <option value='disetujui'>Disetujui</option>
-                                                    <option value='ditolak'>Ditolak</option>
+                                                    <option value='belum_grouping'>Belum Grouping</option>
+                                                    <option value='normal'>Normal</option>
+                                                    <option value='final'>Final</option>
+                                                    <option value='terkirim'>Terkirim</option>
                                                 </select>
                                             </div>
 
@@ -469,7 +485,20 @@ export default function CodingGrouping({ auth, pagination, data }) {
                                             </div>
                                         </div>
                                     </div>
-
+                                    <div className="row">
+                                        <div className="col-sm-6">
+                                            <div className="form-group">
+                                                <label>No SEP:</label>
+                                                <input type="text" className="form-control" name='nosep' value={formData.nosep} onChange={handleInputChange} />
+                                            </div>
+                                        </div>
+                                        <div className="col-sm-6">
+                                            <div className="form-group">
+                                                <label>Nama:</label>
+                                                <input type="text" className="form-control" name='nama_pasien' value={formData.nama_pasien}  onChange={handleInputChange}/>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div className="row">
                                         {/* Buttons */}
                                         <div className="col-md-6 d-flex align-items-end">
@@ -514,18 +543,18 @@ export default function CodingGrouping({ auth, pagination, data }) {
                                         <Column header="Tanggal Pulang" body={tglPulangBody} style={{ alignItems: 'center' }} ></Column>
                                         <Column field="nosep"    body={(rowData) => (
                                                 <>
-                                                {rowData.nosep} <br /> {rowData.nokartuasuransi}
+                                                {rowData.nosep} <br /> <span style={{fontSize:"13px",color:'#888'}}>{rowData.nokartuasuransi}</span>
                                                 </>
                                             )}  header="No SEP" style={{ alignItems: 'center' }} ></Column>
                                         <Column field="nama_pasien"    body={(rowData) => (
                                                 <>
-                                                {rowData.nama_pasien} <br /> {rowData.no_rekam_medik}
+                                                {rowData.nama_pasien} <br /> <span style={{fontSize:"13px",color:'#888'}}>{rowData.no_rekam_medik}</span>
                                                 </>
                                             )}  header="Pasien" style={{ alignItems: 'center' }} ></Column>
                                         <Column field="kodeprosedur" header="Kode" style={{ alignItems: 'center' }} ></Column>
                                         <Column field="plafonprosedur" header="Tarif Total" style={{ alignItems: 'center' }} ></Column>
                                         <Column field="total_tarif_rs" header="Billing RS" style={{ alignItems: 'center' }} ></Column>
-                                        <Column field="jnspelayanan" header="Rawat" style={{ alignItems: 'center' }} ></Column>
+                                        <Column field="jnspelayanan" header="Rawat" body={jnspelayananBody}  style={{ alignItems: 'center' }} ></Column>
                                         <Column field="status" header="Status Klaim" style={{ alignItems: 'center' }} ></Column>
                                         <Column field="nama_pegawai" header="Petugas" style={{ alignItems: 'center' }} ></Column>
                                     </DataTable>

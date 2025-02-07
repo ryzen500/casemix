@@ -85,6 +85,24 @@
         /* transform: translate(0%, 0%); */
         top : 180px !important;
     }
+    .p-button {
+    font-size: 16px; /* Example for button */
+    }
+
+    .p-dropdown {
+    font-size: 16px; /* Example for dropdown */
+    }
+
+    .p-inputtext {
+    font-size: 16px; /* Example for input text */
+    }
+    .p-component{
+        font-size: 16px;
+    }
+    *{
+        font-size: 14px ;
+    }
+
 </style>
 <body >
     @inertia
