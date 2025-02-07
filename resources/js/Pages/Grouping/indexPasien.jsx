@@ -27,6 +27,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
     const [dataGrouping, setDataGrouping] = useState({
         los: 0
     });
+    const [models, setModels] = useState(model);
     const [beratLahir, setBeratLahir] = useState('');
     const [sistole, setSistole] = useState('');
     const [diastole, setDiastole] = useState('');
@@ -1251,11 +1252,11 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                 </div>
                                 <table className='table  mt-3' style={{ border: ' 1px solid black' }}>
                                     <tr>
-                                        <td width={"15%"}>
+                                        <td width={"15%"} className='pl-2'>
                                             Jenis Rawat
                                         </td>
                                         <td width={"60%"}>
-                                            <div className="ml-1">
+                                            <div className="ml-2">
                                                 {datas.jnsPelayanan}
 
                                             </div>
@@ -1277,11 +1278,11 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td width={"15%"}>
+                                        <td width={"15%"}  className='pl-2'>
                                             Tanggal Rawat
                                         </td>
                                         <td width={"60%"}>
-                                            <div className="col-sm-12">
+                                            <div className="col-sm-12 ml-2">
                                                 <div className="row">
                                                     <div className="col-sm-6">
                                                         Masuk :
@@ -1322,26 +1323,40 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                     </tr>
                                     <tr>
                                         {console.log("Masuk ", selectedCaraMasuk)}
-                                        <td>Cara Masuk</td>
-                                        <td >
-                                            <Dropdown value={selectedCaraMasuk} onChange={(e) => setCaraMasuk(e.value)} options={caraMasuk} optionLabel="name"
-                                                placeholder="Pilih Cara Masuk" className='ml-2'
-                                                style={{ width: '250px' }}
-
-                                            />
+                                        <td  className='pl-2'>Cara Masuk</td>
+                                        <td style={{maxHeight:'60px'}}>
+                                            <div className="col-sm-12" style={{borderBottomColor:'white',height:'60px'}}>
+                                                <Dropdown
+                                                    value={selectedCaraMasuk}
+                                                    onChange={(e) => setCaraMasuk(e.value)}
+                                                    options={caraMasuk}
+                                                    optionLabel="name"
+                                                    placeholder="Pilih Cara Masuk"
+                                                    className="ml-2 custom-dropdown"  
+                                                    style={{ width: '250px' }}  
+                                                />
+                                            </div>
                                         </td>
                                     </tr>
 
                                     <tr>
-                                        <td>COB</td>
+                                        <td  className='pl-2'>COB</td>
                                         <td >
-
-                                            <Dropdown value={selectedCOB} onChange={(e) => setCOB(e.value)} options={COB} optionLabel="name" className='ml-2'
-                                                placeholder="Pilih COB" style={{ width: '250px' }} />
+                                            <div className="col-sm-12" style={{borderBottomColor:'white',height:'60px'}}>
+                                                <Dropdown
+                                                    value={selectedCOB}
+                                                    onChange={(e) => setCOB(e.value)}
+                                                    options={COB}
+                                                    optionLabel="name"
+                                                    placeholder="Pilih Cara Masuk"
+                                                    className="ml-2 custom-dropdown"  
+                                                    style={{ width: '250px' }}  
+                                                />
+                                            </div>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>LOS</td>
+                                        <td  className='pl-2'>LOS</td>
                                         <td colSpan={2}>
                                             <InputNumber
                                                 value={pendaftarans && dataGrouping ?
@@ -1355,7 +1370,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                 min={0} // Optional: Set a minimum value
                                                 max={100000000} // Optional: Set a maximum value
                                                 name='los'
-                                                inputClassName=' form-control'
+                                                inputClassName=' form-control ml-2'
                                                 readOnly
                                             /> hari</td>
                                         <td>Berat Lahir(gram)</td>
@@ -1364,17 +1379,24 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                 name="beratLahir"
                                                 value={beratLahir}
                                                 onChange={(e) => setBeratLahir(e.target.value)}
+                                                className='col-sm-3'
                                             />
 
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>ADL Score</td>
+                                        <td  className='pl-2'>ADL Score</td>
                                         <td colSpan="2">
-                                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                                <span>Sub Acute : {dataGrouping ? (dataGrouping.adl_sub_acute ? parseFloat(dataGrouping.adl_sub_acute) : '-') : '-'}</span>
-                                                <span>Chronic : {dataGrouping ? (dataGrouping.adl_chronic ? parseFloat(dataGrouping.adl_chronic) : '-') : '-'}</span>
-                                            </div>
+                                            <table style={{border:'none',width:'100%'}} className='ml-2'>
+                                                <tr>
+                                                    <td>
+                                                        Sub Acute : {dataGrouping ? (dataGrouping.adl_sub_acute ? parseFloat(dataGrouping.adl_sub_acute) : '-') : '-'}
+                                                    </td>
+                                                    <td>
+                                                        Chronic : {dataGrouping ? (dataGrouping.adl_chronic ? parseFloat(dataGrouping.adl_chronic) : '-') : '-'}
+                                                    </td>
+                                                </tr>
+                                            </table>
                                         </td>
                                         <td style={{ textAlign: 'center' }}>Cara Pulang</td>
                                         <td>
@@ -1383,17 +1405,25 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>DPJP</td>
+                                        <td  className='pl-2'>DPJP</td>
                                         <td >
-                                            <Dropdown value={selectedDPJP} onChange={(e) => setDPJP(e.value)} options={DPJP} optionLabel="nmdpjp"
-                                                className='ml-2'
-                                                placeholder="Pilih DPJP" style={{ width: '250px' }} />
+                                            <div className="col-sm-12" style={{borderBottomColor:'white',height:'60px'}}>
+                                                <Dropdown
+                                                    value={selectedDPJP}
+                                                    onChange={(e) => setDPJP(e.value)}
+                                                    options={DPJP}
+                                                    optionLabel="nmdpjp"
+                                                    placeholder="Pilih DPJP"
+                                                    className="ml-2 custom-dropdown"  
+                                                    style={{ width: '250px' }}  
+                                                />
+                                            </div>
                                         </td>
                                         <td>Jenis Tarif</td>
                                         <td><input type="text" className="form-control" name='nama_tarifinacbgs_1' value={profils.nama_tarifinacbgs_1} /></td>
                                     </tr>
                                     <tr>
-                                        <td>Pasien TB</td>
+                                        <td  className='pl-2'>Pasien TB</td>
                                         <td colSpan={3}>
                                             <div className="col-sm-12">
                                                 <div className="row">
@@ -2713,10 +2743,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
             .then((response) => {
                 // console.log('Response:', response.data);
                 setHide(false);
-
-                console.log("Expanded PRoduct >>" , pendaftarans.pendaftaran_id );
-
-                if (Boolean(response.data.success) === false) {
+                if (Boolean(response.data[0].success) === false) {
                     toast.current.show({ severity: 'error', summary: response.data.message, detail: datas.noSep, life: 3000 });
 
                 } else {
@@ -2729,12 +2756,14 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                     // setDataGrouper(grouping_res);
                     setDataGrouper((prevTotal) => ({
                         ...prevTotal,
-                        group_description: response.data.data.response.cbg?.description || '-',
-                        group_code: response.data.data.response.cbg?.code || '-',
-                        group_tarif: response.data.data.response.cbg?.base_tariff || 0
+                        group_description: response.data[0].data.response.cbg?.description || '-',
+                        group_code: response.data[0].data.response.cbg?.code || '-',
+                        group_tarif: response.data[0].data.response.cbg?.base_tariff || 0
                     }));
-                    setDataGrouperv6(response.data.data.response_inagrouper);
-
+                    setDataGrouperv6(response.data[0].data.response_inagrouper);
+                    // klaim_status_cd
+                    setDataGrouping(response.data[1].data.data)
+                    updateRowData(datas.noSep,response.data[0].data.response.cbg.code,response.data[1].data.data.klaim_status_cd,response.data[1].data.data.coder_nm)
                 }
 
                 // Handle the response from the backend
@@ -2744,6 +2773,22 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
             });
     };
 
+    // Function to filter by noSep and update tglSep
+    const updateRowData = (noSep, cbg,status,petugas) => {
+        // Map through the model and update the tglSep where noSep matches
+        const updatedModel = models.map((item) => {
+        if (item.noSep === noSep) {
+            return { ...item,cbg: cbg,status:status, nama_pegawai: petugas }; // Update the tglSep for the matching row
+        }
+        return item; // Leave the rest unchanged
+        });
+
+        // Update the model state with the modified array
+        setModels(updatedModel);
+
+        // Show a success toast
+        toast.current.show({ severity: 'success', summary: 'Date Updated', detail: `tglSep for ${noSep} updated to ${newTglSep}.`, life: 3000 });
+    };
 
     /**Hapus Klaim */
     const handleHapusKlaim = (e) => {
@@ -2903,9 +2948,9 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
             });
     };
     const allowExpansion = (rowData) => {
-        return rowData.pendaftaran_id !== null;
+        return rowData.pendaftaran_id !== null; 
     };
-
+    
 
     const items = [
         { label: pasien ? pasien['no_rekam_medik'] : null },
@@ -2954,7 +2999,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
 
                 <Card>
                     <Toast ref={toast} />
-                    <DataTable value={model} expandedRows={expandedRows} onRowToggle={(e) => setExpandedRows(e.data)}
+                    <DataTable value={models} expandedRows={expandedRows} onRowToggle={(e) => openRow(e)}
                         onRowExpand={onRowExpand} onRowCollapse={onRowCollapse} rowExpansionTemplate={rowExpansionTemplate}
                         dataKey="noSep" tableStyle={{ minWidth: '60rem' }}>
                         <Column expander style={{ width: '5rem' }} />
