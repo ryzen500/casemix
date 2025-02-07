@@ -1017,7 +1017,17 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
         }
     };
 
-
+    const openRow = async (event)=>{
+        // Get the keys of the object
+        const keys = Object.keys(event);
+        
+        // Get the last key
+        const lastKey = keys[keys.length - 1];
+        
+        // Get the last key's value
+        const lastObject = { [lastKey]: [lastKey] };
+        setExpandedRows(lastObject);
+  }
     const handleNewClaim = async (data) => {
 
         console.log("handle new klaim", data);
@@ -3003,7 +3013,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
 
                 <Card>
                     <Toast ref={toast} />
-                    <DataTable value={model} expandedRows={expandedRows} onRowToggle={(e) => setExpandedRows(e.data)}
+                    <DataTable value={model} expandedRows={expandedRows} onRowToggle={(e) => openRow(e.data)}
                         onRowExpand={onRowExpand} onRowCollapse={onRowCollapse} rowExpansionTemplate={rowExpansionTemplate}
                         dataKey="noSep" tableStyle={{ minWidth: '60rem' }}>
                         <Column expander style={{ width: '5rem' }} />
