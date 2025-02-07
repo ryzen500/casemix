@@ -25,7 +25,8 @@ import { faUser, faHome, faCog, faEllipsis, faArrowLeft, faTrashCan } from "@for
 export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJP, jenisKasus, pegawai, kelompokDiagnosa, COB, caraPulang }) {
     const [datas, setDatas] = useState([]);
     const [dataGrouping, setDataGrouping] = useState({
-        los: 0
+        los: 0,
+        grouper:null
     });
     const [models, setModels] = useState(model);
     const [beratLahir, setBeratLahir] = useState('');
@@ -861,8 +862,10 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
 
                     setJaminan(response.data.pendaftaran.carabayar_id);
 
-                    setDataGrouping(response.data.getGrouping.data.data);
+                    if(response.data.getGrouping.success !== false){
+                        setDataGrouping(response.data.getGrouping.data.data);
 
+                    }
                     const defaultCaraPulang = caraPulang.find(
                         (carapulang) => carapulang.value === "1"
                     );
@@ -1002,6 +1005,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
 
             } catch (error) {
                 console.log("Kick 2")
+                console.log("Error",error) 
                 toast.current.show({ severity: 'error', summary: 'Error', detail: error, life: 3000 });
                 // setExpandedRows(null); // Optionally, handle error state
 
@@ -2444,15 +2448,15 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                 <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;' }}>Group</td>
                                                 <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;' }}>
                                                     {console.log("Yest", dataGrouper)}
-                                                    {dataGrouper.group_description !== "-" ? dataGrouper.group_description : (dataGrouping.grouper.response !== null) ? dataGrouping.grouper.response.cbg.description : '-'}
+                                                    {dataGrouper.group_description !== "-" ? dataGrouper.group_description :(dataGrouping.grouper!==null) ?((dataGrouping.grouper.response !== null) ? dataGrouping.grouper.response.cbg.description : '-'):'-'}
                                                 </td>
                                                 <td width="30%" style={{ textAlign: 'center' }}>
-                                                    {dataGrouper.group_code !== "-" ? dataGrouper.group_code : (dataGrouping.grouper.response !== null) ? dataGrouping.grouper.response.cbg.code : '-'}
+                                                    {dataGrouper.group_code !== "-" ? dataGrouper.group_code : (dataGrouping.grouper!==null)?((dataGrouping.grouper.response !== null) ? dataGrouping.grouper.response.cbg.code : '-'):'-'}
 
                                                     {/* {dataGrouper.group_code} */}
                                                 </td>
                                                 <td width="30%" style={{ textAlign: 'right' }}>
-                                                    <FormatRupiah value={dataGrouper.group_tarif ? dataGrouper.group_tarif : (dataGrouping.grouper.response !== null) ? dataGrouping.grouper.response.cbg.base_tariff : ' -'} />
+                                                    <FormatRupiah value={dataGrouper.group_tarif ? dataGrouper.group_tarif : (dataGrouping.grouper!==null)?((dataGrouping.grouper.response !== null) ? dataGrouping.grouper.response.cbg.base_tariff : ' -'):'-'} />
                                                 </td>
                                             </tr>
                                             <tr>
@@ -2547,7 +2551,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
 
                                                 <td width={"30%"} style={{ textAlign: 'right' }} colSpan={3}>Total</td>
                                                 {/* {console.log("Data ",dataGrouping.grouper.tarif_alt.filter(item => item.kelas.includes(`kelas_${datas.klsRawat.klsRawatHak}`))[0].tarif_inacbg)} */}
-                                                <td width={"30%"} style={{ textAlign: 'right' }}><FormatRupiah value={(totalGrouper.total) ? totalGrouper.total : (dataGrouping.grouper.tarif_alt !== null) ? dataGrouping.grouper.tarif_alt.filter(item => item.kelas.includes(`kelas_${datas.klsRawat.klsRawatHak}`))[0].tarif_inacbg : 0} /> </td>
+                                                <td width={"30%"} style={{ textAlign: 'right' }}><FormatRupiah value={(totalGrouper.total) ? totalGrouper.total :(dataGrouping.grouper!==null) ?((dataGrouping.grouper.tarif_alt !== null) ? dataGrouping.grouper.tarif_alt.filter(item => item.kelas.includes(`kelas_${datas.klsRawat.klsRawatHak}`))[0].tarif_inacbg : 0):0} /> </td>
 
                                             </tr>
 
