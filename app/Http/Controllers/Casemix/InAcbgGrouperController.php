@@ -466,13 +466,14 @@ class InAcbgGrouperController extends Controller
         // dd($saveResult);
         // Kembalikan hasil sebagai JSON response
 
-
+// dd($results);
         // if ($saveResult['status'] === 'success') {
         if ($results['success'] === true) {
 
             $saveService = new SaveDataGroupperService();
             $saveResult = $saveService->addDataInasiscbg($results, $data, $dataAuthor);
-
+            $saveResults = $saveService->addDataInasisdmc($results, $data, $dataAuthor);
+// dd($saveResults);
             // if(isset($results['special_cmg_option'])){
             //     $results = $this->inacbg->groupingStageDua($data, $key);
 
