@@ -2381,7 +2381,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                 {/*  Hasil Grouping */}
 
                                 {console.log("Display", hide)}
-                                <div style={{ display: hide === true ? 'none' : 'block' }}>
+                                <div style={{ display: hide === true ? 'none' : 'block' }}
                                     <table className='table table-bordered' style={{ border: ' 1px solid black', width: '100%' ,backgroundColor: dataFinalisasi.is_finalisasi ? '#ffdd99' : '#ffff' }}>
                                         <tbody>
                                             <tr>

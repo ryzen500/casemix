@@ -500,7 +500,7 @@ class Inacbg extends Model
             $encryptedPayload = $this->inacbg_encrypt($payload, $key); // Tambahkan parameter $key
 
             $response = $this->sendRequest($encryptedPayload, $key);
-            return $this->processResponse($response, $key);
+            return $this->processResponseStage1($response, $key);
         } catch (Exception $e) {
             return [
                 'success' => false,
@@ -999,7 +999,25 @@ class Inacbg extends Model
         ];
     }
 
+    private function processResponseStage1(string $response, string $key): array
+    {
+        $decodedResponse = json_decode($response, true);
+        // echo "<pre>";
+        // var_dump($decodedResponse);die;
+        if ($decodedResponse['metadata']['code'] == 200) {
+            return [
+                'success' => true,
+                'message' => $decodedResponse['metadata']['message'],
+                'data' => $decodedResponse ?? null,
+            ];
 
+        }
+
+        return [
+            'success' => false,
+            'message' => $decodedResponse['metadata']['message'] ?? 'Unknown error',
+        ];
+    }
     
     private function processResponsePrint(string $response, string $key): array
     {
