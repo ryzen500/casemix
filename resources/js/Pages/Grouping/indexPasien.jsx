@@ -139,6 +139,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
     const [expandedRows, setExpandedRows] = useState(null);
     const [loading, setLoading] = useState(false); // Loading state for expanded row
     const [hide, setHide] = useState(false); // Loading state for expanded row
+    // const [hid, setHide] = useState(false); // Loading state for expanded row
 
     const toast = useRef(null);
     const [suggestions, setSuggestions] = useState([]);
@@ -796,14 +797,35 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
         if (isNaN(date)) return ''; // Handle invalid date
         return date.toISOString().split('T')[0]; // Format as YYYY-MM-DD
     };
+    
     const onRowExpand = async (event) => {
         const expandedProduct = event.data;
         // Set loading to true when starting the API request
         setLoading(true);
+        console.log("expanded Product ", expandedProduct.pendaftaran_id);
+        setExpandedRows(null);
+
         if (expandedProduct.pendaftaran_id == null) {
+            console.log("<<>>");
+
             toast.current.show({ severity: 'error', summary: 'Error', detail: 'No SEP belum di sinkron!', life: 3000 });
             setExpandedRows(null);
-        } else {
+            console.log("expanded ",expandedRows)
+        }
+        
+        // if (!expandedProduct.pendaftaran_id) { 
+        //     toast.current.show({
+        //         severity: 'error', 
+        //         summary: 'Error', 
+        //         detail: 'No SEP belum di sinkron!', 
+        //         life: 3000
+        //     });
+        //     setLoading(false);
+        //     setExpandedRows(null);
+        //     return;
+        // }
+        
+        else {
             try {
                 // Fetch detailed data (e.g., reviews) for the expanded row
                 const response = await axios.post(route('getGroupperPasien'), {
@@ -2360,7 +2382,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
 
                                 {console.log("Display", hide)}
                                 <div style={{ display: hide === true ? 'none' : 'block' }}>
-                                    <table className='table table-bordered' style={{ border: ' 1px solid black', width: '100%' }}>
+                                    <table className='table table-bordered' style={{ border: ' 1px solid black', width: '100%' ,backgroundColor: dataFinalisasi.is_finalisasi ? '#ffdd99' : '#ffff' }}>
                                         <tbody>
                                             <tr>
                                                 <td colSpan={4}><p className='text-center font-bold'>Hasil Grouper E-Klaim v5 </p></td>
@@ -2498,7 +2520,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                         </tbody>
 
                                     </table>
-                                    <table className='table table-bordered' style={{ border: ' 1px solid black', width: '100%' }}>
+                                    <table className='table table-bordered' style={{ border: ' 1px solid black', width: '100%', backgroundColor: dataFinalisasi.is_finalisasi ? '#ffdd99' : '#ffff' }}>
                                         <tbody>
                                             <tr>
                                                 <td colSpan={4}><p className='text-center font-bold'>Hasil Grouper E-Klaim v6 </p></td>
@@ -2872,7 +2894,10 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                 console.error('Error:', error);
             });
     };
-
+    const allowExpansion = (rowData) => {
+        return rowData.pendaftaran_id !== null; 
+    };
+    
 
     const items = [
         { label: pasien ? pasien['no_rekam_medik'] : null },
