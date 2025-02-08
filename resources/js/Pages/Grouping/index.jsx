@@ -403,10 +403,10 @@ export default function CodingGrouping({ auth, pagination, data }) {
                                             <div className="form-group">
                                                 <label>Jenis Rawat:</label>
                                                 <select
-                                                    name='jenisrawat'
+                                                    name='jenisRawat'
                                                     className="form-control"
                                                     onChange={handleInputChange}
-                                                    value={formData.jenisrawat}
+                                                    value={formData.jenisRawat}
                                                 >
                                                     <option value='semua'>Semua</option>
                                                     <option value='RI'>Rawat Inap</option>
