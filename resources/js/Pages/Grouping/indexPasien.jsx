@@ -565,20 +565,24 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
     }
 
     const formatDateGroup = (dateString) => {
-        const date = new Date(dateString);
-        return new Intl.DateTimeFormat('id-ID', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false
-        }).format(date).replace(/\./g, ':');
+        if (dateString !== undefined) {
+            console.log("Date String", dateString);
+            const date = new Date(dateString);
+            return new Intl.DateTimeFormat('id-ID', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            }).format(date).replace(/\./g, ':');
+        }
+
     };
-    
+
     // const formattedDate = formatDateTime(dataFinalisasi.create_time);
     // console.log(formattedDate); // Output: "2024-02-07 14:30"
-    
+
 
     const formatDateTime = (dateString) => {
         // Convert the date string to a Date object
@@ -2485,7 +2489,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                             </tr>
                                             <tr>
                                                 <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;' }}>Info</td>
-                                                <td width={"35%"} style={{ textAlign: 'left', paddingRight: '10px;' }} colSpan={3}>{dataGrouping.coder_nm} @ {formatDateGroup(dataFinalisasi.create_time)}  <FontAwesomeIcon icon={faEllipsis} /> Kelas {dataGrouping.kelas_rs}  <FontAwesomeIcon icon={faEllipsis} /> Tarif : {dataGrouping.kode_tarif === 'CS' ? 'TARIF RS KELAS C SWASTA' : ''}</td>
+                                                <td width={"35%"} style={{ textAlign: 'left', paddingRight: '10px;' }} colSpan={3}>{dataGrouping.coder_nm} @ {dataFinalisasi.is_finalisasi ? formatDateGroup(dataFinalisasi.create_time) : "-"} <FontAwesomeIcon icon={faEllipsis} /> Kelas {dataGrouping.kelas_rs}  <FontAwesomeIcon icon={faEllipsis} /> Tarif : {dataGrouping.kode_tarif === 'CS' ? 'TARIF RS KELAS C SWASTA' : ''}</td>
 
 
                                             </tr>
@@ -2518,7 +2522,15 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                     {/* {dataGrouper.group_code} */}
                                                 </td>
                                                 <td width="30%" style={{ textAlign: 'right' }}>
-                                                    <FormatRupiah value={dataGrouper.group_tarif ? dataGrouper.group_tarif : (dataGrouping.grouper !== null) ? ((dataGrouping.grouper.response !== null) ? dataGrouping.grouper.response.cbg.base_tariff : ' -') : '-'} />
+                                                    <FormatRupiah
+                                                        value={dataGrouper.group_tarif
+                                                            ? dataGrouper.group_tarif
+                                                            : dataGrouping.grouper && dataGrouping.grouper.response && dataGrouping.grouper.response.cbg.base_tariff !== undefined
+                                                                ? dataGrouping.grouper.response.cbg.base_tariff
+                                                                : 0
+                                                        }
+                                                    />
+
                                                 </td>
                                             </tr>
                                             <tr>
@@ -2612,7 +2624,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                             <tr>
                                                 <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;' }}>Status Klaim</td>
                                                 <td colSpan={3} style={{ textAlign: 'left' }}>
-                                                    {(dataGrouper.klaim_status_cd) ? dataGrouper.klaim_status_cd :  dataGrouping.klaim_status_cd}</td>
+                                                    {(dataGrouper.klaim_status_cd) ? dataGrouper.klaim_status_cd : dataGrouping.klaim_status_cd}</td>
                                             </tr>
                                             <tr>
 
@@ -2876,13 +2888,13 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                 // console.log('Response:', response.data);
                 setHide(false);
 
-                if (Boolean(response.data.success) === false) {
-                    toast.current.show({ severity: 'error', summary: response.data.message, detail: datas.noSep, life: 3000 });
+                if (Boolean(response.data[0].success) === false) {
+                    toast.current.show({ severity: 'error', summary: response.data[0].message, detail: datas.noSep, life: 3000 });
 
                 } else {
                     toast.current.show({ severity: 'success', summary: `Data  Berhasil Di Hapus`, detail: datas.noSep, life: 3000 });
                     setExpandedRows(null);
-
+                    updateRowData(datas.noSep, response.data[1].data.data.grouper.response.cbg.code, response.data[1].data.data.klaim_status_cd, response.data[1].data.data.coder_nm);
                 }
 
                 // Handle the response from the backend
@@ -3010,9 +3022,9 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
 
                 } else {
                     toast.current.show({ severity: 'success', summary: `Data  Berhasil Di Finalisasi`, detail: datas.noSep, life: 3000 });
-                   console.log("Kick 23");
-                   updateRowData(datas.noSep, response.data[1].data.data.grouper.response.cbg.code, response.data[1].data.data.klaim_status_cd, response.data[1].data.data.coder_nm);
-                   setExpandedRows(null);
+                    console.log("Kick 23");
+                    updateRowData(datas.noSep, response.data[1].data.data.grouper.response.cbg.code, response.data[1].data.data.klaim_status_cd, response.data[1].data.data.coder_nm);
+                    setExpandedRows(null);
 
 
                     // setTimeout(() => {

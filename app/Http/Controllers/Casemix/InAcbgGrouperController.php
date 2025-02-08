@@ -440,9 +440,10 @@ class InAcbgGrouperController extends Controller
 
         // result kirim claim
         $results = $this->inacbg->deleteKlaim($data, $key);
+        $getClaim = $this->getKlaim($data['nomor_sep']);
 
         // Kembalikan hasil sebagai JSON response
-        return response()->json($results, 200);
+        return response()->json([$results,$getClaim], 200);
     }
 
     public function groupingStageSatu(Request $request)
@@ -492,13 +493,11 @@ class InAcbgGrouperController extends Controller
             $saveResult = $saveService->addDataInasiscbg($results, $data, $dataAuthor);
             $saveResults = $saveService->addDataInasisdmc($results, $data, $dataAuthor);
 // dd($saveResults);
-            // if(isset($results['special_cmg_option'])){
-            //     $results = $this->inacbg->groupingStageDua($data, $key);
-
-            //     $saveResultinasiscmg = $saveService->addDataInasiscmg( $results, $data, $dataAuthor);
-            // }
+            if($saveResult['status']=== 'success' && $saveResults['status'] === 'success') {
+               $datas = [$results,$getClaim];
+            }
             // Jika berhasil, kirim klaim
-            return response()->json([$results,$getClaim], 200);
+            return response()->json($datas, 200);
         } else {
             // Jika gagal, kembalikan pesan error
             return response()->json($results, 400);
