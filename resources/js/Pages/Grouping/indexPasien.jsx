@@ -564,6 +564,22 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
         }
     }
 
+    const formatDateGroup = (dateString) => {
+        const date = new Date(dateString);
+        return new Intl.DateTimeFormat('id-ID', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        }).format(date).replace(/\./g, ':');
+    };
+    
+    // const formattedDate = formatDateTime(dataFinalisasi.create_time);
+    // console.log(formattedDate); // Output: "2024-02-07 14:30"
+    
+
     const formatDateTime = (dateString) => {
         // Convert the date string to a Date object
         const formattedDate = new Date(dateString.replace(" ", "T"));
@@ -1290,7 +1306,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                             </div>
                                         </td>
 
-                                        <td width={"10%"} style={{textAlign: 'right',paddingRight:'15px'}}>Kelas Hak</td>
+                                        <td width={"10%"} style={{ textAlign: 'right', paddingRight: '15px' }}>Kelas Hak</td>
                                         <td width={"15%"}>
                                             <input type="text" className="col-sm-11 ml-2 " name='hakKelas' value={datas.peserta.hakKelas} />
                                         </td>
@@ -1302,7 +1318,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                         <td width={"60%"}>
                                             <div className="col-sm-12 ml-2">
                                                 <div className="row">
-                                                
+
 
                                                     {/* Flatpci */}
 
@@ -1353,7 +1369,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                         </td>
                                         <td width={"10%"} style={{ textAlign: 'center' }}></td>
 
-                                        <td width={"10%"} style={{ textAlign: 'right',paddingRight:'15px'}}>Umur</td>
+                                        <td width={"10%"} style={{ textAlign: 'right', paddingRight: '15px' }}>Umur</td>
                                         <td width={"20%"}>
                                             <InputText name='umur'
                                                 value={pendaftarans.umur} className='ml-2 col-sm-3' /> Tahun
@@ -1411,7 +1427,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                 inputClassName='col-sm-3 ml-2'
                                                 readOnly
                                             />  </td>
-                                        <td style={{textAlign: 'right',paddingRight:'15px'}}>Berat Lahir(gram)</td>
+                                        <td style={{ textAlign: 'right', paddingRight: '15px' }}>Berat Lahir(gram)</td>
                                         <td>
                                             <InputText
                                                 name="beratLahir"
@@ -1436,9 +1452,9 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                 </tr>
                                             </table>
                                         </td>
-                                        <td style={{ textAlign: 'right',paddingRight:'15px' }}>Cara Pulang</td>
+                                        <td style={{ textAlign: 'right', paddingRight: '15px' }}>Cara Pulang</td>
                                         <td>
-                                        <div className="col-sm-12" style={{ paddingRight:'20px', borderBottomColor: 'white', height: '60px' }}>
+                                            <div className="col-sm-12" style={{ paddingRight: '20px', borderBottomColor: 'white', height: '60px' }}>
                                                 <Dropdown
                                                     value={selectedCaraPulang}
                                                     onChange={(e) => setCaraPulang(e.value)}
@@ -1446,7 +1462,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                     optionLabel="name"
                                                     placeholder="Pilih Cara Pulang"
                                                     className="custom-dropdown"
-                                                    style={{ width: '250px'}}
+                                                    style={{ width: '250px' }}
                                                 />
                                             </div>
                                             {/* <Dropdown value={selectedCaraPulang} onChange={(e) => setCaraPulang(e.value)} options={caraPulang} optionLabel="name"
@@ -1469,7 +1485,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                 />
                                             </div>
                                         </td>
-                                        <td style={{textAlign:'right', paddingRight:'15px'}}>Jenis Tarif</td>
+                                        <td style={{ textAlign: 'right', paddingRight: '15px' }}>Jenis Tarif</td>
                                         <td><input type="text" className="col-sm-11 ml-2 " name='nama_tarifinacbgs_1' value={profils.nama_tarifinacbgs_1} /></td>
                                     </tr>
                                     <tr>
@@ -2469,7 +2485,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                             </tr>
                                             <tr>
                                                 <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;' }}>Info</td>
-                                                <td width={"35%"} style={{ textAlign: 'left', paddingRight: '10px;' }} colSpan={3}>{dataGrouping.coder_nm}</td>
+                                                <td width={"35%"} style={{ textAlign: 'left', paddingRight: '10px;' }} colSpan={3}>{dataGrouping.coder_nm} @ {formatDateGroup(dataFinalisasi.create_time)}  <FontAwesomeIcon icon={faEllipsis} /> Kelas {dataGrouping.kelas_rs}  <FontAwesomeIcon icon={faEllipsis} /> Tarif : {dataGrouping.kode_tarif === 'CS' ? 'TARIF RS KELAS C SWASTA' : ''}</td>
 
 
                                             </tr>
@@ -2577,21 +2593,26 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                     <FormatRupiah value={dataGrouper.special_drug_tarif} />
                                                 </td>
                                             </tr>
-                                            <tr>
-                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;' }}>Status DC Kemkes</td>
-                                                <td colSpan={3} style={{ color: (dataGrouping.kemenkes_dc_status_cd === "unsent" || dataGrouper.kemenkes_dc_status_cd === "unset") ? "red" : "black" }}>
+                                            {dataFinalisasi.is_finalisasi && (
+                                                <>
+                                                    <tr>
+                                                        <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;' }}>Status DC Kemkes</td>
+                                                        <td colSpan={3} style={{ color: (dataGrouping.kemenkes_dc_status_cd === "unsent" || dataGrouper.kemenkes_dc_status_cd === "unset") ? "red" : "black" }}>
 
-                                                    {dataGrouper.kemenkes_dc_status_cd ? dataGrouper.kemenkes_dc_status_cd :
-                                                        (dataGrouping.kemenkes_dc_status_cd === "unsent") ?
-                                                            "Klaim belum terkirim ke Pusat Data Kementerian Kesehatan" : "Terkirim"}
+                                                            {dataGrouper.kemenkes_dc_status_cd ? dataGrouper.kemenkes_dc_status_cd :
+                                                                (dataGrouping.kemenkes_dc_status_cd === "unsent") ?
+                                                                    "Klaim belum terkirim ke Pusat Data Kementerian Kesehatan" : "Terkirim"}
 
-                                                </td>
-                                            </tr>
+                                                        </td>
+                                                    </tr>
+                                                </>
+                                            )}
+
 
                                             <tr>
                                                 <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;' }}>Status Klaim</td>
                                                 <td colSpan={3} style={{ textAlign: 'left' }}>
-                                                    {dataGrouper.klaim_status_cd}</td>
+                                                    {(dataGrouper.klaim_status_cd) ? dataGrouper.klaim_status_cd :  dataGrouping.klaim_status_cd}</td>
                                             </tr>
                                             <tr>
 
@@ -2611,7 +2632,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                             </tr>
                                             <tr>
                                                 <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;' }}>Info</td>
-                                                <td width={"35%"} style={{ textAlign: 'left' }} colSpan={3} >{dataGrouping.coder_nm}</td>
+                                                <td width={"35%"} style={{ textAlign: 'left' }} colSpan={3} >{dataGrouping.coder_nm} @ {formatDateGroup(dataFinalisasi.create_time)}  <FontAwesomeIcon icon={faEllipsis} /> Kelas {dataGrouping.kelas_rs}  <FontAwesomeIcon icon={faEllipsis} /> Tarif : {dataGrouping.kode_tarif === 'CS' ? 'TARIF RS KELAS C SWASTA' : ''} </td>
                                             </tr>
                                             <tr>
                                                 <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;' }}>Jenis Rawat</td>
@@ -2824,13 +2845,13 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
     };
 
     // Function to filter by noSep and update tglSep
-    const updateRowData = async(noSep, cbg,status,petugas) => {
+    const updateRowData = async (noSep, cbg, status, petugas) => {
         // Map through the model and update the tglSep where noSep matches
-        const updatedModel =await models.map((item) => {
-        if (item.noSep === noSep) {
-            return { ...item,cbg: cbg,status:status, nama_pegawai: petugas }; // Update the tglSep for the matching row
-        }
-        return item; // Leave the rest unchanged
+        const updatedModel = await models.map((item) => {
+            if (item.noSep === noSep) {
+                return { ...item, cbg: cbg, status: status, nama_pegawai: petugas }; // Update the tglSep for the matching row
+            }
+            return item; // Leave the rest unchanged
         });
 
         // Update the model state with the modified array
