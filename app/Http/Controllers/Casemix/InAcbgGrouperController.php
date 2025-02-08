@@ -13,6 +13,7 @@ use App\Http\Services\Action\SaveDataKlaimService;
 use App\Http\Services\SearchSepService;
 use App\Models\CarabayarM;
 use App\Models\CaraKeluarM;
+use App\Models\InasismdcT;
 use App\Models\LaporanresepR;
 use App\Models\PasienMordibitasR;
 use App\Models\PegawaiM;
@@ -471,7 +472,8 @@ class InAcbgGrouperController extends Controller
 
             $saveService = new SaveDataGroupperService();
             $saveResult = $saveService->addDataInasiscbg($results, $data, $dataAuthor);
-
+            $saveResults = $saveService->addDataInasisdmc($results, $data, $dataAuthor);
+// dd($saveResults);
             // if(isset($results['special_cmg_option'])){
             //     $results = $this->inacbg->groupingStageDua($data, $key);
 
@@ -826,6 +828,8 @@ class InAcbgGrouperController extends Controller
         $obat = PendaftaranT::getGroupping($pendaftaran_id);
         $profil = ProfilrumahsakitM::getProfilRS();
         $SEP = Inacbg::where('inacbg_nosep', $noSep)->first();
+        $Inasismdc = InasismdcT::where('pendaftaran_id', $pendaftaran_id)->first();
+
         $serviceGrouping = new groupingService($this->inacbg);
         $getGrouping = $serviceGrouping->callDataGrouping($noSep);
         return response()->json([
@@ -836,6 +840,7 @@ class InAcbgGrouperController extends Controller
             'profil' => $profil,
             'dataDiagnosa' => $dataDiagnosa,
             'dataIcd9cm' => $dataIcd9cm,
+            'Inasismdc'=>$Inasismdc,
             'inacbg' => $SEP,
             'getGrouping' => $getGrouping
         ]);

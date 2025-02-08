@@ -20,13 +20,14 @@ import { AutoComplete } from 'primereact/autocomplete';
 import { InputNumber } from 'primereact/inputnumber';
 import { Calendar } from 'primereact/calendar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Flatpickr from "react-flatpickr";
 import { faUser, faHome, faCog, faEllipsis, faArrowLeft, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 
 export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJP, jenisKasus, pegawai, kelompokDiagnosa, COB, caraPulang }) {
     const [datas, setDatas] = useState([]);
     const [dataGrouping, setDataGrouping] = useState({
         los: 0,
-        grouper:null
+        grouper: null
     });
     const [models, setModels] = useState(model);
     const [beratLahir, setBeratLahir] = useState('');
@@ -863,7 +864,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
 
                     setJaminan(response.data.pendaftaran.carabayar_id);
 
-                    if(response.data.getGrouping.success !== false){
+
+                    if (response.data.getGrouping.success !== false) {
                         setDataGrouping(response.data.getGrouping.data.data);
 
                     }
@@ -871,7 +873,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                         (carapulang) => carapulang.value === "1"
                     );
 
-                    console.log("Default cara pulang ", defaultCaraPulang);
+                    setDataGrouperv6(response.data.Inasismdc || false);
+                    // console.log("Default cara pulang ", defaultCaraPulang);
                     setCaraPulang(defaultCaraPulang || null);
                     setDataFinalisasi(response.data.inacbg || false)
                     setPendaftarans(response.data.pendaftaran);
@@ -1006,7 +1009,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
 
             } catch (error) {
                 console.log("Kick 2")
-                console.log("Error",error) 
+                console.log("Error", error)
                 toast.current.show({ severity: 'error', summary: 'Error', detail: error, life: 3000 });
                 // setExpandedRows(null); // Optionally, handle error state
 
@@ -1018,17 +1021,17 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
         }
     };
 
-    const openRow = async (event)=>{
+    const openRow = async (event) => {
         // Get the keys of the object
         const keys = Object.keys(event);
-        
+
         // Get the last key
         const lastKey = keys[keys.length - 1];
-        
+
         // Get the last key's value
         const lastObject = { [lastKey]: [lastKey] };
         setExpandedRows(lastObject);
-  }
+    }
     const handleNewClaim = async (data) => {
 
         console.log("handle new klaim", data);
@@ -1287,91 +1290,111 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                             </div>
                                         </td>
 
-                                        <td width={"10%"}>Kelas Hak</td>
+                                        <td width={"10%"} style={{textAlign: 'right',paddingRight:'15px'}}>Kelas Hak</td>
                                         <td width={"15%"}>
-                                            <input type="text" className="form-control" name='hakKelas' value={datas.peserta.hakKelas} />
+                                            <input type="text" className="col-sm-11 ml-2 " name='hakKelas' value={datas.peserta.hakKelas} />
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td width={"15%"}  className='pl-2'>
+                                        <td width={"15%"} className='pl-2'>
                                             Tanggal Rawat
                                         </td>
                                         <td width={"60%"}>
                                             <div className="col-sm-12 ml-2">
                                                 <div className="row">
+                                                
+
+                                                    {/* Flatpci */}
+
                                                     <div className="col-sm-6">
                                                         Masuk :
-                                                        <Calendar
-                                                            id="calendar-24h"
+                                                        <Flatpickr
+                                                            options={{
+                                                                enableTime: true,
+                                                                dateFormat: "Y-m-d H:i",
+                                                                time_24hr: true,
+                                                                locale: "id", // Bahasa Indonesia
+                                                            }}
                                                             value={pendaftarans.tanggal_masuk ? new Date(pendaftarans.tanggal_masuk) : null}
-                                                            name="tanggal_masuk"
-                                                            onChange={handleChange}
-                                                            showTime
-                                                            hourFormat="24"
+                                                            onChange={(selectedDates) =>
+                                                                handleChange({
+                                                                    target: {
+                                                                        name: "tanggal_masuk",
+                                                                        value: selectedDates[0],
+                                                                    },
+                                                                })
+                                                            }
                                                         />
-                                                        {console.log("Tanggal Masuk ", pendaftarans.tanggal_masuk)}
-                                                        {/* <Calendar id="calendar-24h" value={(pendaftarans.tanggal_masuk)} name='tanggal_masuk' onChange={handleChange} showTime hourFormat="24" /> */}
-                                                        {/* <input type="date" name="tanggal_masuk" class="form-control" value={formatDate(pendaftarans.tanggal_masuk)} onChange={handleChange} /> */}
                                                     </div>
                                                     <div className="col-sm-6">
                                                         Pulang :
-                                                        <Calendar id="calendar-24h"
+                                                        <Flatpickr
+                                                            options={{
+                                                                enableTime: true,
+                                                                dateFormat: "Y-m-d H:i",
+                                                                time_24hr: true,
+                                                                locale: "id",
+                                                                minDate: pendaftarans.tanggal_masuk || null,
+                                                            }}
                                                             value={pendaftarans.tanggal_pulang ? new Date(pendaftarans.tanggal_pulang) : null}
-                                                            name='tanggal_pulang'
-                                                            onChange={handleChange}
-                                                            showTime
-                                                            hourFormat="24" />
-
-                                                        {/* <input type="date" name="tanggal_pulang" class="form-control" value={formatDate(pendaftarans.tanggal_pulang)} onChange={handleChange} /> */}
-
+                                                            onChange={(selectedDates) =>
+                                                                handleChange({
+                                                                    target: {
+                                                                        name: "tanggal_pulang",
+                                                                        value: selectedDates[0],
+                                                                    },
+                                                                })
+                                                            }
+                                                        />
                                                     </div>
+
                                                 </div>
                                             </div>
                                         </td>
                                         <td width={"10%"} style={{ textAlign: 'center' }}></td>
 
-                                        <td width={"10%"} style={{ textAlign: 'center' }}>Umur</td>
+                                        <td width={"10%"} style={{ textAlign: 'right',paddingRight:'15px'}}>Umur</td>
                                         <td width={"20%"}>
                                             <InputText name='umur'
-                                                value={pendaftarans.umur} className='col-sm-3' /> Tahun
+                                                value={pendaftarans.umur} className='ml-2 col-sm-3' /> Tahun
                                         </td>
                                     </tr>
                                     <tr>
                                         {console.log("Masuk ", selectedCaraMasuk)}
-                                        <td  className='pl-2'>Cara Masuk</td>
-                                        <td style={{maxHeight:'60px'}}>
-                                            <div className="col-sm-12" style={{borderBottomColor:'white',height:'60px'}}>
+                                        <td className='pl-2'>Cara Masuk</td>
+                                        <td style={{ maxHeight: '60px' }}>
+                                            <div className="col-sm-12" style={{ borderBottomColor: 'white', height: '60px' }}>
                                                 <Dropdown
                                                     value={selectedCaraMasuk}
                                                     onChange={(e) => setCaraMasuk(e.value)}
                                                     options={caraMasuk}
                                                     optionLabel="name"
                                                     placeholder="Pilih Cara Masuk"
-                                                    className="ml-2 custom-dropdown"  
-                                                    style={{ width: '250px' }}  
+                                                    className="ml-2 custom-dropdown"
+                                                    style={{ width: '250px' }}
                                                 />
                                             </div>
                                         </td>
                                     </tr>
 
                                     <tr>
-                                        <td  className='pl-2'>COB</td>
+                                        <td className='pl-2'>COB</td>
                                         <td >
-                                            <div className="col-sm-12" style={{borderBottomColor:'white',height:'60px'}}>
+                                            <div className="col-sm-12" style={{ borderBottomColor: 'white', height: '60px' }}>
                                                 <Dropdown
                                                     value={selectedCOB}
                                                     onChange={(e) => setCOB(e.value)}
                                                     options={COB}
                                                     optionLabel="name"
-                                                    placeholder="Pilih Cara Masuk"
-                                                    className="ml-2 custom-dropdown"  
-                                                    style={{ width: '250px' }}  
+                                                    placeholder="Pilih COB"
+                                                    className="ml-2 custom-dropdown"
+                                                    style={{ width: '250px' }}
                                                 />
                                             </div>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td  className='pl-2'>LOS</td>
+                                        <td className='pl-2'>LOS</td>
                                         <td colSpan={2}>
                                             <InputNumber
                                                 value={pendaftarans && dataGrouping ?
@@ -1385,24 +1408,24 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                 min={0} // Optional: Set a minimum value
                                                 max={100000000} // Optional: Set a maximum value
                                                 name='los'
-                                                inputClassName=' form-control ml-2'
+                                                inputClassName='col-sm-3 ml-2'
                                                 readOnly
-                                            /> hari</td>
-                                        <td>Berat Lahir(gram)</td>
+                                            />  </td>
+                                        <td style={{textAlign: 'right',paddingRight:'15px'}}>Berat Lahir(gram)</td>
                                         <td>
                                             <InputText
                                                 name="beratLahir"
                                                 value={beratLahir}
                                                 onChange={(e) => setBeratLahir(e.target.value)}
-                                                className='col-sm-3'
+                                                className='ml-2 col-sm-3'
                                             />
 
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td  className='pl-2'>ADL Score</td>
+                                        <td className='pl-2'>ADL Score</td>
                                         <td colSpan="2">
-                                            <table style={{border:'none',width:'100%'}} className='ml-2'>
+                                            <table style={{ border: 'none', width: '100%' }} className='ml-2'>
                                                 <tr>
                                                     <td>
                                                         Sub Acute : {dataGrouping ? (dataGrouping.adl_sub_acute ? parseFloat(dataGrouping.adl_sub_acute) : '-') : '-'}
@@ -1413,32 +1436,44 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                 </tr>
                                             </table>
                                         </td>
-                                        <td style={{ textAlign: 'center' }}>Cara Pulang</td>
+                                        <td style={{ textAlign: 'right',paddingRight:'15px' }}>Cara Pulang</td>
                                         <td>
-                                            <Dropdown value={selectedCaraPulang} onChange={(e) => setCaraPulang(e.value)} options={caraPulang} optionLabel="name"
-                                                placeholder="Pilih Cara Pulang" className="w-full md:w-14rem" />
+                                        <div className="col-sm-12" style={{ paddingRight:'20px', borderBottomColor: 'white', height: '60px' }}>
+                                                <Dropdown
+                                                    value={selectedCaraPulang}
+                                                    onChange={(e) => setCaraPulang(e.value)}
+                                                    options={caraPulang}
+                                                    optionLabel="name"
+                                                    placeholder="Pilih Cara Pulang"
+                                                    className="custom-dropdown"
+                                                    style={{ width: '250px'}}
+                                                />
+                                            </div>
+                                            {/* <Dropdown value={selectedCaraPulang} onChange={(e) => setCaraPulang(e.value)} options={caraPulang} optionLabel="name"
+                                                placeholder="Pilih Cara Pulang" className="ml-2 custom-dropdown"
+                                                /> */}
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td  className='pl-2'>DPJP</td>
-                                        <td >
-                                            <div className="col-sm-12" style={{borderBottomColor:'white',height:'60px'}}>
+                                        <td className='pl-2'>DPJP</td>
+                                        <td colSpan={2} >
+                                            <div className="col-sm-12" style={{ borderBottomColor: 'white', height: '60px' }}>
                                                 <Dropdown
                                                     value={selectedDPJP}
                                                     onChange={(e) => setDPJP(e.value)}
                                                     options={DPJP}
                                                     optionLabel="nmdpjp"
                                                     placeholder="Pilih DPJP"
-                                                    className="ml-2 custom-dropdown"  
-                                                    style={{ width: '250px' }}  
+                                                    className="ml-2 custom-dropdown"
+                                                    style={{ width: '250px' }}
                                                 />
                                             </div>
                                         </td>
-                                        <td>Jenis Tarif</td>
-                                        <td><input type="text" className="form-control" name='nama_tarifinacbgs_1' value={profils.nama_tarifinacbgs_1} /></td>
+                                        <td style={{textAlign:'right', paddingRight:'15px'}}>Jenis Tarif</td>
+                                        <td><input type="text" className="col-sm-11 ml-2 " name='nama_tarifinacbgs_1' value={profils.nama_tarifinacbgs_1} /></td>
                                     </tr>
                                     <tr>
-                                        <td  className='pl-2'>Pasien TB</td>
+                                        <td className='pl-2'>Pasien TB</td>
                                         <td colSpan={3}>
                                             <div className="col-sm-12">
                                                 <div className="row">
@@ -2459,15 +2494,15 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                 <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;' }}>Group</td>
                                                 <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;' }}>
                                                     {console.log("Yest", dataGrouper)}
-                                                    {dataGrouper.group_description !== "-" ? dataGrouper.group_description :(dataGrouping.grouper!==null) ?((dataGrouping.grouper.response !== null) ? dataGrouping.grouper.response.cbg.description : '-'):'-'}
+                                                    {dataGrouper.group_description !== "-" ? dataGrouper.group_description : (dataGrouping.grouper !== null) ? ((dataGrouping.grouper.response !== null) ? dataGrouping.grouper.response.cbg.description : '-') : '-'}
                                                 </td>
                                                 <td width="30%" style={{ textAlign: 'center' }}>
-                                                    {dataGrouper.group_code !== "-" ? dataGrouper.group_code : (dataGrouping.grouper!==null)?((dataGrouping.grouper.response !== null) ? dataGrouping.grouper.response.cbg.code : '-'):'-'}
+                                                    {dataGrouper.group_code !== "-" ? dataGrouper.group_code : (dataGrouping.grouper !== null) ? ((dataGrouping.grouper.response !== null) ? dataGrouping.grouper.response.cbg.code : '-') : '-'}
 
                                                     {/* {dataGrouper.group_code} */}
                                                 </td>
                                                 <td width="30%" style={{ textAlign: 'right' }}>
-                                                    <FormatRupiah value={dataGrouper.group_tarif ? dataGrouper.group_tarif : (dataGrouping.grouper!==null)?((dataGrouping.grouper.response !== null) ? dataGrouping.grouper.response.cbg.base_tariff : ' -'):'-'} />
+                                                    <FormatRupiah value={dataGrouper.group_tarif ? dataGrouper.group_tarif : (dataGrouping.grouper !== null) ? ((dataGrouping.grouper.response !== null) ? dataGrouping.grouper.response.cbg.base_tariff : ' -') : '-'} />
                                                 </td>
                                             </tr>
                                             <tr>
@@ -2562,7 +2597,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
 
                                                 <td width={"30%"} style={{ textAlign: 'right' }} colSpan={3}>Total</td>
                                                 {/* {console.log("Data ",dataGrouping.grouper.tarif_alt.filter(item => item.kelas.includes(`kelas_${datas.klsRawat.klsRawatHak}`))[0].tarif_inacbg)} */}
-                                                <td width={"30%"} style={{ textAlign: 'right' }}><FormatRupiah value={(totalGrouper.total) ? totalGrouper.total :(dataGrouping.grouper!==null) ?((dataGrouping.grouper.tarif_alt !== null) ? dataGrouping.grouper.tarif_alt.filter(item => item.kelas.includes(`kelas_${datas.klsRawat.klsRawatHak}`))[0].tarif_inacbg : 0):0} /> </td>
+                                                <td width={"30%"} style={{ textAlign: 'right' }}><FormatRupiah value={(totalGrouper.total) ? totalGrouper.total : (dataGrouping.grouper !== null) ? ((dataGrouping.grouper.tarif_alt !== null) ? dataGrouping.grouper.tarif_alt.filter(item => item.kelas.includes(`kelas_${datas.klsRawat.klsRawatHak}`))[0].tarif_inacbg : 0) : 0} /> </td>
 
                                             </tr>
 
@@ -2778,7 +2813,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                     setDataGrouperv6(response.data[0].data.response_inagrouper);
                     // klaim_status_cd
                     setDataGrouping(response.data[1].data.data)
-                    updateRowData(datas.noSep,response.data[0].data.response.cbg.code,response.data[1].data.data.klaim_status_cd,response.data[1].data.data.coder_nm)
+                    updateRowData(datas.noSep, response.data[0].data.response.cbg.code, response.data[1].data.data.klaim_status_cd, response.data[1].data.data.coder_nm)
                 }
 
                 // Handle the response from the backend
@@ -2961,9 +2996,9 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
             });
     };
     const allowExpansion = (rowData) => {
-        return rowData.pendaftaran_id !== null; 
+        return rowData.pendaftaran_id !== null;
     };
-    
+
 
     const items = [
         { label: pasien ? pasien['no_rekam_medik'] : null },
