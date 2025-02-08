@@ -401,6 +401,23 @@ class Inacbg extends Model
             ];
         }
     }
+    public function generate_claim_number(array $data, string $key): array
+    {
+        try {
+            // validate The Payload
+            // $this->validateData($data);
+            $payload = $this->preparePayloadGenerateClaim($data);
+            $encryptedPayload = $this->inacbg_encrypt($payload, $key); // Tambahkan parameter $key
+
+            $response = $this->sendRequest($encryptedPayload, $key);
+            return $this->processResponse($response, $key);
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
 
     /**
      * Summary of newClaim
@@ -649,6 +666,12 @@ class Inacbg extends Model
         ]);
     }
 
+    private function preparePayloadGenerateClaim(array $data): string
+    {
+        return json_encode([
+            'metadata' => ['method' => 'generate_claim_number','payor_id' => 3],
+        ]);
+    }
 
        /**
      * Summary of preparePayload Delete Klaim
