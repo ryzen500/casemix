@@ -553,12 +553,12 @@ export default function CodingGrouping({ auth, pagination, data }) {
                                                 {rowData.nama_pasien} <br /> <span style={{fontSize:"13px",color:'#888'}}>{rowData.no_rekam_medik}</span>
                                                 </>
                                             )}  header="Pasien" style={{ alignItems: 'center', border:'1px solid #e5e7eb' }} ></Column>
-                                        <Column field="kodeprosedur" header="Kode" style={{ alignItems: 'center', border:'1px solid #e5e7eb' }} ></Column>
+                                        <Column field="kodeprosedur" header="Kode"  body={(rowData)=>(<>{rowData.kodeprosedur || '-'}</>)} style={{ alignItems: 'center', border:'1px solid #e5e7eb' }} ></Column>
                                         <Column field="plafonprosedur" header="Tarif Total"  body={(rowData)=>(<><FormatRupiah value={rowData.plafonprosedur || 0} /></>)} style={{ alignItems: 'center', border:'1px solid #e5e7eb' }} ></Column>
                                         <Column field="total_tarif_rs" body={(rowData)=>(<><FormatRupiah value={rowData.total_tarif_rs || 0} /></>)} header="Billing RS" style={{ alignItems: 'center', textAlign:'right',border:'1px solid #e5e7eb' }} ></Column>
                                         <Column field="jnspelayanan" header="Rawat" body={jnspelayananBody}  style={{ alignItems: 'center', border:'1px solid #e5e7eb' }} ></Column>
-                                        <Column field="status" header="Status Klaim" style={{ alignItems: 'center', border:'1px solid #e5e7eb' }} ></Column>
-                                        <Column field="nama_pegawai" header="Petugas" style={{ alignItems: 'center', border:'1px solid #e5e7eb' }} ></Column>
+                                        <Column field="status" header="Status Klaim" body={(rowData)=>(<>{rowData.status || '-'}</>)}  style={{ alignItems: 'center', border:'1px solid #e5e7eb' }} ></Column>
+                                        <Column field="nama_pegawai" header="Petugas" body={(rowData)=>(<>{rowData.nama_pegawai || '-'}</>)} style={{ alignItems: 'center', border:'1px solid #e5e7eb' }} ></Column>
                                     </DataTable>
                                 </div>
                             </div>

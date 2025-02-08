@@ -775,6 +775,8 @@ class InAcbgGrouperController extends Controller
                         if (!empty($getClaim['data']['data']['coder_nik'])) {
                             $peg = LoginPemakaiK::getCoder($getClaim['data']['data']['coder_nik']);
                             $data[$key]['nama_pegawai'] = !empty($peg) ? $peg->namaLengkap : '-';
+                        } else if(!empty($getClaim['data']['data']['coder_nm'])){
+                            $data[$key]['nama_pegawai'] = $getClaim['data']['data']['coder_nm'];
                         } else {
                             $data[$key]['nama_pegawai'] = '-';
                         }
