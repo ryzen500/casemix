@@ -2846,6 +2846,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
 
     // Function to filter by noSep and update tglSep
     const updateRowData = async (noSep, cbg, status, petugas) => {
+        console.log("Kicik")
         // Map through the model and update the tglSep where noSep matches
         const updatedModel = await models.map((item) => {
             if (item.noSep === noSep) {
@@ -2971,12 +2972,16 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
         axios.post(route('editUlangKlaim'), payload)
             .then((response) => {
                 // setDataFinalisasi(response.data.data);
-                if (Boolean(response.data.success) === false) {
-                    toast.current.show({ severity: 'error', summary: response.data.message, detail: datas.noSep, life: 3000 });
+                if (Boolean(response.data[0].success) === false) {
+                    toast.current.show({ severity: 'error', summary: response.data[0].message, detail: datas.noSep, life: 3000 });
 
                 } else {
                     toast.current.show({ severity: 'success', summary: `Data  Berhasil Di edit ulang`, detail: datas.noSep, life: 3000 });
+                    updateRowData(datas.noSep, response.data[1].data.data.grouper.response.cbg.code, response.data[1].data.data.klaim_status_cd, response.data[1].data.data.coder_nm);
                     setExpandedRows(null);
+                    // 
+                    // console.log("dataGrouping", dataGrouping)
+
                 }
                 // Handle the response from the backend
             })
@@ -3000,14 +3005,19 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
         axios.post(route('Finalisasi'), payload)
             .then((response) => {
                 // setDataFinalisasi(response.data.data);
-                if (Boolean(response.data.success) === false) {
-                    toast.current.show({ severity: 'error', summary: response.data.message, detail: datas.noSep, life: 3000 });
+                if (Boolean(response.data[0].success) === false) {
+                    toast.current.show({ severity: 'error', summary: response.data[0].message, detail: datas.noSep, life: 3000 });
 
                 } else {
                     toast.current.show({ severity: 'success', summary: `Data  Berhasil Di Finalisasi`, detail: datas.noSep, life: 3000 });
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 500); // 500 ms delay
+                   console.log("Kick 23");
+                   updateRowData(datas.noSep, response.data[1].data.data.grouper.response.cbg.code, response.data[1].data.data.klaim_status_cd, response.data[1].data.data.coder_nm);
+                   setExpandedRows(null);
+
+
+                    // setTimeout(() => {
+                    //     window.location.reload();
+                    // }, 500); // 500 ms delay
                 }
 
                 // Handle the response from the backend

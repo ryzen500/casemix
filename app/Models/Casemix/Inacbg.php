@@ -561,6 +561,7 @@ class Inacbg extends Model
             $encryptedPayload = $this->inacbg_encrypt($payload, $key); // Tambahkan parameter $key
 
             $response = $this->sendRequest($encryptedPayload, $key);
+            // dd($response);
             return $this->processResponse($response, $key);
         } catch (Exception $e) {
             return [
