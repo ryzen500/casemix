@@ -9,6 +9,7 @@ import { DataTable } from 'primereact/datatable';
 import { ColumnGroup } from 'primereact/columngroup';
 import { Row } from 'primereact/row';
 import { Toast } from 'primereact/toast';
+import { FormatRupiah } from '@arismun/format-rupiah';
 
 export default function CodingGrouping({ auth, pagination, data }) {
 
@@ -73,21 +74,21 @@ export default function CodingGrouping({ auth, pagination, data }) {
 
             <Row>
 
-                <Column header="No" rowSpan={2} />
-                <Column header="Tanggal Masuk" rowSpan={2} />
-                <Column header="Tanggal Pulang" rowSpan={2} />
-                <Column header="No SEP" rowSpan={2} />
-                <Column header="Nama Pasien" rowSpan={2} />
-                <Column header="INACBG" colSpan={2} style={{ textAlign: "center" }} />
-                <Column header="Billing RS" rowSpan={2} />
-                <Column header="Rawat" rowSpan={2} />
-                <Column header="Status Klaim" rowSpan={2} />
-                <Column header="Petugas" rowSpan={2} />
+                <Column header="No" rowSpan={2} style={{ border:'1px solid #e5e7eb'}}/>
+                <Column header="Tanggal Masuk" rowSpan={2}  style={{ border:'1px solid #e5e7eb'}} />
+                <Column header="Tanggal Pulang" rowSpan={2}   style={{ border:'1px solid #e5e7eb'}}/>
+                <Column header="No SEP" rowSpan={2}  style={{ border:'1px solid #e5e7eb'}}  />
+                <Column header="Nama Pasien" rowSpan={2}  style={{ border:'1px solid #e5e7eb'}} />
+                <Column header="INACBG" colSpan={2} align='center' style={{ textAlign: "center",border:'1px solid #e5e7eb' }} />
+                <Column header="Billing RS" rowSpan={2}  style={{ border:'1px solid #e5e7eb'}}/>
+                <Column header="Rawat" rowSpan={2}  style={{ border:'1px solid #e5e7eb'}}/>
+                <Column header="Status Klaim" rowSpan={2}  style={{ border:'1px solid #e5e7eb'}}/>
+                <Column header="Petugas" rowSpan={2}  style={{ border:'1px solid #e5e7eb'}}/>
 
             </Row>
             <Row>
-                <Column header="Kode" />
-                <Column header="Tarif Total" />
+                <Column header="Kode"  style={{ border:'1px solid #e5e7eb'}} />
+                <Column header="Tarif Total"  style={{ border:'1px solid #e5e7eb'}} />
             </Row>
         </ColumnGroup>
     );
@@ -526,37 +527,38 @@ export default function CodingGrouping({ auth, pagination, data }) {
                                     {/* <DataTable url="/getSearchGroupper" columns={columns} /> */}
                                     <DataTable
                                         paginator
-                                        dataKey="idq"
+                                        dataKey="nosep"
                                         first={lazyState.first}
                                         rows={parseInt(paginations.items_per_page)}
                                         totalRecords={paginations.total_items}
                                         headerColumnGroup={headerGroup}
                                         lazy
+                                        showGridlines 
                                         value={users}
                                         loading={loading}
                                         stripedRows
                                         rowsPerPageOptions={[100, 200, 300]}
                                         onPage={onPage2}
                                     >
-                                        <Column body={rowNumberTemplate} header="No." style={{ width: '50px', alignItems: 'center' }} />
-                                        <Column header="Tanggal Masuk" body={tglMasukBody} style={{ alignItems: 'center' }} ></Column>
-                                        <Column header="Tanggal Pulang" body={tglPulangBody} style={{ alignItems: 'center' }} ></Column>
+                                        <Column body={rowNumberTemplate} header="No." style={{ width: '50px', alignItems: 'center' , border:'1px solid #e5e7eb'}} />
+                                        <Column header="Tanggal Masuk" body={tglMasukBody} style={{ alignItems: 'center', border:'1px solid #e5e7eb' }} ></Column>
+                                        <Column header="Tanggal Pulang" body={tglPulangBody} style={{ alignItems: 'center', border:'1px solid #e5e7eb' }} ></Column>
                                         <Column field="nosep"    body={(rowData) => (
                                                 <>
                                                 {rowData.nosep} <br /> <span style={{fontSize:"13px",color:'#888'}}>{rowData.nokartuasuransi}</span>
                                                 </>
-                                            )}  header="No SEP" style={{ alignItems: 'center' }} ></Column>
+                                            )}  header="No SEP" style={{ alignItems: 'center', border:'1px solid #e5e7eb' }} ></Column>
                                         <Column field="nama_pasien"    body={(rowData) => (
                                                 <>
                                                 {rowData.nama_pasien} <br /> <span style={{fontSize:"13px",color:'#888'}}>{rowData.no_rekam_medik}</span>
                                                 </>
-                                            )}  header="Pasien" style={{ alignItems: 'center' }} ></Column>
-                                        <Column field="kodeprosedur" header="Kode" style={{ alignItems: 'center' }} ></Column>
-                                        <Column field="plafonprosedur" header="Tarif Total" style={{ alignItems: 'center' }} ></Column>
-                                        <Column field="total_tarif_rs" header="Billing RS" style={{ alignItems: 'center' }} ></Column>
-                                        <Column field="jnspelayanan" header="Rawat" body={jnspelayananBody}  style={{ alignItems: 'center' }} ></Column>
-                                        <Column field="status" header="Status Klaim" style={{ alignItems: 'center' }} ></Column>
-                                        <Column field="nama_pegawai" header="Petugas" style={{ alignItems: 'center' }} ></Column>
+                                            )}  header="Pasien" style={{ alignItems: 'center', border:'1px solid #e5e7eb' }} ></Column>
+                                        <Column field="kodeprosedur" header="Kode" style={{ alignItems: 'center', border:'1px solid #e5e7eb' }} ></Column>
+                                        <Column field="plafonprosedur" header="Tarif Total"  body={(rowData)=>(<><FormatRupiah value={rowData.plafonprosedur || 0} /></>)} style={{ alignItems: 'center', border:'1px solid #e5e7eb' }} ></Column>
+                                        <Column field="total_tarif_rs" body={(rowData)=>(<><FormatRupiah value={rowData.total_tarif_rs || 0} /></>)} header="Billing RS" style={{ alignItems: 'center', textAlign:'right',border:'1px solid #e5e7eb' }} ></Column>
+                                        <Column field="jnspelayanan" header="Rawat" body={jnspelayananBody}  style={{ alignItems: 'center', border:'1px solid #e5e7eb' }} ></Column>
+                                        <Column field="status" header="Status Klaim" style={{ alignItems: 'center', border:'1px solid #e5e7eb' }} ></Column>
+                                        <Column field="nama_pegawai" header="Petugas" style={{ alignItems: 'center', border:'1px solid #e5e7eb' }} ></Column>
                                     </DataTable>
                                 </div>
                             </div>
