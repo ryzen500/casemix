@@ -465,8 +465,7 @@ class InAcbgGrouperController extends Controller
 
         // dd($saveResult);
         // Kembalikan hasil sebagai JSON response
-
-// dd($results);
+        $getClaim = $this->getKlaim($data['nomor_sep']);
         // if ($saveResult['status'] === 'success') {
         if ($results['success'] === true) {
 
@@ -480,7 +479,7 @@ class InAcbgGrouperController extends Controller
             //     $saveResultinasiscmg = $saveService->addDataInasiscmg( $results, $data, $dataAuthor);
             // }
             // Jika berhasil, kirim klaim
-            return response()->json($results, 200);
+            return response()->json([$results,$getClaim], 200);
         } else {
             // Jika gagal, kembalikan pesan error
             return response()->json($results, 400);
