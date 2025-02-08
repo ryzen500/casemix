@@ -129,7 +129,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
     const [totalGrouper, setTotalGrouper] = useState(0);
 
     const handleBackClick = () => {
-        window.history.back();
+        window.open(route('searchGroupper'), '_parent');
+
     };
     const [profils, setProfil] = useState([]);
     const [selectedCaraMasuk, setCaraMasuk] = useState({});
@@ -2823,25 +2824,18 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
     };
 
     // Function to filter by noSep and update tglSep
-    const updateRowData = (noSep, cbg, status, petugas) => {
+    const updateRowData = async(noSep, cbg,status,petugas) => {
         // Map through the model and update the tglSep where noSep matches
-        const updatedModel = models.map((item) => {
-            console.log("Item", item.noSep);
-            console.log("Petugas ", petugas);
-
-            console.log("Item SEP ", noSep);
-            if (item.noSep === noSep) {
-                return { ...item, cbg: cbg, status: status, nama_pegawai: petugas }; // Update the tglSep for the matching row
-            }
-            return item; // Leave the rest unchanged
+        const updatedModel =await models.map((item) => {
+        if (item.noSep === noSep) {
+            return { ...item,cbg: cbg,status:status, nama_pegawai: petugas }; // Update the tglSep for the matching row
+        }
+        return item; // Leave the rest unchanged
         });
 
         // Update the model state with the modified array
         setModels(updatedModel);
-        console.log("models" , models);
-
         // Show a success toast
-        // toast.current.show({ severity: 'success', summary: 'Date Updated', detail: `tglSep for ${noSep} updated to ${newTglSep}.`, life: 3000 });
     };
 
     /**Hapus Klaim */
@@ -3033,19 +3027,18 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
             <>
                 <div className="card ">
 
-                    <BreadCrumb model={items} separatorIcon={<FontAwesomeIcon icon={faEllipsis} />} />
 
-                    <div className='p-4 flex items-center space-x-3 bg-gray-100'>
-                        {/* Button dengan fa-arrow-left */}
+                    <div className="flex items-center space-x-3">
+                        {/* Button with fa-arrow-left */}
                         <button
                             onClick={handleBackClick}
-                            className="flex items-center justify-center p-2 rounded bg-gray-200 hover:bg-gray-300 transition">
+                            className="flex items-center justify-center p-3 rounded hover:bg-gray-300 transition">
                             <FontAwesomeIcon icon={faArrowLeft} />
                         </button>
 
-
+                        {/* BreadCrumb Component */}
+                        <BreadCrumb model={items} separatorIcon={<FontAwesomeIcon icon={faEllipsis} />} />
                     </div>
-
 
                     {/* Breadcrumb Component */}
                 </div>
@@ -3053,7 +3046,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
 
                 <Card>
                     <Toast ref={toast} />
-                    <DataTable value={model} expandedRows={expandedRows} onRowToggle={(e) => openRow(e.data)}
+                    <DataTable value={models} expandedRows={expandedRows} onRowToggle={(e) => openRow(e.data)}
                         onRowExpand={onRowExpand} onRowCollapse={onRowCollapse} rowExpansionTemplate={rowExpansionTemplate}
                         dataKey="noSep" tableStyle={{ minWidth: '60rem' }}>
                         <Column expander style={{ width: '5rem' }} />

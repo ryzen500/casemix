@@ -115,6 +115,35 @@ class SepT extends Model
         $query1 = self::buildBaseQuery();
         if (!empty($filters)) {
             if (!empty($filters['periode']) || !empty($filters['kelasRawat']) || !empty($filters['jenisrawat'] ) || !empty($filters['nosep'] ) || !empty($filters['nama_pasien'] )) {
+
+                if (!empty($filters['kelasRawat']) && $filters['kelasRawat'] != 'Semua Kelas') {
+                    $query1->where('klsrawat', '=', $filters['kelasRawat']);
+                } 
+
+                if (!empty($filters['jenisrawat']) && $filters['jenisrawat'] != 'semua') {
+                     if($filters['jenisrawat']=='RI'){
+                        $query1->where('jnspelayanan', '=', 1);
+                    }else if($filters['jenisrawat']=='RJ'){
+                        $query1->where('jnspelayanan', '=', 2);
+                    }
+                }
+                if (!empty($filters['status']) && $filters['status'] != 'semua') {
+                    if($filters['status']=='belum_grouping'){
+                        $query1->whereNull('inacbg_t.inacbg_id');
+                    }else if($filters['status']=='normal'){
+                        $query1->whereRaw('(inacbg_t.is_finalisasi = false AND inacbg_t.is_terkirim = false)');
+                    }else if($filters['status']=='final'){
+                        $query1->whereRaw('(inacbg_t.is_finalisasi = true AND inacbg_t.is_terkirim = false)');
+                    }else if($filters['status']=='terkirim'){
+                        $query1->whereRaw('(inacbg_t.is_finalisasi = true AND inacbg_t.is_terkirim = true)');
+                    }
+                } 
+                if (!empty($filters['nosep'])) {
+                    $query1->whereRaw('LOWER(sep_t.nosep) LIKE ?', ['%' . strtolower($filters['nosep']) . '%']);
+                }
+                if (!empty($filters['nama_pasien'])) {
+                    $query1->whereRaw('LOWER(pasien_m.nama_pasien) LIKE ?', ['%' . strtolower($filters['nama_pasien']) . '%']);
+                }
                 if ($filters['periode'] == 'tanggal_pulang') {
                     $query1->whereBetween(
                         DB::raw('DATE(pendaftaran_t.tgl_pendaftaran)'), // Use DATE() for ensuring the format is consistent
@@ -131,34 +160,6 @@ class SepT extends Model
                             date('Y-m-d', strtotime($filters['tanggal_selesai'])) // Convert to 'YYYY-MM-DD' format
                         ]
                     );
-                } 
-                if (!empty($filters['kelasRawat']) && $filters['kelasRawat'] != 'Semua Kelas') {
-                    $query1->where('klsrawat', '=', $filters['kelasRawat']);
-                } 
-
-                if (!empty($filters['jenisrawat']) && $filters['jenisrawat'] != 'semua') {
-                     if($filters['jenisrawat']=='RI'){
-                        $query1->where('jnspelayanan', '=', 1);
-                    }else if($filters['jenisrawat']=='RJ'){
-                        $query1->where('jnspelayanan', '=', 2);
-                    }
-                }
-                if (!empty($filters['statusKlaim']) && $filters['statusKlaim'] != 'semua') {
-                    if($filters['statusKlaim']=='belum_grouping'){
-                        $query1->whereNull('inacbg_t.inacbg_id');
-                    }else if($filters['statusKlaim']=='normal'){
-                        $query1->where('status', '=', 'Normal');
-                    }else if($filters['statusKlaim']=='final'){
-                        $query1->where('status', '=', 'Final');
-                    }else if($filters['statusKlaim']=='terkirim'){
-                        $query1->where('status', '=', 'Terkirim');
-                    }
-                } 
-                if (!empty($filters['nosep'])) {
-                    $query1->whereRaw('LOWER(sep_t.nosep) LIKE ?', ['%' . strtolower($filters['nosep']) . '%']);
-                }
-                if (!empty($filters['nama_pasien'])) {
-                    $query1->whereRaw('LOWER(pasien_m.nama_pasien) LIKE ?', ['%' . strtolower($filters['nama_pasien']) . '%']);
                 } 
             } else {
                 if (isset($filters['query'])) {
@@ -173,6 +174,34 @@ class SepT extends Model
         $query2 = self::buildBaseQuery(isSecondQuery: true);
         if (!empty($filters)) {
             if (!empty($filters['periode']) || !empty($filters['kelasRawat']) || !empty($filters['jenisrawat'] ) || !empty($filters['nosep'] ) || !empty($filters['nama_pasien'] )) {
+
+                if (!empty($filters['kelasRawat']) && $filters['kelasRawat'] != 'Semua Kelas') {
+                    $query2->where('klsrawat', '=', $filters['kelasRawat']);
+                } 
+                if (!empty($filters['jenisrawat']) && $filters['jenisrawat'] != 'semua') {
+                    if($filters['jenisrawat']=='RI'){
+                       $query2->where('jnspelayanan', '=', 1);
+                   }else if($filters['jenisrawat']=='RJ'){
+                       $query2->where('jnspelayanan', '=', 2);
+                   }
+               }
+                if (!empty($filters['status']) && $filters['status'] != 'semua') {
+                    if($filters['status']=='belum_grouping'){
+                        $query2->whereNull('inacbg_t.inacbg_id');
+                    }else if($filters['status']=='normal'){
+                        $query2->whereRaw('(inacbg_t.is_finalisasi = false AND inacbg_t.is_terkirim = false)');
+                    }else if($filters['status']=='final'){
+                        $query2->whereRaw('(inacbg_t.is_finalisasi = true AND inacbg_t.is_terkirim = false)');
+                    }else if($filters['status']=='terkirim'){
+                        $query2->whereRaw('(inacbg_t.is_finalisasi = true AND inacbg_t.is_terkirim = true)');
+                    }
+                } 
+                if (!empty($filters['nosep'])) {
+                    $query2->whereRaw('LOWER(sep_t.nosep) LIKE ?', ['%' . strtolower($filters['nosep']) . '%']);
+                }
+                if (!empty($filters['nama_pasien'])) {
+                    $query2->whereRaw('LOWER(pasien_m.nama_pasien) LIKE ?', ['%' . strtolower($filters['nama_pasien']) . '%']);
+                } 
                 if ($filters['periode'] == 'tanggal_pulang') {
                     $query2->whereBetween(
                         DB::raw('DATE(pendaftaran_t.tgl_pendaftaran)'), // Use DATE() for ensuring the format is consistent
@@ -189,33 +218,6 @@ class SepT extends Model
                             date('Y-m-d', strtotime($filters['tanggal_selesai'])) // Convert to 'YYYY-MM-DD' format
                         ]
                     );
-                } 
-                if (!empty($filters['kelasRawat']) && $filters['kelasRawat'] != 'Semua Kelas') {
-                    $query2->where('klsrawat', '=', $filters['kelasRawat']);
-                } 
-                if (!empty($filters['jenisrawat']) && $filters['jenisrawat'] != 'semua') {
-                    if($filters['jenisrawat']=='RI'){
-                       $query2->where('jnspelayanan', '=', 1);
-                   }else if($filters['jenisrawat']=='RJ'){
-                       $query2->where('jnspelayanan', '=', 2);
-                   }
-               }
-                if (!empty($filters['statusKlaim']) && $filters['statusKlaim'] != 'semua') {
-                    if($filters['statusKlaim']=='belum_grouping'){
-                        $query2->whereNull('inacbg_t.inacbg_id');
-                    }else if($filters['statusKlaim']=='normal'){
-                        $query2->where('status', '=', 'Normal');
-                    }else if($filters['statusKlaim']=='final'){
-                        $query2->where('status', '=', 'Final');
-                    }else if($filters['statusKlaim']=='terkirim'){
-                        $query2->where('status', '=', 'Terkirim');
-                    }
-                } 
-                if (!empty($filters['nosep'])) {
-                    $query2->whereRaw('LOWER(sep_t.nosep) LIKE ?', ['%' . strtolower($filters['nosep']) . '%']);
-                }
-                if (!empty($filters['nama_pasien'])) {
-                    $query2->whereRaw('LOWER(pasien_m.nama_pasien) LIKE ?', ['%' . strtolower($filters['nama_pasien']) . '%']);
                 } 
             } else {
                 if (isset($filters['query'])) {
@@ -241,6 +243,34 @@ class SepT extends Model
         $query1 = self::buildBaseQuery();
         if (!empty($filters)) {
             if (!empty($filters['periode']) || !empty($filters['kelasRawat']) || !empty($filters['jenisrawat'] ) || !empty($filters['nosep'] ) || !empty($filters['nama_pasien'] )) {
+                if (!empty($filters['kelasRawat']) && $filters['kelasRawat'] != 'Semua Kelas') {
+                    $query1->where('klsrawat', '=', $filters['kelasRawat']);
+
+                } 
+                if (!empty($filters['jenisrawat']) && $filters['jenisrawat'] != 'semua') {
+                    if($filters['jenisrawat']=='RI'){
+                       $query1->where('jnspelayanan', '=', 1);
+                   }else if($filters['jenisrawat']=='RJ'){
+                       $query1->where('jnspelayanan', '=', 2);
+                   }
+               }
+                if (!empty($filters['status']) && $filters['status'] != 'semua') {
+                    if($filters['status']=='belum_grouping'){
+                        $query1->whereNull('inacbg_t.inacbg_id');
+                    }else if($filters['status']=='normal'){
+                        $query1->whereRaw('(inacbg_t.is_finalisasi = false AND inacbg_t.is_terkirim = false)');
+                    }else if($filters['status']=='final'){
+                        $query1->whereRaw('(inacbg_t.is_finalisasi = true AND inacbg_t.is_terkirim = false)');
+                    }else if($filters['status']=='terkirim'){
+                        $query1->whereRaw('(inacbg_t.is_finalisasi = true AND inacbg_t.is_terkirim = true)');
+                    }
+                } 
+                if (!empty($filters['nosep'])) {
+                    $query1->whereRaw('LOWER(sep_t.nosep) LIKE ?', ['%' . strtolower($filters['nosep']) . '%']);
+                }
+                if (!empty($filters['nama_pasien'])) {
+                    $query1->whereRaw('LOWER(pasien_m.nama_pasien) LIKE ?', ['%' . strtolower($filters['nama_pasien']) . '%']);
+                } 
                 if ($filters['periode'] == 'tanggal_pulang') {
                     $query1->whereBetween(
                         DB::raw('DATE(pendaftaran_t.tgl_pendaftaran)'), // Use DATE() for ensuring the format is consistent
@@ -257,34 +287,6 @@ class SepT extends Model
                             date('Y-m-d', strtotime($filters['tanggal_selesai'])) // Convert to 'YYYY-MM-DD' format
                         ]
                     );
-                } 
-                if (!empty($filters['kelasRawat']) && $filters['kelasRawat'] != 'Semua Kelas') {
-                    $query1->where('klsrawat', '=', $filters['kelasRawat']);
-
-                } 
-                if (!empty($filters['jenisrawat']) && $filters['jenisrawat'] != 'semua') {
-                    if($filters['jenisrawat']=='RI'){
-                       $query1->where('jnspelayanan', '=', 1);
-                   }else if($filters['jenisrawat']=='RJ'){
-                       $query1->where('jnspelayanan', '=', 2);
-                   }
-               }
-                if (!empty($filters['statusKlaim']) && $filters['statusKlaim'] != 'semua') {
-                    if($filters['statusKlaim']=='belum_grouping'){
-                        $query1->whereNull('inacbg_t.inacbg_id');
-                    }else if($filters['statusKlaim']=='normal'){
-                        $query1->where('status', '=', 'Normal');
-                    }else if($filters['statusKlaim']=='final'){
-                        $query1->where('status', '=', 'Final');
-                    }else if($filters['statusKlaim']=='terkirim'){
-                        $query1->where('status', '=', 'Terkirim');
-                    }
-                } 
-                if (!empty($filters['nosep'])) {
-                    $query1->whereRaw('LOWER(sep_t.nosep) LIKE ?', ['%' . strtolower($filters['nosep']) . '%']);
-                }
-                if (!empty($filters['nama_pasien'])) {
-                    $query1->whereRaw('LOWER(pasien_m.nama_pasien) LIKE ?', ['%' . strtolower($filters['nama_pasien']) . '%']);
                 } 
             } else {
                 if (isset($filters['query'])) {
@@ -299,6 +301,34 @@ class SepT extends Model
         $query2 = self::buildBaseQuery(isSecondQuery: true);
         if (!empty($filters)) {
             if (!empty($filters['periode']) || !empty($filters['kelasRawat']) || !empty($filters['jenisrawat'] ) || !empty($filters['nosep'] ) || !empty($filters['nama_pasien'] )) {
+
+                if (!empty($filters['kelasRawat']) && $filters['kelasRawat'] != 'Semua Kelas') {
+                    $query2->where('klsrawat', '=', $filters['kelasRawat']);
+                } 
+                if (!empty($filters['jenisrawat']) && $filters['jenisrawat'] != 'semua') {
+                    if($filters['jenisrawat']=='RI'){
+                       $query2->where('jnspelayanan', '=', 1);
+                   }else if($filters['jenisrawat']=='RJ'){
+                       $query2->where('jnspelayanan', '=', 2);
+                   }
+               }
+                if (!empty($filters['status']) && $filters['status'] != 'semua') {
+                    if($filters['status']=='belum_grouping'){
+                        $query2->whereNull('inacbg_t.inacbg_id');
+                    }else if($filters['status']=='normal'){
+                        $query2->whereRaw('(inacbg_t.is_finalisasi = false AND inacbg_t.is_terkirim = false)');
+                    }else if($filters['status']=='final'){
+                        $query2->whereRaw('(inacbg_t.is_finalisasi = true AND inacbg_t.is_terkirim = false)');
+                    }else if($filters['status']=='terkirim'){
+                        $query2->whereRaw('(inacbg_t.is_finalisasi = true AND inacbg_t.is_terkirim = true)');
+                    }
+                } 
+                if (!empty($filters['nosep'])) {
+                    $query2->whereRaw('LOWER(sep_t.nosep) LIKE ?', ['%' . strtolower($filters['nosep']) . '%']);
+                } 
+                if (!empty($filters['nama_pasien'])) {
+                    $query2->whereRaw('LOWER(pasien_m.nama_pasien) LIKE ?', ['%' . strtolower($filters['nama_pasien']) . '%']);
+                } 
                 if ($filters['periode'] == 'tanggal_pulang') {
                     $query2->whereBetween(
                         DB::raw('DATE(pendaftaran_t.tgl_pendaftaran)'), // Use DATE() for ensuring the format is consistent
@@ -315,33 +345,6 @@ class SepT extends Model
                             date('Y-m-d', strtotime($filters['tanggal_selesai'])) // Convert to 'YYYY-MM-DD' format
                         ]
                     );
-                } 
-                if (!empty($filters['kelasRawat']) && $filters['kelasRawat'] != 'Semua Kelas') {
-                    $query2->where('klsrawat', '=', $filters['kelasRawat']);
-                } 
-                if (!empty($filters['jenisrawat']) && $filters['jenisrawat'] != 'semua') {
-                    if($filters['jenisrawat']=='RI'){
-                       $query2->where('jnspelayanan', '=', 1);
-                   }else if($filters['jenisrawat']=='RJ'){
-                       $query2->where('jnspelayanan', '=', 2);
-                   }
-               }
-                if (!empty($filters['statusKlaim']) && $filters['statusKlaim'] != 'semua') {
-                    if($filters['statusKlaim']=='belum_grouping'){
-                        $query2->whereNull('inacbg_t.inacbg_id');
-                    }else if($filters['statusKlaim']=='normal'){
-                        $query2->where('status', '=', 'Normal');
-                    }else if($filters['statusKlaim']=='final'){
-                        $query2->where('status', '=', 'Final');
-                    }else if($filters['statusKlaim']=='terkirim'){
-                        $query2->where('status', '=', 'Terkirim');
-                    }
-                } 
-                if (!empty($filters['nosep'])) {
-                    $query2->whereRaw('LOWER(sep_t.nosep) LIKE ?', ['%' . strtolower($filters['nosep']) . '%']);
-                } 
-                if (!empty($filters['nama_pasien'])) {
-                    $query2->whereRaw('LOWER(pasien_m.nama_pasien) LIKE ?', ['%' . strtolower($filters['nama_pasien']) . '%']);
                 } 
             } else {
                 if (isset($filters['query'])) {
