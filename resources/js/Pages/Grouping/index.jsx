@@ -10,6 +10,9 @@ import { ColumnGroup } from 'primereact/columngroup';
 import { Row } from 'primereact/row';
 import { Toast } from 'primereact/toast';
 import { FormatRupiah } from '@arismun/format-rupiah';
+import { faFile } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Tooltip } from 'primereact/tooltip';
 
 export default function CodingGrouping({ auth, pagination, data }) {
 
@@ -77,7 +80,7 @@ export default function CodingGrouping({ auth, pagination, data }) {
                 <Column header="No" rowSpan={2} style={{ border:'1px solid #e5e7eb'}}/>
                 <Column header="Tanggal Masuk" rowSpan={2}  style={{ border:'1px solid #e5e7eb'}} />
                 <Column header="Tanggal Pulang" rowSpan={2}   style={{ border:'1px solid #e5e7eb'}}/>
-                <Column header="No SEP" rowSpan={2}  style={{ border:'1px solid #e5e7eb'}}  />
+                <Column header="No SEP" rowSpan={2}  style={{ border:'1px solid #e5e7eb'}}  align={'center'}  alignHeader={'center'}/>
                 <Column header="Nama Pasien" rowSpan={2}  style={{ border:'1px solid #e5e7eb'}} />
                 <Column header="INACBG" colSpan={2} align='center' style={{ textAlign: "center",border:'1px solid #e5e7eb' }} />
                 <Column header="Billing RS" rowSpan={2}  style={{ border:'1px solid #e5e7eb'}}/>
@@ -546,8 +549,15 @@ export default function CodingGrouping({ auth, pagination, data }) {
                                         <Column field="nosep"    body={(rowData) => (
                                                 <>
                                                 {rowData.nosep} <br /> <span style={{fontSize:"13px",color:'#888'}}>{rowData.nokartuasuransi}</span>
+                                                <br />
+                                                    <span data-pr-tooltip="Klik Untuk Melihat File Simplifikasi" data-pr-position="bottom" id="info-icon">
+                                                        <FontAwesomeIcon icon={faFile} style={{ color: (rowData.status === "final" || rowData.status === "Final") ? "#43A047" : "#D13232" }} />
+                                                    </span>
+
+                                                    {/* PrimeReact Tooltip */}
+                                                    <Tooltip target="#info-icon" />
                                                 </>
-                                            )}  header="No SEP" style={{ alignItems: 'center', border:'1px solid #e5e7eb' }} ></Column>
+                                            )}  header="No SEP" style={{ alignItems: 'center', border:'1px solid #e5e7eb' }} align={'center'}  alignHeader={'center'}></Column>
                                         <Column field="nama_pasien"    body={(rowData) => (
                                                 <>
                                                 {rowData.nama_pasien} <br /> <span style={{fontSize:"13px",color:'#888'}}>{rowData.no_rekam_medik}</span>
