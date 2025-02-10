@@ -17,7 +17,9 @@ use App\Models\InasismdcT;
 use App\Models\LaporanresepR;
 use App\Models\PasienMordibitasR;
 use App\Models\PegawaiM;
+use App\Models\PembayaranPelayananT;
 use App\Models\PenjaminPasien;
+use App\Models\TandaBuktiBayarT;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Casemix\Inacbg;
@@ -844,10 +846,28 @@ class InAcbgGrouperController extends Controller
         $getRiwayat = $model->getRiwayatData($noSep)->getOriginalContent();
         $pendaftaran = PendaftaranT::getDataGroup($pendaftaran_id);
         $tarif = PendaftaranT::getTarif($pendaftaran_id);
+        $tarifBelumBayar = PendaftaranT::getTarifTotal($pendaftaran_id);
+
         $obat = PendaftaranT::getGroupping($pendaftaran_id);
+        $obatBelumBayar = PendaftaranT::getGrouppingBelumBayar($pendaftaran_id);
+
         $profil = ProfilrumahsakitM::getProfilRS();
         $SEP = Inacbg::where('inacbg_nosep', $noSep)->first();
         $Inasismdc = InasismdcT::where('pendaftaran_id', $pendaftaran_id)->first();
+        $PembayaranPelayananT = PembayaranPelayananT::where('pendaftaran_id', $pendaftaran_id)->first();
+        // var_dump($PembayaranPelayananT->pembayaranpelayanan_id);die;
+       $total_simrs = 0 ;
+        if(!empty($PembayaranPelayananT)){
+
+
+            $TandabuktiBayarT = TandaBuktiBayarT::where('pembayaranpelayanan_id', $PembayaranPelayananT->pembayaranpelayanan_id)->first();
+            $total_simrs = $TandabuktiBayarT->jmlpembayaran - $PembayaranPelayananT->selisihuntungrugibpjs;
+        }else{
+            $total_simrs = ($tarifBelumBayar->tarif_tindakan ?? 0) + ($obatBelumBayar->hargajual_oa ?? 0);
+
+        }
+
+
 
         $serviceGrouping = new groupingService($this->inacbg);
         $getGrouping = $serviceGrouping->callDataGrouping($noSep);
@@ -855,12 +875,14 @@ class InAcbgGrouperController extends Controller
             'model' => $getRiwayat,
             'pendaftaran' => $pendaftaran,
             'tarif' => $tarif,
+            'tarifBelumBayar'=>$tarifBelumBayar,
             'obat' => $obat,
             'profil' => $profil,
             'dataDiagnosa' => $dataDiagnosa,
             'dataIcd9cm' => $dataIcd9cm,
             'Inasismdc'=>$Inasismdc,
             'inacbg' => $SEP,
+            'total_simrs'=> $total_simrs,
             'getGrouping' => $getGrouping
         ]);
     }
