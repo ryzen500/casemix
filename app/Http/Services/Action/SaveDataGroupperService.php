@@ -47,7 +47,10 @@ class SaveDataGroupperService
                 // Jika SEP ditemukan, lakukan update
                 $inasiscbgData['update_time'] = date("Y-m-d H:i:s");
                 $inasiscbgData['update_loginpemakai_id'] =!empty($dataAuthor['create_loginpemakai_id']) && $dataAuthor['create_loginpemakai_id'] !== '' ? $dataAuthor['create_loginpemakai_id'] : null;
+                $inasiscbgData['create_time'] = date("Y-m-d H:i:s");
+                $inasiscbgData['create_loginpemakai_id'] =!empty($dataAuthor['create_loginpemakai_id']) && $dataAuthor['create_loginpemakai_id'] !== '' ? $dataAuthor['create_loginpemakai_id'] : null;
                 
+
                 $inasiscbg->update($inasiscbgData);
 
 
@@ -121,6 +124,7 @@ class SaveDataGroupperService
                 $inasismdc_t['update_time'] = date("Y-m-d H:i:s");
                 $inasismdc_t['update_loginpemakai_id'] =!empty($dataAuthor['create_loginpemakai_id']) && $dataAuthor['create_loginpemakai_id'] !== '' ? $dataAuthor['create_loginpemakai_id'] : null;
                
+                
                 $inasismdc->update($inasismdc_t);
                 $message = 'Data berhasil diperbarui';
 

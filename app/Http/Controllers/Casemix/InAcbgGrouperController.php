@@ -779,6 +779,9 @@ class InAcbgGrouperController extends Controller
                     } else {
                         $data[$key]['pendaftaran_id'] = null;
                     }
+
+                    // var_dump($getClaim);die;
+                    // dd($getClaim);
                     if (!empty($getClaim['data']['data'])) {
                         $data[$key]['tglSep'] = $getClaim['data']['data']['tgl_masuk'];
                         $data[$key]['tglPlgSep'] = $getClaim['data']['data']['tgl_pulang'];
