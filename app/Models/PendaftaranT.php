@@ -170,6 +170,33 @@ class PendaftaranT extends Model
             ->groupBy('laporan.pendaftaran_id', 'laporan.sep_id');
         return $laporan;
     }
+
+    private static function buildBaseQueryBelumBayar()
+    {
+        $laporan = DB::table(function ($query) {
+            $query->select(
+                'pendaftaran_t.pendaftaran_id',
+                'sep_t.sep_id',
+                'hargajual_oa'
+            )
+            ->from('pendaftaran_t')
+            ->join('obatalkespasien_t', 'obatalkespasien_t.pendaftaran_id', '=', 'pendaftaran_t.pendaftaran_id')
+            ->join('pasien_m', 'pendaftaran_t.pasien_id', '=', 'pasien_m.pasien_id')
+            ->join('obatalkes_m', 'obatalkespasien_t.obatalkes_id', '=', 'obatalkes_m.obatalkes_id')
+            ->join('sep_t', 'pendaftaran_t.sep_id', '=', 'sep_t.sep_id')
+            ->leftJoin('pembayaranpelayanan_t', 'pembayaranpelayanan_t.pendaftaran_id', '=', 'pendaftaran_t.pendaftaran_id')
+            ->leftJoin('tandabuktibayar_t', 'pembayaranpelayanan_t.tandabuktibayar_id', '=', 'tandabuktibayar_t.tandabuktibayar_id')
+            ->leftJoin('formulaobatkronis_m', 'formulaobatkronis_m.formulaobatkronis_id', '=', 'obatalkespasien_t.formulaobatkronis_id');
+        }, 'laporan')
+            ->select(
+                'laporan.pendaftaran_id',
+                'laporan.sep_id',
+                DB::raw('SUM(laporan.hargajual_oa) AS hargajual_oa'),
+            
+                )
+            ->groupBy('laporan.pendaftaran_id', 'laporan.sep_id');
+        return $laporan;
+    }
     public static function dataListGrouper(int $pasien_id)
     {
         $query = self::buildBaseQuery();
@@ -184,6 +211,13 @@ class PendaftaranT extends Model
     public static function getGroupping(int $pendaftaran_id)
     {
         $query = self::buildBaseQueryGrouping();
+        $query->where('laporan.pendaftaran_id', '=', $pendaftaran_id);
+        return $query->first();
+    }
+
+    public static function getGrouppingBelumBayar(int $pendaftaran_id)
+    {
+        $query = self::buildBaseQueryBelumBayar();
         $query->where('laporan.pendaftaran_id', '=', $pendaftaran_id);
         return $query->first();
     }
@@ -301,6 +335,61 @@ class PendaftaranT extends Model
   sum(
     laporan.prosedurenonbedah + laporan.prosedurebedah + laporan.konsultasi + laporan.tenagaahli + laporan.keperawatan + laporan.penunjang_ekg_echo + laporan.radiologi + laporan.laboratorium + laporan.pelayanandarah + laporan.rehabilitasi + laporan.kamar_akomodasi + laporan.rawatintensif
   ) AS total '),
+            )
+            ->where('laporan.pendaftaran_id', $pendaftaran_id)
+            ->groupBy('laporan.pendaftaran_id','laporan.sep_id', 'laporan.nosep','laporan.nokartuasuransi','laporan.namaasuransi_cob','laporan.no_pendaftaran','laporan.pasien_id','laporan.no_rekam_medik','laporan.klsrawat','laporan.nama_pasien');
+        return $laporan->first();
+    }
+
+
+    public static function getTarifTotal($pendaftaran_id)
+    {
+        $laporan = DB::table(function ($query) {
+            $query->select(
+                'sep_t.sep_id',
+                'sep_t.nosep',
+                'sep_t.nokartuasuransi',
+                'sep_t.namaasuransi_cob',
+                'sep_t.klsrawat',
+                'pendaftaran_t.pendaftaran_id',
+                'pendaftaran_t.no_pendaftaran',
+                'pendaftaran_t.pasien_id',
+                'pasien_m.no_rekam_medik',
+                'pasien_m.nama_pasien',
+                'sep_t.dpjpygmelayani_nama AS nama_dpjp',
+                'inacbg_t.no_reg_sitb',
+                DB::raw('tindakanpelayanan_t.tarif_tindakan AS tarif_tindakan')
+
+            )
+            ->from('pendaftaran_t')
+            ->join('tindakanpelayanan_t', 'tindakanpelayanan_t.pendaftaran_id', '=', 'pendaftaran_t.pendaftaran_id')
+            ->join('pasien_m', 'pendaftaran_t.pasien_id', '=', 'pasien_m.pasien_id')
+            ->join('daftartindakan_m', 'tindakanpelayanan_t.daftartindakan_id', '=', 'daftartindakan_m.daftartindakan_id')
+            ->leftJoin('kelompoktindakanbpjs_m', 'kelompoktindakanbpjs_m.kelompoktindakanbpjs_id', '=', 'daftartindakan_m.kelompoktindakanbpjs_id')
+            ->join('sep_t', 'pendaftaran_t.sep_id', '=', 'sep_t.sep_id')
+            ->leftJoin('pasienadmisi_t', 'pasienadmisi_t.pasienadmisi_id', '=', 'pendaftaran_t.pasienadmisi_id')
+            ->join('carabayar_m', 'pendaftaran_t.carabayar_id', '=', 'carabayar_m.carabayar_id')
+            ->leftJoin('pasienpulang_t', 'pendaftaran_t.pasienpulang_id', '=', 'pasienpulang_t.pasienpulang_id')
+            ->leftJoin('carakeluar_m', 'pasienpulang_t.carakeluar_id', '=', 'carakeluar_m.carakeluar_id')
+            ->leftJoin('pembayaranpelayanan_t', 'pendaftaran_t.pendaftaran_id', '=', 'pembayaranpelayanan_t.pendaftaran_id')
+            ->leftJoin('tandabuktibayar_t', 'pembayaranpelayanan_t.tandabuktibayar_id', '=', 'tandabuktibayar_t.tandabuktibayar_id')
+            ->leftJoin('inacbg_t', 'inacbg_t.sep_id', '=', 'sep_t.sep_id')
+            ->leftJoin('inasiscbg_t', 'inasiscbg_t.inacbg_id', '=', 'inacbg_t.inacbg_id');
+
+        }, 'laporan')
+            ->select(
+                'laporan.sep_id',
+                'laporan.nosep',
+                'laporan.nokartuasuransi',
+                'laporan.klsrawat',
+                'laporan.namaasuransi_cob',
+                'laporan.pendaftaran_id',
+                'laporan.no_pendaftaran',
+                'laporan.pasien_id',
+                'laporan.no_rekam_medik',
+                'laporan.nama_pasien',
+
+                DB::raw('sum(tarif_tindakan) as tarif_tindakan')
             )
             ->where('laporan.pendaftaran_id', $pendaftaran_id)
             ->groupBy('laporan.pendaftaran_id','laporan.sep_id', 'laporan.nosep','laporan.nokartuasuransi','laporan.namaasuransi_cob','laporan.no_pendaftaran','laporan.pasien_id','laporan.no_rekam_medik','laporan.klsrawat','laporan.nama_pasien');

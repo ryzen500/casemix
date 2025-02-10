@@ -21,7 +21,8 @@ import { InputNumber } from 'primereact/inputnumber';
 import { Calendar } from 'primereact/calendar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Flatpickr from "react-flatpickr";
-import { faUser, faHome, faCog, faEllipsis, faArrowLeft, faTrashCan,faFile, faFileLines } from "@fortawesome/free-solid-svg-icons";
+import { Dialog } from 'primereact/dialog';
+import { faUser, faHome, faCog, faEllipsis,faQuestionCircle, faArrowLeft, faTrashCan,faFile, faFileLines } from "@fortawesome/free-solid-svg-icons";
 import { Tooltip } from 'primereact/tooltip';
 
 export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJP, jenisKasus, pegawai, kelompokDiagnosa, COB, caraPulang }) {
@@ -33,6 +34,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
     const [models, setModels] = useState(model);
     const [beratLahir, setBeratLahir] = useState('');
     const [sistole, setSistole] = useState('');
+    const [total_simrs, setTotalSimrs] = useState('');
+
     const [diastole, setDiastole] = useState('');
 
     const [pendaftarans, setPendaftarans] = useState([]);
@@ -96,6 +99,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
         total: 0
     });
     const [dataFinalisasi, setDataFinalisasi] = useState([]);
+
+    const [visible, setVisible] = useState(false);
 
     // const [tarifs, setTarifs] = useState([]);
     // const [obats, setObats] = useState([]);
@@ -875,7 +880,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                     console.log("Default cara masuk ", defaultCaraMasuk);
                     setCaraMasuk(defaultCaraMasuk || null);
 
-
+                    setTotalSimrs(response.data.total_simrs);
 
                     const defaultDPJP = DPJP.find(
                         (dpjp) => dpjp.kdDPJP === response.data.model.response.dpjp.kdDPJP
@@ -1536,9 +1541,26 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                     <tr style={{ border: ' 1px solid black' }}>
                                         <td colSpan={3}>
                                             <div className="col-sm-12 text-center">
-                                                Tarif Rumah Sakit :
+                                                <span className="mr-2 font-bold">Tarif Rumah Sakit :</span>
+                                                <span style={{ fontSize: "20px", color: total.total == total_simrs ? 'black' : 'red' }} 
+                                                className='font-bold'
+                                                data-pr-tooltip={total.total == total_simrs ? "Tarif Sudah Sesuai" : "Tarif Rumah Sakit Tidak Sesuai"}
 
-                                                <InputNumber
+                                                >
+                                                    <FormatRupiah value={total.total} 
+                                                    
+                                                    />
+                                                </span>
+
+                                                               {/* Question Icon with Tooltip */}
+                                                               <FontAwesomeIcon
+                                                    icon={faQuestionCircle}
+                                                    style={{ fontSize: "20px", color: total.total == total_simrs ? 'black' : 'red' , cursor: 'pointer', marginLeft: '10px' }}
+                                                    className="question-icon" // Menambahkan kelas khusus untuk target Tooltip
+                                                    data-pr-tooltip={total.total == total_simrs ? "Tarif Sudah Sesuai" : "Tarif Rumah Sakit Tidak Sesuai"}
+                                                    />
+
+                                                {/* <InputNumber
                                                     value={parseFloat(total.total)}
                                                     onValueChange={handleValueChange}
                                                     mode="currency"
@@ -1552,8 +1574,53 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                     inputClassName='ml-2 form-control'
                                                     readOnly
                                                 />
+                                                 */}
+                                                <span className='ml-3 font-bold'>
+                                                    Tarif SIMRS :
 
+                                                </span>
+                                                {/* <span
+                                                    style={{ fontSize: "20px", color: 'blue', textDecoration: 'underline' }}
+                                                    className='ml-3 font-bold'
+                                                    onClick={() => setVisible(true)}
+                                                    title="Klik untuk melihat Rincian Tagihan SIMRS"
+                                                >
+                                                    <FormatRupiah value={total_simrs} />
+                                                </span> */}
+
+                                                {/* Text with FormatRupiah */}
+                                                <span
+                                                    style={{ fontSize: "20px", color: 'blue', textDecoration: 'underline' }}
+                                                    className='ml-3 font-bold'
+                                                    onClick={() => setVisible(true)}
+                                                    data-pr-tooltip="Klik untuk melihat Rincian Tagihan SIMRS"
+                                                >
+                                                    <FormatRupiah value={total_simrs} />
+                                                </span>
+
+                                                {/* Question Icon with Tooltip */}
+                                                <FontAwesomeIcon
+                                                    icon={faQuestionCircle}
+                                                    style={{ fontSize: "20px", color: 'blue', cursor: 'pointer', marginLeft: '10px' }}
+                                                    className="question-icon" // Menambahkan kelas khusus untuk target Tooltip
+                                                    data-pr-tooltip="Klik untuk melihat Rincian Tagihan SIMRS"
+                                                />
+
+
+                                                {/* Tooltip component */}
+                                                <Tooltip target=".font-bold" />
+                                                <Tooltip target=".question-icon" />
+                                                {/* Dialog */}
+                                                <Dialog header="Rincian Tagihan SIMRS" visible={visible} maximizable style={{ width: '50vw', height: '50vw' }} onHide={() => { if (!visible) return; setVisible(false); }}>
+                                                    <iframe
+                                                        src={`http://192.168.214.229/rswb/rswb_new/index.php?r=billingKasir/pembayaranTagihanPasien/cetakGabung&pembayaranpelayanan_id=${736685}`}
+                                                        width="100%"
+                                                        height="100%"
+                                                        style={{ border: "none" }}
+                                                    ></iframe>
+                                                </Dialog>
                                             </div>
+
                                         </td>
                                     </tr>
                                     {kelasEksekutif && (
@@ -1561,7 +1628,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                             <td width={"35%"}>
                                                 <div className="col-sm-12">
                                                     <div className="row">
-                                                        <div className="col-sm-5" style={{ alignContent: 'center' }}>
+                                                        <div className="col-sm-5 font-bold" style={{ alignContent: 'center' }}>
                                                             Poli Eksekutif
                                                         </div>
                                                         <div className="col-sm-7">
@@ -1598,7 +1665,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                         <td width={"35%"}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5" style={{ alignContent: 'center' }}>
+                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center' }}>
                                                         Prosedur Non Bedah
                                                     </div>
                                                     <div className="col-sm-7">
@@ -1623,7 +1690,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                         <td width={"35%"}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5" style={{ alignContent: 'center' }}>
+                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center' }}>
                                                         Prosedur Bedah
                                                     </div>
                                                     <div className="col-sm-7">
@@ -1647,7 +1714,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                         <td width={"30%"}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5" style={{ alignContent: 'center' }}>
+                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center' }}>
                                                         Konsultasi
                                                     </div>
                                                     <div className="col-sm-7">
@@ -1673,7 +1740,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                         <td width={"35%"}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5" style={{ alignContent: 'center' }}>Tenaga Ahli</div>
+                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center' }}>Tenaga Ahli</div>
                                                     <div className="col-sm-7">
                                                         <InputNumber
                                                             value={parseFloat(tarifs.tenagaahli)}
@@ -1695,7 +1762,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                         <td width={"35%"}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5" style={{ alignContent: 'center' }}>Keperawatan</div>
+                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center' }}>Keperawatan</div>
                                                     <div className="col-sm-7">
                                                         <InputNumber
                                                             value={parseFloat(tarifs.keperawatan)}
@@ -1717,7 +1784,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                         <td width={"30%"}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5" style={{ alignContent: 'center' }}>Penunjang</div>
+                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center' }}>Penunjang</div>
                                                     <div className="col-sm-7">
                                                         <InputNumber
                                                             value={parseFloat(tarifs.penunjang)}
@@ -1741,7 +1808,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                         <td width={"35%"}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5" style={{ alignContent: 'center' }}>Radiologi</div>
+                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center' }}>Radiologi</div>
                                                     <div className="col-sm-7">
                                                         <InputNumber
                                                             value={parseFloat(tarifs.radiologi)}
@@ -1763,7 +1830,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                         <td width={"35%"}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5" style={{ alignContent: 'center' }}>Laboratorium</div>
+                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center' }}>Laboratorium</div>
                                                     <div className="col-sm-7">
                                                         <InputNumber
                                                             value={parseFloat(tarifs.laboratorium)}
@@ -1785,7 +1852,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                         <td width={"30%"}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5" style={{ alignContent: 'center' }}>Pelayanan Darah</div>
+                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center' }}>Pelayanan Darah</div>
                                                     <div className="col-sm-7">
                                                         <InputNumber
                                                             value={parseFloat(tarifs.pelayanandarah)}
@@ -1809,7 +1876,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                         <td width={"35%"}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5" style={{ alignContent: 'center' }}>Rehabilitasi</div>
+                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center' }}>Rehabilitasi</div>
                                                     <div className="col-sm-7">
                                                         <InputNumber
                                                             value={parseFloat(tarifs.rehabilitasi)}
@@ -1831,7 +1898,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                         <td width={"35%"}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5" style={{ alignContent: 'center' }}>Kamar / Akomodasi</div>
+                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center' }}>Kamar / Akomodasi</div>
                                                     <div className="col-sm-7">
                                                         <InputNumber
                                                             value={parseFloat(tarifs.kamar_akomodasi)}
@@ -1853,7 +1920,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                         <td width={"30%"}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5" style={{ alignContent: 'center' }}>Rawat Intensif</div>
+                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center' }}>Rawat Intensif</div>
                                                     <div className="col-sm-7">
                                                         <InputNumber
                                                             value={parseFloat(tarifs.rawatintensif)}
@@ -1878,7 +1945,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                         <td width={"35%"}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5" style={{ alignContent: 'center' }}>Obat</div>
+                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center' }}>Obat</div>
                                                     <div className="col-sm-7">
                                                         <InputNumber
                                                             value={parseFloat(obats.obat)}
@@ -1900,7 +1967,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                         <td width={"35%"}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5" style={{ alignContent: 'center' }}>Obat Kronis</div>
+                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center' }}>Obat Kronis</div>
                                                     <div className="col-sm-7">
                                                         <InputNumber
                                                             value={parseFloat(obats.obatkronis)}
@@ -1922,7 +1989,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                         <td width={"30%"}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5" style={{ alignContent: 'center' }}>Obat Kemoterapi</div>
+                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center' }}>Obat Kemoterapi</div>
                                                     <div className="col-sm-7">
                                                         <InputNumber
                                                             value={parseFloat(obats.obatkemoterapi)}
@@ -1946,7 +2013,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                         <td width={"35%"}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5" style={{ alignContent: 'center' }}>Alkes</div>
+                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center' }}>Alkes</div>
                                                     <div className="col-sm-7">
                                                         <InputNumber
                                                             value={parseFloat(obats.alkes)}
@@ -1968,7 +2035,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                         <td width={"35%"}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5" style={{ alignContent: 'center' }}>BMHP</div>
+                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center' }}>BMHP</div>
                                                     <div className="col-sm-7">
                                                         <InputNumber
                                                             value={parseFloat(obats.bmhp)}
@@ -1990,7 +2057,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                         <td width={"30%"}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5" style={{ alignContent: 'center' }}>Sewa Alat</div>
+                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center' }}>Sewa Alat</div>
                                                     <div className="col-sm-7">
                                                         <InputNumber
                                                             value={parseFloat(obats.sewaalat | 0)}
