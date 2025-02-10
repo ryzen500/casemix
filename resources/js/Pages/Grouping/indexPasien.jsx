@@ -936,16 +936,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                     //         is_finalisasi: response.data.getGrouping.data.dataklaim_status_cd
                     //     };
                     // });
-                    console.log("Hasil Final ", response.data.getGrouping.data.data.klaim_status_cd);
-                    setDataFinalisasi((prevDataFinal) => {
-                        return {
-                            ...(response.data.inacbg || {}), // Jika response.data.inacbg ada, gunakan sebagai basis, jika tidak, gunakan objek kosong
-                            // is_finalisasi: (response.data[1].data.data.klaim_status_cd === "final") ? response.data[1].data.data.klaim_status_cd : false// Perbarui is_finalisasi
-
-                            is_finalisasi: (response.data.getGrouping.data.data.klaim_status_cd == "final") ? response.data.getGrouping.data.data.klaim_status_cd : false// Perbarui is_finalisasi
-                        };
-                    });
-                    
+                    // console.log("Hasil Final ", response.data.getGrouping.data.data.klaim_status_cd);
+          
                     if (response.data.inacbg !== null) {
                         let setTarifInacbg = {
                             total: 0,
@@ -1001,6 +993,15 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                         setBeratLahir(response.data.inacbg.berat_lahir);
                         setCaraPulang(response.data.inacbg.cara_pulang);
                         // setDPJP(response.data.inacbg.nama_dpjp);
+                        setDataFinalisasi((prevDataFinal) => {
+                            return {
+                                ...(response.data.inacbg || {}), // Jika response.data.inacbg ada, gunakan sebagai basis, jika tidak, gunakan objek kosong
+                                // is_finalisasi: (response.data[1].data.data.klaim_status_cd === "final") ? response.data[1].data.data.klaim_status_cd : false// Perbarui is_finalisasi
+    
+                                is_finalisasi: (response.data.getGrouping.data.data.klaim_status_cd == "final") ? response.data.getGrouping.data.data.klaim_status_cd : false// Perbarui is_finalisasi
+                            };
+                        });
+                        
                     } else {
                         let setKlinis = {
                             sistole: 0,
