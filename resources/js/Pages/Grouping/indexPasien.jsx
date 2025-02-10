@@ -3125,11 +3125,13 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                     <div>{rowData.noSep}<br /> <span style={{ color: 'red' }}> ( No SEP belum di sinkron )</span> </div> // Show message if pendaftaran_id is null
                 ) : (
                     <div>
-                        {rowData.noSep}
-                        <br />
                         <span data-pr-tooltip="Klik Untuk Melihat File Simplifikasi" data-pr-position="bottom" id="info-icon">
                             <FontAwesomeIcon icon={faFile} style={{ color: (rowData.status === "final" || rowData.status === "Final") ? "#43A047" : "#D13232" }} />
                         </span>
+                        {"\u00A0"}|{"\u00A0"}
+                        {rowData.noSep}
+                        <br />
+
 
                         {/* PrimeReact Tooltip */}
                         <Tooltip target="#info-icon" />

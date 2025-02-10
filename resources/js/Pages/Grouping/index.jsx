@@ -548,14 +548,15 @@ export default function CodingGrouping({ auth, pagination, data }) {
                                         <Column header="Tanggal Pulang" body={tglPulangBody} style={{ alignItems: 'center', border:'1px solid #e5e7eb' }} ></Column>
                                         <Column field="nosep"    body={(rowData) => (
                                                 <>
-                                                {rowData.nosep} <br /> <span style={{fontSize:"13px",color:'#888'}}>{rowData.nokartuasuransi}</span>
-                                                <br />
-                                                    <span data-pr-tooltip="Klik Untuk Melihat File Simplifikasi" data-pr-position="bottom" id="info-icon">
+                                                {rowData.nosep} <br /> 
+                                                <span data-pr-tooltip="Klik Untuk Melihat File Simplifikasi" data-pr-position="bottom" id="info-icon">
                                                         <FontAwesomeIcon icon={faFile} style={{ color: (rowData.status === "final" || rowData.status === "Final") ? "#43A047" : "#D13232" }} />
-                                                    </span>
+                                                    </span>  {"\u00A0"}|{"\u00A0"}
 
                                                     {/* PrimeReact Tooltip */}
-                                                    <Tooltip target="#info-icon" />
+                                                <span style={{fontSize:"13px",color:'#888'}}>{rowData.nokartuasuransi}</span>
+                                                <Tooltip target="#info-icon" />
+                                                    
                                                 </>
                                             )}  header="No SEP" style={{ alignItems: 'center', border:'1px solid #e5e7eb' }} align={'center'}  alignHeader={'center'}></Column>
                                         <Column field="nama_pasien"    body={(rowData) => (
