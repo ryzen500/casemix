@@ -595,6 +595,19 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
         const formattedDate = new Date(dateString.replace(" ", "T"));
         return isNaN(formattedDate) ? null : formattedDate;
     };
+
+    // const formatDate = (dateString) => {
+    //     // Convert the date string to a Date object
+    //     const date = new Date(dateString.replace(" ", "T"));
+    //       // Get the day, month, and year
+    //     const day = String(date.getDate()).padStart(2, '0'); // Adds leading zero if day is < 10
+    //     const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based, so add 1
+    //     const year = date.getFullYear();
+
+    //     // Return formatted date in dd-mm-yyyy format
+    //     return `${day}-${month}-${year}`;
+
+    // };
     const addRowDiagnosaIX = async (rowData, type) => {
         if (type == 'unu') {
             let _dataDiagnosa = dataIcd9cm.map(row => ({ ...row }));
@@ -736,7 +749,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
     }
     const header = (
         <div className="flex flex-wrap gap-2 align-items-center justify-content-between">
-            <h4 className="m-0">Diagnosa (ICD X)</h4>
+            <h4 className="m-0" style={{fontSize:'1rem'}}>Diagnosa (ICD X)</h4>
             <IconField iconPosition="left">
 
                 <AutoComplete
@@ -747,7 +760,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                     onSelect={(e) => addRowDiagnosaX(e.value)}  // Update input field
                     itemTemplate={(item) => (
                         <div>
-                            <span>{item.label} ({item.value})</span>  {/* Custom template to display both label and value */}
+                            <span style={{fontSize:'1rem'}}>{item.label} ({item.value})</span>  {/* Custom template to display both label and value */}
                         </div>
                     )}
                 />
@@ -756,7 +769,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
     );
     const headerINA = (
         <div className="flex flex-wrap gap-2 align-items-center justify-content-between">
-            <h4 className="m-0">Diagnosa (ICD X)</h4>
+            <h4 className="m-0" style={{fontSize:'1rem'}}>Diagnosa (ICD X)</h4>
             <IconField iconPosition="left">
 
                 <AutoComplete
@@ -767,7 +780,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                     onSelect={(e) => addRowDiagnosaINAX(e.value)}  // Update input field
                     itemTemplate={(item) => (
                         <div>
-                            <span>{item.label} ({item.value})</span>  {/* Custom template to display both label and value */}
+                            <span style={{fontSize:'1rem'}}>{item.label} ({item.value})</span>  {/* Custom template to display both label and value */}
                         </div>
                     )}
                 />
@@ -776,7 +789,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
     );
     const headerUnuICDIX = (
         <div className="flex flex-wrap gap-2 align-items-center justify-content-between">
-            <h4 className="m-0">Diagnosa (ICD IX)</h4>
+            <h4 className="m-0" style={{fontSize:'1rem'}}>Diagnosa (ICD IX)</h4>
             <IconField iconPosition="left">
 
                 <AutoComplete
@@ -787,7 +800,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                     onSelect={(e) => addRowDiagnosaIX(e.value, 'unu')}  // Update input field
                     itemTemplate={(item) => (
                         <div>
-                            <span>{item.label} ({item.value})</span>  {/* Custom template to display both label and value */}
+                            <span style={{fontSize:'1rem'}}>{item.label} ({item.value})</span>  {/* Custom template to display both label and value */}
                         </div>
                     )}
                 />
@@ -796,7 +809,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
     );
     const headerInaICDIX = (
         <div className="flex flex-wrap gap-2 align-items-center justify-content-between">
-            <h4 className="m-0">Diagnosa (ICD IX)</h4>
+            <h4 className="m-0" style={{fontSize:'1rem'}}>Diagnosa (ICD IX)</h4>
             <IconField iconPosition="left">
 
                 <AutoComplete
@@ -807,7 +820,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                     onSelect={(e) => addRowDiagnosaIX(e.value, 'ina')}  // Update input field
                     itemTemplate={(item) => (
                         <div>
-                            <span>{item.label} ({item.value})</span>  {/* Custom template to display both label and value */}
+                            <span style={{fontSize:'1rem'}}>{item.label} ({item.value})</span>  {/* Custom template to display both label and value */}
                         </div>
                     )}
                 />
@@ -819,15 +832,23 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
         return <InputText type="text" value={options.value} onChange={(e) => options.editorCallback(e.target.value)} />;
     };
 
-
     const formatDate = (dateString) => {
-        // Check if dateString exists and is valid
+        // Check if dateString exists and is not empty
         if (!dateString) return '';
-        const date = new Date(dateString);
-        if (isNaN(date)) return ''; // Handle invalid date
-        return date.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+        
+        // Split the date string into day, month, and year
+        const [day, month, year] = dateString.split('/');
+    
+        // Create a new date object from the parsed values
+        const date = new Date(`${year}-${month}-${day}`);
+    
+        // Check if the date is valid
+        if (isNaN(date)) return '';
+    
+        // Return the formatted date as YYYY-MM-DD
+        return date.toISOString().split('T')[0];
     };
-
+    
     const onRowExpand = async (event) => {
         const expandedProduct = event.data;
         // Set loading to true when starting the API request
@@ -902,14 +923,29 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                     setDataGrouperv6(response.data.Inasismdc || false);
                     // console.log("Default cara pulang ", defaultCaraPulang);
                     setCaraPulang(defaultCaraPulang || null);
-                    setDataFinalisasi(response.data.inacbg || false)
+                    // setDataFinalisasi(response.data.inacbg || false)
                     setPendaftarans(response.data.pendaftaran);
                     setProfil(response.data.profil);
                     setDiagnosa(response.data.dataDiagnosa);
                     setDiagnosaINA(response.data.dataDiagnosa);
                     setDataIcd9cm(response.data.dataIcd9cm);
                     setDataIcd9cmINA(response.data.dataIcd9cm);
+                    // setDataFinalisasi((prevDataFinal) => {
+                    //     return {
+                    //         ...prevDataFinal,
+                    //         is_finalisasi: response.data.getGrouping.data.dataklaim_status_cd
+                    //     };
+                    // });
+                    console.log("Hasil Final ", response.data.getGrouping.data.data.klaim_status_cd);
+                    setDataFinalisasi((prevDataFinal) => {
+                        return {
+                            ...(response.data.inacbg || {}), // Jika response.data.inacbg ada, gunakan sebagai basis, jika tidak, gunakan objek kosong
+                            // is_finalisasi: (response.data[1].data.data.klaim_status_cd === "final") ? response.data[1].data.data.klaim_status_cd : false// Perbarui is_finalisasi
 
+                            is_finalisasi: (response.data.getGrouping.data.data.klaim_status_cd == "final") ? response.data.getGrouping.data.data.klaim_status_cd : false// Perbarui is_finalisasi
+                        };
+                    });
+                    
                     if (response.data.inacbg !== null) {
                         let setTarifInacbg = {
                             total: 0,
@@ -949,6 +985,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                         setCaraMasuk(response.data.inacbg.hak_kelasrawat_inacbg);
                         // setCOB(response.data.inacbg.cob_id);
                         // setPendaftarans(setPendaftaran)
+   
+
                         setPendaftarans((prevTotal) => ({
                             ...prevTotal,
                             tanggal_masuk: response.data.inacbg.tglrawat_masuk,
@@ -1296,16 +1334,16 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                 </div>
                                 <table className='table  mt-3' style={{ border: ' 1px solid black' }}>
                                     <tr>
-                                        <td width={"15%"} className='pl-2'>
+                                        <td width={"15%"} className='pl-2' style={{fontSize:'1rem'}}>
                                             Jenis Rawat
                                         </td>
-                                        <td width={"60%"}>
-                                            <div className="ml-2">
+                                        <td width={"60%"} style={{fontSize:'1rem'}}>
+                                            <div className="ml-2" >
                                                 {datas.jnsPelayanan}
 
                                             </div>
                                         </td>
-                                        <td width={"10%"}>
+                                        <td width={"10%"} style={{fontSize:'1rem'}}>
                                             <div className="col-sm-1">
                                                 <Checkbox
                                                     value="true"
@@ -1316,16 +1354,16 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                             </div>
                                         </td>
 
-                                        <td width={"10%"} style={{ textAlign: 'right', paddingRight: '15px' }}>Kelas Hak</td>
-                                        <td width={"15%"}>
+                                        <td width={"10%"} style={{ textAlign: 'right', paddingRight: '15px',fontSize:'1rem' }}>Kelas Hak</td>
+                                        <td width={"15%"} style={{fontSize:'1rem'}}>
                                             <input type="text" className="col-sm-11 ml-2 " name='hakKelas' value={datas.peserta.hakKelas} />
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td width={"15%"} className='pl-2'>
+                                        <td width={"15%"} className='pl-2' style={{fontSize:'1rem'}}>
                                             Tanggal Rawat
                                         </td>
-                                        <td width={"60%"}>
+                                        <td width={"60%"} style={{fontSize:'1rem'}}>
                                             <div className="col-sm-12 ml-2">
                                                 <div className="row">
 
@@ -1377,18 +1415,18 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                 </div>
                                             </div>
                                         </td>
-                                        <td width={"10%"} style={{ textAlign: 'center' }}></td>
+                                        <td width={"10%"} style={{ textAlign: 'center' , fontSize:'1rem'}}></td>
 
-                                        <td width={"10%"} style={{ textAlign: 'right', paddingRight: '15px' }}>Umur</td>
-                                        <td width={"20%"}>
+                                        <td width={"10%"} style={{ textAlign: 'right', paddingRight: '15px' , fontSize:'1rem'}}>Umur</td>
+                                        <td width={"20%"} style={{fontSize:'1rem'}}>
                                             <InputText name='umur'
                                                 value={pendaftarans.umur} className='ml-2 col-sm-3' /> Tahun
                                         </td>
                                     </tr>
                                     <tr>
                                         {console.log("Masuk ", selectedCaraMasuk)}
-                                        <td className='pl-2'>Cara Masuk</td>
-                                        <td style={{ maxHeight: '60px' }}>
+                                        <td className='pl-2' style={{fontSize:'1rem'}}>Cara Masuk</td>
+                                        <td style={{ maxHeight: '60px' , fontSize:'1rem' }}>
                                             <div className="col-sm-12" style={{ borderBottomColor: 'white', height: '60px' }}>
                                                 <Dropdown
                                                     value={selectedCaraMasuk}
@@ -1404,8 +1442,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                     </tr>
 
                                     <tr>
-                                        <td className='pl-2'>COB</td>
-                                        <td >
+                                        <td className='pl-2' style={{fontSize:'1rem'}}>COB</td>
+                                        <td style={{fontSize:'1rem'}} >
                                             <div className="col-sm-12" style={{ borderBottomColor: 'white', height: '60px' }}>
                                                 <Dropdown
                                                     value={selectedCOB}
@@ -1420,8 +1458,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td className='pl-2'>LOS</td>
-                                        <td colSpan={2}>
+                                        <td className='pl-2' style={{fontSize:'1rem'}}>LOS</td>
+                                        <td colSpan={2} style={{fontSize:'1rem'}}>
                                             <InputNumber
                                                 value={pendaftarans && dataGrouping ?
                                                     (dataGrouping.tanggal_masuk === dataGrouping.tanggal_pulang ? 1 : (dataGrouping.los ? parseFloat(dataGrouping.los) : Math.ceil((new Date(dataGrouping.tanggal_pulang) - new Date(dataGrouping.tanggal_masuk)) / (1000 * 3600 * 24))))
@@ -1437,8 +1475,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                 inputClassName='col-sm-3 ml-2'
                                                 readOnly
                                             />  </td>
-                                        <td style={{ textAlign: 'right', paddingRight: '15px' }}>Berat Lahir(gram)</td>
-                                        <td>
+                                        <td style={{ textAlign: 'right', paddingRight: '15px' , fontSize:'1rem' }}>Berat Lahir(gram)</td>
+                                        <td style={{fontSize:'1rem'}}>
                                             <InputText
                                                 name="beratLahir"
                                                 value={beratLahir}
@@ -1449,21 +1487,21 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td className='pl-2'>ADL Score</td>
-                                        <td colSpan="2">
+                                        <td className='pl-2' style={{fontSize:'1rem'}}>ADL Score</td>
+                                        <td colSpan="2" style={{fontSize:'1rem'}}>
                                             <table style={{ border: 'none', width: '100%' }} className='ml-2'>
                                                 <tr>
-                                                    <td>
+                                                    <td style={{fontSize:'1rem'}}>
                                                         Sub Acute : {dataGrouping ? (dataGrouping.adl_sub_acute ? parseFloat(dataGrouping.adl_sub_acute) : '-') : '-'}
                                                     </td>
-                                                    <td>
+                                                    <td style={{fontSize:'1rem'}}>
                                                         Chronic : {dataGrouping ? (dataGrouping.adl_chronic ? parseFloat(dataGrouping.adl_chronic) : '-') : '-'}
                                                     </td>
                                                 </tr>
                                             </table>
                                         </td>
-                                        <td style={{ textAlign: 'right', paddingRight: '15px' }}>Cara Pulang</td>
-                                        <td>
+                                        <td style={{ textAlign: 'right', paddingRight: '15px' ,fontSize:'1rem'}}>Cara Pulang</td>
+                                        <td style={{fontSize:'1rem'}}>
                                             <div className="col-sm-12" style={{ paddingRight: '20px', borderBottomColor: 'white', height: '60px' }}>
                                                 <Dropdown
                                                     value={selectedCaraPulang}
@@ -1481,8 +1519,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td className='pl-2'>DPJP</td>
-                                        <td colSpan={2} >
+                                        <td className='pl-2' style={{fontSize:'1rem'}}>DPJP</td>
+                                        <td colSpan={2}  style={{fontSize:'1rem'}}>
                                             <div className="col-sm-12" style={{ borderBottomColor: 'white', height: '60px' }}>
                                                 <Dropdown
                                                     value={selectedDPJP}
@@ -1495,12 +1533,12 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                 />
                                             </div>
                                         </td>
-                                        <td style={{ textAlign: 'right', paddingRight: '15px' }}>Jenis Tarif</td>
-                                        <td><input type="text" className="col-sm-11 ml-2 " name='nama_tarifinacbgs_1' value={profils.nama_tarifinacbgs_1} /></td>
+                                        <td style={{ textAlign: 'right', paddingRight: '15px' , fontSize:'1rem' }}>Jenis Tarif</td>
+                                        <td style={{fontSize:'1rem'}}><input type="text" className="col-sm-11 ml-2 " name='nama_tarifinacbgs_1' value={profils.nama_tarifinacbgs_1} /></td>
                                     </tr>
                                     <tr>
-                                        <td className='pl-2'>Pasien TB</td>
-                                        <td colSpan={3}>
+                                        <td className='pl-2' style={{fontSize:'1rem'}}>Pasien TB</td>
+                                        <td colSpan={3} style={{fontSize:'1rem'}}>
                                             <div className="col-sm-12">
                                                 <div className="row">
                                                     <div className="col-sm-1">
@@ -1509,12 +1547,12 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                             name="pasien_tb"
                                                             checked={pasienTB}
                                                             onChange={handleCheckboxChange} />
-                                                        <label htmlFor="ingredient1" className="ml-2">Ya</label>
+                                                        <label htmlFor="ingredient1" className="ml-2" style={{fontSize:'1rem'}}>Ya</label>
                                                     </div>
                                                     <div className="col-sm-11">
                                                         {pasienTB && (
                                                             <>
-                                                                <div className='col-sm-12'>
+                                                                <div className='col-sm-12' style={{fontSize:'1rem'}}>
                                                                     <input
                                                                         type="text"
                                                                         name="nomorRegister"
@@ -1539,9 +1577,9 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                 {/* Tarif Rumah Sakit */}
                                 <table className='table table-borderless' style={{ border: ' 1px solid black', width: '100%' }}>
                                     <tr style={{ border: ' 1px solid black' }}>
-                                        <td colSpan={3}>
+                                        <td colSpan={3} style={{fontSize:'1rem'}}>
                                             <div className="col-sm-12 text-center">
-                                                <span className="mr-2 font-bold">Tarif Rumah Sakit :</span>
+                                                <span className="mr-2 font-bold" style={{fontSize:'1rem'}}>Tarif Rumah Sakit :</span>
                                                 <span style={{ fontSize: "20px", color: total.total == total_simrs ? 'black' : 'red' }} 
                                                 className='font-bold'
                                                 data-pr-tooltip={total.total == total_simrs ? "Tarif Sudah Sesuai" : "Tarif Rumah Sakit Tidak Sesuai"}
@@ -1575,7 +1613,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                     readOnly
                                                 />
                                                  */}
-                                                <span className='ml-3 font-bold'>
+                                                <span className='ml-3 font-bold' style={{fontSize:'1rem'}}>
                                                     Tarif SIMRS :
 
                                                 </span>
@@ -1625,13 +1663,13 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                     </tr>
                                     {kelasEksekutif && (
                                         <tr>
-                                            <td width={"35%"}>
+                                            <td width={"35%"} style={{fontSize:'1rem'}}>
                                                 <div className="col-sm-12">
                                                     <div className="row">
-                                                        <div className="col-sm-5 font-bold" style={{ alignContent: 'center' }}>
+                                                        <div className="col-sm-5 font-bold" style={{ alignContent: 'center',fontSize:'1rem' }}>
                                                             Poli Eksekutif
                                                         </div>
-                                                        <div className="col-sm-7">
+                                                        <div className="col-sm-7" style={{fontSize:'1rem'}}>
                                                             <InputNumber
                                                                 value={parseFloat(tarifs.tarif_poli_eks) || 0}
                                                                 onValueChange={handleValueChange}
@@ -1662,13 +1700,13 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
 
 
                                     <tr>
-                                        <td width={"35%"}>
+                                        <td width={"35%"} style={{fontSize:'1rem'}}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center' }}>
+                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center',fontSize:'1rem' }}>
                                                         Prosedur Non Bedah
                                                     </div>
-                                                    <div className="col-sm-7">
+                                                    <div className="col-sm-7" style={{fontSize:'1rem'}}>
                                                         <InputNumber
                                                             value={parseFloat(tarifs.prosedurenonbedah)}
                                                             onValueChange={handleValueChange}
@@ -1687,13 +1725,13 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                             </div>
 
                                         </td>
-                                        <td width={"35%"}>
+                                        <td width={"35%"} style={{fontSize:'1rem'}}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center' }}>
+                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center', fontSize:'1rem' }}>
                                                         Prosedur Bedah
                                                     </div>
-                                                    <div className="col-sm-7">
+                                                    <div className="col-sm-7" style={{fontSize:'1rem'}}>
                                                         <InputNumber
                                                             value={parseFloat(tarifs.prosedurebedah)}
                                                             onValueChange={handleValueChange}
@@ -1711,13 +1749,13 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                 </div>
                                             </div>
                                         </td>
-                                        <td width={"30%"}>
+                                        <td width={"30%"} style={{fontSize:'1rem'}}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center' }}>
+                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center' ,fontSize:'1rem'}}>
                                                         Konsultasi
                                                     </div>
-                                                    <div className="col-sm-7">
+                                                    <div className="col-sm-7" style={{fontSize:'1rem'}}>
                                                         <InputNumber
                                                             value={parseFloat(tarifs.konsultasi)}
                                                             onValueChange={handleValueChange}
@@ -1737,11 +1775,11 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td width={"35%"}>
+                                        <td width={"35%"} style={{fontSize:'1rem'}}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center' }}>Tenaga Ahli</div>
-                                                    <div className="col-sm-7">
+                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center',fontSize:'1rem' }}>Tenaga Ahli</div>
+                                                    <div className="col-sm-7" style={{fontSize:'1rem'}}>
                                                         <InputNumber
                                                             value={parseFloat(tarifs.tenagaahli)}
                                                             onValueChange={handleValueChange}
@@ -1754,16 +1792,17 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                             max={100000000} // Optional: Set a maximum value
                                                             name='tenagaahli'
                                                             inputClassName='ml-2 form-control'
+                                                            style={{fontSize:'1rem'}}
                                                         />
                                                     </div>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td width={"35%"}>
+                                        <td width={"35%"} style={{fontSize:'1rem'}}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center' }}>Keperawatan</div>
-                                                    <div className="col-sm-7">
+                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center', fontSize:'1rem' }}>Keperawatan</div>
+                                                    <div className="col-sm-7" style={{fontSize:'1rem'}}>
                                                         <InputNumber
                                                             value={parseFloat(tarifs.keperawatan)}
                                                             onValueChange={handleValueChange}
@@ -1776,15 +1815,16 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                             max={100000000} // Optional: Set a maximum value
                                                             name='keperawatan'
                                                             inputClassName='ml-2 form-control'
+                                                            style={{fontSize:'1rem'}}
                                                         />
                                                     </div>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td width={"30%"}>
+                                        <td width={"30%"} style={{fontSize:'1rem'}}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center' }}>Penunjang</div>
+                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center' ,fontSize:'1rem'}}>Penunjang</div>
                                                     <div className="col-sm-7">
                                                         <InputNumber
                                                             value={parseFloat(tarifs.penunjang)}
@@ -1798,6 +1838,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                             max={100000000} // Optional: Set a maximum value
                                                             name='penunjang'
                                                             inputClassName='ml-2 form-control'
+                                                            style={{fontSize:'1rem'}}
                                                         />
                                                     </div>
                                                 </div>
@@ -1805,10 +1846,10 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td width={"35%"}>
+                                        <td width={"35%"} style={{fontSize:'1rem'}}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center' }}>Radiologi</div>
+                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center' , fontSize:'1rem' }}>Radiologi</div>
                                                     <div className="col-sm-7">
                                                         <InputNumber
                                                             value={parseFloat(tarifs.radiologi)}
@@ -1822,15 +1863,16 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                             max={100000000} // Optional: Set a maximum value
                                                             name='radiologi'
                                                             inputClassName='ml-2 form-control'
+                                                            style={{fontSize:'1rem'}}
                                                         />
                                                     </div>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td width={"35%"}>
+                                        <td width={"35%"} style={{fontSize:'1rem'}}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center' }}>Laboratorium</div>
+                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center' ,fontSize:'1rem'}}>Laboratorium</div>
                                                     <div className="col-sm-7">
                                                         <InputNumber
                                                             value={parseFloat(tarifs.laboratorium)}
@@ -1844,15 +1886,16 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                             max={100000000} // Optional: Set a maximum value
                                                             name='laboratorium'
                                                             inputClassName='ml-2 form-control'
+                                                            style={{fontSize:'1rem'}}
                                                         />
                                                     </div>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td width={"30%"}>
+                                        <td width={"30%"} style={{fontSize:'1rem'}}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center' }}>Pelayanan Darah</div>
+                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center' ,fontSize:'1rem'}}>Pelayanan Darah</div>
                                                     <div className="col-sm-7">
                                                         <InputNumber
                                                             value={parseFloat(tarifs.pelayanandarah)}
@@ -1865,7 +1908,9 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                             min={0} // Optional: Set a minimum value
                                                             max={100000000} // Optional: Set a maximum value
                                                             name='pelayanandarah'
+                                                            style={{fontSize:'1rem'}}
                                                             inputClassName='ml-2 form-control'
+                                                            
                                                         />
                                                     </div>
                                                 </div>
@@ -1876,7 +1921,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                         <td width={"35%"}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center' }}>Rehabilitasi</div>
+                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center',fontSize:'1rem' }}>Rehabilitasi</div>
                                                     <div className="col-sm-7">
                                                         <InputNumber
                                                             value={parseFloat(tarifs.rehabilitasi)}
@@ -1898,7 +1943,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                         <td width={"35%"}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center' }}>Kamar / Akomodasi</div>
+                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center',fontSize:'1rem' }}>Kamar / Akomodasi</div>
                                                     <div className="col-sm-7">
                                                         <InputNumber
                                                             value={parseFloat(tarifs.kamar_akomodasi)}
@@ -1911,16 +1956,17 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                             min={0} // Optional: Set a minimum value
                                                             max={100000000} // Optional: Set a maximum value
                                                             name='kamar_akomodasi'
+                                                            style={{fontSize:'1rem'}}
                                                             inputClassName='ml-2 form-control'
                                                         />
                                                     </div>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td width={"30%"}>
+                                        <td width={"30%"} style={{fontSize:'1rem'}}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center' }}>Rawat Intensif</div>
+                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center' ,fontSize:'1rem' }}>Rawat Intensif</div>
                                                     <div className="col-sm-7">
                                                         <InputNumber
                                                             value={parseFloat(tarifs.rawatintensif)}
@@ -1934,6 +1980,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                             max={100000000} // Optional: Set a maximum value
                                                             name='rawatintensif'
                                                             inputClassName='ml-2 form-control'
+                                                            style={{fontSize:'1rem'}}
                                                         />
                                                     </div>
                                                 </div>
@@ -1945,7 +1992,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                         <td width={"35%"}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center' }}>Obat</div>
+                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center',fontSize:'1rem' }}>Obat</div>
                                                     <div className="col-sm-7">
                                                         <InputNumber
                                                             value={parseFloat(obats.obat)}
@@ -1954,6 +2001,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                             currency="IDR"
                                                             locale="id-ID" // Set the locale for Indonesia (Rupiah)
                                                             showSymbol
+                                                            style={{fontSize:'1rem'}}
                                                             prefix="" // Adds the Rp prefix to the input value
                                                             min={0} // Optional: Set a minimum value
                                                             max={100000000} // Optional: Set a maximum value
@@ -1964,10 +2012,10 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                 </div>
                                             </div>
                                         </td>
-                                        <td width={"35%"}>
+                                        <td width={"35%"} style={{fontSize:'1rem'}}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center' }}>Obat Kronis</div>
+                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center',fontSize:'1rem' }}>Obat Kronis</div>
                                                     <div className="col-sm-7">
                                                         <InputNumber
                                                             value={parseFloat(obats.obatkronis)}
@@ -1976,6 +2024,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                             currency="IDR"
                                                             locale="id-ID" // Set the locale for Indonesia (Rupiah)
                                                             showSymbol
+                                                            style={{fontSize:'1rem'}}
                                                             prefix="" // Adds the Rp prefix to the input value
                                                             min={0} // Optional: Set a minimum value
                                                             max={100000000} // Optional: Set a maximum value
@@ -1986,15 +2035,16 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                 </div>
                                             </div>
                                         </td>
-                                        <td width={"30%"}>
+                                        <td width={"30%"} style={{fontSize:'1rem'}}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center' }}>Obat Kemoterapi</div>
+                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center', fontSize:'1rem' }}>Obat Kemoterapi</div>
                                                     <div className="col-sm-7">
                                                         <InputNumber
                                                             value={parseFloat(obats.obatkemoterapi)}
                                                             onValueChange={handleValueChange}
                                                             mode="currency"
+                                                            style={{fontSize:'1rem'}}
                                                             currency="IDR"
                                                             locale="id-ID" // Set the locale for Indonesia (Rupiah)
                                                             showSymbol
@@ -2010,10 +2060,10 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td width={"35%"}>
+                                        <td width={"35%"} style={{fontSize:'1rem'}}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center' }}>Alkes</div>
+                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center', fontSize:'1rem' }}>Alkes</div>
                                                     <div className="col-sm-7">
                                                         <InputNumber
                                                             value={parseFloat(obats.alkes)}
@@ -2026,16 +2076,17 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                             min={0} // Optional: Set a minimum value
                                                             max={100000000} // Optional: Set a maximum value
                                                             name='alkes'
+                                                            style={{fontSize:'1rem'}}
                                                             inputClassName='ml-2 form-control'
                                                         />
                                                     </div>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td width={"35%"}>
+                                        <td width={"35%"} style={{fontSize:'1rem'}}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center' }}>BMHP</div>
+                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center' ,fontSize:'1rem'}}>BMHP</div>
                                                     <div className="col-sm-7">
                                                         <InputNumber
                                                             value={parseFloat(obats.bmhp)}
@@ -2044,6 +2095,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                             currency="IDR"
                                                             locale="id-ID" // Set the locale for Indonesia (Rupiah)
                                                             showSymbol
+                                                            style={{fontSize:'1rem'}}
                                                             prefix="" // Adds the Rp prefix to the input value
                                                             min={0} // Optional: Set a minimum value
                                                             max={100000000} // Optional: Set a maximum value
@@ -2057,7 +2109,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                         <td width={"30%"}>
                                             <div className="col-sm-12">
                                                 <div className="row">
-                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center' }}>Sewa Alat</div>
+                                                    <div className="col-sm-5 font-bold" style={{ alignContent: 'center' , fontSize : '1rem' }}>Sewa Alat</div>
                                                     <div className="col-sm-7">
                                                         <InputNumber
                                                             value={parseFloat(obats.sewaalat | 0)}
@@ -2066,6 +2118,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                             currency="IDR"
                                                             locale="id-ID" // Set the locale for Indonesia (Rupiah)
                                                             showSymbol
+                                                            style={{fontSize:'1rem'}}
                                                             prefix="" // Adds the Rp prefix to the input value
                                                             min={0} // Optional: Set a minimum value
                                                             max={100000000} // Optional: Set a maximum value
@@ -2079,7 +2132,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                     </tr>
                                 </table>
                                 {/* Checkbox Tarif */}
-                                <div className='text-center'><Checkbox defaultChecked></Checkbox> Menyatakan benar bahwa data tarif yang tersebut di atas adalah benar sesuai dengan kondisi yang sesungguhnya.</div>
+                                <div className='text-center' style={{fontSize:'1rem'}}><Checkbox defaultChecked></Checkbox> Menyatakan benar bahwa data tarif yang tersebut di atas adalah benar sesuai dengan kondisi yang sesungguhnya.</div>
                                 <TabView>
                                     <TabPanel header="Coding UNU Grouper">
                                         <div className="p-datatable-header">
@@ -2088,9 +2141,9 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                             }
                                         </div>
                                         <table className="table table-border"  >
-                                            <thead className='p-datatable-thead'>
+                                            <thead className='p-datatable-thead' style={{fontSize:'1rem'}}>
                                                 <tr>
-                                                    <th>No</th>
+                                                    <th >No</th>
                                                     {/* <th>Tgl. Diagnosa <br />/ Dokter<br /> / Jenis Kasus</th> */}
                                                     <th>Diagnosa Kode</th>
                                                     <th>Diagnosa Nama</th>
@@ -2101,10 +2154,10 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                             <tbody>
                                                 {dataDiagnosa.map((row, index) => (
                                                     <tr key={index}>
-                                                        <td>
+                                                        <td style={{fontSize:'1rem'}}>
                                                             {index + 1}
                                                         </td>
-                                                        <td style={{ display: 'none' }}>
+                                                        <td style={{ display: 'none',fontSize:'1rem' }}>
                                                             {console.log(row.tgl_pendaftaran)}
                                                             <Calendar
                                                                 value={formatDateTime(row.tgl_pendaftaran)} // Pass a valid Date object
@@ -2124,12 +2177,13 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                                 filterBy="nmdpjp"
                                                                 name={`[PasienmorbiditasT][${index}][pegawai_id]`}
                                                                 id={`pegawai_id_${index}`}
-                                                                style={{ width: '250px' }}
+                                                                style={{ width: '250px' , fontSize:'1rem' }}
                                                             />
                                                             <br />
                                                             <Dropdown
                                                                 value={row.kasusdiagnosa} onChange={(e) => handleInputChangeRow(index, 'kasusdiagnosa', e.target.value, 'unu')}
                                                                 options={jenisKasus} optionLabel="name"
+                                                                style={{fontSize:'1rem'}}
                                                                 placeholder="Pilih Jenis Kasus Penyakit"
                                                                 filter={true} // Enables the search filter
                                                                 filterBy="name"
@@ -2137,7 +2191,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                                 id={`kasusdiagnosa_${index}`}
                                                             />
                                                         </td>
-                                                        <td>
+                                                        <td style={{fontSize:'1rem'}}>
                                                             <input
                                                                 type="hidden"
                                                                 value={row.diagnosa_id}
@@ -2166,14 +2220,15 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                                 placeholder="Enter Diagnosa Kode"
                                                                 itemTemplate={(item) => (
                                                                     <div>
-                                                                        <span>{item.label} ({item.value})</span>  {/* Custom template to display both label and value */}
+                                                                        <span style={{fontSize:'1rem'}}>{item.label} ({item.value})</span>  {/* Custom template to display both label and value */}
                                                                     </div>
                                                                 )}
                                                             />
 
                                                         </td>
-                                                        <td>
+                                                        <td style={{fontSize:'1rem'}}>
                                                             <input
+                                                            style={{fontSize:'1rem'}}
                                                                 type="text"
                                                                 value={row.diagnosa_nama}
                                                                 onChange={(e) => handleInputChangeRow(index, 'diagnosa_nama', e.target.value, 'unu')}
@@ -2181,7 +2236,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                                 id={`diagnosa_nama_${index}`}
                                                             />
                                                         </td>
-                                                        <td>
+                                                        <td style={{fontSize:'1rem'}}>
                                                             <Dropdown
                                                                 value={row.kelompokdiagnosa_id}
                                                                 onChange={(e) => handleInputChangeRow(index, 'kelompokdiagnosa_id', e.target.value, 'unu')}
@@ -2192,7 +2247,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                                 id={`kelompokdiagnosa_id_${index}`}
                                                             />
                                                         </td>
-                                                        <td style={{ textAlign: 'center' }}>
+                                                        <td style={{ textAlign: 'center',fontSize:'1rem' }}>
                                                             <button type="button" onClick={() => removeRow(index, 'unu')} >
                                                                 <FontAwesomeIcon icon={faTrashCan} />
                                                             </button>
@@ -2208,7 +2263,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                             }
                                         </div>
                                         <table className="p-datatable-table ">
-                                            <thead className='p-datatable-thead'>
+                                            <thead className='p-datatable-thead' style={{fontSize:'1rem'}}>
                                                 <tr>
                                                     <th>No</th>
                                                     <th>Diagnosa Kode</th>
@@ -2220,10 +2275,10 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                             <tbody>
                                                 {dataIcd9cm.map((row, index) => (
                                                     <tr key={index}>
-                                                        <td>
+                                                        <td style={{fontSize:'1rem'}}>
                                                             {index + 1}
                                                         </td>
-                                                        <td>
+                                                        <td style={{fontSize:'1rem'}}>
                                                             <input
                                                                 type="hidden"
                                                                 value={row.diagnosaicdix_id}
@@ -2252,13 +2307,13 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                                 placeholder="Enter Diagnosa Kode"
                                                                 itemTemplate={(item) => (
                                                                     <div>
-                                                                        <span>{item.label} ({item.value})</span>  {/* Custom template to display both label and value */}
+                                                                        <span style={{fontSize:'1rem'}}>{item.label} ({item.value})</span>  {/* Custom template to display both label and value */}
                                                                     </div>
                                                                 )}
                                                             />
 
                                                         </td>
-                                                        <td>
+                                                        <td style={{fontSize:'1rem'}}>
                                                             <input
                                                                 type="text"
                                                                 value={row.diagnosaicdix_nama}
@@ -2279,7 +2334,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                             />
 
                                                         </td> */}
-                                                        <td style={{ textAlign: 'center' }}>
+                                                        <td style={{ textAlign: 'center' ,fontSize:'1rem'}}>
                                                             <button type="button" onClick={() => removeRowIX(index, 'icdixunu')}>
                                                                 <FontAwesomeIcon icon={faTrashCan} />
                                                             </button>
@@ -2296,7 +2351,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                             }
                                         </div>
                                         <table className="p-datatable-table">
-                                            <thead className='p-datatable-thead'>
+                                            <thead className='p-datatable-thead' style={{fontSize:'1rem'}}>
                                                 <tr>
                                                     <th style={{ textAlign: 'center' }}>No</th>
                                                     {/* <th>Tgl. Diagnosa <br />/ Dokter<br /> / Jenis Kasus</th> */}
@@ -2309,7 +2364,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                             <tbody>
                                                 {dataDiagnosaINA.map((row, index) => (
                                                     <tr key={index}>
-                                                        <td style={{ textAlign: 'center' }}>
+                                                        <td style={{ textAlign: 'center' ,fontSize:'1rem' }}>
                                                             {index + 1}
                                                         </td>
                                                         <td style={{ display: 'none' }}>
@@ -2344,7 +2399,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                                 id={`kasusdiagnosa_${index}`}
                                                             />
                                                         </td>
-                                                        <td>
+                                                        <td style={{fontSize:'1rem'}}>
                                                             <input
                                                                 type="hidden"
                                                                 value={row.diagnosa_id}
@@ -2372,7 +2427,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                             />
 
                                                         </td>
-                                                        <td>
+                                                        <td style={{fontSize:'1rem'}}>
                                                             <input
                                                                 type="text"
                                                                 value={row.diagnosa_nama}
@@ -2381,7 +2436,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                                 id={`diagnosa_nama_${index}`}
                                                             />
                                                         </td>
-                                                        <td>
+                                                        <td style={{fontSize:'1rem'}}>
                                                             <Dropdown
                                                                 value={row.kelompokdiagnosa_id}
                                                                 onChange={(e) => handleInputChangeRow(index, 'kelompokdiagnosa_id', e.target.value, 'ina')}
@@ -2392,7 +2447,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                                 id={`kelompokdiagnosa_id_${index}`}
                                                             />
                                                         </td>
-                                                        <td style={{ textAlign: 'center' }}>
+                                                        <td style={{ textAlign: 'center' , fontSize:'1rem' }}>
                                                             <button type="button" onClick={() => removeRow(index, 'ina')}>
                                                                 <FontAwesomeIcon icon={faTrashCan} />
                                                             </button>
@@ -2408,7 +2463,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                             }
                                         </div>
                                         <table className="p-datatable-table ">
-                                            <thead className='p-datatable-thead'>
+                                            <thead className='p-datatable-thead' style={{fontSize:'1rem'}}>
                                                 <tr>
                                                     <th>No</th>
                                                     <th>Diagnosa Kode</th>
@@ -2420,10 +2475,10 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                             <tbody>
                                                 {dataIcd9cmINA.map((row, index) => (
                                                     <tr key={index}>
-                                                        <td>
+                                                        <td style={{fontSize:'1rem'}}>
                                                             {index + 1}
                                                         </td>
-                                                        <td>
+                                                        <td style={{fontSize:'1rem'}}>
                                                             <input
                                                                 type="hidden"
                                                                 value={row.diagnosaicdix_id}
@@ -2452,13 +2507,13 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                                 placeholder="Enter Diagnosa Kode"
                                                                 itemTemplate={(item) => (
                                                                     <div>
-                                                                        <span>{item.label} ({item.value})</span>  {/* Custom template to display both label and value */}
+                                                                        <span style={{fontSize:'1rem'}}>{item.label} ({item.value})</span>  {/* Custom template to display both label and value */}
                                                                     </div>
                                                                 )}
                                                             />
 
                                                         </td>
-                                                        <td>
+                                                        <td style={{fontSize:'1rem'}}>
                                                             <input
                                                                 type="text"
                                                                 value={row.diagnosaicdix_nama}
@@ -2479,7 +2534,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                             />
 
                                                         </td> */}
-                                                        <td style={{ textAlign: 'center' }}>
+                                                        <td style={{ textAlign: 'center' ,fontSize:'1rem' }}>
                                                             <button type="button" onClick={() => removeRowIX(index, 'icdixina')}>
                                                                 <FontAwesomeIcon icon={faTrashCan} />
                                                             </button>
@@ -2492,14 +2547,14 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                 </TabView>
                                 <div className="row mt-5">
                                     <hr />
-                                    <div className="col-sm-12" style={{ textAlign: 'center' }}>
+                                    <div className="col-sm-12" style={{ textAlign: 'center' ,fontSize:'1rem' }}>
                                         <div>Data Klinis</div>
                                     </div>
                                     <hr />
-                                    <div className="col-sm-12 mb-3" style={{ textAlign: 'center' }}>
+                                    <div className="col-sm-12 mb-3" style={{ textAlign: 'center' , fontSize:'1rem' }}>
                                         <div>Tekanan Darah (mmHg) :</div>
                                     </div>
-                                    <div className="col-sm-6" style={{ textAlign: 'right' }}>
+                                    <div className="col-sm-6" style={{ textAlign: 'right' , fontSize:'1rem' }}>
                                         <InputText
                                             id="sistole"
                                             name="sistole"
@@ -2510,20 +2565,21 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                     </div>
                                     <div className="col-sm-6">
                                         <InputText
+
                                             id="diastole"
                                             name="diastole"
                                             value={diastole}
                                             onChange={(e) => setDiastole(e.target.value)}
-                                            style={{ width: '150px', textAlign: 'center' }}
+                                            style={{ width: '150px', textAlign: 'center' , fontSize:'1rem'}}
                                         />
                                     </div>
                                     <div className="col-sm-6" style={{ textAlign: 'right' }}>
-                                        <div style={{ float: 'right', width: '150px', textAlign: 'center' }}>
+                                        <div style={{ float: 'right', width: '150px', textAlign: 'center' ,fontSize:'1rem' }}>
                                             <label>Sistole</label>
                                         </div>
                                     </div>
                                     <div className="col-sm-6">
-                                        <div style={{ float: 'left', width: '150px', textAlign: 'center' }}>
+                                        <div style={{ float: 'left', width: '150px', textAlign: 'center' , fontSize:'1rem' }}>
                                             <label>Diastole</label>
                                         </div>
 
@@ -2548,24 +2604,24 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
 
                                 {/*  Hasil Grouping */}
 
-                                {console.log("Display", hide)}
+                                {console.log("Data Finalisasi", dataFinalisasi.is_finalisasi )}
                                 <div style={{ display: hide === true ? 'none' : 'block' }}>
-                                    <table className='table table-bordered' style={{ border: ' 1px solid black', width: '100%', backgroundColor: dataFinalisasi.is_finalisasi ? '#ffdd99' : '#ffff' }}>
+                                    <table className='table table-bordered' style={{ border: ' 1px solid black', width: '100%'}}>
                                         <tbody>
-                                            <tr>
-                                                <td colSpan={4}><p className='text-center font-bold'>Hasil Grouper E-Klaim v5 </p></td>
+                                            <tr style={{backgroundColor: dataFinalisasi.is_finalisasi ? '#fb9002' : '#ffff' }}>
+                                                <td colSpan={4}><p className='text-center font-bold' style={{color:'black' ,fontSize:'1rem'}}>Hasil Grouper E-Klaim v5 </p></td>
                                             </tr>
-                                            <tr>
-                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;' }}>Info</td>
-                                                <td width={"35%"} style={{ textAlign: 'left', paddingRight: '10px;' }} colSpan={3}>{dataGrouping.coder_nm} @ {dataFinalisasi.is_finalisasi ? formatDateGroup(dataFinalisasi.create_time) : "-"} <FontAwesomeIcon icon={faEllipsis} /> Kelas {dataGrouping.kelas_rs}  <FontAwesomeIcon icon={faEllipsis} /> Tarif : {dataGrouping.kode_tarif === 'CS' ? 'TARIF RS KELAS C SWASTA' : ''}</td>
+                                            <tr style={{backgroundColor: dataFinalisasi.is_finalisasi ? '#ffdd99' : '#ffff' }}  >
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;' , color:'black' ,fontSize:'1rem'}}>Info</td>
+                                                <td width={"35%"} style={{ textAlign: 'left', paddingRight: '10px;', color:'black' ,fontSize:'1rem' }} colSpan={3}>{dataGrouping.coder_nm} @ {dataFinalisasi.is_finalisasi ?  formatDateGroup(dataFinalisasi.create_time) : "-"} <FontAwesomeIcon icon={faEllipsis} /> Kelas {dataGrouping.kelas_rs}  <FontAwesomeIcon icon={faEllipsis} /> Tarif : {dataGrouping.kode_tarif === 'CS' ? 'TARIF RS KELAS C SWASTA' : ''}</td>
 
 
                                             </tr>
-                                            <tr>
-                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;' }}>Jenis Rawat</td>
-                                                <td width={"35%"} style={{ textAlign: 'left', paddingRight: '10px;' }} colSpan={3}>Rawat Jalan Regular </td>
+                                            <tr style={{backgroundColor: dataFinalisasi.is_finalisasi ? '#ffdd99' : '#ffff' }} >
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color:'black'  ,fontSize:'1rem'}}>Jenis Rawat</td>
+                                                <td width={"35%"} style={{ textAlign: 'left', paddingRight: '10px;', color:'black' ,fontSize:'1rem' }} colSpan={3}>Rawat Jalan Regular </td>
 
-                                            </tr>
+                                            </tr >
                                             {/* <tr>
                                                 <td width={"15%"}>Group</td>
                                                 <td width="35%" style={{ textAlign: 'left' }}>
@@ -2578,18 +2634,18 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                     <FormatRupiah value={dataGrouper.cbg?.base_tariff || 0} />
                                                 </td>
                                             </tr> */}
-                                            <tr>
-                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;' }}>Group</td>
-                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;' }}>
+                                            <tr style={{backgroundColor: dataFinalisasi.is_finalisasi ? '#ffdd99' : '#ffff' }} >
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color:'black' ,fontSize:'1rem' }}>Group</td>
+                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;' , color:'black' ,fontSize:'1rem'}}>
                                                     {console.log("Yest", dataGrouper)}
                                                     {dataGrouper.group_description !== "-" ? dataGrouper.group_description : (dataGrouping.grouper !== null) ? ((dataGrouping.grouper.response !== null) ? dataGrouping.grouper.response.cbg.description : '-') : '-'}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'center' }}>
+                                                <td width="30%" style={{ textAlign: 'center' , color:'black' ,fontSize:'1rem'}}>
                                                     {dataGrouper.group_code !== "-" ? dataGrouper.group_code : (dataGrouping.grouper !== null) ? ((dataGrouping.grouper.response !== null) ? dataGrouping.grouper.response.cbg.code : '-') : '-'}
 
                                                     {/* {dataGrouper.group_code} */}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'right' }}>
+                                                <td width="30%" style={{ textAlign: 'right', color:'black',fontSize:'1rem'  }}>
                                                     <FormatRupiah
                                                         value={dataGrouper.group_tarif
                                                             ? dataGrouper.group_tarif
@@ -2601,83 +2657,83 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
 
                                                 </td>
                                             </tr>
-                                            <tr>
-                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;' }}>Sub Acute</td>
-                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;' }}>
+                                            <tr style={{backgroundColor: dataFinalisasi.is_finalisasi ? '#ffdd99' : '#ffff' }} >
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color:'black',fontSize:'1rem'  }}>Sub Acute</td>
+                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;' , color:'black' ,fontSize:'1rem'}}>
                                                     {dataGrouper.sub_acute_description}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'center' }}>
+                                                <td width="30%" style={{ textAlign: 'center', color:'black',fontSize:'1rem'  }}>
                                                     {dataGrouper.sub_acute_code}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'right' }}>
+                                                <td width="30%" style={{ textAlign: 'right', color:'black'  ,fontSize:'1rem'}}>
                                                     <FormatRupiah value={dataGrouper.sub_acute_tarif} />
                                                 </td>
                                             </tr>
-                                            <tr>
-                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;' }}>Chronic</td>
-                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;' }}>
+                                            <tr style={{backgroundColor: dataFinalisasi.is_finalisasi ? '#ffdd99' : '#ffff' }} >
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color:'black' ,fontSize:'1rem' }}>Chronic</td>
+                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;' , color:'black' ,fontSize:'1rem'}}>
                                                     {dataGrouper.chronic_description}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'center' }}>
+                                                <td width="30%" style={{ textAlign: 'center' , color:'black' ,fontSize:'1rem'}}>
                                                     {dataGrouper.chronic_code}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'right' }}>
+                                                <td width="30%" style={{ textAlign: 'right', color:'black' ,fontSize:'1rem' }}>
                                                     <FormatRupiah value={dataGrouper.chronic_tarif} />
                                                 </td>
                                             </tr>
-                                            <tr>
-                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;' }}>Special Procedure</td>
-                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;' }}>
+                                            <tr style={{backgroundColor: dataFinalisasi.is_finalisasi ? '#ffdd99' : '#ffff' }} >
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;' , color:'black',fontSize:'1rem' }}>Special Procedure</td>
+                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;', color:'black' ,fontSize:'1rem' }}>
                                                     {dataGrouper.special_procedure_description}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'center' }}>
+                                                <td width="30%" style={{ textAlign: 'center', color:'black' ,fontSize:'1rem' }}>
                                                     {dataGrouper.special_procedure_code}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'right' }}>
+                                                <td width="30%" style={{ textAlign: 'right', color:'black',fontSize:'1rem'  }}>
                                                     <FormatRupiah value={dataGrouper.special_procedure_tarif} />
                                                 </td>
                                             </tr>
-                                            <tr>
-                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;' }}>Special Prosthesis</td>
-                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;' }}>
+                                            <tr style={{backgroundColor: dataFinalisasi.is_finalisasi ? '#ffdd99' : '#ffff' }} >
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color:'black' ,fontSize:'1rem' }}>Special Prosthesis</td>
+                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;', color:'black' ,fontSize:'1rem' }}>
                                                     {dataGrouper.special_prosthesis_description}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'center' }}>
+                                                <td width="30%" style={{ textAlign: 'center', color:'black'  ,fontSize:'1rem'}}>
                                                     {dataGrouper.special_prosthesis_code}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'right' }}>
+                                                <td width="30%" style={{ textAlign: 'right' , color:'black',fontSize:'1rem' }}>
                                                     <FormatRupiah value={dataGrouper.special_prosthesis_tarif} />
                                                 </td>
                                             </tr>
-                                            <tr>
-                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;' }}>Special Investigation</td>
-                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;' }}>
+                                            <tr style={{backgroundColor: dataFinalisasi.is_finalisasi ? '#ffdd99' : '#ffff' }} >
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color:'black' ,fontSize:'1rem' }}>Special Investigation</td>
+                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;', color:'black' ,fontSize:'1rem' }}>
                                                     {dataGrouper.special_investigation_description}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'center' }}>
+                                                <td width="30%" style={{ textAlign: 'center', color:'black' ,fontSize:'1rem' }}>
                                                     {dataGrouper.special_investigation_code}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'right' }}>
+                                                <td width="30%" style={{ textAlign: 'right', color:'black' ,fontSize:'1rem' }}>
                                                     <FormatRupiah value={dataGrouper.special_investigation_tarif} />
                                                 </td>
                                             </tr>
-                                            <tr>
-                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;' }}>Special Drug</td>
-                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;' }}>
+                                            <tr style={{backgroundColor: dataFinalisasi.is_finalisasi ? '#ffdd99' : '#ffff' }} >
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color:'black' ,fontSize:'1rem' }}>Special Drug</td>
+                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;' , color:'black',fontSize:'1rem' }}>
                                                     {dataGrouper.special_drug_description}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'center' }}>
+                                                <td width="30%" style={{ textAlign: 'center' , color:'black' ,fontSize:'1rem'}}>
                                                     {dataGrouper.special_drug_code}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'right' }}>
+                                                <td width="30%" style={{ textAlign: 'right' , color:'black',fontSize:'1rem' }}>
                                                     <FormatRupiah value={dataGrouper.special_drug_tarif} />
                                                 </td>
                                             </tr>
                                             {dataFinalisasi.is_finalisasi && (
                                                 <>
-                                                    <tr>
-                                                        <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;' }}>Status DC Kemkes</td>
-                                                        <td colSpan={3} style={{ color: (dataGrouping.kemenkes_dc_status_cd === "unsent" || dataGrouper.kemenkes_dc_status_cd === "unset") ? "red" : "black" }}>
+                                                    <tr style={{backgroundColor: dataFinalisasi.is_finalisasi ? '#ffdd99' : '#ffff' }} >
+                                                        <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;' , color:'black' ,fontSize:'1rem'}}>Status DC Kemkes</td>
+                                                        <td colSpan={3} style={{  fontSize:'1rem',color: (dataGrouping.kemenkes_dc_status_cd === "unsent" || dataGrouper.kemenkes_dc_status_cd === "unset") ? "red" : "black" }}>
 
                                                             {dataGrouper.kemenkes_dc_status_cd ? dataGrouper.kemenkes_dc_status_cd :
                                                                 (dataGrouping.kemenkes_dc_status_cd === "unsent") ?
@@ -2689,50 +2745,50 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                             )}
 
 
-                                            <tr>
-                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;' }}>Status Klaim</td>
-                                                <td colSpan={3} style={{ textAlign: 'left' }}>
+                                            <tr style={{backgroundColor: dataFinalisasi.is_finalisasi ? '#ffdd99' : '#ffff' }} >
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color:'black',fontSize:'1rem'  }}>Status Klaim</td>
+                                                <td colSpan={3} style={{ textAlign: 'left' , color:'black' }}>
                                                     {(dataGrouper.klaim_status_cd) ? dataGrouper.klaim_status_cd : dataGrouping.klaim_status_cd}</td>
                                             </tr>
-                                            <tr>
+                                            <tr style={{backgroundColor: dataFinalisasi.is_finalisasi ? '#ffdd99' : '#ffff' }} >
 
-                                                <td width={"30%"} style={{ textAlign: 'right' }} colSpan={3}>Total</td>
+                                                <td width={"30%"} style={{ textAlign: 'right', color:'black' ,fontSize:'1rem' }} colSpan={3}>Total</td>
                                                 {/* {console.log("Data ",dataGrouping.grouper.tarif_alt.filter(item => item.kelas.includes(`kelas_${datas.klsRawat.klsRawatHak}`))[0].tarif_inacbg)} */}
-                                                <td width={"30%"} style={{ textAlign: 'right' }}><FormatRupiah value={(totalGrouper.total) ? totalGrouper.total : (dataGrouping.grouper !== null) ? ((dataGrouping.grouper.tarif_alt !== null) ? dataGrouping.grouper.tarif_alt.filter(item => item.kelas.includes(`kelas_${datas.klsRawat.klsRawatHak}`))[0].tarif_inacbg : 0) : 0} /> </td>
+                                                <td width={"30%"} style={{ textAlign: 'right', color:'black',fontSize:'1rem'  }}><FormatRupiah value={(totalGrouper.total) ? totalGrouper.total : (dataGrouping.grouper !== null) ? ((dataGrouping.grouper.tarif_alt !== null) ? dataGrouping.grouper.tarif_alt.filter(item => item.kelas.includes(`kelas_${datas.klsRawat.klsRawatHak}`))[0].tarif_inacbg : 0) : 0} /> </td>
 
                                             </tr>
 
                                         </tbody>
 
                                     </table>
-                                    <table className='table table-bordered' style={{ border: ' 1px solid black', width: '100%', backgroundColor: dataFinalisasi.is_finalisasi ? '#ffdd99' : '#ffff' }}>
+                                    <table className='table table-bordered' style={{ border: ' 1px solid black', width: '100%', backgroundColor: dataFinalisasi.is_finalisasi ? '#fb9002' : '#ffff' }}>
                                         <tbody>
                                             <tr>
-                                                <td colSpan={4}><p className='text-center font-bold'>Hasil Grouper E-Klaim v6 </p></td>
+                                                <td colSpan={4}><p className='text-center font-bold' style={{ color:'black' ,fontSize:'1rem'}}>Hasil Grouper E-Klaim v6 </p></td>
                                             </tr>
-                                            <tr>
-                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;' }}>Info</td>
-                                                <td width={"35%"} style={{ textAlign: 'left' }} colSpan={3} >{dataGrouping.coder_nm} @ {formatDateGroup(dataFinalisasi.create_time)}  <FontAwesomeIcon icon={faEllipsis} /> Kelas {dataGrouping.kelas_rs}  <FontAwesomeIcon icon={faEllipsis} /> Tarif : {dataGrouping.kode_tarif === 'CS' ? 'TARIF RS KELAS C SWASTA' : ''} </td>
+                                            <tr style={{backgroundColor: dataFinalisasi.is_finalisasi ? '#ffdd99' : '#ffff' }} >
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;' , color:'black' ,fontSize:'1rem'}}>Info</td>
+                                                <td width={"35%"} style={{ textAlign: 'left' , color:'black',fontSize:'1rem' }} colSpan={3} >{dataGrouping.coder_nm} @ {formatDateGroup(dataFinalisasi.create_time)}  <FontAwesomeIcon icon={faEllipsis} /> Kelas {dataGrouping.kelas_rs}  <FontAwesomeIcon icon={faEllipsis} /> Tarif : {dataGrouping.kode_tarif === 'CS' ? 'TARIF RS KELAS C SWASTA' : ''} </td>
                                             </tr>
-                                            <tr>
-                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;' }}>Jenis Rawat</td>
-                                                <td width={"35%"} style={{ textAlign: 'left' }} colSpan={3}>Rawat Jalan Regular </td>
+                                            <tr style={{backgroundColor: dataFinalisasi.is_finalisasi ? '#ffdd99' : '#ffff' }} > 
+                                                <td width={"15%"} style={{ textAlign: 'right',  color:'black' ,paddingLeft: '10px;' ,fontSize:'1rem'}}>Jenis Rawat</td>
+                                                <td width={"35%"} style={{ textAlign: 'left' , color:'black',fontSize:'1rem' }} colSpan={3}>Rawat Jalan Regular </td>
                                             </tr>
-                                            <tr>
-                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;' }}>MDC</td>
-                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;' }} colSpan={2}>
+                                            <tr style={{backgroundColor: dataFinalisasi.is_finalisasi ? '#ffdd99' : '#ffff' }} >
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color:'black'  ,fontSize:'1rem'}}>MDC</td>
+                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;' , color:'black',fontSize:'1rem' }} colSpan={2}>
                                                     {dataGrouperv6.mdc_description}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'left', paddingRight: '10px;' }}>
+                                                <td width="30%" style={{ textAlign: 'left', paddingRight: '10px;' , color:'black',fontSize:'1rem' }}>
                                                     {dataGrouperv6.mdc_number}
                                                 </td>
-                                            </tr>
-                                            <tr>
-                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;' }}>DRG</td>
-                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;' }} colSpan={2}>
+                                            </tr >
+                                            <tr style={{backgroundColor: dataFinalisasi.is_finalisasi ? '#ffdd99' : '#ffff' }} >
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color:'black'  ,fontSize:'1rem'}}>DRG</td>
+                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;', color:'black'  ,fontSize:'1rem'}} colSpan={2}>
                                                     {dataGrouperv6.drg_description}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'left', paddingRight: '10px;' }}>
+                                                <td width="30%" style={{ textAlign: 'left', paddingRight: '10px;' , color:'black' ,fontSize:'1rem'}}>
                                                     {dataGrouperv6.drg_code}
                                                 </td>
                                             </tr>
@@ -2914,7 +2970,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                     setDataGrouperv6(response.data[0].data.response_inagrouper);
                     // klaim_status_cd
                     setDataGrouping(response.data[1].data.data)
-                    updateRowData(datas.noSep, response.data[0].data.response.cbg.code, response.data[1].data.data.klaim_status_cd, response.data[1].data.data.coder_nm)
+                    updateRowData(datas.noSep,response.data[1].data.data.tgl_masuk,response.data[1].data.data.tgl_pulang, response.data[1].data.data.jenis_rawat,  response.data[0].data.response.cbg.code, response.data[1].data.data.klaim_status_cd, response.data[1].data.data.coder_nm)
                 }
 
                 // Handle the response from the backend
@@ -2925,12 +2981,12 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
     };
 
     // Function to filter by noSep and update tglSep
-    const updateRowData = async (noSep, cbg, status, petugas) => {
+    const updateRowData = async (noSep, tglSep ,tglPlgSep , tipe, cbg, status, petugas) => {
         console.log("Kicik")
         // Map through the model and update the tglSep where noSep matches
         const updatedModel = await models.map((item) => {
             if (item.noSep === noSep) {
-                return { ...item, cbg: cbg, status: status, nama_pegawai: petugas }; // Update the tglSep for the matching row
+                return { ...item, tglSep ,tglPlgSep:tglPlgSep ,tipe:tipe == "2" ? "RJ" : tipe,  cbg: cbg, status: status, nama_pegawai: petugas }; // Update the tglSep for the matching row
             }
             return item; // Leave the rest unchanged
         });
@@ -2962,7 +3018,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                 } else {
                     toast.current.show({ severity: 'success', summary: `Data  Berhasil Di Hapus`, detail: datas.noSep, life: 3000 });
                     setExpandedRows(null);
-                    updateRowData(datas.noSep, response.data[1].data.data.grouper.response.cbg.code, response.data[1].data.data.klaim_status_cd, response.data[1].data.data.coder_nm);
+                    updateRowData(datas.noSep,response.data[1].data.data.tgl_masuk,response.data[1].data.data.tgl_pulang,response.data[1].data.data.jenis_rawat , response.data[1].data.data.grouper.response.cbg.code, response.data[1].data.data.klaim_status_cd, response.data[1].data.data.coder_nm);
                 }
 
                 // Handle the response from the backend
@@ -3057,8 +3113,16 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
 
                 } else {
                     toast.current.show({ severity: 'success', summary: `Data  Berhasil Di edit ulang`, detail: datas.noSep, life: 3000 });
-                    updateRowData(datas.noSep, response.data[1].data.data.grouper.response.cbg.code, response.data[1].data.data.klaim_status_cd, response.data[1].data.data.coder_nm);
-                    setExpandedRows(null);
+                    updateRowData(datas.noSep,response.data[1].data.data.tgl_masuk,response.data[1].data.data.tgl_pulang,response.data[1].data.data.jenis_rawat , response.data[1].data.data.grouper.response.cbg.code, response.data[1].data.data.klaim_status_cd, response.data[1].data.data.coder_nm);
+                //    console.log("Edit Ulang Klaim ", response.data[1].data.data.klaim_status_cd);
+                   setDataFinalisasi((prevDataFinal) => {
+                    return {
+                        ...(response.data.inacbg || {}), // Jika response.data.inacbg ada, gunakan sebagai basis, jika tidak, gunakan objek kosong
+                        is_finalisasi: (response.data[1].data.data.klaim_status_cd == "final") ? response.data.getGrouping.data.data.klaim_status_cd : false// Perbarui is_finalisasi
+                    };
+                });
+                
+                    // setExpandedRows(null);
                     // 
                     // console.log("dataGrouping", dataGrouping)
 
@@ -3070,6 +3134,25 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
             });
     };
 
+
+    const tglSepBody = (rowData) => {
+        // console.log("Waktus masuk ", formatDate(rowData.tglSep));
+        return (
+        <>
+          {rowData.tglSep?formatDate(rowData.tglSep): '-' } 
+
+        </>);
+
+    };
+
+    const tglPlgSepBody = (rowData) => {
+        // console.log("Waktus masuk ", formatDate(rowData));
+        return (
+        <>
+          {rowData.tglPlgSep?formatDate(rowData.tglPlgSep): '-' } 
+        </>);
+
+    };
     /**Simpan Finalisasi */
     const handleSimpanFinalisasi = (e) => {
         e.preventDefault(); // Prevent page reload
@@ -3091,8 +3174,14 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                 } else {
                     toast.current.show({ severity: 'success', summary: `Data  Berhasil Di Finalisasi`, detail: datas.noSep, life: 3000 });
                     console.log("Kick 23");
-                    updateRowData(datas.noSep, response.data[1].data.data.grouper.response.cbg.code, response.data[1].data.data.klaim_status_cd, response.data[1].data.data.coder_nm);
-                    setExpandedRows(null);
+                    updateRowData(datas.noSep,response.data[1].data.data.tgl_masuk,response.data[1].data.data.tgl_pulang,response.data[1].data.data.jenis_rawat , response.data[1].data.data.grouper.response.cbg.code, response.data[1].data.data.klaim_status_cd, response.data[1].data.data.coder_nm);
+                    // setExpandedRows(null);
+                    setDataFinalisasi((prevDataFinal) => {
+                        return {
+                            ...(response.data.inacbg || {}), // Jika response.data.inacbg ada, gunakan sebagai basis, jika tidak, gunakan objek kosong
+                            is_finalisasi: (response.data[1].data.data.klaim_status_cd === "final") ? response.data[1].data.data.klaim_status_cd : false// Perbarui is_finalisasi
+                        };
+                    });
 
 
                     // setTimeout(() => {
@@ -3171,8 +3260,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                         dataKey="noSep" tableStyle={{ minWidth: '60rem' }}>
                         <Column expander style={{ width: '5rem' }} />
 
-                        <Column field="tglSep" header="Tanggal Masuk" align={'center'}  alignHeader={'center'}></Column>
-                        <Column field="tglPlgSep" header="Tanggal Pulang" align={'center'}  alignHeader={'center'}></Column>
+                        <Column  body={tglSepBody} header="Tanggal Masuk" align={'center'}  alignHeader={'center'}></Column>
+                        <Column  body={tglPlgSepBody} header="Tanggal Pulang" align={'center'}  alignHeader={'center'}></Column>
                         <Column field="jaminan" header="Jaminan" body={"JKN"} align={'center'}  alignHeader={'center'}></Column>
                         <Column field="noSep" header="No. SEP" body={noSepBody} align={'center'} alignHeader={'center'}></Column>
                         <Column field="tipe" header="Tipe" align={'center'}  alignHeader={'center'}></Column>

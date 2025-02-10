@@ -42,6 +42,9 @@
         top: -1rem;
         right: -1rem;
     }
+    td {
+        color:black;
+    }
     .p-jc-center{
         text-align:center;
     }
@@ -95,6 +98,13 @@
 
     .p-inputtext {
     font-size: 16px; /* Example for input text */
+    color: black;
+    }
+    input{
+        color: black;
+    }
+    .form-control {
+        color: black;
     }
     .p-component{
         font-size: 16px;

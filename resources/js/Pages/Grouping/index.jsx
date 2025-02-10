@@ -98,6 +98,7 @@ export default function CodingGrouping({ auth, pagination, data }) {
     let networkTimeout = null;
 
     const tglMasukBody = (rowData) => {
+        console.log("Waktus masuk ", formatDateTime(rowData.tgl_masuk));
         return (
         <>
             <a   style={{ textDecoration: 'underline',color :'blue' }}  href={route('searchGroupperPasien',rowData.nokartuasuransi)} className="submenu-item">{rowData.tgl_masuk?formatDateTime(rowData.tgl_masuk):''} </a>
@@ -106,6 +107,8 @@ export default function CodingGrouping({ auth, pagination, data }) {
     };
 
     const tglPulangBody = (rowData) => {
+
+        console.log("waktu ", formatDateTime(rowData.tgl_pulang));
         return rowData.tgl_pulang?formatDateTime(rowData.tgl_pulang):'';
     };
     
