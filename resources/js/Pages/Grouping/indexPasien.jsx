@@ -21,7 +21,8 @@ import { InputNumber } from 'primereact/inputnumber';
 import { Calendar } from 'primereact/calendar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Flatpickr from "react-flatpickr";
-import { faUser, faHome, faCog, faEllipsis, faArrowLeft, faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import { faUser, faHome, faCog, faEllipsis, faArrowLeft, faTrashCan,faFile, faFileLines } from "@fortawesome/free-solid-svg-icons";
+import { Tooltip } from 'primereact/tooltip';
 
 export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJP, jenisKasus, pegawai, kelompokDiagnosa, COB, caraPulang }) {
     const [datas, setDatas] = useState([]);
@@ -3058,6 +3059,13 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                 ) : (
                     <div>
                         {rowData.noSep}
+                        <br />
+                        <span data-pr-tooltip="Klik Untuk Melihat File Simplifikasi" data-pr-position="bottom" id="info-icon">
+                            <FontAwesomeIcon icon={faFile} style={{ color: (rowData.status === "final" || rowData.status === "Final") ? "#43A047" : "#D13232" }} />
+                        </span>
+
+                        {/* PrimeReact Tooltip */}
+                        <Tooltip target="#info-icon" />
                     </div>
                 )}
             </div>
@@ -3094,14 +3102,14 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                         dataKey="noSep" tableStyle={{ minWidth: '60rem' }}>
                         <Column expander style={{ width: '5rem' }} />
 
-                        <Column field="tglSep" header="Tanggal Masuk" ></Column>
-                        <Column field="tglPlgSep" header="Tanggal Pulang" ></Column>
-                        <Column field="jaminan" header="Jaminan" body={"JKN"} ></Column>
-                        <Column field="noSep" header="No. SEP" body={noSepBody} ></Column>
-                        <Column field="tipe" header="Tipe" ></Column>
-                        <Column field="cbg" header="CBG" ></Column>
-                        <Column field="status" header="Status" ></Column>
-                        <Column field="nama_pegawai" header="Petugas" ></Column>
+                        <Column field="tglSep" header="Tanggal Masuk" align={'center'}  alignHeader={'center'}></Column>
+                        <Column field="tglPlgSep" header="Tanggal Pulang" align={'center'}  alignHeader={'center'}></Column>
+                        <Column field="jaminan" header="Jaminan" body={"JKN"} align={'center'}  alignHeader={'center'}></Column>
+                        <Column field="noSep" header="No. SEP" body={noSepBody} align={'center'} alignHeader={'center'}></Column>
+                        <Column field="tipe" header="Tipe" align={'center'}  alignHeader={'center'}></Column>
+                        <Column field="cbg" header="CBG" align={'center'}  alignHeader={'center'}></Column>
+                        <Column field="status" header="Status" align={'center'}  alignHeader={'center'}></Column>
+                        <Column field="nama_pegawai" header="Petugas" align={'center'}  alignHeader={'center'}></Column>
                     </DataTable>
                 </Card>
             </>
