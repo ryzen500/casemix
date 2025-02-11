@@ -1326,8 +1326,9 @@ class Inacbg extends Model
         $query = DB::table('sep_t as s')
             ->join('pendaftaran_t as p', 'p.sep_id', '=', 's.sep_id')
             ->join('pasien_m as pa', 'pa.pasien_id', '=', 'p.pasien_id')
-            ->select('pa.nama_pasien', 'pa.no_rekam_medik', 'nokartuasuransi')
-            ->groupBy('pa.nama_pasien', 'pa.no_rekam_medik', 'nokartuasuransi')
+            ->join('asuransipasien_m as ap', 'ap.asuransipasien_id', '=', 'p.asuransipasien_id')
+            ->select('pa.nama_pasien', 'pa.tanggal_lahir','pa.jeniskelamin','pa.no_rekam_medik', 's.nokartuasuransi','ap.nopeserta')
+            ->groupBy('pa.nama_pasien','pa.tanggal_lahir','pa.jeniskelamin', 'pa.no_rekam_medik', 's.nokartuasuransi','ap.nopeserta')
             ->orderBy('pa.nama_pasien', 'asc')
             ;
 
