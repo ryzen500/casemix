@@ -112,6 +112,15 @@
     *{
         font-size: 14px ;
     }
+    .full-width-autocomplete {
+        width: 100% !important;
+    }
+    .p-autocomplete {
+        width: 100% !important;
+    }
+    .p-autocomplete-input {
+        width: 100% !important;
+    }
 
 </style>
 <body >
