@@ -48,7 +48,11 @@ export default function CodingGrouping({ auth, pagination, data }) {
 
         toast.current.show({ severity: 'info', summary: 'Data Sudah Dipilih', detail:e.data.name, life: 3000 }); 
     };
-
+    useEffect(() => {
+        isMounted.current = true;
+        handleSearch();
+        // ProductService.getProductsSmall().then((data) => setProducts(data));
+    }, [lazyParams]);
     useEffect(() => {
         isMounted.current = true;
         loadLazyData();
