@@ -39,6 +39,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
     const [diastole, setDiastole] = useState('');
 
     const [pendaftarans, setPendaftarans] = useState([]);
+    const [pembayaranPelayanans, setPembayaranPelayanans] = useState([]);
+
     const [dataDiagnosa, setDiagnosa] = useState([]);
     const [dataIcd9cm, setDataIcd9cm] = useState([]);
     const [dataIcd9cmINA, setDataIcd9cmINA] = useState([]);
@@ -911,7 +913,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
 
                     setJaminan(response.data.pendaftaran.carabayar_id);
 
-
+                    setPembayaranPelayanans(response.data.pembayaranpelayanan || null);
                     if (response.data.getGrouping.success !== false) {
                         setDataGrouping(response.data.getGrouping.data.data);
 
@@ -1651,8 +1653,9 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                 <Tooltip target=".question-icon" />
                                                 {/* Dialog */}
                                                 <Dialog header="Rincian Tagihan SIMRS" visible={visible} maximizable style={{ width: '50vw', height: '50vw' }} onHide={() => { if (!visible) return; setVisible(false); }}>
+                                                    {console.log("pembayaranpelayanan", pembayaranPelayanans)}
                                                     <iframe
-                                                        src={`http://192.168.214.229/rswb/rswb_new/index.php?r=billingKasir/pembayaranTagihanPasien/cetakGabung&pembayaranpelayanan_id=${736685}`}
+                                                        src={pembayaranPelayanans !== null ?  `http://192.168.214.229/rswb/rswb_new/index.php?r=billingKasir/pembayaranTagihanPasien/cetakGabung&pembayaranpelayanan_id=${pembayaranPelayanans.pembayaranpelayanan_id}` : `http://192.168.214.229/rswb/rswb_new/index.php?r=billingKasir/PembayaranTagihanPasien/PrintRincianBelumBayar&instalasi_id=2&pendaftaran_id=${pendaftarans.pendaftaran_id}&pasienadmisi_id=&caraPrint=PRINT` }
                                                         width="100%"
                                                         height="100%"
                                                         style={{ border: "none" }}

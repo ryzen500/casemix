@@ -878,7 +878,7 @@ class InAcbgGrouperController extends Controller
             'model' => $getRiwayat,
             'pendaftaran' => $pendaftaran,
             'tarif' => $tarif,
-            'tarifBelumBayar'=>$tarifBelumBayar,
+            'pembayaranpelayanan'=>$PembayaranPelayananT,
             'obat' => $obat,
             'profil' => $profil,
             'dataDiagnosa' => $dataDiagnosa,
