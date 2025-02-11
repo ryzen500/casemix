@@ -39,7 +39,12 @@ Route::group(['prefix' => 'inacbg', 'middleware' => 'auth.jwt'], function () {
     Route::get('grouper', [InAcbgGrouperController::class, 'index'])->name('inacbg.grouper.index');
 
     // POST
-    Route::post('grouper', [InAcbgGrouperController::class, 'saveNewKlaim'])->name('inacbg.grouper.newClaim');
+    Route::post('newClaim', [InAcbgGrouperController::class, 'saveNewKlaim'])->name('inacbg.grouper.newClaim');
+    Route::post('updateNewKlaim', [InAcbgGrouperController::class, 'updateNewKlaim'])->name('updateNewKlaim');
+    Route::post('groupingStageSatu', [InAcbgGrouperController::class, 'groupingStageSatu'])->name('groupingStageSatu');
+    Route::post('Finalisasi', [InAcbgGrouperController::class, 'Finalisasi'])->name('Finalisasi');
+    Route::post('editUlangKlaim', [InAcbgGrouperController::class, 'EditUlangKlaim'])->name('editUlangKlaim');
+    Route::post('deleteKlaim', [InAcbgGrouperController::class, 'deleteKlaim'])->name('deleteKlaim');
 
 });
 
