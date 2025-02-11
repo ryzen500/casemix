@@ -1002,7 +1002,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                 ...({}), // Jika response.data.inacbg ada, gunakan sebagai basis, jika tidak, gunakan objek kosong
                                 // is_finalisasi: (response.data[1].data.data.klaim_status_cd === "final") ? response.data[1].data.data.klaim_status_cd : false// Perbarui is_finalisasi
                                 is_finalisasi: (response.data.getGrouping.success !== false) ? (
-                                    (response.data.getGrouping.data.data.klaim_status_cd == "final") ? response.data.getGrouping.data.data.klaim_status_cd : "normal") : false// Perbarui is_finalisasi
+                                    (response.data.getGrouping.data.data.klaim_status_cd == "final") ? response.data.getGrouping.data.data.klaim_status_cd : false) : false// Perbarui is_finalisasi
                             };
                         });
 
@@ -1066,7 +1066,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                 ...({}), // Jika response.data.inacbg ada, gunakan sebagai basis, jika tidak, gunakan objek kosong
                                 // is_finalisasi: (response.data[1].data.data.klaim_status_cd === "final") ? response.data[1].data.data.klaim_status_cd : false// Perbarui is_finalisasi
                                 is_finalisasi: (response.data.getGrouping.success !== false) ? (
-                                    (response.data.getGrouping.data.data.klaim_status_cd == "final") ? response.data.getGrouping.data.data.klaim_status_cd : "normal") : false// Perbarui is_finalisasi
+                                    (response.data.getGrouping.data.data.klaim_status_cd == "final") ? response.data.getGrouping.data.data.klaim_status_cd : false) : false// Perbarui is_finalisasi
                             };
                         });
 
@@ -2655,7 +2655,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                     </div>
                                 </div>
                                 <div className="col-md-6 d-flex mb-3 mt-5">
-                                    {!dataFinalisasi.is_finalisasi && (
+                                {!dataFinalisasi.is_finalisasi  && (
                                         <>
                                             <button className="btn btn-primary" style={{ float: 'right' }} onClick={handleSimpanKlaim}>
                                                 Simpan
@@ -3089,7 +3089,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                 } else {
                     toast.current.show({ severity: 'success', summary: `Data  Berhasil Di Hapus`, detail: datas.noSep, life: 3000 });
                     setExpandedRows(null);
-                    updateRowData(datas.noSep, response.data[1].data.data.tgl_masuk, response.data[1].data.data.tgl_pulang, response.data[1].data.data.jenis_rawat, response.data[1].data.data.grouper.response.cbg.code, response.data[1].data.data.klaim_status_cd, response.data[1].data.data.coder_nm);
+                    resetRowData(datas.noSep);
                 }
 
                 // Handle the response from the backend
@@ -3099,7 +3099,20 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
             });
     };
 
+    // Function to filter by noSep and update tglSep
+    const resetRowData = async (noSep) => {
+        // Map through the model and update the tglSep where noSep matches
+        const updatedModel = await models.map((item) => {
+            if (item.noSep === noSep) {
+                return { ...item,tipe:'',cbg: '', status: '', nama_pegawai: '' }; // Update the tglSep for the matching row
+            }
+            return item; // Leave the rest unchanged
+        });
 
+        // Update the model state with the modified array
+        setModels(updatedModel);
+        // Show a success toast
+    };
     /**handleCetak */
     const handleCetak = (e) => {
         e.preventDefault(); // Prevent page reload

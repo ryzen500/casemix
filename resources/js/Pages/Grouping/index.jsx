@@ -283,7 +283,8 @@ export default function CodingGrouping({ auth, pagination, data }) {
                 </small>
 
                 <small style={{ display: 'block', color: '#6c757d' }}>
-                Tanggal Lahir: {rowData.tanggal_lahir} ({rowData.usia})
+                Tanggal Lahir: {rowData.tanggal_lahir} ({rowData.jeniskelamin})
+                {/* ({rowData.usia}) */}
                 </small>
                 <small style={{ display: 'block', color: '#6c757d',marginBottom:'15px' , textAlign:'right' }}>
                     Rekam Medik: {rowData.no_rekam_medik} 
