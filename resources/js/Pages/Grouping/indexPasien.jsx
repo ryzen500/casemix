@@ -326,7 +326,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
             setDataIcd9cm(updatedRows);
             let length = value.length;
             if (length > 2) {
-                fetchSuggestionsCodeIX(value);  // Fetch suggestions based on the input
+                fetchSuggestionsIX(value);  // Fetch suggestions based on the input
             }
         } else if (type == 'icdixina') {
             const updatedRows = dataIcd9cmINA.map(row => ({ ...row }));
@@ -334,7 +334,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
             setDataIcd9cmINA(updatedRows);
             let length = value.length;
             if (length > 2) {
-                fetchSuggestionsCodeIX(value);  // Fetch suggestions based on the input
+                fetchSuggestionsIX(value);  // Fetch suggestions based on the input
             }
         }
     };
@@ -999,8 +999,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                             return {
                                 ...(response.data.inacbg || {}), // Jika response.data.inacbg ada, gunakan sebagai basis, jika tidak, gunakan objek kosong
                                 // is_finalisasi: (response.data[1].data.data.klaim_status_cd === "final") ? response.data[1].data.data.klaim_status_cd : false// Perbarui is_finalisasi
-    
-                                is_finalisasi: (response.data.getGrouping.data.data.klaim_status_cd == "final") ? response.data.getGrouping.data.data.klaim_status_cd : false// Perbarui is_finalisasi
+                                is_finalisasi: (response.data.success==false)?((response.data.getGrouping.data.data.klaim_status_cd == "final") ? response.data.getGrouping.data.data.klaim_status_cd : false):false// Perbarui is_finalisasi
                             };
                         });
                         
@@ -1128,7 +1127,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                 console.log('Response:', response.data);
                 // setHide(false);
                 if (Boolean(response.data.success) === false) {
-                    // toast.current.show({ severity: 'error', summary: response.data.message, detail: datas.noSep, life: 3000 });
+                    toast.current.show({ severity: 'error', summary: response.data.message, detail: datas.noSep, life: 3000 });
 
                 } else {
                     toast.current.show({ severity: 'success', summary: `Data  Berhasil Di simpan`, detail: datas.noSep, life: 3000 });
@@ -2241,13 +2240,23 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
 
                                                         </td>
                                                         <td style={{fontSize:'1rem'}}>
-                                                            <input
-                                                            style={{fontSize:'1rem'}}
-                                                                type="text"
+                                                            <AutoComplete
                                                                 value={row.diagnosa_nama}
-                                                                onChange={(e) => handleInputChangeRow(index, 'diagnosa_nama', e.target.value, 'unu')}
+                                                                suggestions={suggestions}
+                                                                completeMethod={fetchSuggestionsCode}
+                                                                field="name"
+                                                                onChange={(e) => handleInputChangeAutocompleteRow(index, 'diagnosa_nama', e.value, 'unu')}
                                                                 name={`[PasienmorbiditasT][${index}][diagnosa_nama]`}
                                                                 id={`diagnosa_nama_${index}`}
+                                                                onSelect={(e) => updateRow(index, e.value, 'unu')}  // Update input field
+                                                                // loading={loading}
+                                                                minLength={3}
+                                                                placeholder="Enter Diagnosa Nama"
+                                                                itemTemplate={(item) => (
+                                                                    <div>
+                                                                        <span style={{fontSize:'1rem'}}>{item.label} ({item.value})</span>  {/* Custom template to display both label and value */}
+                                                                    </div>
+                                                                )}
                                                             />
                                                         </td>
                                                         <td style={{fontSize:'1rem'}}>
@@ -2328,12 +2337,23 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
 
                                                         </td>
                                                         <td style={{fontSize:'1rem'}}>
-                                                            <input
-                                                                type="text"
+                                                            <AutoComplete
                                                                 value={row.diagnosaicdix_nama}
-                                                                onChange={(e) => handleInputChangeRow(index, 'diagnosaicdix_nama', e.target.value, 'icdixunu')}
+                                                                suggestions={suggestions}
+                                                                completeMethod={fetchSuggestionsIX}
+                                                                field="name"
+                                                                onChange={(e) => handleInputChangeAutocompleteIXRow(index, 'diagnosaicdix_nama', e.value, 'icdixunu')}
                                                                 name={`[Pasienicd9cmT][${index}][diagnosaicdix_nama]`}
                                                                 id={`diagnosaicdix_nama_${index}`}
+                                                                onSelect={(e) => updateIXRow(index, e.value, 'icdixunu')}  // Update input field
+                                                                // loading={loading}
+                                                                minLength={3}
+                                                                placeholder="Enter Diagnosa Nama"
+                                                                itemTemplate={(item) => (
+                                                                    <div>
+                                                                        <span style={{fontSize:'1rem'}}>{item.label} ({item.value})</span>  {/* Custom template to display both label and value */}
+                                                                    </div>
+                                                                )}
                                                             />
                                                         </td>
                                                         {/* <td>
@@ -2442,12 +2462,23 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
 
                                                         </td>
                                                         <td style={{fontSize:'1rem'}}>
-                                                            <input
-                                                                type="text"
+                                                            <AutoComplete
                                                                 value={row.diagnosa_nama}
-                                                                onChange={(e) => handleInputChangeRow(index, 'diagnosa_nama', e.target.value, 'ina')}
+                                                                suggestions={suggestions}
+                                                                completeMethod={fetchSuggestionsCode}
+                                                                field="name"
+                                                                onChange={(e) => handleInputChangeAutocompleteRow(index, 'diagnosa_nama', e.value, 'ina')}
                                                                 name={`[PasienmorbiditasTINA][${index}][diagnosa_nama]`}
                                                                 id={`diagnosa_nama_${index}`}
+                                                                onSelect={(e) => updateRow(index, e.value, 'ina')}  // Update input field
+                                                                // loading={loading}
+                                                                minLength={3}
+                                                                placeholder="Enter Diagnosa Nama"
+                                                                itemTemplate={(item) => (
+                                                                    <div>
+                                                                        <span>{item.label} ({item.value})</span>  {/* Custom template to display both label and value */}
+                                                                    </div>
+                                                                )}
                                                             />
                                                         </td>
                                                         <td style={{fontSize:'1rem'}}>
@@ -2528,12 +2559,23 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
 
                                                         </td>
                                                         <td style={{fontSize:'1rem'}}>
-                                                            <input
-                                                                type="text"
+                                                            <AutoComplete
                                                                 value={row.diagnosaicdix_nama}
-                                                                onChange={(e) => handleInputChangeRow(index, 'diagnosaicdix_nama', e.target.value, 'icdixina')}
+                                                                suggestions={suggestions}
+                                                                completeMethod={fetchSuggestionsIX}
+                                                                field="name"
+                                                                onChange={(e) => handleInputChangeAutocompleteIXRow(index, 'diagnosaicdix_nama', e.value, 'icdixina')}
                                                                 name={`[Pasienicd9cmTINA][${index}][diagnosaicdix_nama]`}
                                                                 id={`diagnosaicdix_nama_${index}`}
+                                                                onSelect={(e) => updateIXRow(index, e.value, 'icdixina')}  // Update input field
+                                                                // loading={loading}
+                                                                minLength={3}
+                                                                placeholder="Enter Diagnosa Nama"
+                                                                itemTemplate={(item) => (
+                                                                    <div>
+                                                                        <span style={{fontSize:'1rem'}}>{item.label} ({item.value})</span>  {/* Custom template to display both label and value */}
+                                                                    </div>
+                                                                )}
                                                             />
                                                         </td>
                                                         {/* <td>
