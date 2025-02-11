@@ -2169,10 +2169,10 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                         <table className="table table-border"  >
                                             <thead className='p-datatable-thead' style={{ fontSize: '1rem' }}>
                                                 <tr>
-                                                    <th >No</th>
+                                                    <th width={'1%'}>No</th>
                                                     {/* <th>Tgl. Diagnosa <br />/ Dokter<br /> / Jenis Kasus</th> */}
-                                                    <th>Diagnosa Kode</th>
-                                                    <th>Diagnosa Nama</th>
+                                                    <th width={'70%'}>Diagnosa Nama</th>
+                                                    <th width={'10%'}>Diagnosa Kode</th>
                                                     <th>Kelompok Diagnosa</th>
                                                     <th>Actions</th>
                                                 </tr>
@@ -2218,6 +2218,27 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                             />
                                                         </td>
                                                         <td style={{ fontSize: '1rem' }}>
+                                                            <AutoComplete
+                                                                value={row.diagnosa_nama}
+                                                                suggestions={suggestions}
+                                                                completeMethod={fetchSuggestionsCode}
+                                                                field="name"
+                                                                onChange={(e) => handleInputChangeAutocompleteRow(index, 'diagnosa_nama', e.value, 'unu')}
+                                                                name={`[PasienmorbiditasT][${index}][diagnosa_nama]`}
+                                                                id={`diagnosa_nama_${index}`}
+                                                                onSelect={(e) => updateRow(index, e.value, 'unu')}  // Update input field
+                                                                // loading={loading}
+                                                                minLength={3}
+                                                                inputClassName='full-width-autocomplete'
+                                                                placeholder="Enter Diagnosa Nama"
+                                                                itemTemplate={(item) => (
+                                                                    <div>
+                                                                        <span style={{ fontSize: '1rem' }}>{item.label} ({item.value})</span>  {/* Custom template to display both label and value */}
+                                                                    </div>
+                                                                )}
+                                                            />
+                                                        </td>
+                                                        <td style={{ fontSize: '1rem' }}>
                                                             <input
                                                                 type="hidden"
                                                                 value={row.diagnosa_id}
@@ -2252,26 +2273,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                             />
 
                                                         </td>
-                                                        <td style={{ fontSize: '1rem' }}>
-                                                            <AutoComplete
-                                                                value={row.diagnosa_nama}
-                                                                suggestions={suggestions}
-                                                                completeMethod={fetchSuggestionsCode}
-                                                                field="name"
-                                                                onChange={(e) => handleInputChangeAutocompleteRow(index, 'diagnosa_nama', e.value, 'unu')}
-                                                                name={`[PasienmorbiditasT][${index}][diagnosa_nama]`}
-                                                                id={`diagnosa_nama_${index}`}
-                                                                onSelect={(e) => updateRow(index, e.value, 'unu')}  // Update input field
-                                                                // loading={loading}
-                                                                minLength={3}
-                                                                placeholder="Enter Diagnosa Nama"
-                                                                itemTemplate={(item) => (
-                                                                    <div>
-                                                                        <span style={{ fontSize: '1rem' }}>{item.label} ({item.value})</span>  {/* Custom template to display both label and value */}
-                                                                    </div>
-                                                                )}
-                                                            />
-                                                        </td>
+
                                                         <td style={{ fontSize: '1rem' }}>
                                                             <Dropdown
                                                                 value={row.kelompokdiagnosa_id}
@@ -2302,8 +2304,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                             <thead className='p-datatable-thead' style={{ fontSize: '1rem' }}>
                                                 <tr>
                                                     <th>No</th>
+                                                    <th width={'80%'}>Diagnosa Nama</th>
                                                     <th>Diagnosa Kode</th>
-                                                    <th>Diagnosa Nama</th>
                                                     {/* <th>Kelompok Diagnosa</th> */}
                                                     <th>Actions</th>
                                                 </tr>
@@ -2313,6 +2315,28 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                     <tr key={index}>
                                                         <td style={{ fontSize: '1rem' }}>
                                                             {index + 1}
+                                                        </td>
+                                                        <td style={{ fontSize: '1rem' }}>
+                                                            <AutoComplete
+                                                                value={row.diagnosaicdix_nama}
+                                                                suggestions={suggestions}
+                                                                completeMethod={fetchSuggestionsIX}
+                                                                field="name"
+                                                                onChange={(e) => handleInputChangeAutocompleteIXRow(index, 'diagnosaicdix_nama', e.value, 'icdixunu')}
+                                                                name={`[Pasienicd9cmT][${index}][diagnosaicdix_nama]`}
+                                                                id={`diagnosaicdix_nama_${index}`}
+                                                                onSelect={(e) => updateIXRow(index, e.value, 'icdixunu')}  // Update input field
+                                                                // loading={loading}
+                                                                minLength={3}
+                                                                inputClassName='full-width-autocomplete'
+
+                                                                placeholder="Enter Diagnosa Nama"
+                                                                itemTemplate={(item) => (
+                                                                    <div>
+                                                                        <span style={{ fontSize: '1rem' }}>{item.label} ({item.value})</span>  {/* Custom template to display both label and value */}
+                                                                    </div>
+                                                                )}
+                                                            />
                                                         </td>
                                                         <td style={{ fontSize: '1rem' }}>
                                                             <input
@@ -2349,26 +2373,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                             />
 
                                                         </td>
-                                                        <td style={{ fontSize: '1rem' }}>
-                                                            <AutoComplete
-                                                                value={row.diagnosaicdix_nama}
-                                                                suggestions={suggestions}
-                                                                completeMethod={fetchSuggestionsIX}
-                                                                field="name"
-                                                                onChange={(e) => handleInputChangeAutocompleteIXRow(index, 'diagnosaicdix_nama', e.value, 'icdixunu')}
-                                                                name={`[Pasienicd9cmT][${index}][diagnosaicdix_nama]`}
-                                                                id={`diagnosaicdix_nama_${index}`}
-                                                                onSelect={(e) => updateIXRow(index, e.value, 'icdixunu')}  // Update input field
-                                                                // loading={loading}
-                                                                minLength={3}
-                                                                placeholder="Enter Diagnosa Nama"
-                                                                itemTemplate={(item) => (
-                                                                    <div>
-                                                                        <span style={{ fontSize: '1rem' }}>{item.label} ({item.value})</span>  {/* Custom template to display both label and value */}
-                                                                    </div>
-                                                                )}
-                                                            />
-                                                        </td>
+
                                                         {/* <td>
                                                             <Dropdown
                                                                 value={row.kelompokdiagnosa_id}
