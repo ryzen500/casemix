@@ -1075,7 +1075,17 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
             } catch (error) {
                 console.log("Kick 2")
                 console.log("Error", error)
-                toast.current.show({ severity: 'error', summary: 'Error', detail: error, life: 3000 });
+                if (error.response && error.response.status === 401) {
+                    toast.current.show({
+                        severity: 'error',
+                        summary: 'Session Expired',
+                        detail: 'Your session has expired. Redirecting to login...',
+                        life: 3000
+                    });
+                    window.open(route('login'), '_parent');
+                }else{
+                    toast.current.show({ severity: 'error', summary: 'Error', detail: error, life: 3000 });
+                }
                 // setExpandedRows(null); // Optionally, handle error state
 
             } finally {

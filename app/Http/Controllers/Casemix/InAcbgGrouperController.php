@@ -104,20 +104,20 @@ class InAcbgGrouperController extends Controller
         // result kirim claim
         $results = $this->inacbg->newClaim($data, $key);
         //if false and message =  Nomor Klaim sudah terpakai. Silakan generate_claim_number lagi. then generate claim number first
-        if($results['success']==false && $results['message']=='Nomor Klaim sudah terpakai. Silakan generate_claim_number lagi.'){
-            // documentaion number 18
-            $results2 = $this->inacbg->generate_claim_number($data, $key);
-            $data = [
-                'nomor_kartu' => $nomor_kartu,
-                'nomor_sep' => $results2['data']['claim_number'],
-                'nomor_rm' => $nomor_rm,
-                'nama_pasien' => $nama_pasien,
-                'tgl_lahir' => $tgl_lahir,
-                'gender' => $gender,
-            ];            
-            // result kirim claim
-            $results = $this->inacbg->newClaim($data, $key);
-        }
+        // if($results['success']==false && $results['message']=='Nomor Klaim sudah terpakai. Silakan generate_claim_number lagi.'){
+        //     // documentaion number 18
+        //     $results2 = $this->inacbg->generate_claim_number($data, $key);
+        //     $data = [
+        //         'nomor_kartu' => $nomor_kartu,
+        //         'nomor_sep' => $results2['data']['claim_number'],
+        //         'nomor_rm' => $nomor_rm,
+        //         'nama_pasien' => $nama_pasien,
+        //         'tgl_lahir' => $tgl_lahir,
+        //         'gender' => $gender,
+        //     ];            
+        //     // result kirim claim
+        //     $results = $this->inacbg->newClaim($data, $key);
+        // }
         // Kembalikan hasil sebagai JSON response
         return response()->json($results, 200);
     }
