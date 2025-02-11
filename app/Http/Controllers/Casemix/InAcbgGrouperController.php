@@ -860,15 +860,28 @@ class InAcbgGrouperController extends Controller
         $PembayaranPelayananT = PembayaranPelayananT::where('pendaftaran_id', $pendaftaran_id)->first();
         // var_dump($PembayaranPelayananT->pembayaranpelayanan_id);die;
        $total_simrs = 0 ;
-        if(!empty($PembayaranPelayananT)){
+        // if(!empty($PembayaranPelayananT)){
 
 
-            $TandabuktiBayarT = TandaBuktiBayarT::where('pembayaranpelayanan_id', $PembayaranPelayananT->pembayaranpelayanan_id)->first();
-            $total_simrs = $TandabuktiBayarT->jmlpembayaran - $PembayaranPelayananT->selisihuntungrugibpjs;
-        }else{
-            $total_simrs = ($tarifBelumBayar->tarif_tindakan ?? 0) + ($obatBelumBayar->hargajual_oa ?? 0);
+        //     $TandabuktiBayarT = TandaBuktiBayarT::where('pembayaranpelayanan_id', $PembayaranPelayananT->pembayaranpelayanan_id)->first();
+        //     $total_simrs = $TandabuktiBayarT->jmlpembayaran - $obat->obatkronis;
+        //     // dd(floatval($TandabuktiBayarT->jmlpembayaran) - floatval($obat->obatkronis));
+        //     dd([
+        //         'jmlpembayaran' => $tarifBelumBayar->tarif_tindakan,
+        //         'obatkronis' => floatval($obatBelumBayar->hargajual_oa),
+        //         'hasil' => floatval($tarifBelumBayar->tarif_tindakan) + floatval($obatBelumBayar->hargajual_oa)
+        //     ]);
+            
 
-        }
+        // }else{
+            //      dd([
+            //     'jmlpembayaran' => $tarifBelumBayar->tarif_tindakan,
+            //     'obatkronis' => floatval($obatBelumBayar->hargajual_oa),
+            //     'hasil' => floatval($tarifBelumBayar->tarif_tindakan) + floatval($obatBelumBayar->hargajual_oa)
+            // ]);
+        $total_simrs = ($tarifBelumBayar->tarif_tindakan ?? 0) + ($obatBelumBayar->hargajual_oa ?? 0);
+
+        // }
 
 
 
@@ -878,7 +891,9 @@ class InAcbgGrouperController extends Controller
             'model' => $getRiwayat,
             'pendaftaran' => $pendaftaran,
             'tarif' => $tarif,
+            'tarifBelumBayar'=>$tarifBelumBayar,
             'pembayaranpelayanan'=>$PembayaranPelayananT,
+            'obatBelumBayar'=>$obatBelumBayar,
             'obat' => $obat,
             'profil' => $profil,
             'dataDiagnosa' => $dataDiagnosa,
