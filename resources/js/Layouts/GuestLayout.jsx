@@ -4,7 +4,7 @@ import { Link } from '@inertiajs/react';
 export default function Guest({ children }) {
     return (
         <div
-            style={{ backgroundImage: `url('/assets/images/bg/bg-lock-screen.jpg')`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+            style={{ backgroundImage: `url('assets/images/bg/bg-lock-screen.jpg')`, backgroundSize: 'cover', backgroundPosition: 'center' }}
             className="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0"
         >
 
