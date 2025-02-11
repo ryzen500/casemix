@@ -996,10 +996,13 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                         setCaraPulang(response.data.inacbg.cara_pulang);
                         // setDPJP(response.data.inacbg.nama_dpjp);
                         setDataFinalisasi((prevDataFinal) => {
+                            console.log("Data FInal sat" , response.data);
+
                             return {
-                                ...(response.data.inacbg || {}), // Jika response.data.inacbg ada, gunakan sebagai basis, jika tidak, gunakan objek kosong
+                                ...({}), // Jika response.data.inacbg ada, gunakan sebagai basis, jika tidak, gunakan objek kosong
                                 // is_finalisasi: (response.data[1].data.data.klaim_status_cd === "final") ? response.data[1].data.data.klaim_status_cd : false// Perbarui is_finalisasi
-                                is_finalisasi: (response.data.success==false)?((response.data.getGrouping.data.data.klaim_status_cd == "final") ? response.data.getGrouping.data.data.klaim_status_cd : false):false// Perbarui is_finalisasi
+                                is_finalisasi: (response.data.getGrouping.success!==false)?(
+                                    (response.data.getGrouping.data.data.klaim_status_cd == "final") ? response.data.getGrouping.data.data.klaim_status_cd : "normal"):false// Perbarui is_finalisasi
                             };
                         });
                         
