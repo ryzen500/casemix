@@ -1323,75 +1323,13 @@ class Inacbg extends Model
 
     private static function buildBaseQuery(bool $isSecondQuery = false)
     {
-        $query = DB::table('pendaftaran_t as p')
+        $query = DB::table('sep_t as s')
+            ->join('pendaftaran_t as p', 'p.sep_id', '=', 's.sep_id')
             ->join('pasien_m as pa', 'pa.pasien_id', '=', 'p.pasien_id')
-            ->join('sep_t as s', 's.sep_id', '=', 'p.sep_id')
-            ->leftJoin('pasienadmisi_t as pas', 'pas.pasienadmisi_id', '=', 'p.pasienadmisi_id')
-            ->leftJoin('inacbg_t', 'inacbg_t.sep_id', '=', 's.sep_id')
-            ->leftJoin('pasienpulang_t', 'p.pasienpulang_id', '=', 'pasienpulang_t.pasienpulang_id')
-            ->leftJoin('inasiscbg_t', 'inasiscbg_t.inacbg_id', '=', 'inacbg_t.inacbg_id')
-            ->leftJoin('pegawai_m as pg', 'pg.loginpemakai_id', '=', 'inacbg_t.create_loginpemakai_id')
-            ->leftJoin('asuransipasien_m as ap', 'ap.asuransipasien_id', '=', 'p.asuransipasien_id')
-            ->select(
-                DB::raw("
-                CASE 
-                    WHEN p.pasienadmisi_id IS NOT NULL THEN pas.tgladmisi 
-                    ELSE date(p.tgl_pendaftaran)::timestamp without time zone 
-                END AS tglmasuk
-            "),
-                DB::raw("
-                CASE 
-                    WHEN p.pasienadmisi_id IS NOT NULL THEN pas.rencanapulang 
-                    ELSE date(p.tgl_pendaftaran)::timestamp without time zone 
-                END AS tglpulang
-            "),
-                'pa.no_rekam_medik',
-                'pa.nama_pasien',
-                's.nosep',
-                'pa.pasien_id',
-                's.klsrawat',
-                DB::raw("'JKN'::text AS jaminan"),
-                DB::raw("
-                CASE
-                    WHEN inacbg_t.tglrawat_masuk IS NOT NULL THEN DATE(inacbg_t.tglrawat_masuk)
-                    WHEN inacbg_t.tglrawat_masuk IS NULL AND p.pasienadmisi_id IS NULL THEN DATE(p.tgl_pendaftaran)
-                    WHEN inacbg_t.tglrawat_masuk IS NULL AND p.pasienadmisi_id IS NOT NULL THEN DATE(pas.tgladmisi)
-                    ELSE DATE(p.tgl_pendaftaran)
-                END AS tanggalmasuk_inacbg
-            "),
-                DB::raw("
-                CASE
-                    WHEN inacbg_t.tglrawat_keluar IS NOT NULL THEN DATE(inacbg_t.tglrawat_keluar)
-                    WHEN inacbg_t.tglrawat_keluar IS NULL AND p.pasienpulang_id IS NOT NULL THEN DATE(pasienpulang_t.tglpasienpulang)
-                    WHEN inacbg_t.tglrawat_keluar IS NULL THEN DATE(p.tgl_pendaftaran)
-                    ELSE DATE(p.tgl_pendaftaran)
-                END AS tanggalpulang_inacbg
-            "),
-                DB::raw("
-                CASE 
-                    WHEN s.jnspelayanan = 2 THEN 'RJ' 
-                    WHEN s.jnspelayanan = 1 THEN 'RI' 
-                    ELSE '?' 
-                END AS tipe
-            "),
-                'inasiscbg_t.kodeprosedur as cbg',
-                DB::raw("
-                CASE 
-                    WHEN inacbg_t.is_finalisasi = true AND inacbg_t.is_terkirim = true THEN 'Terkirim' 
-                    WHEN inacbg_t.is_finalisasi = true AND (inacbg_t.is_terkirim = false or inacbg_t.is_terkirim is null) THEN 'Final' 
-                    WHEN inacbg_t.is_finalisasi = false AND inacbg_t.is_terkirim = false THEN '-' 
-                    ELSE '-' 
-                END AS status
-            "),
-                'ap.nopeserta',
-                'pa.tanggal_lahir',
-                DB::raw("
-                CONCAT(
-                    DATE_PART('year', AGE(pa.tanggal_lahir)), ' Tahun'
-                ) AS usia
-            "),
-                'pg.nama_pegawai'
-            );
+            ->select('pa.nama_pasien', 'pa.no_rekam_medik', 'nokartuasuransi')
+            ->groupBy('pa.nama_pasien', 'pa.no_rekam_medik', 'nokartuasuransi')
+            ->orderBy('pa.nama_pasien', 'asc')
+            ;
 
         return $query;
     }
