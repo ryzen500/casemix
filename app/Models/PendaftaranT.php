@@ -177,7 +177,7 @@ class PendaftaranT extends Model
             $query->select(
                 'pendaftaran_t.pendaftaran_id',
                 'sep_t.sep_id',
-                'hargajual_oa'
+                'obatalkespasien_t.hargajual_oa'
             )
             ->from('pendaftaran_t')
             ->join('obatalkespasien_t', 'obatalkespasien_t.pendaftaran_id', '=', 'pendaftaran_t.pendaftaran_id')
