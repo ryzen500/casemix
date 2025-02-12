@@ -14,7 +14,7 @@ import { faFile } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Tooltip } from 'primereact/tooltip';
 
-export default function CodingGrouping({ auth, pagination, data }) {
+export default function CodingGrouping({ auth }) {
 
     // State to handle criteria card visibility
     const [showCriteria, setShowCriteria] = useState(false);
@@ -125,13 +125,13 @@ export default function CodingGrouping({ auth, pagination, data }) {
     };
     // Fetch lazy data
     const loadLazyData = () => {
-        setLoading(true);
 
         if (networkTimeout) {
             clearTimeout(networkTimeout);
         }
 
         networkTimeout = setTimeout(() => {
+            setLoading(true);
             // const fetchUrl = `${route("/getSearchGroupper")}/?page=${lazyState.page + 1}&per_page=${lazyState.rows}`;            
             const fetchUrl = route("getSearchGroupper"); // Just the URL without query parameters
 
@@ -247,6 +247,7 @@ export default function CodingGrouping({ auth, pagination, data }) {
     const handleSave = (e) => {
         e.preventDefault(); // Prevent page reload
 
+        setLoading(true);
 
         // Perform API request with axios
         // const fetchUrl = `${route("/getSearchGroupper")}/?page=${1}&per_page=${lazyState.rows}`;            
@@ -298,8 +299,6 @@ export default function CodingGrouping({ auth, pagination, data }) {
     return (
         <AuthenticatedLayout
             user={auth.user}
-            pagination={pagination}
-            data={data}
         >
             <Head title="Search Coding / Grouping" />
 
