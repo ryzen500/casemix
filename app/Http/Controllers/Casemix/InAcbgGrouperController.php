@@ -957,4 +957,64 @@ class InAcbgGrouperController extends Controller
         return $this->inacbg->validateSITB($payload, $key_ina);
 
     }
+    public function kirimDataOnline(Request $request)
+    {
+        return Inertia::render('KirimDataOnline/index', []);
+    }
+    public function kirimDataOnlineKolektif(Request $request)
+    {
+        // Ambil keynya dari  ENV 
+        $key_ina = env('INACBG_KEY');
+
+
+        // dd($request->all);
+        $start_dt =  Carbon::parse($request->input('tanggal') ?? "")->setTimezone('Asia/Jakarta')->format('Y-m-d');
+        $stop_dt = Carbon::parse($request->input('tanggal') ?? "")->setTimezone('Asia/Jakarta')->format('Y-m-d');
+        $jenis_rawat = $request->input('jenisRawat') ?? null;
+        $date_type = $request->input('date_type') ?? null;
+        
+
+        // Structur Payload 
+        $payload = [
+            'start_dt' => $start_dt,
+            'stop_dt' => $stop_dt,
+            'jenis_rawat' => $jenis_rawat,
+            'date_type' => $date_type,
+        ];
+
+        // result kirim claim
+        $results =  $this->inacbg->sendClaimKolektif($payload, $key_ina);
+        return $results;
+
+    }
+    public function kirimDataOnlineSearch(Request $request){
+        $currentPage = $request->input('page', 1);
+        $itemsPerPage = $request->input('items_per_page', 10);
+
+        $start_dt =  Carbon::parse($request->input('tanggal') ?? "")->setTimezone('Asia/Jakarta')->format('Y-m-d');
+        $stop_dt = Carbon::parse($request->input('tanggal') ?? "")->setTimezone('Asia/Jakarta')->format('Y-m-d');
+        $jenis_rawat = $request->input('jenisRawat') ?? null;
+        $date_type = $request->input('date_type') ?? null;
+        $filters =[
+            'start_dt'=>Carbon::parse($request->input('tanggal') ?? "")->setTimezone('Asia/Jakarta')->format('Y-m-d'),
+            'stop_dt'=>Carbon::parse($request->input('tanggal') ?? "")->setTimezone('Asia/Jakarta')->format('Y-m-d'),
+            'jenis_rawat'=>$request->input('jenisRawat') ?? null,
+            'date_type'=>$request->input('date_type') ?? null,
+
+        ];
+        // // Hitung total data
+        $totalItems = Inacbg::dataListKirimOnlineCount($filters);
+
+        // // Inisialisasi pagination
+        $pagination = new Pagination($totalItems, $itemsPerPage, $currentPage);
+
+        // // Ambil data berdasarkan pagination
+        $data = Inacbg::dataListKirimOnline($pagination->getLimit(), $pagination->getOffset(), $filters);
+
+        // Kembalikan response JSON
+        return response()->json([
+            'pagination' => $pagination->getPaginationInfo(),
+            'data' => $data,
+        ]);
+    }
 }

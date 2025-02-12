@@ -7,7 +7,7 @@ import { DataTable } from 'primereact/datatable';
 import { ChakraProvider } from "@chakra-ui/react";
 import { Column } from 'primereact/column';
 import { FormatRupiah } from '@arismun/format-rupiah';
-import DateRangePicker from '../../../Components/DateRangePicker';
+import DateRangePicker from '@/Components/DateRangePicker';
 
 export default function LaporanSEP({ auth, pagination, data }) {
     const [users, setUsers] = useState([]);
