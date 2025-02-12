@@ -654,14 +654,14 @@ class InAcbgGrouperController extends Controller
             'nosep',
             'nama_pasien'
         ]);
-        // Hitung total data
-        $totalItems = Inacbg::dataListSepCount($filters);
+        // // Hitung total data
+        // $totalItems = Inacbg::dataListSepCount($filters);
 
-        // Inisialisasi pagination
-        $pagination = new Pagination($totalItems, $itemsPerPage, $currentPage);
+        // // Inisialisasi pagination
+        // $pagination = new Pagination($totalItems, $itemsPerPage, $currentPage);
 
-        // Ambil data berdasarkan pagination
-        $data = Inacbg::dataListSep($pagination->getLimit(), $pagination->getOffset(), $filters);
+        // // Ambil data berdasarkan pagination
+        // $data = Inacbg::dataListSep($pagination->getLimit(), $pagination->getOffset(), $filters);
 
         // Kembalikan response JSON
         // return response()->json([
@@ -669,8 +669,8 @@ class InAcbgGrouperController extends Controller
         //     'data' => $data,
         // ]);
         return Inertia::render('Grouping/index', [
-            'pagination' => $pagination->getPaginationInfo(),
-            'data' => $data,
+            // 'pagination' => $pagination->getPaginationInfo(),
+            // 'data' => $data,
         ]);
     }
 
