@@ -71,7 +71,7 @@ export default function Authenticated({ user, header, children }) {
                             </NavLink>
                             <Sidebar menuItems=
                             {[
-                                { id: 1, label: "Transaksi", submenu: [{label:"Coding / Group ",link:route('searchGroupper')},{label:"Kirim Data Online",link:"kirimDataOnline"},{label:"Pengajuan Klaim",link:"a2.html"}]}
+                                { id: 1, label: "Transaksi", submenu: [{label:"Coding / Group ",link:route('searchGroupper')},{label:"Kirim Data Online",link:route('kirimDataOnline')},{label:"Pengajuan Klaim",link:"a2.html"}]}
                             ]}></Sidebar>
                             <Sidebar menuItems=
                             {[

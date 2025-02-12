@@ -152,7 +152,40 @@ class Inacbg extends Model
             ->limit($limit)
             ->get();
     }
+    public static function dataListKirimOnlineCount(array $filters = [])
+    {
+        $query =DB::table('informasisepgrouping_v');
+        if (!empty($filters['date_type']) && $filters['date_type'] == '1') {
+            $query->where('tgl_pulang', '=', $filters['start_dt'] );
+        }else{
+            $query->where('inacbg_tgl', '=', $filters['start_dt'] );
+        }
+        if (!empty($filters['jenis_rawat']) && $filters['jenis_rawat'] != '3') {
+            $query->where('jnspelayanan', '=', $filters['jenis_rawat'] );
+        }
+        $query->whereRaw('(is_finalisasi = true)');
+        return $query->count();
+    }
+    /**
+     * Ambil data untuk ditampilkan dengan pagination.
+     */
+    public static function dataListKirimOnline(int $limit, int $offset, array $filters = [])
+    {
+        $query =DB::table('informasisepgrouping_v');
+        if (!empty($filters['date_type']) && $filters['date_type'] == '1') {
+            $query->where('tgl_pulang', '=', $filters['start_dt'] );
+        }else{
+            $query->where('inacbg_tgl', '=', $filters['start_dt'] );
+        }
+        if (!empty($filters['jenis_rawat']) && $filters['jenis_rawat'] != '3') {
+            $query->where('jnspelayanan', '=', $filters['jenis_rawat'] );
+        }
+        $query->whereRaw('(is_finalisasi = true)');
+        $query->offset($offset);
+        $query->limit($limit);
 
+        return $query->get();
+    }
     /**
      * Summary of inacbg_encrypt
      * @param mixed $data
@@ -566,8 +599,51 @@ class Inacbg extends Model
             ];
         }
     }
+    public function sendClaimKolektif(array $data, string $key): array
+    {
+        try {
+            // validate The Payload
+            $this->validateSendClaimKolektif($data);
+            $payload = $this->preparePayloadClaimKolektif($data);
 
+            $encryptedPayload = $this->inacbg_encrypt($payload, $key); // Tambahkan parameter $key
+            $response = $this->sendRequest($encryptedPayload, $key);
+            dd($response);
+            return $this->processResponse($response, $key);
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
 
+    public function validateSendClaimKolektif(array $data)
+    {
+        $validator = Validator::make($data, [
+            'start_dt' => 'required',
+            'stop_dt' => 'required',
+            'jenis_rawat' => 'required',
+            'date_type' => 'required',
+
+        ]);
+
+        if ($validator->fails()) {
+            throw new Exception(implode(', ', $validator->errors()->all()));
+        }
+    }
+    private function preparePayloadClaimKolektif(array $data): string
+    {
+        return json_encode([
+            'metadata' => ['method' => 'send_claim'],
+            'data' => [
+                'start_dt' => $data['start_dt'] ?? "",
+                'stop_dt' => $data['stop_dt'] ?? "",
+                'jenis_rawat' => $data['jenis_rawat'] ?? "",
+                'date_type' => $data['date_type'] ?? ""
+            ],
+        ]);
+    }
     public function finalisasi(array $data, string $key): array
     {
         try {
