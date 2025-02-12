@@ -103,7 +103,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
     const [dataFinalisasi, setDataFinalisasi] = useState([]);
 
     const [visible, setVisible] = useState(false);
-
+    const [showSimpli, setShowSimpli] = useState(false);
+    
     // const [tarifs, setTarifs] = useState([]);
     // const [obats, setObats] = useState([]);
 
@@ -2405,10 +2406,10 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                         <table className="p-datatable-table">
                                             <thead className='p-datatable-thead' style={{ fontSize: '1rem' }}>
                                                 <tr>
-                                                    <th style={{ textAlign: 'center' }}>No</th>
+                                                    <th width={'1%'}>No</th>
                                                     {/* <th>Tgl. Diagnosa <br />/ Dokter<br /> / Jenis Kasus</th> */}
-                                                    <th>Diagnosa Kode</th>
-                                                    <th>Diagnosa Nama</th>
+                                                    <th width={'70%'}>Diagnosa Nama</th>
+                                                    <th width={'10%'}>Diagnosa Kode</th>
                                                     <th>Kelompok Diagnosa</th>
                                                     <th>Actions</th>
                                                 </tr>
@@ -2452,6 +2453,28 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                             />
                                                         </td>
                                                         <td style={{ fontSize: '1rem' }}>
+                                                            <AutoComplete
+                                                                value={row.diagnosa_nama}
+                                                                suggestions={suggestions}
+                                                                completeMethod={fetchSuggestionsCode}
+                                                                field="name"
+                                                                onChange={(e) => handleInputChangeAutocompleteRow(index, 'diagnosa_nama', e.value, 'ina')}
+                                                                name={`[PasienmorbiditasTINA][${index}][diagnosa_nama]`}
+                                                                id={`diagnosa_nama_${index}`}
+                                                                onSelect={(e) => updateRow(index, e.value, 'ina')}  // Update input field
+                                                                // loading={loading}
+                                                                minLength={3}
+                                                                placeholder="Enter Diagnosa Nama"
+                                                                inputClassName='full-width-autocomplete'
+
+                                                                itemTemplate={(item) => (
+                                                                    <div>
+                                                                        <span>{item.label} ({item.value})</span>  {/* Custom template to display both label and value */}
+                                                                    </div>
+                                                                )}
+                                                            />
+                                                        </td>
+                                                        <td style={{ fontSize: '1rem' }}>
                                                             <input
                                                                 type="hidden"
                                                                 value={row.diagnosa_id}
@@ -2479,26 +2502,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                             />
 
                                                         </td>
-                                                        <td style={{ fontSize: '1rem' }}>
-                                                            <AutoComplete
-                                                                value={row.diagnosa_nama}
-                                                                suggestions={suggestions}
-                                                                completeMethod={fetchSuggestionsCode}
-                                                                field="name"
-                                                                onChange={(e) => handleInputChangeAutocompleteRow(index, 'diagnosa_nama', e.value, 'ina')}
-                                                                name={`[PasienmorbiditasTINA][${index}][diagnosa_nama]`}
-                                                                id={`diagnosa_nama_${index}`}
-                                                                onSelect={(e) => updateRow(index, e.value, 'ina')}  // Update input field
-                                                                // loading={loading}
-                                                                minLength={3}
-                                                                placeholder="Enter Diagnosa Nama"
-                                                                itemTemplate={(item) => (
-                                                                    <div>
-                                                                        <span>{item.label} ({item.value})</span>  {/* Custom template to display both label and value */}
-                                                                    </div>
-                                                                )}
-                                                            />
-                                                        </td>
+
                                                         <td style={{ fontSize: '1rem' }}>
                                                             <Dropdown
                                                                 value={row.kelompokdiagnosa_id}
@@ -2529,8 +2533,8 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                             <thead className='p-datatable-thead' style={{ fontSize: '1rem' }}>
                                                 <tr>
                                                     <th>No</th>
+                                                    <th width={'80%'}>Diagnosa Nama</th>
                                                     <th>Diagnosa Kode</th>
-                                                    <th>Diagnosa Nama</th>
                                                     {/* <th>Kelompok Diagnosa</th> */}
                                                     <th>Actions</th>
                                                 </tr>
@@ -2540,6 +2544,27 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                     <tr key={index}>
                                                         <td style={{ fontSize: '1rem' }}>
                                                             {index + 1}
+                                                        </td>
+                                                        <td style={{ fontSize: '1rem' }}>
+                                                            <AutoComplete
+                                                                value={row.diagnosaicdix_nama}
+                                                                suggestions={suggestions}
+                                                                completeMethod={fetchSuggestionsIX}
+                                                                field="name"
+                                                                onChange={(e) => handleInputChangeAutocompleteIXRow(index, 'diagnosaicdix_nama', e.value, 'icdixina')}
+                                                                name={`[Pasienicd9cmTINA][${index}][diagnosaicdix_nama]`}
+                                                                id={`diagnosaicdix_nama_${index}`}
+                                                                onSelect={(e) => updateIXRow(index, e.value, 'icdixina')}  // Update input field
+                                                                // loading={loading}
+                                                                inputClassName='full-width-autocomplete'
+                                                                minLength={3}
+                                                                placeholder="Enter Diagnosa Nama"
+                                                                itemTemplate={(item) => (
+                                                                    <div>
+                                                                        <span style={{ fontSize: '1rem' }}>{item.label} ({item.value})</span>  {/* Custom template to display both label and value */}
+                                                                    </div>
+                                                                )}
+                                                            />
                                                         </td>
                                                         <td style={{ fontSize: '1rem' }}>
                                                             <input
@@ -2576,26 +2601,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                             />
 
                                                         </td>
-                                                        <td style={{ fontSize: '1rem' }}>
-                                                            <AutoComplete
-                                                                value={row.diagnosaicdix_nama}
-                                                                suggestions={suggestions}
-                                                                completeMethod={fetchSuggestionsIX}
-                                                                field="name"
-                                                                onChange={(e) => handleInputChangeAutocompleteIXRow(index, 'diagnosaicdix_nama', e.value, 'icdixina')}
-                                                                name={`[Pasienicd9cmTINA][${index}][diagnosaicdix_nama]`}
-                                                                id={`diagnosaicdix_nama_${index}`}
-                                                                onSelect={(e) => updateIXRow(index, e.value, 'icdixina')}  // Update input field
-                                                                // loading={loading}
-                                                                minLength={3}
-                                                                placeholder="Enter Diagnosa Nama"
-                                                                itemTemplate={(item) => (
-                                                                    <div>
-                                                                        <span style={{ fontSize: '1rem' }}>{item.label} ({item.value})</span>  {/* Custom template to display both label and value */}
-                                                                    </div>
-                                                                )}
-                                                            />
-                                                        </td>
+
                                                         {/* <td>
                                                             <Dropdown
                                                                 value={row.kelompokdiagnosa_id}
@@ -2683,7 +2689,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                     <table className='table table-bordered' style={{ border: ' 1px solid black', width: '100%' }}>
                                         <tbody>
                                             <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fb9002' : '#ffff' }}>
-                                                <td colSpan={4}><p className='text-center font-bold' style={{ color: 'black', fontSize: '1rem' }}>Hasil Grouper E-Klaim v5 </p></td>
+                                                <td colSpan={4}><p className='text-center font-bold' style={{ color: 'black', fontSize: '19px' }}>Hasil Grouper E-Klaim v5 </p></td>
                                             </tr>
                                             <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff' }}  >
                                                 <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem' }}>Info</td>
@@ -2840,7 +2846,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                     <table className='table table-bordered' style={{ border: ' 1px solid black', width: '100%', backgroundColor: dataFinalisasi.is_finalisasi ? '#fb9002' : '#ffff' }}>
                                         <tbody>
                                             <tr>
-                                                <td colSpan={4}><p className='text-center font-bold' style={{ color: 'black', fontSize: '1rem' }}>Hasil Grouper E-Klaim v6 </p></td>
+                                                <td colSpan={4}><p className='text-center font-bold' style={{ color: 'black', fontSize: '19px' }}>Hasil Grouper E-Klaim v6 </p></td>
                                             </tr>
                                             <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff' }} >
                                                 <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem' }}>Info</td>
@@ -3303,9 +3309,26 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                     <div>{rowData.noSep}<br /> <span style={{ color: 'red' }}> ( No SEP belum di sinkron )</span> </div> // Show message if pendaftaran_id is null
                 ) : (
                     <div>
-                        <span data-pr-tooltip="Klik Untuk Melihat File Simplifikasi" data-pr-position="bottom" id="info-icon">
+                        <span data-pr-tooltip="Klik Untuk Melihat File Simplifikasi" data-pr-position="bottom" id="info-icon" onClick={() => setShowSimpli(true)}>
+                            
                             <FontAwesomeIcon icon={faFile} style={{ color: (rowData.status === "final" || rowData.status === "Final") ? "#43A047" : "#D13232" }} />
+                                {/* Dialog */}
                         </span>
+                                <Dialog 
+                                    header="File Simplifikasi" 
+                                    visible={showSimpli} 
+                                    maximizable 
+                                    style={{ width: '50vw', height: '50vw' }} 
+                                    onHide={() => { if (!showSimpli) return; setShowSimpli(false); }}
+                                >
+                                {/* <Dialog header="File Simplifikasi" visible={showSimpli} maximizable style={{ width: '50vw', height: '50vw' }} onHide={() => { if (!showSimpli) return; setShowSimpli(false); }}> */}
+                                <iframe
+                                    src={`http://192.168.214.229/rswb-e/index.php?r=sepGlobal/printSep&sep_id=${rowData.sep_id}`}
+                                    width="100%"
+                                    height="100%"
+                                    style={{ border: "none" }}
+                                ></iframe>
+                            </Dialog>
                         {"\u00A0"}|{"\u00A0"}
                         {rowData.noSep}
                         <br />
