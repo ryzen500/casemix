@@ -54,6 +54,7 @@ class SepT extends Model
             ->select(
                 'pendaftaran_t.tgl_pendaftaran AS tgl_masuk',
                 'pendaftaran_t.tgl_pendaftaran AS tgl_pulang',
+                'sep_t.sep_id',
                 'sep_t.nosep',
                 'sep_t.nokartuasuransi',
                 'pasien_m.no_rekam_medik',
@@ -86,6 +87,7 @@ class SepT extends Model
             ->select(
                 'pendaftaran_t.tgl_pendaftaran AS tgl_masuk',
                 'pendaftaran_t.tgl_pendaftaran AS tgl_pulang',
+                'sep_t.sep_id',
                 'sep_t.nosep',
                 'sep_t.nokartuasuransi',
                 'pasien_m.no_rekam_medik',

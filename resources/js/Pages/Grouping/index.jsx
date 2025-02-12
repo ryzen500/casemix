@@ -37,6 +37,7 @@ export default function CodingGrouping({ auth }) {
         sortField: null,
         sortOrder: null,
     });
+    const [showSimpli, setShowSimpli] = useState(false);
 
     const op = useRef(null);
     const toast = useRef(null);
@@ -556,10 +557,24 @@ export default function CodingGrouping({ auth }) {
                                         <Column field="nosep"    body={(rowData) => (
                                                 <>
                                                 {rowData.nosep} <br /> 
-                                                <span data-pr-tooltip="Klik Untuk Melihat File Simplifikasi" data-pr-position="bottom" id="info-icon">
+                                                    <span data-pr-tooltip="Klik Untuk Melihat File Simplifikasi" data-pr-position="bottom" id="info-icon" onClick={() => setShowSimpli(true)}> 
                                                         <FontAwesomeIcon icon={faFile} style={{ color: (rowData.status === "final" || rowData.status === "Final") ? "#43A047" : "#D13232" }} />
                                                     </span>  {"\u00A0"}|{"\u00A0"}
-
+                                                    <Dialog 
+                                                            header="File Simplifikasi" 
+                                                            visible={showSimpli} 
+                                                            maximizable 
+                                                            style={{ width: '50vw', height: '50vw' }} 
+                                                            onHide={() => { if (!showSimpli) return; setShowSimpli(false); }}
+                                                        >
+                                                        {/* <Dialog header="File Simplifikasi" visible={showSimpli} maximizable style={{ width: '50vw', height: '50vw' }} onHide={() => { if (!showSimpli) return; setShowSimpli(false); }}> */}
+                                                        <iframe
+                                                            src={`http://192.168.214.229/rswb-e/index.php?r=sepGlobal/printSep&sep_id=${rowData.sep_id}`}
+                                                            width="100%"
+                                                            height="100%"
+                                                            style={{ border: "none" }}
+                                                        ></iframe>
+                                                    </Dialog>
                                                     {/* PrimeReact Tooltip */}
                                                 <span style={{fontSize:"13px",color:'#888'}}>{rowData.nokartuasuransi}</span>
                                                 <Tooltip target="#info-icon" />

@@ -771,6 +771,7 @@ class InAcbgGrouperController extends Controller
 
                     if (!empty($sep)) {
                         $data[$key]['pendaftaran_id'] = $sep->pendaftaran_id;
+                        $data[$key]['sep_id'] = $sep->sep_id;
                         $pasien['nama_pasien'] = $sep->nama_pasien;
                         $pasien['no_rekam_medik'] = $sep->no_rekam_medik;
                         $pasien['jeniskelamin'] = $sep->jeniskelamin;
@@ -778,6 +779,7 @@ class InAcbgGrouperController extends Controller
 
                     } else {
                         $data[$key]['pendaftaran_id'] = null;
+                        $data[$key]['sep_id'] = null;
                     }
 
                     // var_dump($getClaim);die;
