@@ -594,7 +594,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
     
     // console.log(formatDateGroup("2025-02-13 03:24:33")); // Output: 2025-02-13, 03:24
      
-    console.log("Waktu ",formatDateGroup("2025-02-13 03:24:33"));
+    // console.log("Waktu ",formatDateGroup("2025-02-13 03:24:33"));
     
 
     // const formattedDate = formatDateTime(dataFinalisasi.create_time);
@@ -938,7 +938,11 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                     // console.log("Hasil Final ", response.data.getGrouping.data.data.klaim_status_cd);
 
                     if (response.data.inacbg !== null) {
-                        setDataCreateTime(response.data.inacbg.create_time);
+                        if(response.data.inacbg.update_time !== null){
+                            setDataCreateTime(response.data.inacbg.update_time);
+                        }else{
+                            setDataCreateTime(response.data.inacbg.create_time);
+                        }
                         let setTarifInacbg = {
                             total: 0,
                             prosedurenonbedah: response.data.inacbg.tarif_prosedur_nonbedah || 0,
@@ -1067,6 +1071,9 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                     (response.data.getGrouping.data.data.klaim_status_cd == "final") ? response.data.getGrouping.data.data.klaim_status_cd : false) : false// Perbarui is_finalisasi
                             };
                         });
+
+                        setDataGrouperv6(response.data.getGrouping.data.data.grouper.response_inagrouper);
+
 
                     }
                     calculate_total();
@@ -2690,7 +2697,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                             </tr>
                                             <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff' }}  >
                                                 <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem' }}>Info</td>
-                                                <td width={"35%"} style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem' }} colSpan={3}>{dataGrouping.coder_nm} @ {dataGrouping.kelas_rs ? formatDateGroup(dataGroupCreateTime) : "-"} <FontAwesomeIcon icon={faEllipsis} /> Kelas {dataGrouping.kelas_rs}  <FontAwesomeIcon icon={faEllipsis} /> Tarif : {dataGrouping.kode_tarif === 'CS' ? 'TARIF RS KELAS C SWASTA' : ''}</td>
+                                                <td width={"35%"} style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem' }} colSpan={3}>{dataGrouping.coder_nm} @ {dataGrouping.kelas_rs ? (dataGroupCreateTime) : "-"} <FontAwesomeIcon icon={faEllipsis} /> Kelas {dataGrouping.kelas_rs}  <FontAwesomeIcon icon={faEllipsis} /> Tarif : {dataGrouping.kode_tarif === 'CS' ? 'TARIF RS KELAS C SWASTA' : ''}</td>
 
 
                                             </tr>
@@ -2847,7 +2854,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                             </tr>
                                             <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff' }} >
                                                 <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem' }}>Info</td>
-                                                <td width={"35%"} style={{ textAlign: 'left', color: 'black', fontSize: '1rem' }} colSpan={3} >{dataGrouping.coder_nm} @ {dataGrouping.kelas_rs ? formatDateGroup(dataGroupCreateTime) : '-'}  <FontAwesomeIcon icon={faEllipsis} /> Kelas {dataGrouping.kelas_rs}  <FontAwesomeIcon icon={faEllipsis} /> Tarif : {dataGrouping.kode_tarif === 'CS' ? 'TARIF RS KELAS C SWASTA' : ''} </td>
+                                                <td width={"35%"} style={{ textAlign: 'left', color: 'black', fontSize: '1rem' }} colSpan={3} >{dataGrouping.coder_nm} @ {dataGrouping.kelas_rs ? (dataGroupCreateTime) : '-'}  <FontAwesomeIcon icon={faEllipsis} /> Kelas {dataGrouping.kelas_rs}  <FontAwesomeIcon icon={faEllipsis} /> Tarif : {dataGrouping.kode_tarif === 'CS' ? 'TARIF RS KELAS C SWASTA' : ''} </td>
                                             </tr>
                                             <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff' }} >
                                                 <td width={"15%"} style={{ textAlign: 'right', color: 'black', paddingLeft: '10px;', fontSize: '1rem' }}>Jenis Rawat</td>
@@ -3050,12 +3057,19 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                     //Set Data Grouping 6 
                     setDataGrouperv6(response.data[0].data.response_inagrouper);
 
-                    // Call the inacbg info 
-                    setDataCreateTime(response.data[2].create_time);
-
+          
                     // klaim_status_cd
                     setDataGrouping(response.data[1].data.data)
                     updateRowData(datas.noSep, response.data[1].data.data.tgl_masuk, response.data[1].data.data.tgl_pulang, response.data[1].data.data.jenis_rawat, response.data[0].data.response.cbg.code, response.data[1].data.data.klaim_status_cd, response.data[1].data.data.coder_nm)
+                       // Call the inacbg info 
+                       if(response.data[2].update_time !== null){
+                        setDataCreateTime(response.data[2].update_time);
+
+                    }else{
+                        setDataCreateTime(response.data[2].create_time);
+
+                    }
+
                 }
 
                 // Handle the response from the backend

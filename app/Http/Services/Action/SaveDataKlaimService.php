@@ -4,6 +4,7 @@ namespace App\Http\Services\Action;
 
 use App\Models\Casemix\Inacbg;
 use App\Models\PendaftaranT;
+use Carbon\Carbon;
 use DB;
 use Exception;
 use Log;
@@ -23,6 +24,9 @@ class SaveDataKlaimService
 
         // Periksa keberadaan SEP
         $SEP = Inacbg::where('inacbg_nosep', $data['nomor_sep'])->first();
+        $today = Carbon::now()->setTimezone("Asia/Jakarta");
+
+
         try {
             $inacbgData = [
                 'jaminan_id' => !empty($data['jaminan_id']) && $data['jaminan_id'] !== '' ? $data['jaminan_id'] : null,
@@ -80,7 +84,7 @@ class SaveDataKlaimService
 
             if ($SEP) {
                 // dd($inacbgData);
-                $inacbgData['update_time'] = date("Y-m-d H:i:s");
+                $inacbgData['update_time'] = $today->format("Y-m-d H:i:s");
                 $inacbgData['update_loginpemakai_id'] =!empty($pendaftaran['create_loginpemakai_id']) && $pendaftaran['create_loginpemakai_id'] !== '' ? $pendaftaran['create_loginpemakai_id'] : null;
                 
                 \Log::info('Nilai akhir is_pasientb:', ['is_pasientb' => $inacbgData['is_pasientb']]);
@@ -100,7 +104,7 @@ class SaveDataKlaimService
 
             } else {
                 
-                $inacbgData['create_time'] = date("Y-m-d H:i:s");
+                $inacbgData['create_time'] = $today->format("Y-m-d H:i:s");
                 $inacbgData['create_loginpemakai_id'] =!empty($pendaftaran['create_loginpemakai_id']) && $pendaftaran['create_loginpemakai_id'] !== '' ? $pendaftaran['create_loginpemakai_id'] : null;
 
 
