@@ -23,6 +23,15 @@ export default function CodingGrouping({ auth }) {
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [loading, setLoading] = useState(false);
     const [totalRecords, setTotalRecords] = useState(0);
+    const [selectedDialog, setSelectedDialog] = useState(null);
+
+    const openDialog = (rowData) => {
+        setSelectedDialog(rowData.sep_id);
+    };
+    
+    const closeDialog = () => {
+        setSelectedDialog(null);
+    };
     const [lazyParams, setLazyParams] = useState({
         first: 0,
         rows: 5,
@@ -558,16 +567,16 @@ export default function CodingGrouping({ auth }) {
                                         <Column field="nosep"    body={(rowData) => (
                                                 <>
                                                 {rowData.nosep} <br /> 
-                                                    <span data-pr-tooltip="Klik Untuk Melihat File Simplifikasi" data-pr-position="bottom" id="info-icon" onClick={() => setShowSimpli(true)}> 
+                                                    <span data-pr-tooltip="Klik Untuk Melihat File Simplifikasi" data-pr-position="bottom" id="info-icon" onClick={() => openDialog(rowData)}> 
                                                         <FontAwesomeIcon icon={faFile} style={{ color: (rowData.status === "final" || rowData.status === "Final") ? "#43A047" : "#D13232" }} />
                                                     </span>  {"\u00A0"}|{"\u00A0"}
                                                     <Dialog 
                                                             header="File Simplifikasi" 
-                                                            visible={showSimpli} 
+                                                            visible={selectedDialog === rowData.sep_id} 
                                                             maximizable 
                                                             style={{ width: '50vw', height: '50vw' }} 
-                                                            onHide={() => { if (!showSimpli) return; setShowSimpli(false); }}
-                                                        >
+                                                            onHide={closeDialog}
+                                                            >
                                                         {/* <Dialog header="File Simplifikasi" visible={showSimpli} maximizable style={{ width: '50vw', height: '50vw' }} onHide={() => { if (!showSimpli) return; setShowSimpli(false); }}> */}
                                                         <iframe
                                                             src={`http://192.168.214.229/rswb-e/index.php?r=sepGlobal/printSep&sep_id=${rowData.sep_id}`}
