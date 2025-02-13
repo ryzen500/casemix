@@ -44,8 +44,6 @@
     }
     td {
         color:black;
-        font-weight: bold;
-
     }
     .p-jc-center{
         text-align:center;
@@ -83,46 +81,33 @@
     .p-dropdown {
         border: 1px solid black !important;
         border-radius: 5px; /* Optional: Add rounded corners */
-        font-weight: bold;
-
     }
     /* Center the OverlayPanel */
     .p-overlaypanel {
         position: fixed;
         /* transform: translate(0%, 0%); */
         top : 180px !important;
-
     }
     .p-button {
     font-size: 16px; /* Example for button */
-
-    font-weight: bold;
-}
+    }
 
     .p-dropdown {
     font-size: 16px; /* Example for dropdown */
-    font-weight: bold;
-
-}
+    }
 
     .p-inputtext {
     font-size: 16px; /* Example for input text */
     color: black;
-    font-weight: 'bold';
-}
+    }
     input{
         color: black;
-        font-weight: bold;
-
     }
     .form-control {
         color: black;
-        font-weight: bold;
-
     }
     .p-component{
         font-size: 16px;
-        
     }
     *{
         font-size: 14px ;

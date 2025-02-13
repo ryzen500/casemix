@@ -10,6 +10,7 @@ class DashboardController extends Controller
 {
     public function index(){
 
+        // dd(session()->all());
         $total_tarif_rs = Inacbg::getDashboard();
         $total_tarif_rs->total_tarif_rs=number_format($total_tarif_rs->total_tarif_rs,2,",",".");
         $total_tarif_rs->tarifgruper=number_format($total_tarif_rs->tarifgruper,2,",",".");
