@@ -13,6 +13,7 @@ import { FormatRupiah } from '@arismun/format-rupiah';
 import { faFile } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Tooltip } from 'primereact/tooltip';
+import { Dialog } from 'primereact/dialog';
 
 export default function CodingGrouping({ auth }) {
 

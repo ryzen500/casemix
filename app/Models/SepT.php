@@ -65,8 +65,8 @@ class SepT extends Model
                 'sep_t.jnspelayanan',
                 DB::raw("CASE 
                             WHEN inacbg_t.is_finalisasi = true AND inacbg_t.is_terkirim = true THEN 'Terkirim'
-                            WHEN inacbg_t.is_finalisasi = true AND inacbg_t.is_terkirim = false THEN 'Final'
-                            WHEN inacbg_t.is_finalisasi = false AND inacbg_t.is_terkirim = false THEN '-'
+                            WHEN inacbg_t.is_finalisasi = true AND (inacbg_t.is_terkirim = false or inacbg_t.is_terkirim is null) THEN 'Final'
+                            WHEN inacbg_t.is_finalisasi = false AND (inacbg_t.is_terkirim = false or inacbg_t.is_terkirim is null) THEN 'Normal'
                             ELSE NULL
                         END AS status"),
                 'inacbg_t.create_loginpemakai_id AS inacbg_loginpemakai_id',
@@ -98,8 +98,8 @@ class SepT extends Model
                 'sep_t.jnspelayanan',
                 DB::raw("CASE 
                             WHEN inacbg_t.is_finalisasi = true AND inacbg_t.is_terkirim = true THEN 'Terkirim'
-                            WHEN inacbg_t.is_finalisasi = true AND inacbg_t.is_terkirim = false THEN 'Final'
-                            WHEN inacbg_t.is_finalisasi = false AND inacbg_t.is_terkirim = false THEN '-'
+                            WHEN inacbg_t.is_finalisasi = true AND (inacbg_t.is_terkirim = false or inacbg_t.is_terkirim is null) THEN 'Final'
+                            WHEN inacbg_t.is_finalisasi = false AND (inacbg_t.is_terkirim = false or inacbg_t.is_terkirim is null) THEN 'Normal'
                             ELSE NULL
                         END AS status"),
                 'inacbg_t.create_loginpemakai_id AS inacbg_loginpemakai_id',
