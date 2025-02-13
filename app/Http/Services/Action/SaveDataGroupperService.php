@@ -60,7 +60,7 @@ class SaveDataGroupperService
                 DB::table('inacbg_t')
                 ->where('inacbg_nosep', $data['nomor_sep'])
                 ->update(['tarifgruper' =>  !empty($results['data']['response']['cbg']['base_tariff']) ? $results['data']['response']['cbg']['base_tariff'] : 0,
-                        'create_time'=>$today->format("Y-m-d H:i:s")
+                        'update_time'=>$today->format("Y-m-d H:i:s")
             ]);
                 $message = 'Data berhasil diperbarui';
 

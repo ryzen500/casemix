@@ -37,6 +37,7 @@ class Inacbg extends Model
         'caramasuk',
         'ruanganakhir_id',
         'create_time',
+        'update_time',
         'tarif_prosedur_nonbedah',
         'tarif_prosedur_bedah',
         'tarif_konsultasi',
