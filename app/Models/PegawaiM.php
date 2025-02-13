@@ -11,6 +11,13 @@ class PegawaiM extends Model
     use HasFactory;
     protected $table = 'pegawai_m';
 
+    protected $primaryKey = 'pegawai_id'; // Adjust if the table uses a different primary key
+    // Relasi dengan LoginPemakaiK
+    public function loginPemakai()
+    {
+        return $this->hasMany(LoginPemakaiK::class);
+    }
+
     public static function getPegawaiDPJP($kelompokpegawai_id)
     {
         $query = DB::table('pegawai_m')

@@ -27,7 +27,10 @@ class LoginController extends Controller
             'password' => Hash::make($request->input('password')),
         ];
 
-        $user = LoginPemakaiK::where('nama_pemakai', $request->input('username'))->first();
+        $user = LoginPemakaiK::where('nama_pemakai', $request->input('username'))
+            ->with('pegawai') // Memuat relasi pegawai
+            ->first();
+        // $user = LoginPemakaiK::where('nama_pemakai', $request->input('username'))->first();
         if (!$user) {
             return Inertia::render('Auth/Login', [
                 'errors' => ['username' => 'Username tidak ditemukan.']

@@ -14,6 +14,12 @@ class LoginPemakaiK extends Authenticatable
     protected $primaryKey = 'loginpemakai_id'; // Adjust if the table uses a different primary key
     public $timestamps = false; // Set to true if timestamps exist
 
+
+     // Relasi dengan Pegawai
+     public function pegawai()
+     {
+         return $this->belongsTo(PegawaiM::class, 'pegawai_id');
+     }
     protected $fillable = ['nama_pemakai', 'katakunci_pemakai']; // Define the columns you allow for mass assignment
     // Define username and password fields for authentication
     public function getAuthIdentifierName()

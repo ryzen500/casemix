@@ -2696,14 +2696,14 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                 <td colSpan={4}><p className='text-center font-bold' style={{ color: 'black', fontSize: '19px' }}>Hasil Grouper E-Klaim v5 </p></td>
                                             </tr>
                                             <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff' }}  >
-                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem' }}>Info</td>
-                                                <td width={"35%"} style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem' }} colSpan={3}>{dataGrouping.coder_nm} @ {dataGrouping.kelas_rs ? (dataGroupCreateTime) : "-"} <FontAwesomeIcon icon={faEllipsis} /> Kelas {dataGrouping.kelas_rs}  <FontAwesomeIcon icon={faEllipsis} /> Tarif : {dataGrouping.kode_tarif === 'CS' ? 'TARIF RS KELAS C SWASTA' : ''}</td>
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem' ,fontWeight:'bold' }}>Info</td>
+                                                <td width={"35%"} style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem' ,fontWeight:'bold'}} colSpan={3}>{dataGrouping.coder_nm} @ {dataGrouping.kelas_rs ? (dataGroupCreateTime) : "-"} <FontAwesomeIcon icon={faEllipsis} /> Kelas {dataGrouping.kelas_rs}  <FontAwesomeIcon icon={faEllipsis} /> Tarif : {dataGrouping.kode_tarif === 'CS' ? 'TARIF RS KELAS C SWASTA' : ''}</td>
 
 
                                             </tr>
                                             <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff' }} >
-                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem' }}>Jenis Rawat</td>
-                                                <td width={"35%"} style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem' }} colSpan={3}>Rawat Jalan Regular </td>
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem',fontWeight:'bold' }}>Jenis Rawat</td>
+                                                <td width={"35%"} style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem',fontWeight:'bold' }} colSpan={3}>Rawat Jalan Regular </td>
 
                                             </tr >
                                             {/* <tr>
@@ -2719,17 +2719,17 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                 </td>
                                             </tr> */}
                                             <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff' }} >
-                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem' }}>Group</td>
-                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem' }}>
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem',fontWeight:'bold' }}>Group</td>
+                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem' ,fontWeight:'bold'}}>
                                                     {console.log("Yest", dataGrouper)}
                                                     {dataGrouper.group_description !== "-" ? dataGrouper.group_description : (dataGrouping.grouper !== null) ? ((dataGrouping.grouper.response !== null) ? dataGrouping.grouper.response.cbg.description : '-') : '-'}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'center', color: 'black', fontSize: '1rem' }}>
+                                                <td width="30%" style={{ textAlign: 'center', color: 'black', fontSize: '1rem',fontWeight:'bold' }}>
                                                     {dataGrouper.group_code !== "-" ? dataGrouper.group_code : (dataGrouping.grouper !== null) ? ((dataGrouping.grouper.response !== null) ? dataGrouping.grouper.response.cbg.code : '-') : '-'}
 
                                                     {/* {dataGrouper.group_code} */}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'right', color: 'black', fontSize: '1rem' }}>
+                                                <td width="30%" style={{ textAlign: 'right', color: 'black', fontSize: '1rem' ,fontWeight:'bold'}}>
                                                     <FormatRupiah
                                                         value={dataGrouper.group_tarif
                                                             ? dataGrouper.group_tarif
@@ -2741,83 +2741,83 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
 
                                                 </td>
                                             </tr>
-                                            <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff' }} >
-                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem' }}>Sub Acute</td>
-                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem' }}>
+                                            <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff',fontWeight:'bold' }} >
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem',fontWeight:'bold' }}>Sub Acute</td>
+                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem',fontWeight:'bold' }}>
                                                     {dataGrouper.sub_acute_description}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'center', color: 'black', fontSize: '1rem' }}>
+                                                <td width="30%" style={{ textAlign: 'center', color: 'black', fontSize: '1rem',fontWeight:'bold' }}>
                                                     {dataGrouper.sub_acute_code}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'right', color: 'black', fontSize: '1rem' }}>
+                                                <td width="30%" style={{ textAlign: 'right', color: 'black', fontSize: '1rem' ,fontWeight:'bold'}}>
                                                     <FormatRupiah value={dataGrouper.sub_acute_tarif} />
                                                 </td>
                                             </tr>
-                                            <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff' }} >
-                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem' }}>Chronic</td>
-                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem' }}>
+                                            <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff',fontWeight:'bold' }} >
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem',fontWeight:'bold' }}>Chronic</td>
+                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem',fontWeight:'bold' }}>
                                                     {dataGrouper.chronic_description}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'center', color: 'black', fontSize: '1rem' }}>
+                                                <td width="30%" style={{ textAlign: 'center', color: 'black', fontSize: '1rem' ,fontWeight:'bold'}}>
                                                     {dataGrouper.chronic_code}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'right', color: 'black', fontSize: '1rem' }}>
+                                                <td width="30%" style={{ textAlign: 'right', color: 'black', fontSize: '1rem',fontWeight:'bold' }}>
                                                     <FormatRupiah value={dataGrouper.chronic_tarif} />
                                                 </td>
                                             </tr>
                                             <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff' }} >
-                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem' }}>Special Procedure</td>
-                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem' }}>
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem' ,fontWeight:'bold'}}>Special Procedure</td>
+                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem',fontWeight:'bold' }}>
                                                     {dataGrouper.special_procedure_description}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'center', color: 'black', fontSize: '1rem' }}>
+                                                <td width="30%" style={{ textAlign: 'center', color: 'black', fontSize: '1rem',fontWeight:'bold' }}>
                                                     {dataGrouper.special_procedure_code}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'right', color: 'black', fontSize: '1rem' }}>
+                                                <td width="30%" style={{ textAlign: 'right', color: 'black', fontSize: '1rem' ,fontWeight:'bold' }}>
                                                     <FormatRupiah value={dataGrouper.special_procedure_tarif} />
                                                 </td>
                                             </tr>
                                             <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff' }} >
-                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem' }}>Special Prosthesis</td>
-                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem' }}>
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem',fontWeight:'bold' }}>Special Prosthesis</td>
+                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem',fontWeight:'bold' }}>
                                                     {dataGrouper.special_prosthesis_description}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'center', color: 'black', fontSize: '1rem' }}>
+                                                <td width="30%" style={{ textAlign: 'center', color: 'black', fontSize: '1rem',fontWeight:'bold' }}>
                                                     {dataGrouper.special_prosthesis_code}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'right', color: 'black', fontSize: '1rem' }}>
+                                                <td width="30%" style={{ textAlign: 'right', color: 'black', fontSize: '1rem',fontWeight:'bold' }}>
                                                     <FormatRupiah value={dataGrouper.special_prosthesis_tarif} />
                                                 </td>
                                             </tr>
                                             <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff' }} >
-                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem' }}>Special Investigation</td>
-                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem' }}>
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem',fontWeight:'bold' }}>Special Investigation</td>
+                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem' ,fontWeight:'bold' }}>
                                                     {dataGrouper.special_investigation_description}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'center', color: 'black', fontSize: '1rem' }}>
+                                                <td width="30%" style={{ textAlign: 'center', color: 'black', fontSize: '1rem' ,fontWeight:'bold' }}>
                                                     {dataGrouper.special_investigation_code}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'right', color: 'black', fontSize: '1rem' }}>
+                                                <td width="30%" style={{ textAlign: 'right', color: 'black', fontSize: '1rem' ,fontWeight:'bold'}}>
                                                     <FormatRupiah value={dataGrouper.special_investigation_tarif} />
                                                 </td>
                                             </tr>
                                             <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff' }} >
-                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem' }}>Special Drug</td>
-                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem' }}>
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem',fontWeight:'bold' }}>Special Drug</td>
+                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem',fontWeight:'bold' }}>
                                                     {dataGrouper.special_drug_description}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'center', color: 'black', fontSize: '1rem' }}>
+                                                <td width="30%" style={{ textAlign: 'center', color: 'black', fontSize: '1rem',fontWeight:'bold' }}>
                                                     {dataGrouper.special_drug_code}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'right', color: 'black', fontSize: '1rem' }}>
+                                                <td width="30%" style={{ textAlign: 'right', color: 'black', fontSize: '1rem' ,fontWeight:'bold'}}>
                                                     <FormatRupiah value={dataGrouper.special_drug_tarif} />
                                                 </td>
                                             </tr>
                                             {dataFinalisasi.is_finalisasi && (
                                                 <>
                                                     <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff' }} >
-                                                        <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem' }}>Status DC Kemkes</td>
-                                                        <td colSpan={3} style={{ fontSize: '1rem', color: (dataGrouping.kemenkes_dc_status_cd === "unsent" || dataGrouper.kemenkes_dc_status_cd === "unset") ? "#b70404" : "black" }}>
+                                                        <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem',fontWeight:'bold' }}>Status DC Kemkes</td>
+                                                        <td colSpan={3} style={{ fontSize: '1rem',fontWeight:'bold', color: (dataGrouping.kemenkes_dc_status_cd === "unsent" || dataGrouper.kemenkes_dc_status_cd === "unset") ? "#b70404" : "black" }}>
                                                             <b>
 
                                                                 {dataGrouper.kemenkes_dc_status_cd ? dataGrouper.kemenkes_dc_status_cd :
@@ -2832,15 +2832,15 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
 
 
                                             <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff' }} >
-                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem' }}>Status Klaim</td>
-                                                <td colSpan={3} style={{ textAlign: 'left', color: 'black' }}>
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem' ,fontWeight:'bold'}}>Status Klaim</td>
+                                                <td colSpan={3} style={{ textAlign: 'left', color: 'black' ,fontWeight:'bold'}}>
                                                     {(dataGrouper.klaim_status_cd) ? dataGrouper.klaim_status_cd : dataGrouping.klaim_status_cd}</td>
                                             </tr>
                                             <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff' }} >
 
-                                                <td width={"30%"} style={{ textAlign: 'right', color: 'black', fontSize: '1rem' }} colSpan={3}>Total</td>
+                                                <td width={"30%"} style={{ textAlign: 'right', color: 'black', fontSize: '1rem' ,fontWeight:'bold'}} colSpan={3}>Total</td>
                                                 {/* {console.log("Data ",dataGrouping.grouper.tarif_alt.filter(item => item.kelas.includes(`kelas_${datas.klsRawat.klsRawatHak}`))[0].tarif_inacbg)} */}
-                                                <td width={"30%"} style={{ textAlign: 'right', color: 'black', fontSize: '1rem' }}><FormatRupiah value={(totalGrouper.total) ? totalGrouper.total : (dataGrouping.grouper !== null) ? ((dataGrouping.grouper.tarif_alt !== null) ? dataGrouping.grouper.tarif_alt.filter(item => item.kelas.includes(`kelas_${datas.klsRawat.klsRawatHak}`))[0].tarif_inacbg : 0) : 0} /> </td>
+                                                <td width={"30%"} style={{ textAlign: 'right', color: 'black', fontSize: '1rem' ,fontWeight:'bold'}}><FormatRupiah value={(totalGrouper.total) ? totalGrouper.total : (dataGrouping.grouper !== null) ? ((dataGrouping.grouper.tarif_alt !== null) ? dataGrouping.grouper.tarif_alt.filter(item => item.kelas.includes(`kelas_${datas.klsRawat.klsRawatHak}`))[0].tarif_inacbg : 0) : 0} /> </td>
 
                                             </tr>
 
@@ -2853,28 +2853,28 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                 <td colSpan={4}><p className='text-center font-bold' style={{ color: 'black', fontSize: '19px' }}>Hasil Grouper E-Klaim v6 </p></td>
                                             </tr>
                                             <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff' }} >
-                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem' }}>Info</td>
-                                                <td width={"35%"} style={{ textAlign: 'left', color: 'black', fontSize: '1rem' }} colSpan={3} >{dataGrouping.coder_nm} @ {dataGrouping.kelas_rs ? (dataGroupCreateTime) : '-'}  <FontAwesomeIcon icon={faEllipsis} /> Kelas {dataGrouping.kelas_rs}  <FontAwesomeIcon icon={faEllipsis} /> Tarif : {dataGrouping.kode_tarif === 'CS' ? 'TARIF RS KELAS C SWASTA' : ''} </td>
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem',fontWeight:'bold' }}>Info</td>
+                                                <td width={"35%"} style={{ textAlign: 'left', color: 'black', fontSize: '1rem' ,fontWeight:'bold'}} colSpan={3} >{dataGrouping.coder_nm} @ {dataGrouping.kelas_rs ? (dataGroupCreateTime) : '-'}  <FontAwesomeIcon icon={faEllipsis} /> Kelas {dataGrouping.kelas_rs}  <FontAwesomeIcon icon={faEllipsis} /> Tarif : {dataGrouping.kode_tarif === 'CS' ? 'TARIF RS KELAS C SWASTA' : ''} </td>
                                             </tr>
                                             <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff' }} >
-                                                <td width={"15%"} style={{ textAlign: 'right', color: 'black', paddingLeft: '10px;', fontSize: '1rem' }}>Jenis Rawat</td>
-                                                <td width={"35%"} style={{ textAlign: 'left', color: 'black', fontSize: '1rem' }} colSpan={3}>Rawat Jalan Regular </td>
+                                                <td width={"15%"} style={{ textAlign: 'right', color: 'black', paddingLeft: '10px;', fontSize: '1rem',fontWeight:'bold' }}>Jenis Rawat</td>
+                                                <td width={"35%"} style={{ textAlign: 'left', color: 'black', fontSize: '1rem',fontWeight:'bold' }} colSpan={3}>Rawat Jalan Regular </td>
                                             </tr>
                                             <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff' }} >
-                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem' }}>MDC</td>
-                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem' }} colSpan={2}>
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem' ,fontWeight:'bold' }}>MDC</td>
+                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem'  ,fontWeight:'bold'}} colSpan={2}>
                                                     {dataGrouperv6.mdc_description}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem' }}>
+                                                <td width="30%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem' ,fontWeight:'bold' }}>
                                                     {dataGrouperv6.mdc_number}
                                                 </td>
                                             </tr >
                                             <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff' }} >
-                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem' }}>DRG</td>
-                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem' }} colSpan={2}>
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem',fontWeight:'bold' }}>DRG</td>
+                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem' ,fontWeight:'bold'}} colSpan={2}>
                                                     {dataGrouperv6.drg_description}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem' }}>
+                                                <td width="30%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem',fontWeight:'bold' }}>
                                                     {dataGrouperv6.drg_code}
                                                 </td>
                                             </tr>
