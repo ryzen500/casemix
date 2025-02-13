@@ -13,6 +13,7 @@ use App\Http\Services\Action\SaveDataKlaimService;
 use App\Http\Services\SearchSepService;
 use App\Models\CarabayarM;
 use App\Models\CaraKeluarM;
+use App\Models\DiagnosaicdixM;
 use App\Models\InasismdcT;
 use App\Models\LaporanresepR;
 use App\Models\PasienMordibitasR;
@@ -35,6 +36,7 @@ use App\Models\SepT;
 use PaginationLibrary\Pagination;
 use Inertia\Inertia;
 use App\Services\DataService;
+use Illuminate\Support\Facades\DB;
 
 class InAcbgGrouperController extends Controller
 {
@@ -854,7 +856,7 @@ class InAcbgGrouperController extends Controller
         $pendaftaran_id = $request->input('pendaftaran_id');
         $diagnosa = $request->input('diagnosa');
         $diagnosa = explode(' ', $diagnosa);
-        $dataDiagnosa = PasienmorbiditasT::getMorbiditas($pendaftaran_id);
+
         $dataIcd9cm = Pasienicd9cmT::getIcdIX($pendaftaran_id);
         $model = new SearchSepService();
         $getRiwayat = $model->getRiwayatData($noSep)->getOriginalContent();
@@ -895,9 +897,204 @@ class InAcbgGrouperController extends Controller
         // }
 
 
-
         $serviceGrouping = new groupingService($this->inacbg);
         $getGrouping = $serviceGrouping->callDataGrouping($noSep);
+        $konfig = DB::table('konfigsystem_k')->first();
+        // dd($konfig->is_updatediagnosacasemix,$getGrouping['success'],$getGrouping['data']['data']['diagnosa'],$getGrouping['data']['data']['procedure'],$getGrouping['data']['data']['diagnosa_inagrouper'],$getGrouping['data']['data']['procedure_inagrouper']);
+        if($konfig->is_updatediagnosacasemix){
+            $dataDiagnosa = PasienmorbiditasT::getMorbiditas($pendaftaran_id);
+            $dataDiagnosaIXUNU= $dataIcd9cm;
+            $dataDiagnosaXINA=$dataDiagnosa;
+            $dataDiagnosaIXINA= $dataIcd9cm;
+
+        }else{
+            // api
+            if($getGrouping['success']==true){
+                $dataDiagnosa=[];
+
+                if($getGrouping['data']['data']['diagnosa']!=''){
+                    $diagnosaXUnu = explode("#",$getGrouping['data']['data']['diagnosa']);
+                    if(count($diagnosaXUnu)>0){
+                        foreach ($diagnosaXUnu as $key=>$value) {
+                            $diagnosa= DiagnosaM::getDiagnosaByCode($value);
+                            if($key==0){
+                                $kelompokdiagnosa_id =2;
+                            }else{
+                                $kelompokdiagnosa_id =3;
+                            }
+                            $dataDiagnosa[$key]=[
+                                'diagnosa_id' =>$diagnosa->diagnosa_id,
+                                'diagnosa_nama' =>$diagnosa->diagnosa_nama,
+                                'diagnosa_kode' =>$diagnosa->diagnosa_kode,
+                                'kelompokdiagnosa_id' =>$kelompokdiagnosa_id,
+                                'tgl_pendaftaran' =>$pendaftaran->tgl_pendaftaran,
+                                'pegawai_id' =>$pendaftaran->pegawai_id
+                            ];
+                        }
+                    }
+                }else{
+                    $diagnosaXUnu =DB::table('diagnosax_inacbgs_t')->where('inacbg_id','=',$SEP->inacbg_id)->get();
+                    if(count((array)$diagnosaXUnu)>0){
+                        foreach ($diagnosaXUnu as $key=>$value) {
+                            $diagnosa= DiagnosaM::getDiagnosaByCode($value->diagnosa_kode);
+                            if($key==0){
+                                $kelompokdiagnosa_id =2;
+                            }else{
+                                $kelompokdiagnosa_id =3;
+                            }
+                            $dataDiagnosa[$key]=[
+                                'diagnosa_id' =>$diagnosa->diagnosa_id,
+                                'diagnosa_nama' =>$diagnosa->diagnosa_nama,
+                                'diagnosa_kode' =>$diagnosa->diagnosa_kode,
+                                'kelompokdiagnosa_id' => $value->diagnosax_type,
+                                'tgl_pendaftaran' =>$pendaftaran->tgl_pendaftaran,
+                                'pegawai_id' =>$pendaftaran->pegawai_id
+                            ];
+                        }
+                    }else{
+                        $dataDiagnosa= PasienmorbiditasT::getMorbiditas($pendaftaran_id);
+                    }
+                }
+                $dataDiagnosaIXUNU=[];
+
+                if($getGrouping['data']['data']['procedure']!=''){
+                    $diagnosaIXUnu = explode("#",$getGrouping['data']['data']['procedure']);
+                    if(count($diagnosaIXUnu)>0){
+                        foreach ($diagnosaIXUnu as $key=>$value) {
+                            $diagnosa= DiagnosaicdixM::getDiagnosaByCode($value);
+                            if($key==0){
+                                $kelompokdiagnosa_id =2;
+                            }else{
+                                $kelompokdiagnosa_id =3;
+                            }
+                            $dataDiagnosaIXUNU[$key]=[
+                                'diagnosaicdix_id' =>$diagnosa->diagnosaicdix_id,
+                                'diagnosaicdix_kode' =>$diagnosa->diagnosaicdix_kode,
+                                'diagnosaicdix_nama' =>$diagnosa->diagnosaicdix_nama,
+                            ];
+                        }
+                    }
+                }else{
+                    $diagnosaIXUnu =DB::table('diagnosaix_inacbg_t')->where('inacbg_id','=',$SEP->inacbg_id)->get();
+                    if(count((array)$diagnosaIXUnu)>0){
+                        foreach ($diagnosaIXUnu as $key=>$value) {
+                            $diagnosa= DiagnosaicdixM::getDiagnosaByCode($value->diagnosaix_kode);
+                            if($key==0){
+                                $kelompokdiagnosa_id =2;
+                            }else{
+                                $kelompokdiagnosa_id =3;
+                            }
+                            $dataDiagnosaIXUNU[$key]=[
+                                'diagnosaicdix_id' =>$diagnosa->diagnosaicdix_id,
+                                'diagnosaicdix_kode' =>$diagnosa->diagnosaicdix_kode,
+                                'diagnosaicdix_nama' =>$diagnosa->diagnosaicdix_nama,
+                            ];
+                        }
+                    }else{
+                        $dataDiagnosaIXUNU= $dataIcd9cm;
+                    }
+                }
+                $dataDiagnosaXINA=[];
+
+                if($getGrouping['data']['data']['diagnosa_inagrouper']!=''){
+                    $diagnosaXIna = explode("#",$getGrouping['data']['data']['diagnosa_inagrouper']);
+
+                    if(count($diagnosaXIna)>0){
+                        foreach ($diagnosaXIna as $key=>$value) {
+                            $diagnosa= DiagnosaM::getDiagnosaByCode($value);
+                            if($key==0){
+                                $kelompokdiagnosa_id =2;
+                            }else{
+                                $kelompokdiagnosa_id =3;
+                            }
+                            $dataDiagnosaXINA[$key]=[
+                                'diagnosa_id' =>$diagnosa->diagnosa_id,
+                                'diagnosa_nama' =>$diagnosa->diagnosa_nama,
+                                'diagnosa_kode' =>$diagnosa->diagnosa_kode,
+                                'kelompokdiagnosa_id' =>$kelompokdiagnosa_id,
+                                'tgl_pendaftaran' =>$pendaftaran->tgl_pendaftaran,
+                                'pegawai_id' =>$pendaftaran->pegawai_id
+                            ];
+                        }
+                    }
+                }else{
+                    $diagnosaXIna =DB::table('diagnosainacbg_t')->where('inacbg_id','=',$SEP->inacbg_id)->get();
+                    if(count((array)$diagnosaXIna)>0){
+                        foreach ($diagnosaXIna as $key=>$value) {
+                            $diagnosa= DiagnosaM::getDiagnosaByCode($value->kodediagnosainacbg);
+                            if($key==0){
+                                $kelompokdiagnosa_id =2;
+                            }else{
+                                $kelompokdiagnosa_id =3;
+                            }
+                            $dataDiagnosaXINA[$key]=[
+                                'diagnosa_id' =>$diagnosa->diagnosa_id,
+                                'diagnosa_nama' =>$diagnosa->diagnosa_nama,
+                                'diagnosa_kode' =>$diagnosa->diagnosa_kode,
+                                'kelompokdiagnosa_id' => $value->diagnosainacbg_type,
+                                'tgl_pendaftaran' =>$pendaftaran->tgl_pendaftaran,
+                                'pegawai_id' =>$pendaftaran->pegawai_id
+                            ];
+                        }
+                    }else{
+                        $dataDiagnosaXINA= PasienmorbiditasT::getMorbiditas($pendaftaran_id);
+                    }
+                }
+
+                $dataDiagnosaIXINA=[];
+
+                if($getGrouping['data']['data']['procedure_inagrouper']!=''){
+                    $diagnosaIXIna = explode("#",$getGrouping['data']['data']['procedure_inagrouper']);
+                    if(count($diagnosaIXIna)>0){
+                        foreach ($diagnosaIXIna as $key=>$value) {
+                            $diagnosa= DiagnosaicdixM::getDiagnosaByCode($value);
+                            if($key==0){
+                                $kelompokdiagnosa_id =2;
+                            }else{
+                                $kelompokdiagnosa_id =3;
+                            }
+                            $dataDiagnosaIXINA[$key]=[
+                                'diagnosaicdix_id' =>$diagnosa->diagnosaicdix_id,
+                                'diagnosaicdix_kode' =>$diagnosa->diagnosaicdix_kode,
+                                'diagnosaicdix_nama' =>$diagnosa->diagnosaicdix_nama,
+                            ];
+                        }
+                    }
+                }else{
+                    $dataDiagnosaIXINA =DB::table('diagnosainacbgix_t')->where('inacbg_id','=',$SEP->inacbg_id)->get();
+                    if(count((array)$dataDiagnosaIXINA)>0){
+                        foreach ($dataDiagnosaIXINA as $key=>$value) {
+                            $diagnosa= DiagnosaicdixM::getDiagnosaByCode($value->kodediagnosainacbgix);
+                            if($key==0){
+                                $kelompokdiagnosa_id =2;
+                            }else{
+                                $kelompokdiagnosa_id =3;
+                            }
+                            $dataDiagnosaIXINA[$key]=[
+                                'diagnosaicdix_id' =>$diagnosa->diagnosaicdix_id,
+                                'diagnosaicdix_kode' =>$diagnosa->diagnosaicdix_kode,
+                                'diagnosaicdix_nama' =>$diagnosa->diagnosaicdix_nama,
+                            ];
+                        }
+                    }else{
+                        $dataDiagnosaIXINA= $dataIcd9cm;
+                    }
+                }
+                
+                // if(count($diagnosaIXUnu)>0){
+                //     foreach ($diagnosaIXUnu as $key=>$value) {
+                //         $diagnosa= DiagnosaicdixM::getDiagnosaByCode($value);
+                //         $dataDiagnosaIXINA[$key]=[
+                //             'diagnosaicdix_id' =>$diagnosa->diagnosaicdix_id,
+                //             'diagnosaicdix_kode' =>$diagnosa->diagnosaicdix_kode,
+                //             'diagnosaicdix_nama' =>$diagnosa->diagnosaicdix_nama,
+                //         ];
+                //     }
+                // }
+            }
+            $dataDiagnosa = PasienmorbiditasT::getMorbiditas($pendaftaran_id);
+
+        }
         return response()->json([
             'model' => $getRiwayat,
             'pendaftaran' => $pendaftaran,
@@ -908,11 +1105,14 @@ class InAcbgGrouperController extends Controller
             'obat' => $obat,
             'profil' => $profil,
             'dataDiagnosa' => $dataDiagnosa,
-            'dataIcd9cm' => $dataIcd9cm,
+            'dataDiagnosaIXUNU' => $dataDiagnosaIXUNU,
+            'dataDiagnosaXINA' => $dataDiagnosaXINA,
+            'dataDiagnosaIXINA' => $dataDiagnosaIXINA,
             'Inasismdc'=>$Inasismdc,
             'inacbg' => $SEP,
             'total_simrs'=> $total_simrs,
-            'getGrouping' => $getGrouping
+            'getGrouping' => $getGrouping,
+            'konfig' =>$konfig
         ]);
     }
     public function getClaimData(Request $request){
