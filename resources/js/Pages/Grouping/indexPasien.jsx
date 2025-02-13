@@ -2741,7 +2741,6 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                             <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff' }} >
                                                 <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>Group</td>
                                                 <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
-                                                    {console.log("Yest", dataGrouper)}
                                                     {dataGrouper.group_description !== "-" ? dataGrouper.group_description : (dataGrouping.grouper !== null) ? ((dataGrouping.grouper.response !== null) ? dataGrouping.grouper.response.cbg.description : '-') : '-'}
                                                 </td>
                                                 <td width="30%" style={{ textAlign: 'center', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
@@ -2854,7 +2853,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                             <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff' }} >
                                                 <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>Status Klaim</td>
                                                 <td colSpan={3} style={{ textAlign: 'left', color: 'black', fontWeight: 'bold' }}>
-                                                    {(dataGrouper.klaim_status_cd) ? dataGrouper.klaim_status_cd : dataGrouping.klaim_status_cd}</td>
+                                                    {(dataGrouper.klaim_status_cd) ? statusTable(dataGrouper.klaim_status_cd) : statusTable(dataGrouping.klaim_status_cd)}</td>
                                             </tr>
                                             <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff' }} >
 
@@ -3266,6 +3265,44 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
             });
     };
 
+    const statusBody = (rowData)=> {
+        let Datas;
+        console.log("Row Data", rowData);
+        // statusBody 
+        if(rowData.status == "Terkirim"){
+            Datas = "Terkirim";
+        }else if(rowData.status == "normal"){
+            Datas = "Normal";
+        }else if(rowData.status == "final"){
+            Datas = "Final";
+        }
+    
+        return (
+            <>
+            {Datas}
+            </>
+        )
+    }
+
+
+    const statusTable = (rowData)=> {
+        let Datas;
+        console.log("Row Data", rowData);
+        // statusBody 
+        if(rowData == "Terkirim"){
+            Datas = "Terkirim";
+        }else if(rowData == "normal"){
+            Datas = "Normal";
+        }else if(rowData == "final"){
+            Datas = "Final";
+        }
+    
+        return (
+            <>
+            {Datas}
+            </>
+        )
+    }
 
     const tglSepBody = (rowData) => {
         // console.log("Waktus masuk ", formatDate(rowData.tglSep));
@@ -3278,7 +3315,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
     };
 
     const tglPlgSepBody = (rowData) => {
-        // console.log("Waktus masuk ", formatDate(rowData));
+        console.log("Data", rowData);
         return (
             <>
                 {rowData.tglPlgSep ? formatDate(rowData.tglPlgSep) : '-'}
@@ -3415,7 +3452,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                         <Column field="noSep" header="No. SEP" body={noSepBody} align={'center'} alignHeader={'center'}></Column>
                         <Column field="tipe" header="Tipe" align={'center'} alignHeader={'center'}></Column>
                         <Column field="cbg" header="CBG" align={'center'} alignHeader={'center'}></Column>
-                        <Column field="status" header="Status" align={'center'} alignHeader={'center'}></Column>
+                        <Column  body={statusBody} header="Status" align={'center'} alignHeader={'center'}></Column>
                         <Column field="nama_pegawai" header="Petugas" align={'center'} alignHeader={'center'}></Column>
                     </DataTable>
                 </Card>

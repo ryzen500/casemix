@@ -768,7 +768,7 @@ class InAcbgGrouperController extends Controller
                 foreach ($getRiwayat['response']['histori'] as $key => $row) {
                     $sep = SepT::getSep($row['noSep']);
                     $data[] = $row;
-                    // dd($data,$sep,!empty($sep));
+                    // dd($data);
                     $getClaim = $this->getKlaim($row['noSep']);
 
                     if (!empty($sep)) {
@@ -784,8 +784,7 @@ class InAcbgGrouperController extends Controller
                         $data[$key]['sep_id'] = null;
                     }
 
-                    // var_dump($getClaim);die;
-                    // dd($getClaim);
+                  
                     if (!empty($getClaim['data']['data'])) {
                         $data[$key]['tglSep'] = $getClaim['data']['data']['tgl_masuk'];
                         $data[$key]['tglPlgSep'] = $getClaim['data']['data']['tgl_pulang'];
@@ -801,7 +800,14 @@ class InAcbgGrouperController extends Controller
                         $data[$key]['tipe'] = $tipe;
 
                         $data[$key]['cbg'] = !empty($getClaim['data']['data']['grouper']['response']) ? $getClaim['data']['data']['grouper']['response']['cbg']['code'] : "-";
-                        $data[$key]['status'] = !empty($getClaim['data']['data']['klaim_status_cd']) ? $getClaim['data']['data']['klaim_status_cd'] : "-";
+                        // echo "<pre>";
+                        // var_dump($getClaim['data']['data']['kemenkes_dc_status_cd']);
+                        if($getClaim['data']['data']['klaim_status_cd'] == "final" && $getClaim['data']['data']['kemenkes_dc_status_cd'] !== "unsent"){
+                            $data[$key]['status'] = !empty($getClaim['data']['data']['klaim_status_cd']) ? "Terkirim": "-";
+                        }else{
+                            $data[$key]['status'] = !empty($getClaim['data']['data']['klaim_status_cd']) ? $getClaim['data']['data']['klaim_status_cd']   : "-";
+
+                        }
                         if (!empty($getClaim['data']['data']['coder_nik'])) {
                             $peg = LoginPemakaiK::getCoder($getClaim['data']['data']['coder_nik']);
                             $data[$key]['nama_pegawai'] = !empty($peg) ? $peg->namaLengkap : '-';
@@ -815,6 +821,7 @@ class InAcbgGrouperController extends Controller
                 }
             }
         }
+        // die;
         // for dropdown
         $caraMasuk = LookupM::getLookupType('inacbgs_caramasuk');
         $caraPulang = CaraKeluarM::getDataListKeluar();
