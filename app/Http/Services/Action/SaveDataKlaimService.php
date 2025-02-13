@@ -375,13 +375,13 @@ class SaveDataKlaimService
                     'golonganumur_id' => 1,
                     // Tambahkan field lain sesuai kebutuhan
                 ];
-
                 $preparedDataINAX[] = [
                     'pasienmorbiditas_id' => $item['pasienmorbiditas_id'] ?? null,
                     'inacbg_id' => $SEP['inacbg_id'] ?? null,
                     'pendaftaran_id' => $RegisterData['pendaftaran_id'] ?? null,
                     'kodediagnosainacbg' => $item['diagnosa_kode'] ?? null,
                     'namadiagnosainacbg' => $item['diagnosa_nama'] ?? null,
+                    'diagnosainacbg_type' => $item['kelompokdiagnosa_id'] ?? null,
                     'create_time' => date('Y-m-d H:i:s'), // Tambahkan tanggal saat ini
                     'create_loginpemakai_id' => $data['loginpemakai_id'], // Tambahkan tanggal saat ini
                     'create_ruangan' => 429,
@@ -486,16 +486,15 @@ class SaveDataKlaimService
                     'inacbg_id' => $SEP['inacbg_id'] ?? null,
                     'sep_id' => $SEP['sep_id'] ?? null,
                     'pendaftaran_id' => $RegisterData['pendaftaran_id'] ?? null,
-                    'diagnosax_kode' => $item['diagnosa_kode'] ?? null,
-                    'diagnosax_nama' => $item['diagnosa_nama'] ?? null,
-                    'diagnosax_type' => $item['kelompokdiagnosa_id'] ?? null,
+                    'diagnosaix_kode' => $item['diagnosaicdix_kode'] ?? null,
+                    'diagnosaix_nama' => $item['diagnosaicdix_nama'] ?? null,
+                    // 'diagnosax_type' => $item['kelompokdiagnosa_id'] ?? null,
                     'create_time' => date('Y-m-d H:i:s'), // Tambahkan tanggal saat ini
                     'create_loginpemakai_id' => $data['loginpemakai_id'], // Tambahkan tanggal saat ini
                     'create_ruangan_id' => 429,
                     // Tambahkan field lain sesuai kebutuhan
                 ];
             }
-
             // Lakukan insert batch ke tabel
             if (!empty($preparedDataIX)) {
                 // $result = DB::table('pasienmorbiditas_t')->insert($preparedData);
@@ -568,11 +567,11 @@ class SaveDataKlaimService
                 $preparedDataIX[] = [
                     'inacbg_id' => $SEP['inacbg_id'] ?? null,
                     'pendaftaran_id' => $RegisterData['pendaftaran_id'] ?? null,
-                    'kodediagnosainacbgix,' => $item['diagnosa_kode'] ?? null,
-                    'namadiagnosainacbgix,' => $item['diagnosa_nama'] ?? null,
+                    'kodediagnosainacbgix' => $item['diagnosaicdix_kode'] ?? null,
+                    'namadiagnosainacbgix' => $item['diagnosaicdix_nama'] ?? null,
                     'create_time' => date('Y-m-d H:i:s'), // Tambahkan tanggal saat ini
                     'create_loginpemakai_id' => $data['loginpemakai_id'], // Tambahkan tanggal saat ini
-                    'create_ruangan_id' => 429,
+                    'create_ruangan' => 429,
                     // Tambahkan field lain sesuai kebutuhan
                 ];
             }
