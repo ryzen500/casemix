@@ -101,10 +101,11 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
         total: 0
     });
     const [dataFinalisasi, setDataFinalisasi] = useState([]);
+    const [dataGroupCreateTime, setDataCreateTime] = useState([]);
 
     const [visible, setVisible] = useState(false);
     const [showSimpli, setShowSimpli] = useState(false);
-    
+
     // const [tarifs, setTarifs] = useState([]);
     // const [obats, setObats] = useState([]);
 
@@ -572,22 +573,29 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
             fetchSuggestionsIX(e.query);  // Fetch suggestions based on the input
         }
     }
-
     const formatDateGroup = (dateString) => {
-        if (dateString !== undefined) {
+        if (dateString) {
             console.log("Date String", dateString);
-            const date = new Date(dateString);
-            return new Intl.DateTimeFormat('id-ID', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false
-            }).format(date).replace(/\./g, ':');
+            
+            // Pastikan format dapat diparsing dengan benar
+            const date = new Date(dateString.replace(" ", "T"));
+    
+            // Dapatkan komponen tanggal & waktu
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0'); // Bulan dimulai dari 0
+            const day = String(date.getDate()).padStart(2, '0');
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+    
+            // Format sesuai keinginan: YYYY-MM-DD, HH:mm
+            return `${year}-${month}-${day}, ${hours}:${minutes}`;
         }
-
     };
+    
+    // console.log(formatDateGroup("2025-02-13 03:24:33")); // Output: 2025-02-13, 03:24
+     
+    console.log("Waktu ",formatDateGroup("2025-02-13 03:24:33"));
+    
 
     // const formattedDate = formatDateTime(dataFinalisasi.create_time);
     // console.log(formattedDate); // Output: "2024-02-07 14:30"
@@ -599,18 +607,6 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
         return isNaN(formattedDate) ? null : formattedDate;
     };
 
-    // const formatDate = (dateString) => {
-    //     // Convert the date string to a Date object
-    //     const date = new Date(dateString.replace(" ", "T"));
-    //       // Get the day, month, and year
-    //     const day = String(date.getDate()).padStart(2, '0'); // Adds leading zero if day is < 10
-    //     const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based, so add 1
-    //     const year = date.getFullYear();
-
-    //     // Return formatted date in dd-mm-yyyy format
-    //     return `${day}-${month}-${year}`;
-
-    // };
     const addRowDiagnosaIX = async (rowData, type) => {
         if (type == 'unu') {
             let _dataDiagnosa = dataIcd9cm.map(row => ({ ...row }));
@@ -942,6 +938,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                     // console.log("Hasil Final ", response.data.getGrouping.data.data.klaim_status_cd);
 
                     if (response.data.inacbg !== null) {
+                        setDataCreateTime(response.data.inacbg.create_time);
                         let setTarifInacbg = {
                             total: 0,
                             prosedurenonbedah: response.data.inacbg.tarif_prosedur_nonbedah || 0,
@@ -1061,7 +1058,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                         setTarifs(setTarifGrouping);
                         setObats(setObatGrouping);
                         setDataFinalisasi((prevDataFinal) => {
-                            console.log("Data FInal sat", response.data);
+                            // console.log("Data FInal sat", response.data);
 
                             return {
                                 ...({}), // Jika response.data.inacbg ada, gunakan sebagai basis, jika tidak, gunakan objek kosong
@@ -2666,7 +2663,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                     </div>
                                 </div>
                                 <div className="col-md-6 d-flex mb-3 mt-5">
-                                {!dataFinalisasi.is_finalisasi  && (
+                                    {!dataFinalisasi.is_finalisasi && (
                                         <>
                                             <button className="btn btn-primary" style={{ float: 'right' }} onClick={handleSimpanKlaim}>
                                                 Simpan
@@ -2693,7 +2690,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                             </tr>
                                             <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff' }}  >
                                                 <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem' }}>Info</td>
-                                                <td width={"35%"} style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem' }} colSpan={3}>{dataGrouping.coder_nm} @ {dataFinalisasi.is_finalisasi ? formatDateGroup(dataFinalisasi.create_time) : "-"} <FontAwesomeIcon icon={faEllipsis} /> Kelas {dataGrouping.kelas_rs}  <FontAwesomeIcon icon={faEllipsis} /> Tarif : {dataGrouping.kode_tarif === 'CS' ? 'TARIF RS KELAS C SWASTA' : ''}</td>
+                                                <td width={"35%"} style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem' }} colSpan={3}>{dataGrouping.coder_nm} @ {dataGrouping.kelas_rs ? formatDateGroup(dataGroupCreateTime) : "-"} <FontAwesomeIcon icon={faEllipsis} /> Kelas {dataGrouping.kelas_rs}  <FontAwesomeIcon icon={faEllipsis} /> Tarif : {dataGrouping.kode_tarif === 'CS' ? 'TARIF RS KELAS C SWASTA' : ''}</td>
 
 
                                             </tr>
@@ -2850,7 +2847,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                             </tr>
                                             <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff' }} >
                                                 <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem' }}>Info</td>
-                                                <td width={"35%"} style={{ textAlign: 'left', color: 'black', fontSize: '1rem' }} colSpan={3} >{dataGrouping.coder_nm} @ {formatDateGroup(dataFinalisasi.create_time)}  <FontAwesomeIcon icon={faEllipsis} /> Kelas {dataGrouping.kelas_rs}  <FontAwesomeIcon icon={faEllipsis} /> Tarif : {dataGrouping.kode_tarif === 'CS' ? 'TARIF RS KELAS C SWASTA' : ''} </td>
+                                                <td width={"35%"} style={{ textAlign: 'left', color: 'black', fontSize: '1rem' }} colSpan={3} >{dataGrouping.coder_nm} @ {dataGrouping.kelas_rs ? formatDateGroup(dataGroupCreateTime) : '-'}  <FontAwesomeIcon icon={faEllipsis} /> Kelas {dataGrouping.kelas_rs}  <FontAwesomeIcon icon={faEllipsis} /> Tarif : {dataGrouping.kode_tarif === 'CS' ? 'TARIF RS KELAS C SWASTA' : ''} </td>
                                             </tr>
                                             <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff' }} >
                                                 <td width={"15%"} style={{ textAlign: 'right', color: 'black', paddingLeft: '10px;', fontSize: '1rem' }}>Jenis Rawat</td>
@@ -3033,7 +3030,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                 // console.log('Response:', response.data);
                 setHide(false);
                 if (Boolean(response.data[0].success) === false) {
-                    toast.current.show({ severity: 'error', summary: response.data.message, detail: datas.noSep, life: 3000 });
+                    toast.current.show({ severity: 'error', summary: response.data[0].message, detail: datas.noSep, life: 3000 });
 
                 } else {
                     toast.current.show({ severity: 'success', summary: `Data  Berhasil Di Grouping`, detail: datas.noSep, life: 3000 });
@@ -3042,6 +3039,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                     //     group_code : response.data.data.cbg?.code || '-',
                     //     group_tarif : response.data.data.cbg?.base_tariff || 0
                     // };
+
                     // setDataGrouper(grouping_res);
                     setDataGrouper((prevTotal) => ({
                         ...prevTotal,
@@ -3049,7 +3047,12 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                         group_code: response.data[0].data.response.cbg?.code || '-',
                         group_tarif: response.data[0].data.response.cbg?.base_tariff || 0
                     }));
+                    //Set Data Grouping 6 
                     setDataGrouperv6(response.data[0].data.response_inagrouper);
+
+                    // Call the inacbg info 
+                    setDataCreateTime(response.data[2].create_time);
+
                     // klaim_status_cd
                     setDataGrouping(response.data[1].data.data)
                     updateRowData(datas.noSep, response.data[1].data.data.tgl_masuk, response.data[1].data.data.tgl_pulang, response.data[1].data.data.jenis_rawat, response.data[0].data.response.cbg.code, response.data[1].data.data.klaim_status_cd, response.data[1].data.data.coder_nm)
@@ -3115,7 +3118,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
         // Map through the model and update the tglSep where noSep matches
         const updatedModel = await models.map((item) => {
             if (item.noSep === noSep) {
-                return { ...item,tipe:'',cbg: '', status: '', nama_pegawai: '' }; // Update the tglSep for the matching row
+                return { ...item, tipe: '', cbg: '', status: '', nama_pegawai: '' }; // Update the tglSep for the matching row
             }
             return item; // Leave the rest unchanged
         });
@@ -3310,25 +3313,25 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                 ) : (
                     <div>
                         <span data-pr-tooltip="Klik Untuk Melihat File Simplifikasi" data-pr-position="bottom" id="info-icon" onClick={() => setShowSimpli(true)}>
-                            
+
                             <FontAwesomeIcon icon={faFile} style={{ color: (rowData.status === "final" || rowData.status === "Final") ? "#43A047" : "#D13232" }} />
-                                {/* Dialog */}
+                            {/* Dialog */}
                         </span>
-                                <Dialog 
-                                    header="File Simplifikasi" 
-                                    visible={showSimpli} 
-                                    maximizable 
-                                    style={{ width: '50vw', height: '50vw' }} 
-                                    onHide={() => { if (!showSimpli) return; setShowSimpli(false); }}
-                                >
-                                {/* <Dialog header="File Simplifikasi" visible={showSimpli} maximizable style={{ width: '50vw', height: '50vw' }} onHide={() => { if (!showSimpli) return; setShowSimpli(false); }}> */}
-                                <iframe
-                                    src={`http://192.168.214.229/rswb-e/index.php?r=sepGlobal/printSep&sep_id=${rowData.sep_id}`}
-                                    width="100%"
-                                    height="100%"
-                                    style={{ border: "none" }}
-                                ></iframe>
-                            </Dialog>
+                        <Dialog
+                            header="File Simplifikasi"
+                            visible={showSimpli}
+                            maximizable
+                            style={{ width: '50vw', height: '50vw' }}
+                            onHide={() => { if (!showSimpli) return; setShowSimpli(false); }}
+                        >
+                            {/* <Dialog header="File Simplifikasi" visible={showSimpli} maximizable style={{ width: '50vw', height: '50vw' }} onHide={() => { if (!showSimpli) return; setShowSimpli(false); }}> */}
+                            <iframe
+                                src={`http://192.168.214.229/rswb-e/index.php?r=sepGlobal/printSep&sep_id=${rowData.sep_id}`}
+                                width="100%"
+                                height="100%"
+                                style={{ border: "none" }}
+                            ></iframe>
+                        </Dialog>
                         {"\u00A0"}|{"\u00A0"}
                         {rowData.noSep}
                         <br />

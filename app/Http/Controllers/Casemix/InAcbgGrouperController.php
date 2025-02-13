@@ -488,6 +488,8 @@ class InAcbgGrouperController extends Controller
         // dd($saveResult);
         // Kembalikan hasil sebagai JSON response
         $getClaim = $this->getKlaim($data['nomor_sep']);
+        $SEP = Inacbg::where('inacbg_nosep', $data['nomor_sep'])->first();
+
         // if ($saveResult['status'] === 'success') {
         if ($results['success'] === true) {
 
@@ -496,7 +498,7 @@ class InAcbgGrouperController extends Controller
             $saveResults = $saveService->addDataInasisdmc($results, $data, $dataAuthor);
 // dd($saveResults);
             if($saveResult['status']=== 'success' && $saveResults['status'] === 'success') {
-               $datas = [$results,$getClaim];
+               $datas = [$results,$getClaim,$SEP];
             }
             // Jika berhasil, kirim klaim
             return response()->json($datas, 200);
