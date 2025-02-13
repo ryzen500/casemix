@@ -6,6 +6,7 @@ use App\Models\Casemix\Inacbg;
 use App\Models\Inasiscbg;
 use App\Models\InasismdcT;
 use App\Models\PendaftaranT;
+use Carbon\Carbon;
 use DB;
 use Exception;
 
@@ -53,10 +54,14 @@ class SaveDataGroupperService
 
                 $inasiscbg->update($inasiscbgData);
 
+                $today = Carbon::now()->setTimezone("Asia/Jakarta");
+
 
                 DB::table('inacbg_t')
                 ->where('inacbg_nosep', $data['nomor_sep'])
-                ->update(['tarifgruper' =>  !empty($results['data']['response']['cbg']['base_tariff']) ? $results['data']['response']['cbg']['base_tariff'] : 0]);
+                ->update(['tarifgruper' =>  !empty($results['data']['response']['cbg']['base_tariff']) ? $results['data']['response']['cbg']['base_tariff'] : 0,
+                        'create_time'=>$today->format("Y-m-d H:i:s")
+            ]);
                 $message = 'Data berhasil diperbarui';
 
             } else{
