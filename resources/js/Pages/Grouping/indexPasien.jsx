@@ -51,7 +51,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
     const openDialog = (rowData) => {
         setSelectedDialog(rowData.sep_id);
     };
-    
+
     const closeDialog = () => {
         setSelectedDialog(null);
     };
@@ -584,26 +584,26 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
     const formatDateGroup = (dateString) => {
         if (dateString) {
             console.log("Date String", dateString);
-            
+
             // Pastikan format dapat diparsing dengan benar
             const date = new Date(dateString.replace(" ", "T"));
-    
+
             // Dapatkan komponen tanggal & waktu
             const year = date.getFullYear();
             const month = String(date.getMonth() + 1).padStart(2, '0'); // Bulan dimulai dari 0
             const day = String(date.getDate()).padStart(2, '0');
             const hours = String(date.getHours()).padStart(2, '0');
             const minutes = String(date.getMinutes()).padStart(2, '0');
-    
+
             // Format sesuai keinginan: YYYY-MM-DD, HH:mm
             return `${year}-${month}-${day}, ${hours}:${minutes}`;
         }
     };
-    
+
     // console.log(formatDateGroup("2025-02-13 03:24:33")); // Output: 2025-02-13, 03:24
-     
+
     // console.log("Waktu ",formatDateGroup("2025-02-13 03:24:33"));
-    
+
 
     // const formattedDate = formatDateTime(dataFinalisasi.create_time);
     // console.log(formattedDate); // Output: "2024-02-07 14:30"
@@ -946,9 +946,9 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                     // console.log("Hasil Final ", response.data.getGrouping.data.data.klaim_status_cd);
 
                     if (response.data.inacbg !== null) {
-                        if(response.data.inacbg.update_time !== null){
+                        if (response.data.inacbg.update_time !== null) {
                             setDataCreateTime(response.data.inacbg.update_time);
-                        }else{
+                        } else {
                             setDataCreateTime(response.data.inacbg.create_time);
                         }
                         let setTarifInacbg = {
@@ -1617,78 +1617,90 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                     <tr style={{ border: ' 1px solid black' }}>
                                         <td colSpan={3} style={{ fontSize: '1rem' }}>
                                             <div className="col-sm-12 text-center">
-                                                <span className="mr-2 font-bold" style={{ fontSize: '1rem' }}>Tarif Rumah Sakit :</span>
-                                                <span style={{ fontSize: "20px", color: total.total == total_simrs ? 'black' : 'red' }}
-                                                    className='font-bold'
-                                                    data-pr-tooltip={total.total == total_simrs ? "Tarif Sudah Sesuai" : "Tarif Rumah Sakit Tidak Sesuai"}
+                                                {dataFinalisasi.is_finalisasi && (
+                                                    <>
+                                                        <span className="mr-2 font-bold" style={{ fontSize: '1rem' }}>Tarif Rumah Sakit :</span>
+                                                        <span style={{ fontSize: "20px", color: 'black'}}
+                                                            className='font-bold'
+                                                            data-pr-tooltip={"Tarif Sudah DiFinalisasi"}
 
-                                                >
-                                                    <FormatRupiah value={total.total}
+                                                        >
+                                                            <FormatRupiah value={total.total}
 
-                                                    />
-                                                </span>
+                                                            />
+                                                        </span>
 
-                                                {/* Question Icon with Tooltip */}
-                                                <FontAwesomeIcon
-                                                    icon={faQuestionCircle}
-                                                    style={{ fontSize: "20px", color: total.total == total_simrs ? 'black' : 'red', cursor: 'pointer', marginLeft: '10px' }}
-                                                    className="question-icon" // Menambahkan kelas khusus untuk target Tooltip
-                                                    data-pr-tooltip={total.total == total_simrs ? "Tarif Sudah Sesuai" : "Tarif Rumah Sakit Tidak Sesuai"}
-                                                />
+                                                        {/* Question Icon with Tooltip */}
+                                                        <FontAwesomeIcon
+                                                            icon={faQuestionCircle}
+                                                            style={{ fontSize: "20px", color: 'black', cursor: 'pointer', marginLeft: '10px' }}
+                                                            className="question-icon" // Menambahkan kelas khusus untuk target Tooltip
+                                                            data-pr-tooltip={total.total == total_simrs ? "Tarif Sudah Sesuai" : "Tarif Rumah Sakit Tidak Sesuai"}
+                                                        />
+                                                    </>
+                                                )}
+                                                {!dataFinalisasi.is_finalisasi && (
+                                                    <>
+                                                        <span className="mr-2 font-bold" style={{ fontSize: '1rem' }}>Tarif Rumah Sakit :</span>
+                                                        <span style={{ fontSize: "20px", color: total.total == total_simrs ? 'black' : 'red' }}
+                                                            className='font-bold'
+                                                            data-pr-tooltip={total.total == total_simrs ? "Tarif Sudah Sesuai" : "Tarif Rumah Sakit Tidak Sesuai"}
 
-                                                {/* <InputNumber
-                                                    value={parseFloat(total.total)}
-                                                    onValueChange={handleValueChange}
-                                                    mode="currency"
-                                                    currency="IDR"
-                                                    locale="id-ID" // Set the locale for Indonesia (Rupiah)
-                                                    showSymbol
-                                                    prefix="" // Adds the Rp prefix to the input value
-                                                    min={0} // Optional: Set a minimum value
-                                                    max={100000000} // Optional: Set a maximum value
-                                                    name='total_tarif_rs'
-                                                    inputClassName='ml-2 form-control'
-                                                    readOnly
-                                                />
-                                                 */}
-                                                <span className='ml-3 font-bold' style={{ fontSize: '1rem' }}>
-                                                    Tarif SIMRS :
+                                                        >
+                                                            <FormatRupiah value={total.total}
 
-                                                </span>
-                                                {/* <span
-                                                    style={{ fontSize: "20px", color: 'blue', textDecoration: 'underline' }}
-                                                    className='ml-3 font-bold'
-                                                    onClick={() => setVisible(true)}
-                                                    title="Klik untuk melihat Rincian Tagihan SIMRS"
-                                                >
-                                                    <FormatRupiah value={total_simrs} />
-                                                </span> */}
+                                                            />
+                                                        </span>
 
-                                                {/* Text with FormatRupiah */}
-                                                <span
-                                                    style={{ fontSize: "20px", color: 'blue', textDecoration: 'underline' }}
-                                                    className='ml-3 font-bold'
-                                                    onClick={() => setVisible(true)}
-                                                    data-pr-tooltip="Klik untuk melihat Rincian Tagihan SIMRS"
-                                                >
-                                                    <FormatRupiah value={total_simrs} />
-                                                </span>
-
-                                                {/* Question Icon with Tooltip */}
-                                                <FontAwesomeIcon
-                                                    icon={faQuestionCircle}
-                                                    style={{ fontSize: "20px", color: 'blue', cursor: 'pointer', marginLeft: '10px' }}
-                                                    className="question-icon" // Menambahkan kelas khusus untuk target Tooltip
-                                                    data-pr-tooltip="Klik untuk melihat Rincian Tagihan SIMRS"
-                                                />
+                                                        {/* Question Icon with Tooltip */}
+                                                        <FontAwesomeIcon
+                                                            icon={faQuestionCircle}
+                                                            style={{ fontSize: "20px", color: total.total == total_simrs ? 'black' : 'red', cursor: 'pointer', marginLeft: '10px' }}
+                                                            className="question-icon" // Menambahkan kelas khusus untuk target Tooltip
+                                                            data-pr-tooltip={total.total == total_simrs ? "Tarif Sudah Sesuai" : "Tarif Rumah Sakit Tidak Sesuai"}
+                                                        />
+                                                    </>
+                                                )}
 
 
-                                                {/* Tooltip component */}
-                                                <Tooltip target=".font-bold" />
-                                                <Tooltip target=".question-icon" />
+                                                {!dataFinalisasi.is_finalisasi && (
+                                                    <>
+                                                        <span className='ml-3 font-bold' style={{ fontSize: '1rem' }}>
+                                                            Tarif SIMRS :
+
+                                                        </span>
+
+                                                        <span
+                                                            style={{ fontSize: "20px", color: 'blue', textDecoration: 'underline' }}
+                                                            className='ml-3 font-bold'
+                                                            onClick={() => setVisible(true)}
+                                                            data-pr-tooltip="Klik untuk melihat Rincian Tagihan SIMRS"
+                                                        >
+                                                            <FormatRupiah value={total_simrs} />
+                                                        </span>
+
+                                                        {/* Question Icon with Tooltip */}
+                                                        <FontAwesomeIcon
+                                                            icon={faQuestionCircle}
+                                                            style={{ fontSize: "20px", color: 'blue', cursor: 'pointer', marginLeft: '10px' }}
+                                                            className="question-icon" // Menambahkan kelas khusus untuk target Tooltip
+                                                            data-pr-tooltip="Klik untuk melihat Rincian Tagihan SIMRS"
+                                                        />
+
+
+                                                        {/* Tooltip component */}
+                                                        <Tooltip target=".font-bold" />
+                                                        <Tooltip target=".question-icon" />
+                                                    </>
+                                                )}
+
+
+
+
+
+
                                                 {/* Dialog */}
                                                 <Dialog header="Rincian Tagihan SIMRS" visible={visible} maximizable style={{ width: '50vw', height: '50vw' }} onHide={() => { if (!visible) return; setVisible(false); }}>
-                                                    {console.log("pembayaranpelayanan", pembayaranPelayanans)}
                                                     <iframe
                                                         src={pembayaranPelayanans !== null ? `http://192.168.214.229/rswb/rswb_new/index.php?r=billingKasir/pembayaranTagihanPasien/cetakGabung&pembayaranpelayanan_id=${pembayaranPelayanans.pembayaranpelayanan_id}` : `http://192.168.214.229/rswb/rswb_new/index.php?r=billingKasir/PembayaranTagihanPasien/PrintRincianBelumBayar&instalasi_id=2&pendaftaran_id=${pendaftarans.pendaftaran_id}&pasienadmisi_id=&caraPrint=PRINT`}
                                                         width="100%"
@@ -2704,14 +2716,14 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                 <td colSpan={4}><p className='text-center font-bold' style={{ color: 'black', fontSize: '19px' }}>Hasil Grouper E-Klaim v5 </p></td>
                                             </tr>
                                             <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff' }}  >
-                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem' ,fontWeight:'bold' }}>Info</td>
-                                                <td width={"35%"} style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem' ,fontWeight:'bold'}} colSpan={3}>{dataGrouping.coder_nm} @ {dataGrouping.kelas_rs ? (dataGroupCreateTime) : "-"} <FontAwesomeIcon icon={faEllipsis} /> Kelas {dataGrouping.kelas_rs}  <FontAwesomeIcon icon={faEllipsis} /> Tarif : {dataGrouping.kode_tarif === 'CS' ? 'TARIF RS KELAS C SWASTA' : ''}</td>
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>Info</td>
+                                                <td width={"35%"} style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }} colSpan={3}>{dataGrouping.coder_nm} @ {dataGrouping.kelas_rs ? (dataGroupCreateTime) : "-"} <FontAwesomeIcon icon={faEllipsis} /> Kelas {dataGrouping.kelas_rs}  <FontAwesomeIcon icon={faEllipsis} /> Tarif : {dataGrouping.kode_tarif === 'CS' ? 'TARIF RS KELAS C SWASTA' : ''}</td>
 
 
                                             </tr>
                                             <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff' }} >
-                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem',fontWeight:'bold' }}>Jenis Rawat</td>
-                                                <td width={"35%"} style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem',fontWeight:'bold' }} colSpan={3}>Rawat Jalan Regular </td>
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>Jenis Rawat</td>
+                                                <td width={"35%"} style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }} colSpan={3}>Rawat Jalan Regular </td>
 
                                             </tr >
                                             {/* <tr>
@@ -2727,17 +2739,17 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                 </td>
                                             </tr> */}
                                             <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff' }} >
-                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem',fontWeight:'bold' }}>Group</td>
-                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem' ,fontWeight:'bold'}}>
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>Group</td>
+                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
                                                     {console.log("Yest", dataGrouper)}
                                                     {dataGrouper.group_description !== "-" ? dataGrouper.group_description : (dataGrouping.grouper !== null) ? ((dataGrouping.grouper.response !== null) ? dataGrouping.grouper.response.cbg.description : '-') : '-'}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'center', color: 'black', fontSize: '1rem',fontWeight:'bold' }}>
+                                                <td width="30%" style={{ textAlign: 'center', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
                                                     {dataGrouper.group_code !== "-" ? dataGrouper.group_code : (dataGrouping.grouper !== null) ? ((dataGrouping.grouper.response !== null) ? dataGrouping.grouper.response.cbg.code : '-') : '-'}
 
                                                     {/* {dataGrouper.group_code} */}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'right', color: 'black', fontSize: '1rem' ,fontWeight:'bold'}}>
+                                                <td width="30%" style={{ textAlign: 'right', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
                                                     <FormatRupiah
                                                         value={dataGrouper.group_tarif
                                                             ? dataGrouper.group_tarif
@@ -2749,83 +2761,83 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
 
                                                 </td>
                                             </tr>
-                                            <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff',fontWeight:'bold' }} >
-                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem',fontWeight:'bold' }}>Sub Acute</td>
-                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem',fontWeight:'bold' }}>
+                                            <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff', fontWeight: 'bold' }} >
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>Sub Acute</td>
+                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
                                                     {dataGrouper.sub_acute_description}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'center', color: 'black', fontSize: '1rem',fontWeight:'bold' }}>
+                                                <td width="30%" style={{ textAlign: 'center', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
                                                     {dataGrouper.sub_acute_code}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'right', color: 'black', fontSize: '1rem' ,fontWeight:'bold'}}>
+                                                <td width="30%" style={{ textAlign: 'right', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
                                                     <FormatRupiah value={dataGrouper.sub_acute_tarif} />
                                                 </td>
                                             </tr>
-                                            <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff',fontWeight:'bold' }} >
-                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem',fontWeight:'bold' }}>Chronic</td>
-                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem',fontWeight:'bold' }}>
+                                            <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff', fontWeight: 'bold' }} >
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>Chronic</td>
+                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
                                                     {dataGrouper.chronic_description}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'center', color: 'black', fontSize: '1rem' ,fontWeight:'bold'}}>
+                                                <td width="30%" style={{ textAlign: 'center', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
                                                     {dataGrouper.chronic_code}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'right', color: 'black', fontSize: '1rem',fontWeight:'bold' }}>
+                                                <td width="30%" style={{ textAlign: 'right', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
                                                     <FormatRupiah value={dataGrouper.chronic_tarif} />
                                                 </td>
                                             </tr>
                                             <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff' }} >
-                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem' ,fontWeight:'bold'}}>Special Procedure</td>
-                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem',fontWeight:'bold' }}>
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>Special Procedure</td>
+                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
                                                     {dataGrouper.special_procedure_description}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'center', color: 'black', fontSize: '1rem',fontWeight:'bold' }}>
+                                                <td width="30%" style={{ textAlign: 'center', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
                                                     {dataGrouper.special_procedure_code}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'right', color: 'black', fontSize: '1rem' ,fontWeight:'bold' }}>
+                                                <td width="30%" style={{ textAlign: 'right', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
                                                     <FormatRupiah value={dataGrouper.special_procedure_tarif} />
                                                 </td>
                                             </tr>
                                             <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff' }} >
-                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem',fontWeight:'bold' }}>Special Prosthesis</td>
-                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem',fontWeight:'bold' }}>
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>Special Prosthesis</td>
+                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
                                                     {dataGrouper.special_prosthesis_description}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'center', color: 'black', fontSize: '1rem',fontWeight:'bold' }}>
+                                                <td width="30%" style={{ textAlign: 'center', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
                                                     {dataGrouper.special_prosthesis_code}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'right', color: 'black', fontSize: '1rem',fontWeight:'bold' }}>
+                                                <td width="30%" style={{ textAlign: 'right', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
                                                     <FormatRupiah value={dataGrouper.special_prosthesis_tarif} />
                                                 </td>
                                             </tr>
                                             <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff' }} >
-                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem',fontWeight:'bold' }}>Special Investigation</td>
-                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem' ,fontWeight:'bold' }}>
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>Special Investigation</td>
+                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
                                                     {dataGrouper.special_investigation_description}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'center', color: 'black', fontSize: '1rem' ,fontWeight:'bold' }}>
+                                                <td width="30%" style={{ textAlign: 'center', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
                                                     {dataGrouper.special_investigation_code}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'right', color: 'black', fontSize: '1rem' ,fontWeight:'bold'}}>
+                                                <td width="30%" style={{ textAlign: 'right', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
                                                     <FormatRupiah value={dataGrouper.special_investigation_tarif} />
                                                 </td>
                                             </tr>
                                             <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff' }} >
-                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem',fontWeight:'bold' }}>Special Drug</td>
-                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem',fontWeight:'bold' }}>
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>Special Drug</td>
+                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
                                                     {dataGrouper.special_drug_description}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'center', color: 'black', fontSize: '1rem',fontWeight:'bold' }}>
+                                                <td width="30%" style={{ textAlign: 'center', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
                                                     {dataGrouper.special_drug_code}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'right', color: 'black', fontSize: '1rem' ,fontWeight:'bold'}}>
+                                                <td width="30%" style={{ textAlign: 'right', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
                                                     <FormatRupiah value={dataGrouper.special_drug_tarif} />
                                                 </td>
                                             </tr>
                                             {dataFinalisasi.is_finalisasi && (
                                                 <>
                                                     <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff' }} >
-                                                        <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem',fontWeight:'bold' }}>Status DC Kemkes</td>
-                                                        <td colSpan={3} style={{ fontSize: '1rem',fontWeight:'bold', color: (dataGrouping.kemenkes_dc_status_cd === "unsent" || dataGrouper.kemenkes_dc_status_cd === "unset") ? "#b70404" : "black" }}>
+                                                        <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>Status DC Kemkes</td>
+                                                        <td colSpan={3} style={{ fontSize: '1rem', fontWeight: 'bold', color: (dataGrouping.kemenkes_dc_status_cd === "unsent" || dataGrouper.kemenkes_dc_status_cd === "unset") ? "#b70404" : "black" }}>
                                                             <b>
 
                                                                 {dataGrouper.kemenkes_dc_status_cd ? dataGrouper.kemenkes_dc_status_cd :
@@ -2840,15 +2852,15 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
 
 
                                             <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff' }} >
-                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem' ,fontWeight:'bold'}}>Status Klaim</td>
-                                                <td colSpan={3} style={{ textAlign: 'left', color: 'black' ,fontWeight:'bold'}}>
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>Status Klaim</td>
+                                                <td colSpan={3} style={{ textAlign: 'left', color: 'black', fontWeight: 'bold' }}>
                                                     {(dataGrouper.klaim_status_cd) ? dataGrouper.klaim_status_cd : dataGrouping.klaim_status_cd}</td>
                                             </tr>
                                             <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff' }} >
 
-                                                <td width={"30%"} style={{ textAlign: 'right', color: 'black', fontSize: '1rem' ,fontWeight:'bold'}} colSpan={3}>Total</td>
+                                                <td width={"30%"} style={{ textAlign: 'right', color: 'black', fontSize: '1rem', fontWeight: 'bold' }} colSpan={3}>Total</td>
                                                 {/* {console.log("Data ",dataGrouping.grouper.tarif_alt.filter(item => item.kelas.includes(`kelas_${datas.klsRawat.klsRawatHak}`))[0].tarif_inacbg)} */}
-                                                <td width={"30%"} style={{ textAlign: 'right', color: 'black', fontSize: '1rem' ,fontWeight:'bold'}}><FormatRupiah value={(totalGrouper.total) ? totalGrouper.total : (dataGrouping.grouper !== null) ? ((dataGrouping.grouper.tarif_alt !== null) ? dataGrouping.grouper.tarif_alt.filter(item => item.kelas.includes(`kelas_${datas.klsRawat.klsRawatHak}`))[0].tarif_inacbg : 0) : 0} /> </td>
+                                                <td width={"30%"} style={{ textAlign: 'right', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}><FormatRupiah value={(totalGrouper.total) ? totalGrouper.total : (dataGrouping.grouper !== null) ? ((dataGrouping.grouper.tarif_alt !== null) ? dataGrouping.grouper.tarif_alt.filter(item => item.kelas.includes(`kelas_${datas.klsRawat.klsRawatHak}`))[0].tarif_inacbg : 0) : 0} /> </td>
 
                                             </tr>
 
@@ -2861,28 +2873,28 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                 <td colSpan={4}><p className='text-center font-bold' style={{ color: 'black', fontSize: '19px' }}>Hasil Grouper E-Klaim v6 </p></td>
                                             </tr>
                                             <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff' }} >
-                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem',fontWeight:'bold' }}>Info</td>
-                                                <td width={"35%"} style={{ textAlign: 'left', color: 'black', fontSize: '1rem' ,fontWeight:'bold'}} colSpan={3} >{dataGrouping.coder_nm} @ {dataGrouping.kelas_rs ? (dataGroupCreateTime) : '-'}  <FontAwesomeIcon icon={faEllipsis} /> Kelas {dataGrouping.kelas_rs}  <FontAwesomeIcon icon={faEllipsis} /> Tarif : {dataGrouping.kode_tarif === 'CS' ? 'TARIF RS KELAS C SWASTA' : ''} </td>
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>Info</td>
+                                                <td width={"35%"} style={{ textAlign: 'left', color: 'black', fontSize: '1rem', fontWeight: 'bold' }} colSpan={3} >{dataGrouping.coder_nm} @ {dataGrouping.kelas_rs ? (dataGroupCreateTime) : '-'}  <FontAwesomeIcon icon={faEllipsis} /> Kelas {dataGrouping.kelas_rs}  <FontAwesomeIcon icon={faEllipsis} /> Tarif : {dataGrouping.kode_tarif === 'CS' ? 'TARIF RS KELAS C SWASTA' : ''} </td>
                                             </tr>
                                             <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff' }} >
-                                                <td width={"15%"} style={{ textAlign: 'right', color: 'black', paddingLeft: '10px;', fontSize: '1rem',fontWeight:'bold' }}>Jenis Rawat</td>
-                                                <td width={"35%"} style={{ textAlign: 'left', color: 'black', fontSize: '1rem',fontWeight:'bold' }} colSpan={3}>Rawat Jalan Regular </td>
+                                                <td width={"15%"} style={{ textAlign: 'right', color: 'black', paddingLeft: '10px;', fontSize: '1rem', fontWeight: 'bold' }}>Jenis Rawat</td>
+                                                <td width={"35%"} style={{ textAlign: 'left', color: 'black', fontSize: '1rem', fontWeight: 'bold' }} colSpan={3}>Rawat Jalan Regular </td>
                                             </tr>
                                             <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff' }} >
-                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem' ,fontWeight:'bold' }}>MDC</td>
-                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem'  ,fontWeight:'bold'}} colSpan={2}>
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>MDC</td>
+                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }} colSpan={2}>
                                                     {dataGrouperv6.mdc_description}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem' ,fontWeight:'bold' }}>
+                                                <td width="30%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
                                                     {dataGrouperv6.mdc_number}
                                                 </td>
                                             </tr >
                                             <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff' }} >
-                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem',fontWeight:'bold' }}>DRG</td>
-                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem' ,fontWeight:'bold'}} colSpan={2}>
+                                                <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>DRG</td>
+                                                <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }} colSpan={2}>
                                                     {dataGrouperv6.drg_description}
                                                 </td>
-                                                <td width="30%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem',fontWeight:'bold' }}>
+                                                <td width="30%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
                                                     {dataGrouperv6.drg_code}
                                                 </td>
                                             </tr>
@@ -3065,15 +3077,15 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                     //Set Data Grouping 6 
                     setDataGrouperv6(response.data[0].data.response_inagrouper);
 
-          
+
                     // klaim_status_cd
                     setDataGrouping(response.data[1].data.data)
                     updateRowData(datas.noSep, response.data[1].data.data.tgl_masuk, response.data[1].data.data.tgl_pulang, response.data[1].data.data.jenis_rawat, response.data[0].data.response.cbg.code, response.data[1].data.data.klaim_status_cd, response.data[1].data.data.coder_nm)
-                       // Call the inacbg info 
-                       if(response.data[2].update_time !== null){
+                    // Call the inacbg info 
+                    if (response.data[2].update_time !== null) {
                         setDataCreateTime(response.data[2].update_time);
 
-                    }else{
+                    } else {
                         setDataCreateTime(response.data[2].create_time);
 
                     }
@@ -3336,23 +3348,23 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                     <div>
                         <span data-pr-tooltip="Klik Untuk Melihat File Simplifikasi" data-pr-position="bottom" id="info-icon" onClick={() => openDialog(rowData)}>
                             <FontAwesomeIcon icon={faFile} style={{ color: (rowData.status === "final" || rowData.status === "Final") ? "#43A047" : "#D13232" }} />
-                                {/* Dialog */}
+                            {/* Dialog */}
                         </span>
-                            <Dialog 
-                                    header="File Simplifikasi" 
-                                    visible={selectedDialog === rowData.sep_id} 
-                                    maximizable 
-                                    style={{ width: '50vw', height: '50vw' }} 
-                                    onHide={closeDialog}
-                                >
-                                {/* <Dialog header="File Simplifikasi" visible={showSimpli} maximizable style={{ width: '50vw', height: '50vw' }} onHide={() => { if (!showSimpli) return; setShowSimpli(false); }}> */}
-                                <iframe
-                                    src={`http://192.168.214.229/rswb-e/index.php?r=sepGlobal/printSep&sep_id=${rowData.sep_id}`}
-                                    width="100%"
-                                    height="100%"
-                                    style={{ border: "none" }}
-                                ></iframe>
-                            </Dialog>
+                        <Dialog
+                            header="File Simplifikasi"
+                            visible={selectedDialog === rowData.sep_id}
+                            maximizable
+                            style={{ width: '50vw', height: '50vw' }}
+                            onHide={closeDialog}
+                        >
+                            {/* <Dialog header="File Simplifikasi" visible={showSimpli} maximizable style={{ width: '50vw', height: '50vw' }} onHide={() => { if (!showSimpli) return; setShowSimpli(false); }}> */}
+                            <iframe
+                                src={`http://192.168.214.229/rswb-e/index.php?r=sepGlobal/printSep&sep_id=${rowData.sep_id}`}
+                                width="100%"
+                                height="100%"
+                                style={{ border: "none" }}
+                            ></iframe>
+                        </Dialog>
 
                         {"\u00A0"}|{"\u00A0"}
                         {rowData.noSep}
