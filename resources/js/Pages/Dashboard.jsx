@@ -1,7 +1,8 @@
 import Card from '@/Components/Card';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
+import { Head,Link } from '@inertiajs/react';
 import { useEffect, useRef } from 'react';
+
 
 export default function Dashboard({ auth, total_tarif_rs }) {
     const canvasRef = useRef(null);
@@ -24,7 +25,7 @@ export default function Dashboard({ auth, total_tarif_rs }) {
             });
         }
     }, []);
-                            {console.log("nama User ", auth.user)}
+    { console.log("nama User ", auth.user) }
 
     return (
         <AuthenticatedLayout
@@ -36,20 +37,24 @@ export default function Dashboard({ auth, total_tarif_rs }) {
             <div className="col-sm-12">
                 <div className="card mb-4">
                     <div className="card-header">
-                        <h1 style={{fontSize:'22px'}}>
+                        <h1 style={{ fontSize: '22px' }}>
                             12 Januari 2025
                         </h1>
                     </div>
                     <hr />
                     <div className="card-body mt-6">
-                        <p style={{fontSize:'38px'}}>Selamat Datang {auth.user.nama_pemakai}                        </p>
-                        <div style={{color:'white',backgroundColor:'#0e83d2'}} className="alert alert-info mt-3">
-                            <strong style={{fontSize:'20px'}}>Panduan:</strong>
-                            <ol style={{ listStyleType: 'decimal',  paddingLeft: '20px' }}>
-                                <li style={{fontSize:'20px'}}>Menu Transaksi: menu untuk mengelola Data yang perlu untuk dilakukan Transactional </li>
-                                <li style={{fontSize:'20px'}}>Menu Laporan: menu untuk melihat laporan</li>
-                                <li style={{fontSize:'20px'}}>Silahkan Klik Link Berikut untuk melakukan Grouping </li>
-
+                        <p style={{ fontSize: '38px' }}>Selamat Datang {auth.user.nama_pemakai}                        </p>
+                        <div style={{ color: 'white', backgroundColor: '#0e83d2' }} className="alert alert-info mt-3">
+                            <strong style={{ fontSize: '20px' }}>Panduan:</strong>
+                            <ol style={{ listStyleType: 'decimal', paddingLeft: '20px' }}>
+                                <li style={{ fontSize: '20px' }}>Menu Transaksi: Menu untuk mengelola data yang perlu untuk dilakukan transaksi </li>
+                                <li style={{ fontSize: '20px' }}>Menu Laporan: Menu untuk melihat laporan</li>
+                                <li style={{ fontSize: '20px' }}>Silahkan klik tombol berikut untuk melakukan grouping
+                                   <a href={route('searchGroupper')} className="btn btn-primary ml-2">Search Grouping</a>
+                                    {/* <Link href={route('searchGroupper')} className="btn btn-primary ml-2">
+                                        Search Grouping
+                                    </Link> */}
+                                </li>
                             </ol>
 
 
