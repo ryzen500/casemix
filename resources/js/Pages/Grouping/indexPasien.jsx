@@ -934,9 +934,9 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                     setPendaftarans(response.data.pendaftaran);
                     setProfil(response.data.profil);
                     setDiagnosa(response.data.dataDiagnosa);
-                    setDiagnosaINA(response.data.dataDiagnosa);
-                    setDataIcd9cm(response.data.dataIcd9cm);
-                    setDataIcd9cmINA(response.data.dataIcd9cm);
+                    setDiagnosaINA(response.data.dataDiagnosaXINA);
+                    setDataIcd9cm(response.data.dataDiagnosaIXUNU);
+                    setDataIcd9cmINA(response.data.dataDiagnosaIXINA);
                     // setDataFinalisasi((prevDataFinal) => {
                     //     return {
                     //         ...prevDataFinal,

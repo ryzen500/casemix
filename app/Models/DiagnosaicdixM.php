@@ -31,4 +31,15 @@ class DiagnosaicdixM extends Model
         return $query->get();
 
     }
+    public static function getDiagnosaByCode( $diagnosa_kode)
+    {
+        // $query = self::buildBaseQueryGrouping();
+        $query = DB::table('diagnosaicdix_m as d')
+                ->select('diagnosaicdix_id', 'diagnosaicdix_kode', 'diagnosaicdix_nama')
+                ->where('d.diagnosaicdix_aktif', true) // Ensuring that the diagnosa is active
+               ->whereRaw('LOWER(d.diagnosaicdix_kode) LIKE ?', ['%' . strtolower($diagnosa_kode) . '%']);
+                // ->where('s.nosep', '=', "'".$nosep."'");
+        return $query->first();
+
+    }
 }
