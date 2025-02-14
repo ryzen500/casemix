@@ -2914,6 +2914,9 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                 <button className="btn btn-secondary ml-2" onClick={handleCetak}>
                                                     Cetak Klaim
                                                 </button>
+                                                <button className="btn btn-secondary ml-2" onClick={handleCetakSimpli}>
+                                                    Cetak Simplifikasi
+                                                </button>
                                                 <button className="btn btn-secondary ml-2 " onClick={handleKirimOnlineKlaim}>
                                                     Kirim Online
                                                 </button>
@@ -3161,6 +3164,11 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
         // Show a success toast
     };
     /**handleCetak */
+    const handleCetakSimpli = (e) =>{
+        // openDialog(pendaftarans)
+        e.preventDefault(); // Prevent page reload
+        openDialog(pendaftarans);
+    }
     const handleCetak = (e) => {
         e.preventDefault(); // Prevent page reload
 
