@@ -14,6 +14,7 @@ use App\Http\Services\SearchSepService;
 use App\Models\CarabayarM;
 use App\Models\CaraKeluarM;
 use App\Models\InasismdcT;
+use App\Models\KelasPelayananM;
 use App\Models\LaporanresepR;
 use App\Models\PasienMordibitasR;
 use App\Models\PegawaiM;
@@ -206,7 +207,7 @@ class InAcbgGrouperController extends Controller
         $adl_chronic = $request->input('adl_chronic') ?? "";
         $icu_indikator = $request->input('icu_indikator') ?? "";
         $icu_los = $request->input('icu_los') ?? "";
-        $ventilator_hour = $request->input('ventilator_hour') ?? "";
+    
         $upgrade_class_ind = $request->input('upgrade_class_ind') ?? "";
         $upgrade_class_class = $request->input('upgrade_class_class') ?? "";
         $upgrade_class_los = $request->input("upgrade_class_los") ?? "";
@@ -252,13 +253,18 @@ class InAcbgGrouperController extends Controller
         $nama_dokter = $request->input(key: "nama_dokter") ?? "";
         $kode_tarif = $request->input(key: "kode_tarif") ?? "";
         $payor_id = $request->input(key: "payor_id") ?? "";
-        $payor_cd = $request->input(key: "payor_cd") ?? "";
+        $payor_cd = $request->input(key: "payor_cd") ?? "JKN";
         $cob_cd = $request->input(key: "cob_cd") ?? "";
         $coder_nik = $request->input(key: "coder_nik") ?? "";
         $sistole = $request->input(key: "sistole") ?? "";
         $diastole = $request->input(key: "diastole") ?? "";
         $is_tb = $request->input(key: "is_tb");
         $nomor_register_sitb = $request->input('nomor_register_sitb') ?? null;
+        $start_dttm = Carbon::parse($request->input('intubasi'))->setTimezone("Asia/Jakarta") ?? null;
+        $stop_dttm = Carbon::parse($request->input('exstabasi'))->setTimezone("Asia/Jakarta") ?? null;
+        $ventilator_hour = $request->input('ventilator_hour') ?? "";
+        $use_ind = $request->input('use_ind') ?? "";
+
         //Data DB
         $carabayar_id = $request->input(key: "carabayar_id") ?? "";
         $carabayar_nama = $request->input(key: "carabayar_nama") ?? "";
@@ -291,6 +297,9 @@ class InAcbgGrouperController extends Controller
             'icu_indikator' => $icu_indikator,
             'icu_los' => $icu_los,
             'ventilator_hour' => $ventilator_hour,
+            'use_ind'=>$use_ind,
+            'start_dttm'=>$start_dttm,
+            'stop_dttm'=>$stop_dttm,
             'upgrade_class_ind' => $upgrade_class_ind,
             'upgrade_class_class' => $upgrade_class_class,
             'upgrade_class_los' => $upgrade_class_los,
@@ -826,6 +835,7 @@ class InAcbgGrouperController extends Controller
         $caraMasuk = LookupM::getLookupType('inacbgs_caramasuk');
         $caraPulang = CaraKeluarM::getDataListKeluar();
         $Jaminan = CarabayarM::getCarabayar();
+        $KelasPelayananM = LookupM::getLookupTypeSequence('naikkelasbpjs');
 
         $jenisKasus = LookupM::getLookupType('kasusdiagnosa');
         $kelompokDiagnosa = KelompokdiagnosaM::getKelompokDiagnosa();
@@ -841,6 +851,7 @@ class InAcbgGrouperController extends Controller
             'caraMasuk' => $caraMasuk,
             'Jaminan'=>$Jaminan,
             'caraPulang' => $caraPulang,
+            'KelasPelayananM'=>$KelasPelayananM,
             'DPJP' => $DPJP,
             'jenisKasus' => $jenisKasus,
             'pegawai' => $pegawai,
