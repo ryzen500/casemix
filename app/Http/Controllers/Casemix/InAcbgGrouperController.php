@@ -933,7 +933,11 @@ class InAcbgGrouperController extends Controller
                         }
                     }
                 }else{
-                    $diagnosaXUnu =DB::table('diagnosax_inacbgs_t')->where('inacbg_id','=',$SEP->inacbg_id)->get();
+                    if(!empty($SEP)){
+                        $diagnosaXUnu =DB::table('diagnosax_inacbgs_t')->where('inacbg_id','=',$SEP->inacbg_id)->get();
+                    }else{
+                        $diagnosaXUnu=[];
+                    }
                     if(count((array)$diagnosaXUnu)>0){
                         foreach ($diagnosaXUnu as $key=>$value) {
                             $diagnosa= DiagnosaM::getDiagnosaByCode($value->diagnosa_kode);
@@ -975,7 +979,11 @@ class InAcbgGrouperController extends Controller
                         }
                     }
                 }else{
-                    $diagnosaIXUnu =DB::table('diagnosaix_inacbg_t')->where('inacbg_id','=',$SEP->inacbg_id)->get();
+                    if(!empty($SEP)){
+                        $diagnosaIXUnu =DB::table('diagnosaix_inacbg_t')->where('inacbg_id','=',$SEP->inacbg_id)->get();
+                    }else{
+                        $diagnosaIXUnu=[];
+                    }
                     if(count((array)$diagnosaIXUnu)>0){
                         foreach ($diagnosaIXUnu as $key=>$value) {
                             $diagnosa= DiagnosaicdixM::getDiagnosaByCode($value->diagnosaix_kode);
@@ -1018,7 +1026,11 @@ class InAcbgGrouperController extends Controller
                         }
                     }
                 }else{
-                    $diagnosaXIna =DB::table('diagnosainacbg_t')->where('inacbg_id','=',$SEP->inacbg_id)->get();
+                    if(!empty($SEP)){
+                        $diagnosaXIna =DB::table('diagnosainacbg_t')->where('inacbg_id','=',$SEP->inacbg_id)->get();
+                    }else{
+                        $diagnosaXIna=[];
+                    }
                     if(count((array)$diagnosaXIna)>0){
                         foreach ($diagnosaXIna as $key=>$value) {
                             $diagnosa= DiagnosaM::getDiagnosaByCode($value->kodediagnosainacbg);
@@ -1061,7 +1073,11 @@ class InAcbgGrouperController extends Controller
                         }
                     }
                 }else{
-                    $dataDiagnosaIXINA =DB::table('diagnosainacbgix_t')->where('inacbg_id','=',$SEP->inacbg_id)->get();
+                    if(!empty($SEP)){
+                        $dataDiagnosaIXINA =DB::table('diagnosainacbgix_t')->where('inacbg_id','=',$SEP->inacbg_id)->get();
+                    }else{
+                        $dataDiagnosaIXINA=[];
+                    }
                     if(count((array)$dataDiagnosaIXINA)>0){
                         foreach ($dataDiagnosaIXINA as $key=>$value) {
                             $diagnosa= DiagnosaicdixM::getDiagnosaByCode($value->kodediagnosainacbgix);
@@ -1091,8 +1107,13 @@ class InAcbgGrouperController extends Controller
                 //         ];
                 //     }
                 // }
+            }else{
+
+                $dataDiagnosa = PasienmorbiditasT::getMorbiditas($pendaftaran_id);
+                $dataDiagnosaIXUNU= $dataIcd9cm;
+                $dataDiagnosaXINA=$dataDiagnosa;
+                $dataDiagnosaIXINA= $dataIcd9cm;
             }
-            $dataDiagnosa = PasienmorbiditasT::getMorbiditas($pendaftaran_id);
 
         }
         return response()->json([
