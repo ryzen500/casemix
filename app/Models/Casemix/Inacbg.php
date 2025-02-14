@@ -167,6 +167,29 @@ class Inacbg extends Model
         $query->whereRaw('(is_finalisasi = true)');
         return $query->count();
     }
+    public static function dataListKirimOnlineCountTable(array $filters = [])
+    {
+        $query =DB::table('informasisepgrouping_v');
+
+
+        if (!empty($filters['date_type']) && $filters['date_type'] == '1') {
+            $query->where('tgl_pulang', '=', $filters['start_dt'] );
+        }else{
+            $query->where('inacbg_tgl', '=', $filters['start_dt'] );
+        }        
+        if (!empty($filters['jnspelayanan']) && $filters['jnspelayanan'] != '3') {
+            $query->where('jnspelayanan', '=', $filters['jnspelayanan'] );
+        }
+        if(!empty($filters['is_terkirim'])){
+            $query->where('is_terkirim', '=', $filters['is_terkirim'] );
+
+        }
+        if (!empty($filters['jenis_rawat']) && $filters['jenis_rawat'] != '3') {
+            $query->where('jnspelayanan', '=', $filters['jenis_rawat'] );
+        }
+        $query->whereRaw('(is_finalisasi = true)');
+        return $query->count();
+    }
     /**
      * Ambil data untuk ditampilkan dengan pagination.
      */

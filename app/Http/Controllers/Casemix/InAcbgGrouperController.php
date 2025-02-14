@@ -1199,11 +1199,6 @@ class InAcbgGrouperController extends Controller
     public function kirimDataOnlineSearch(Request $request){
         $currentPage = $request->input('page', 1);
         $itemsPerPage = $request->input('items_per_page', 10);
-
-        $start_dt =  Carbon::parse($request->input('tanggal') ?? "")->setTimezone('Asia/Jakarta')->format('Y-m-d');
-        $stop_dt = Carbon::parse($request->input('tanggal') ?? "")->setTimezone('Asia/Jakarta')->format('Y-m-d');
-        $jenis_rawat = $request->input('jenisRawat') ?? null;
-        $date_type = $request->input('date_type') ?? null;
         $filters =[
             'start_dt'=>Carbon::parse($request->input('tanggal') ?? "")->setTimezone('Asia/Jakarta')->format('Y-m-d'),
             'stop_dt'=>Carbon::parse($request->input('tanggal') ?? "")->setTimezone('Asia/Jakarta')->format('Y-m-d'),
@@ -1219,11 +1214,23 @@ class InAcbgGrouperController extends Controller
 
         // // Ambil data berdasarkan pagination
         $data = Inacbg::dataListKirimOnline($pagination->getLimit(), $pagination->getOffset(), $filters);
-
+        $totalRJItems = Inacbg::dataListKirimOnlineCountTable(['start_dt'=>Carbon::parse($request->input('tanggal') ?? "")->setTimezone('Asia/Jakarta')->format('Y-m-d'),'date_type'=>$request->input('date_type') ?? null,'jenis_rawat'=>$request->input('jenisRawat') ?? null,'jnspelayanan'=>2,'is_terkirim'=>'']);
+        $totalRIItems = Inacbg::dataListKirimOnlineCountTable(['start_dt'=>Carbon::parse($request->input('tanggal') ?? "")->setTimezone('Asia/Jakarta')->format('Y-m-d'),'date_type'=>$request->input('date_type') ?? null,'jenis_rawat'=>$request->input('jenisRawat') ?? null,'jnspelayanan'=>1,'is_terkirim'=>'']);
+        // belum terkirim
+        $totalBTItems = Inacbg::dataListKirimOnlineCountTable(['start_dt'=>Carbon::parse($request->input('tanggal') ?? "")->setTimezone('Asia/Jakarta')->format('Y-m-d'),'date_type'=>$request->input('date_type') ?? null,'jenis_rawat'=>$request->input('jenisRawat') ?? null,'jnspelayanan'=>'','is_terkirim'=>false]);
+        // terkirim
+        $totalTItems = Inacbg::dataListKirimOnlineCountTable(['start_dt'=>Carbon::parse($request->input('tanggal') ?? "")->setTimezone('Asia/Jakarta')->format('Y-m-d'),'date_type'=>$request->input('date_type') ?? null,'jenis_rawat'=>$request->input('jenisRawat') ?? null,'jnspelayanan'=>'','is_terkirim'=>true]);
+        $countTable=[
+            'rj' => $totalRJItems,
+            'ri' => $totalRIItems,
+            'belum_terkirim' => $totalBTItems,
+            'terkirim' => $totalTItems,
+        ];
         // Kembalikan response JSON
         return response()->json([
             'pagination' => $pagination->getPaginationInfo(),
             'data' => $data,
+            'countTable' => $countTable
         ]);
     }
 }
