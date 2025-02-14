@@ -25,8 +25,10 @@ import { Dialog } from 'primereact/dialog';
 import { faUser, faHome, faCog, faEllipsis, faQuestionCircle, faArrowLeft, faTrashCan, faFile, faFileLines } from "@fortawesome/free-solid-svg-icons";
 import { Tooltip } from 'primereact/tooltip';
 
-export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJP, jenisKasus, pegawai, kelompokDiagnosa, COB, caraPulang }) {
+export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMasuk, Jaminan, DPJP, jenisKasus, pegawai, kelompokDiagnosa, COB, caraPulang }) {
     const [datas, setDatas] = useState([]);
+    const [jnsPelayanan, setJnsPelayanan] = useState("");
+
     const [dataGrouping, setDataGrouping] = useState({
         los: 0,
         grouper: null
@@ -37,6 +39,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
     const [total_simrs, setTotalSimrs] = useState('');
 
     const [diastole, setDiastole] = useState('');
+    const [upgrade_class_los, setUpgradeKelasLos] = useState('');
 
     const [pendaftarans, setPendaftarans] = useState([]);
     const [pembayaranPelayanans, setPembayaranPelayanans] = useState([]);
@@ -47,6 +50,17 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
 
     const [dataDiagnosaINA, setDiagnosaINA] = useState([]);
     const [selectedDialog, setSelectedDialog] = useState(null);
+
+    // Intubasi dan extubasi 
+    let emptyRawatIntensif = {
+        icu_los: 0,
+        intubasi: '',
+        exstabasi: '',
+        use_ind: '',
+        ventilator_hour: '',
+    }
+    const [rawatIntensif, setRawatIntensif] = useState(emptyRawatIntensif);
+
 
     const openDialog = (rowData) => {
         setSelectedDialog(rowData.sep_id);
@@ -169,6 +183,10 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
     const [searchTextIX, setSearchTextIX] = useState('');
 
     const [pasienTB, setPasienTB] = useState(false); // Track the checkbox state
+    const [naikKelas, setNaikKelas] = useState(false); // Track the checkbox state
+    const [adaRawatIntensif, setAdaRawatIntensif] = useState(false); // Track the checkbox state
+    const [adaVentilator, setAdaVentilator] = useState(false); // Track the checkbox state
+
     const [kelasEksekutif, setKelasEksekutif] = useState(false); // Track the checkbox state
 
     const [nomorRegister, setNomorRegister] = useState(''); // Track the nomor register
@@ -176,6 +194,32 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
     const handleCheckboxChange = () => {
         setPasienTB(!pasienTB);
     };
+
+    const handleVentilator = () => {
+        setAdaVentilator(!adaVentilator);
+    };
+
+    // Handle perubahan radio button
+    const handleJnsPelayananChange = (event) => {
+        console.log("Kick hello"); // Akan dipanggil
+
+
+        setDatas((prevState) => ({
+            ...prevState, // Mempertahankan nilai lainnya
+            jnsPelayanan: event.target.value, // Hanya mengubah bagian jnsPelayanan
+        }));
+    };
+
+
+
+    const handleAdaRawatIntensif = () => {
+        setAdaRawatIntensif(!adaRawatIntensif);
+    };
+
+    const handleCheckboxNaikKelasChange = () => {
+        setNaikKelas(!naikKelas);
+    };
+
 
     const handleCheckboxKelasEksekutifChange = () => {
         setKelasEksekutif(!kelasEksekutif);
@@ -348,6 +392,10 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
             }
         }
     };
+    const handleInputChange = (event) => {
+        setUpgradeKelasLos(event.target.value);  // Mengupdate state sesuai dengan nilai input
+    };
+
     const handleInputChangeRow = async (index, field, value, type) => {
         if (type === 'unu') {
             const updatedRows = dataDiagnosa.map(row => ({ ...row }));
@@ -1153,7 +1201,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                 console.log('Response:', response.data);
                 // setHide(false);
                 if (Boolean(response.data.success) === false) {
-                    toast.current.show({ severity: 'error', summary: response.data.message, detail: datas.noSep, life: 3000 });
+                    // toast.current.show({ severity: 'error', summary: response.data.message, detail: datas.noSep, life: 3000 });
 
                 } else {
                     toast.current.show({ severity: 'success', summary: `Data  Berhasil Di simpan`, detail: datas.noSep, life: 3000 });
@@ -1270,6 +1318,15 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
             [e.target.name]: e.target.value, // Memastikan input bisa diubah oleh user
         });
     };
+
+
+    const handleChangeIntensif = (e) => {
+        setRawatIntensif({
+            ...rawatIntensif,
+            [e.target.name]: e.target.value, // Memastikan input bisa diubah oleh user
+        });
+    };
+
     const removeRow = async (index, type) => {
         if (type === 'unu') {
             let updatedRows = dataDiagnosa.filter((_, i) => i === index);
@@ -1375,21 +1432,81 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                         <td width={"15%"} className='pl-2' style={{ fontSize: '1rem' }}>
                                             Jenis Rawat
                                         </td>
-                                        <td width={"60%"} style={{ fontSize: '1rem' }}>
-                                            <div className="ml-2" >
-                                                {datas.jnsPelayanan}
 
+                                        <td width="20%" style={{ fontSize: '1rem' }}>
+                                            <div className="ml-2 mt-2 d-flex align-items-center">
+                                                {/* Rawat Jalan */}
+                                                <input
+                                                    type="radio"
+                                                    name="jnsPelayanan"
+                                                    value={"Rawat Jalan"} // ✅ Tambahkan ini
+                                                    checked={datas.jnsPelayanan === "Rawat Jalan"}
+                                                    onChange={handleJnsPelayananChange}
+                                                    className="mr-2"
+                                                />
+                                                <label>Rawat Jalan</label>
+
+                                                {/* Spacer */}
+                                                <div style={{ width: '20px' }}></div>
+
+                                                {/* Rawat Inap */}
+                                                <input
+                                                    type="radio"
+                                                    name="jnsPelayanan"
+                                                    value={"Rawat Inap"} // ✅ Tambahkan ini
+                                                    checked={datas.jnsPelayanan === "Rawat Inap"}
+                                                    onChange={handleJnsPelayananChange}
+                                                    className="mr-2"
+                                                />
+                                                <label>Rawat Inap</label>
                                             </div>
+
+
                                         </td>
+
+
+
                                         <td width={"10%"} style={{ fontSize: '1rem' }}>
-                                            <div className="col-sm-1">
-                                                <Checkbox
-                                                    value="true"
-                                                    name="kelas_eksekutif"
-                                                    checked={kelasEksekutif}
-                                                    onChange={handleCheckboxKelasEksekutifChange} />
-                                                <label htmlFor="ingredient1" className="ml-2">Kelas Eksekutif</label>
-                                            </div>
+                                            {/* Input Checklist Naik/ Turun Kelas */}
+                                            {datas.jnsPelayanan !== 'Rawat Jalan' && (
+                                                <>
+                                                    <div className="col-sm-1">
+                                                        <Checkbox
+                                                            value="true"
+                                                            name="naik_turun_kelas"
+                                                            checked={naikKelas}
+                                                            onChange={handleCheckboxNaikKelasChange} />
+                                                        <label htmlFor="ingredient1" className="ml-2">Naik/Turun Kelas</label>
+                                                    </div>
+
+                                                    <div className="col-sm-1">
+                                                        <Checkbox
+                                                            value="true"
+                                                            name="naik_turun_kelas"
+                                                            checked={adaRawatIntensif}
+                                                            onChange={handleAdaRawatIntensif} />
+                                                        <label htmlFor="ingredient1" className="ml-2">Ada Rawat Intensif</label>
+                                                    </div>
+                                                </>
+                                            )}
+
+                                            {/* Kelas Eksekutif */}
+
+                                            {datas.jnsPelayanan === 'Rawat Jalan' && (
+                                                <>
+
+                                                    <div className="col-sm-1">
+                                                        <Checkbox
+                                                            value="true"
+                                                            name="kelas_eksekutif"
+                                                            checked={kelasEksekutif}
+                                                            onChange={handleCheckboxKelasEksekutifChange} />
+                                                        <label htmlFor="ingredient1" className="ml-2">Kelas Eksekutif</label>
+                                                    </div>
+                                                </>
+                                            )}
+
+
                                         </td>
 
                                         <td width={"10%"} style={{ textAlign: 'right', paddingRight: '15px', fontSize: '1rem' }}>Kelas Hak</td>
@@ -1397,12 +1514,182 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                             <input type="text" className="col-sm-11 ml-2 " name='hakKelas' value={datas.peserta.hakKelas} />
                                         </td>
                                     </tr>
+
+                                    {/*  Upgrade Kelas Pelayanan Rawat Inap */}
+                                    {
+                                        // console.log("Rawat Inap Kelas Pelayanan ",  KelasPelayananM[0].name)
+                                        // console.log("Test ",  datas.peserta.hakKelas)
+
+                                    }
+                                    {naikKelas && (
+                                        <>
+                                            <tr>
+                                                <td width={"15%"} className='pl-2' style={{ fontSize: '1rem' }}>
+                                                    Kelas Pelayanan
+                                                </td>
+
+                                                <td colSpan={2} width="20%" style={{ fontSize: '1rem' }}>
+                                                    <div className="ml-2 mt-2 d-flex align-items-center">
+
+                                                        {/* Kelas 3 */}
+                                                        {console.log("")}
+                                                        {KelasPelayananM.map((kelas) => (
+                                                            <div key={kelas.id} className="d-flex align-items-center mr-3">
+                                                                <input
+                                                                    type="radio"
+                                                                    name="upgrade_class_class"
+                                                                    value={kelas.value}
+                                                                    className="mr-2"
+                                                                    disabled={kelas.name === datas.peserta.hakKelas} // Nonaktifkan jika sesuai dengan hakKelas
+                                                                />
+                                                                <label>{kelas.name}</label>
+                                                            </div>
+                                                        ))}
+
+
+                                                        {/* Spacer */}
+                                                        <div style={{ width: '20px' }}></div>
+
+
+                                                    </div>
+
+
+                                                </td>
+
+
+
+                                                <td width={"10%"} style={{ textAlign: 'right', paddingRight: '15px', fontSize: '1rem' }}>Lama (Hari)</td>
+                                                <td width={"20%"} style={{ fontSize: '1rem' }}>
+                                                    <InputText
+                                                        name='upgrade_class_los'
+                                                        value={upgrade_class_los}  // Mengikat nilai input ke state
+                                                        onChange={handleInputChange}  // Menangani perubahan input
+                                                        className='ml-2 col-sm-3'
+                                                    />
+                                                </td>
+
+                                            </tr>
+
+
+                                        </>)}
+
+
+                                    {adaRawatIntensif && (
+                                        <>
+                                            <tr>
+                                                <td width={"15%"} className='pl-2' style={{ fontSize: '1rem' }}>
+                                                    Ventilator
+                                                </td>
+
+                                                <td colSpan={2} width="20%" style={{ fontSize: '1rem' }}>
+                                                    <div className="ml-2 mt-2 d-flex align-items-center">
+
+                                                        {/* Kelas 3 */}
+                                                        <div className="col-sm-12">
+                                                            <div className="row">
+                                                                <div className="col-sm-1">
+                                                                    <Checkbox
+                                                                        value="true"
+                                                                        name="use_ind"
+                                                                        checked={adaVentilator}
+                                                                        onChange={handleVentilator} />
+                                                                    <label htmlFor="ingredient1" className="ml-2" style={{ fontSize: '1rem' }}>Ya</label>
+                                                                </div>
+                                                                <div className="col-sm-11">
+                                                                    {adaVentilator && (
+                                                                        <>
+                                                                            <div className="row">
+
+
+                                                                                {/* Flatpci */}
+
+                                                                                <div className="col-sm-6">
+                                                                                    Intubasi :
+                                                                                    <Flatpickr
+                                                                                        options={{
+                                                                                            enableTime: true,
+                                                                                            dateFormat: "Y-m-d H:i",
+                                                                                            time_24hr: true,
+                                                                                            locale: "id", // Bahasa Indonesia
+                                                                                        }}
+                                                                                        value={rawatIntensif.intubasi || null}
+                                                                                        onChange={(selectedDates) =>
+                                                                                            handleChangeIntensif({
+                                                                                                target: {
+                                                                                                    name: "intubasi",
+                                                                                                    value: selectedDates[0],
+                                                                                                },
+                                                                                            })
+                                                                                        }
+                                                                                    />
+                                                                                </div>
+                                                                                <div className="col-sm-6">
+                                                                                    Ekstubasi :
+                                                                                    <Flatpickr
+                                                                                        options={{
+                                                                                            enableTime: true,
+                                                                                            dateFormat: "Y-m-d H:i",
+                                                                                            time_24hr: true,
+                                                                                            locale: "id",
+                                                                                            minDate: rawatIntensif.intubasi || null,
+                                                                                        }}
+                                                                                        value={rawatIntensif.exstabasi || null}
+                                                                                        onChange={(selectedDates) =>
+                                                                                            handleChangeIntensif({
+                                                                                                target: {
+                                                                                                    name: "exstabasi",
+                                                                                                    value: selectedDates[0],
+                                                                                                },
+                                                                                            })
+                                                                                        }
+                                                                                    />
+                                                                                </div>
+
+                                                                            </div>
+                                                                        </>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+
+                                                        {console.log("")}
+                                                        {/* Checklist Ventilator Ya Atau Tidak */}
+
+
+                                                        {/* Spacer */}
+                                                        <div style={{ width: '20px' }}></div>
+
+
+                                                    </div>
+
+
+                                                </td>
+
+
+
+                                                <td width={"10%"} style={{ textAlign: 'right', paddingRight: '15px', fontSize: '1rem' }}>Rawat Intensif (Hari)</td>
+                                                <td width={"20%"} style={{ fontSize: '1rem' }}>
+                                                    <InputText
+                                                        name='icu_los'
+                                                        value={rawatIntensif.icu_los}  // Mengikat nilai input ke state
+                                                        onChange={handleChangeIntensif}  // Menangani perubahan input
+                                                        className='ml-2 col-sm-3'
+                                                    />
+                                                </td>
+
+                                            </tr>
+                                        </>
+                                    )}
+
+
+
                                     <tr>
                                         <td width={"15%"} className='pl-2' style={{ fontSize: '1rem' }}>
                                             Tanggal Rawat
                                         </td>
                                         <td width={"60%"} style={{ fontSize: '1rem' }}>
-                                            <div className="col-sm-12 ml-2">
+                                            <div className="col-sm-12 ml-2 align-items-center" style={{ marginLeft: '100px' }}>
                                                 <div className="row">
 
 
@@ -1472,7 +1759,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                     options={caraMasuk}
                                                     optionLabel="name"
                                                     placeholder="Pilih Cara Masuk"
-                                                    className="ml-2 custom-dropdown"
+                                                    className="ml-2"
                                                     style={{ width: '250px' }}
                                                 />
                                             </div>
@@ -1547,7 +1834,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                     options={caraPulang}
                                                     optionLabel="name"
                                                     placeholder="Pilih Cara Pulang"
-                                                    className="custom-dropdown"
+                                                    className='p-dropdown'
                                                     style={{ width: '250px' }}
                                                 />
                                             </div>
@@ -1620,7 +1907,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                                                 {dataFinalisasi.is_finalisasi && (
                                                     <>
                                                         <span className="mr-2 font-bold" style={{ fontSize: '1rem' }}>Tarif Rumah Sakit :</span>
-                                                        <span style={{ fontSize: "20px", color: 'black'}}
+                                                        <span style={{ fontSize: "20px", color: 'black' }}
                                                             className='font-bold'
                                                             data-pr-tooltip={"Tarif Sudah DiFinalisasi"}
 
@@ -2953,6 +3240,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
     const handleSimpanKlaim = (e) => {
         e.preventDefault(); // Prevent page reload
 
+        // console.log("upgrade_class_class" , KelasPelayananM);
 
         // Perform API request with axios
         const payload = {
@@ -3015,8 +3303,20 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
             adl_sub_acute: dataGrouping.adl_sub_acute ? dataGrouping.adl_sub_acute : 0,
             adl_chronic: dataGrouping.adl_chronic ? dataGrouping.adl_chronic : 0,
             los: dataGrouping.los ? dataGrouping.los : 0,
-            jaminan_id: selectedJaminan
+            jaminan_id: selectedJaminan,
+            use_ind : adaVentilator,
+            icu_indikator : adaRawatIntensif,
+            ventilator_hour :  Math.ceil((new Date(rawatIntensif.exstabasi) - new Date(rawatIntensif.intubasi)) / (1000 * 60 * 60)).toFixed(2),
+            intubasi : (rawatIntensif.intubasi),
+            exstabasi : (rawatIntensif.exstabasi),
+            icu_los : rawatIntensif.icu_los
+
+
+            // upgrade_class_ind: naikKelas,
+            // upgrade_class_los: upgrade_class_los
         };
+
+        // console.log("Simpan Klaim ", payload);
         axios.post(route('updateNewKlaim'), payload)
             .then((response) => {
                 // Handle the response from the backend
@@ -3273,41 +3573,41 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
             });
     };
 
-    const statusBody = (rowData)=> {
+    const statusBody = (rowData) => {
         let Datas;
-        console.log("Row Data", rowData);
+        // console.log("Row Data", rowData);
         // statusBody 
-        if(rowData.status == "Terkirim"){
+        if (rowData.status == "Terkirim") {
             Datas = "Terkirim";
-        }else if(rowData.status == "normal"){
+        } else if (rowData.status == "normal") {
             Datas = "Normal";
-        }else if(rowData.status == "final"){
+        } else if (rowData.status == "final") {
             Datas = "Final";
         }
-    
+
         return (
             <>
-            {Datas}
+                {Datas}
             </>
         )
     }
 
 
-    const statusTable = (rowData)=> {
+    const statusTable = (rowData) => {
         let Datas;
-        console.log("Row Data", rowData);
+        // console.log("Row Data", rowData);
         // statusBody 
-        if(rowData == "Terkirim"){
+        if (rowData == "Terkirim") {
             Datas = "Terkirim";
-        }else if(rowData == "normal"){
+        } else if (rowData == "normal") {
             Datas = "Normal";
-        }else if(rowData == "final"){
+        } else if (rowData == "final") {
             Datas = "Final";
         }
-    
+
         return (
             <>
-            {Datas}
+                {Datas}
             </>
         )
     }
@@ -3323,7 +3623,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
     };
 
     const tglPlgSepBody = (rowData) => {
-        console.log("Data", rowData);
+        // console.log("Data", rowData);
         return (
             <>
                 {rowData.tglPlgSep ? formatDate(rowData.tglPlgSep) : '-'}
@@ -3460,7 +3760,7 @@ export default function Dashboard({ auth, model, pasien, caraMasuk, Jaminan, DPJ
                         <Column field="noSep" header="No. SEP" body={noSepBody} align={'center'} alignHeader={'center'}></Column>
                         <Column field="tipe" header="Tipe" align={'center'} alignHeader={'center'}></Column>
                         <Column field="cbg" header="CBG" align={'center'} alignHeader={'center'}></Column>
-                        <Column  body={statusBody} header="Status" align={'center'} alignHeader={'center'}></Column>
+                        <Column body={statusBody} header="Status" align={'center'} alignHeader={'center'}></Column>
                         <Column field="nama_pegawai" header="Petugas" align={'center'} alignHeader={'center'}></Column>
                     </DataTable>
                 </Card>

@@ -93,11 +93,11 @@
     }
 
     .p-dropdown {
-    font-size: 16px; /* Example for dropdown */
+    font-size: 14px; /* Example for dropdown */
     }
 
     .p-inputtext {
-    font-size: 16px; /* Example for input text */
+    font-size: 14px; /* Example for input text */
     color: black;
     }
     input{
@@ -107,7 +107,7 @@
         color: black;
     }
     .p-component{
-        font-size: 16px;
+        font-size: 14px;
     }
     *{
         font-size: 14px ;

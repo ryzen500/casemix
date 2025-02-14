@@ -26,7 +26,9 @@ class SaveDataGroupperService
         $Inacbg = Inacbg::where('inacbg_nosep', $data['nomor_sep'])->first();
       
         //Validasi apakah inasiscbg_t ini sudah ada atau belum 
-        
+
+        // dd($Inacbg);
+
         $inasiscbg = Inasiscbg::where('pendaftaran_id', $Inacbg['pendaftaran_id'])->first();
         $inasismdc = InasismdcT::where('pendaftaran_id', $Inacbg['pendaftaran_id'])->first();
         // dd($results['data']['response']);
@@ -44,7 +46,7 @@ class SaveDataGroupperService
 
         
 
-            if ($inasiscbg) {
+            if (!empty($inasiscbg)) {
                 // Jika SEP ditemukan, lakukan update
                 $inasiscbgData['update_time'] = date("Y-m-d H:i:s");
                 $inasiscbgData['update_loginpemakai_id'] =!empty($dataAuthor['create_loginpemakai_id']) && $dataAuthor['create_loginpemakai_id'] !== '' ? $dataAuthor['create_loginpemakai_id'] : null;

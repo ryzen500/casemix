@@ -79,7 +79,13 @@ class Inacbg extends Model
         'update_loginpemakai_id',
         'pegfinalisasi_id',
         'is_finalisasi',
-        'tglfinalisasi'
+        'tglfinalisasi',
+        'is_rawatintesif',
+        'ventilator_icu',
+        'tgl_intubasi',
+        'tgl_ekstubasi',
+        'lamarawat_icu',
+        'is_rawatintensif'
     ];
 
     protected $casts = [
@@ -102,6 +108,9 @@ class Inacbg extends Model
         'tarif_bhp' => 'float',
         'tarif_sewa_alat' => 'float',
         'is_pasientb' => 'boolean',
+        'is_rawatintesif'=>'boolean',
+        'ventilator_icu'=>'boolean',
+        'lamarawat_icu'=>'float'
     ];
     
     /**
@@ -543,6 +552,7 @@ class Inacbg extends Model
             $this->validateDataKlaimUpdate($data);
             $payload = $this->preparePayloadUpdateKlaim($data);
 
+            // dd($payload);
             $encryptedPayload = $this->inacbg_encrypt($payload, $key); // Tambahkan parameter $key
 
             $response = $this->sendRequest($encryptedPayload, $key);
@@ -826,6 +836,11 @@ class Inacbg extends Model
                 'icu_indikator' => $data['icu_indikator'] ?? null,
                 'icu_los' => $data['icu_los'] ?? null,
                 'ventilator_hour' => $data['ventilator_hour'] ?? null,
+                'ventilator'=>[
+                    'use_ind'=>$data['use_ind'] ?? null,
+                    'start_dttm'=>$data['start_dttm'] ?? null,
+                    'stop_dttm'=>$data['stop_dttm'] ?? null
+                ],
                 'upgrade_class_ind' => $data['upgrade_class_ind'] ?? null,
                 'upgrade_class_class' => $data['upgrade_class_class'] ?? null,
                 'upgrade_class_los' => $data['upgrade_class_los'] ?? null,
@@ -863,7 +878,7 @@ class Inacbg extends Model
                 'nama_dokter' => $data['nama_dokter'] ?? null,
                 'kode_tarif' => $data['kode_tarif'] ?? null,
                 'payor_id' => $data['payor_id'] ?? null,
-                'payor_cd' => $data['payor_cd'] ?? null,
+                'payor_cd' => $data['payor_cd'] ?? "JKN",
                 'cob_cd' => $data['cob_cd'] ?? null,
                 'coder_nik' => $data['coder_nik'] ?? null,
             ],
