@@ -3692,7 +3692,7 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
                 ) : (
                     <div>
                         <span data-pr-tooltip="Klik Untuk Melihat File Simplifikasi" data-pr-position="bottom" id="info-icon" onClick={() => openDialog(rowData)}>
-                            <FontAwesomeIcon icon={faFile} style={{ color: (rowData.status === "final" || rowData.status === "Final") ? "#43A047" : "#D13232" }} />
+                            <FontAwesomeIcon icon={faFile} style={{ color: (rowData.status === "final" || rowData.status === "Final"|| rowData.status === "terkirim"|| rowData.status === "Terkirim") ? "#43A047" : "#D13232" }} />
                             {/* Dialog */}
                         </span>
                         <Dialog
