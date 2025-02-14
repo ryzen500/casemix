@@ -2,22 +2,49 @@ import Card from '@/Components/Card';
 // import DataTable from '@/Components/DataTable';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, usePage } from '@inertiajs/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { ChakraProvider } from "@chakra-ui/react";
 import { Column } from 'primereact/column';
 import { FormatRupiah } from '@arismun/format-rupiah';
 import { Calendar } from 'primereact/calendar';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFile } from '@fortawesome/free-solid-svg-icons';
+import { Tooltip } from 'primereact/tooltip';
+import { Dialog } from 'primereact/dialog';
+
 import axios from 'axios';
 
 export default function kirimDataOnline({ auth}) {
     const [loading, setLoading] = useState(false);
+    const [showList, setShowList] = useState(false);
     const [users, setUsers] = useState([]);
     const [result, setResult] = useState(0);
     const props = usePage().props;
     const [datas, setDatas] = useState([]);
     const [paginations, setPaginations] = useState([]);
     const [totalRecords, setTotalRecords] = useState(0);
+    const [showSimpli, setShowSimpli] = useState(false);
+
+    const [totalRecordTable, setTotalRecordTable] = useState({
+        'rj':0,
+        'ri':0,
+        'belum_terkirim':0,
+        'terkirim':0
+    });
+    const formatDateTime = (dateString) => {
+        // Convert the date string to a Date object
+        const date = new Date(dateString.replace(" ", "T"));
+          // Get the day, month, and year
+        const day = String(date.getDate()).padStart(2, '0'); // Adds leading zero if day is < 10
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based, so add 1
+        const year = date.getFullYear();
+
+        // Return formatted date in dd-mm-yyyy format
+        return `${day}-${month}-${year}`;
+
+    };
+    const isMounted = useRef(false);
 
     const [formData, setFormData] = useState({
         _token: props.csrf_token,
@@ -39,6 +66,8 @@ export default function kirimDataOnline({ auth}) {
             ...prevData,
             [name]: value
         }));
+        setShowList(false);
+
     };
     const [lazyState, setLazyState] = useState({
         first: 0,
@@ -53,6 +82,25 @@ export default function kirimDataOnline({ auth}) {
     };
 
     // Handle form submission using axios
+    const handleSearch= () => {
+        setLoading(true);
+        // Perform API request with axios
+        axios.post(route('kirimDataOnlineSearch'), {
+            ...formData,
+            page: lazyState.page,
+        })
+            .then((response) => {
+                setDatas(response.data.data); // The actual data from the API
+                setTotalRecords(response.data.pagination); // The actual data from the API
+                setResult(response.data.pagination.total_items)
+                setLoading(false);
+                setTotalRecordTable(response.data.countTable);
+                // Handle the response from the backend
+            })
+            .catch((error) => {
+                // console.error('Error:', error);
+            });
+    };
     const handleSave= () => {
         // setLoading(true);
         // // Perform API request with axios
@@ -72,27 +120,48 @@ export default function kirimDataOnline({ auth}) {
         //         console.error('Error:', error);
         //     });
     };
-    const handleSearch= () => {
-        setLoading(true);
-        // Perform API request with axios
-        axios.post(route('kirimDataOnlineSearch'), {
-            ...formData,
-            page: lazyState.page,
-        })
-            .then((response) => {
-                
-                setDatas(response.data.data); // The actual data from the API
-                setTotalRecords(response.data.pagination); // The actual data from the API
-                setResult(response.data.pagination.total_items)
-                setLoading(false);
-                // Handle the response from the backend
+    const handleShow = () => {
+        setShowList(!showList);
+    };
+    useEffect(() => {
+        isMounted.current = true;
+        loadLazyData();
+        // ProductService.getProductsSmall().then((data) => setProducts(data));
+    }, [lazyState]);
+    let networkTimeout = null;
+
+    // Fetch lazy data
+    const loadLazyData = () => {
+
+        if (networkTimeout) {
+            clearTimeout(networkTimeout);
+        }
+
+        networkTimeout = setTimeout(() => {
+            setLoading(true);
+            // const fetchUrl = `${route("/getSearchGroupper")}/?page=${lazyState.page + 1}&per_page=${lazyState.rows}`;            
+            const fetchUrl = route("kirimDataOnlineSearch"); // Just the URL without query parameters
+
+            axios.post(fetchUrl, {
+                page: lazyState.page + 1,
+                per_page: lazyState.rows,
+                ...formData // If you need to send more data
             })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
+            axios.post(fetchUrl, formData)
+                .then((response) => {
+                    setDatas(response.data.data); // The actual data from the API
+                    setPaginations(response.data.pagination);
+                    // setTotalRecords(response.data.totalRecords);
+                    setLoading(false);
+                })
+                .catch((error) => {
+                    console.error("Error fetching data:", error);
+                    setLoading(false);
+                });
+        }, Math.random() * 1000 + 250); // Simulate a delay
     };
     const tglMasukBody = (rowData) => {
-        console.log("Waktus masuk ", formatDateTime(rowData.tgl_masuk));
+        // console.log("Waktus masuk ", formatDateTime(rowData.tgl_masuk));
         return (
         <>
             <a   style={{ textDecoration: 'underline',color :'blue' }}  href={route('searchGroupperPasien',rowData.nokartuasuransi)} className="submenu-item">{rowData.tgl_masuk?formatDateTime(rowData.tgl_masuk):''} </a>
@@ -101,7 +170,7 @@ export default function kirimDataOnline({ auth}) {
     };
     const tglPulangBody = (rowData) => {
 
-        console.log("waktu ", formatDateTime(rowData.tgl_pulang));
+        // console.log("waktu ", formatDateTime(rowData.tgl_pulang));
         return rowData.tgl_pulang?formatDateTime(rowData.tgl_pulang):'';
     };
         
@@ -197,7 +266,50 @@ export default function kirimDataOnline({ auth}) {
 
             <section className="section">
                 <div className="row">
-                    <div className="col-12">
+                    <div className="col-sm-12" style={{ display: showList !== true ? 'block'  : 'none' }}>
+                        <div className="card">
+                            <div className="card-body">
+                                <table className='table table-bordered' style={{ border: ' 1px solid black', width:'50%',margin:'0 auto'}}>
+                                    <tbody>
+                                        <tr>
+                                            <td colSpan={2} className='text-center'>Jumlah Klaim</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Rawat Inap</td>
+                                            <td>{totalRecordTable.ri}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Rawat Jalan</td>
+                                            <td>{totalRecordTable.rj}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Total</td>
+                                            <td>{result}</td>
+                                        </tr>
+                                        <tr>
+                                            <td colSpan={2} className='text-center'>Status Pengiriman</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Belum Terkirim</td>
+                                            <td>{totalRecordTable.belum_terkirim}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Sudah Terkirim</td>
+                                            <td>{totalRecordTable.terkirim}</td>
+                                        </tr>
+                                        <tr>
+                                            <td colSpan={2} className='text-center'>
+                                                <button className="btn btn-primary" onClick={handleShow} >
+                                                    Tampilkan Klaim
+                                                </button>   
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col-12" style={{ display: showList === true ? 'block'  : 'none' }}>
                         <div className="card">
                             <div className="card-header">
                                 <h4 className="card-title">List Data</h4>
