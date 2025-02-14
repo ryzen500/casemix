@@ -213,7 +213,7 @@ class InAcbgGrouperController extends Controller
         $upgrade_class_ind = $request->input('upgrade_class_ind') ?? "";
         $upgrade_class_class = $request->input('upgrade_class_class') ?? "";
         $upgrade_class_los = $request->input("upgrade_class_los") ?? "";
-        $upgrade_class_payor = $request->input("upgrade_class_payor") ?? "";
+        $upgrade_class_payor = $request->input("upgrade_class_payor") ?? "peserta";
 
 
         $birth_weight = $request->input("birth_weight") ?? "";
@@ -306,6 +306,7 @@ class InAcbgGrouperController extends Controller
             'upgrade_class_class' => $upgrade_class_class,
             'upgrade_class_los' => $upgrade_class_los,
             'upgrade_class_payor' => $upgrade_class_payor,
+            'add_payment_pct'=>35,
             'birth_weight' => $birth_weight,
             'discharge_status' => $discharge_status,
             'diagnosa' => $diagnosa,
@@ -970,26 +971,28 @@ class InAcbgGrouperController extends Controller
                     }else{
                         $diagnosaXUnu=[];
                     }
-                    if(count((array)$diagnosaXUnu)>0){
-                        foreach ($diagnosaXUnu as $key=>$value) {
-                            $diagnosa= DiagnosaM::getDiagnosaByCode($value->diagnosa_kode);
-                            if($key==0){
-                                $kelompokdiagnosa_id =2;
-                            }else{
-                                $kelompokdiagnosa_id =3;
-                            }
-                            $dataDiagnosa[$key]=[
-                                'diagnosa_id' =>$diagnosa->diagnosa_id,
-                                'diagnosa_nama' =>$diagnosa->diagnosa_nama,
-                                'diagnosa_kode' =>$diagnosa->diagnosa_kode,
-                                'kelompokdiagnosa_id' => $value->diagnosax_type,
-                                'tgl_pendaftaran' =>$pendaftaran->tgl_pendaftaran,
-                                'pegawai_id' =>$pendaftaran->pegawai_id
-                            ];
-                        }
-                    }else{
-                        $dataDiagnosa= PasienmorbiditasT::getMorbiditas($pendaftaran_id);
-                    }
+                    // if(count((array)$diagnosaXUnu)>0){
+                    //     foreach ($diagnosaXUnu as $key=>$value) {
+                    //         $diagnosa= DiagnosaM::getDiagnosaByCode($value->diagnosa_kode);
+                    //         if($key==0){
+                    //             $kelompokdiagnosa_id =2;
+                    //         }else{
+                    //             $kelompokdiagnosa_id =3;
+                    //         }
+                    //         $dataDiagnosa[$key]=[
+                    //             'diagnosa_id' =>$diagnosa->diagnosa_id,
+                    //             'diagnosa_nama' =>$diagnosa->diagnosa_nama,
+                    //             'diagnosa_kode' =>$diagnosa->diagnosa_kode,
+                    //             'kelompokdiagnosa_id' => $value->diagnosax_type,
+                    //             'tgl_pendaftaran' =>$pendaftaran->tgl_pendaftaran,
+                    //             'pegawai_id' =>$pendaftaran->pegawai_id
+                    //         ];
+                    //     }
+                    // }else{
+                    //     $dataDiagnosa= PasienmorbiditasT::getMorbiditas($pendaftaran_id);
+                    // }
+                    $dataDiagnosa= PasienmorbiditasT::getMorbiditas($pendaftaran_id);
+
                 }
                 $dataDiagnosaIXUNU=[];
 

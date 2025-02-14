@@ -85,7 +85,10 @@ class Inacbg extends Model
         'tgl_intubasi',
         'tgl_ekstubasi',
         'lamarawat_icu',
-        'is_rawatintensif'
+        'is_rawatintensif',
+        'is_naikkelas',
+        'naik_kelasrawat_inacbg',
+        'lamarawat_naikkelas'
     ];
 
     protected $casts = [
@@ -110,7 +113,9 @@ class Inacbg extends Model
         'is_pasientb' => 'boolean',
         'is_rawatintesif'=>'boolean',
         'ventilator_icu'=>'boolean',
-        'lamarawat_icu'=>'float'
+        'lamarawat_icu'=>'float',
+        'is_naikkelas'=>'boolean',
+        'lamarawat_naikkelas'=>'float'
     ];
     
     /**
@@ -845,6 +850,7 @@ class Inacbg extends Model
                 'upgrade_class_class' => $data['upgrade_class_class'] ?? null,
                 'upgrade_class_los' => $data['upgrade_class_los'] ?? null,
                 'upgrade_class_payor' => $data['upgrade_class_payor'] ?? null,
+                'add_payment_pct'=>$data['add_payment_pct'] ?? null,
                 'birth_weight' => $data['birth_weight'] ?? null,
                 'sistole' => $data['sistole'] ?? null,
                 'diastole' => $data['diastole'] ?? null,
