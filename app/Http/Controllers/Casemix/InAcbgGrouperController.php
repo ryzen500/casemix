@@ -756,7 +756,28 @@ class InAcbgGrouperController extends Controller
 
         // Ambil data berdasarkan pagination
         $data = Inacbg::dataListSep($pagination->getLimit(), $pagination->getOffset(), $filters);
-
+        if($totalItems==0){
+            $model = new SearchSepService();
+            $getRiwayat = $model->getRiwayatData($filters['query'])->getOriginalContent();
+            if($getRiwayat['metaData']['code']==200){
+                if($getRiwayat['response']['peserta']['kelamin']=='L'){
+                    $jk='LAKI-LAKI';
+                }else{
+                    $jk="PEREMPUAN";
+                }
+                $data[] = 
+                ['nama_pasien'=>$getRiwayat['response']['peserta']['nama'],
+                 'tanggal_lahir'=>$getRiwayat['response']['peserta']['tglLahir'],
+                 'jeniskelamin'=>$jk,
+                 'no_rekam_medik'=>$getRiwayat['response']['peserta']['noMr'],
+                 'nopeserta'=>$getRiwayat['response']['peserta']['noKartu'],   
+                ];
+            }else{
+                $data=[];
+            }
+           
+            // dd($getRiwayat['response']['noSep'],$getRiwayat['response']['peserta']['nama'],$getRiwayat['response']['peserta']['tglLahir'],$getRiwayat['response']['peserta']['noKartu'],$getRiwayat['response']['peserta']['noMr'],$getRiwayat['response']['peserta']['kelamin']);
+        }
         // Kembalikan response JSON
         return response()->json([
             'pagination' => $pagination->getPaginationInfo(),

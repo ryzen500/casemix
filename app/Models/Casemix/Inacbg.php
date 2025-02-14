@@ -1308,7 +1308,7 @@ class Inacbg extends Model
                 if (isset($filters['query'])) {
                     $value = $filters['query'];
                     $query1->whereRaw('LOWER(pa.nama_pasien) LIKE ?', ['%' . strtolower($value) . '%'])
-                        ->orWhereRaw('(s.nosep) LIKE ?', ['%' . ($value) . '%'])
+                        // ->orWhereRaw('(s.nosep) LIKE ?', ['%' . ($value) . '%'])
                         ->orWhereRaw('(pa.no_rekam_medik) LIKE ?', ['%' . ($value) . '%']);
                     $query1->orderBy('pa.nama_pasien','asc');
                 }
@@ -1357,7 +1357,7 @@ class Inacbg extends Model
                 if (isset($filters['query'])) {
                     $value = $filters['query'];
                     $query1->whereRaw('LOWER(pa.nama_pasien) LIKE ?', ['%' . strtolower($value) . '%'])
-                        ->orWhereRaw('(s.nosep) LIKE ?', ['%' . ($value) . '%'])
+                        // ->orWhereRaw('(s.nosep) LIKE ?', ['%' . ($value) . '%'])
                         ->orWhereRaw('(pa.no_rekam_medik) LIKE ?', ['%' . ($value) . '%']);
                 }
             }
