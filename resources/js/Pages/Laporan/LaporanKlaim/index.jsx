@@ -8,6 +8,10 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { Column } from 'primereact/column';
 import { Button } from "primereact/button";
 import { Tooltip } from 'primereact/tooltip';
+import { Dialog } from 'primereact/dialog';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFile } from '@fortawesome/free-solid-svg-icons';
+
 import jsPDF from "jspdf";
 
 import { FormatRupiah } from '@arismun/format-rupiah';
@@ -17,7 +21,7 @@ export default function LaporanKlaim({ auth, pagination, data }) {
     const [users, setUsers] = useState([]);
     const [paginations, setPaginations] = useState([]);
     const dt = useRef(null);
-
+    const [selectedDialog, setSelectedDialog] = useState(null);
     // 
     const [dateRange, setDateRange] = useState([new Date(), new Date()]); // initial date range
     const [isRange, setIsRange] = useState(true); // Toggle between Range and Daily view
@@ -35,6 +39,13 @@ export default function LaporanKlaim({ auth, pagination, data }) {
     const props = usePage().props;
 
 
+    const openDialog = (rowData) => {
+        setSelectedDialog(rowData.sep_id);
+    };
+    
+    const closeDialog = () => {
+        setSelectedDialog(null);
+    };
     // Function to toggle criteria card visibility
     const toggleCriteria = () => {
         setShowCriteria(!showCriteria);
@@ -369,7 +380,33 @@ export default function LaporanKlaim({ auth, pagination, data }) {
                             <Column body={rowNumberTemplate} header="No." />
                             <Column body={bodyTanggalMasuk} header="Tanggal Masuk" ></Column>
                             <Column body={bodyTanggalPulang} header="Tanggal Pulang" ></Column>
-                            <Column field="nosep" header="No SEP" ></Column>
+                             <Column field="nosep"    body={(rowData) => (
+                                                                        <>
+                                                                        {rowData.nosep} <br /> 
+                                                                            <span data-pr-tooltip="Klik Untuk Melihat File Simplifikasi" data-pr-position="bottom" id="info-icon" onClick={() => openDialog(rowData)}> 
+                                                                                <FontAwesomeIcon icon={faFile} style={{ color: (rowData.status === "final" || rowData.status === "Final") ? "#43A047" : "#D13232" }} />
+                                                                            </span>  {"\u00A0"}|{"\u00A0"}
+                                                                            <Dialog 
+                                                                                    header="File Simplifikasi" 
+                                                                                    visible={selectedDialog === rowData.sep_id} 
+                                                                                    maximizable 
+                                                                                    style={{ width: '50vw', height: '50vw' }} 
+                                                                                    onHide={closeDialog}
+                                                                                    >
+                                                                                {/* <Dialog header="File Simplifikasi" visible={showSimpli} maximizable style={{ width: '50vw', height: '50vw' }} onHide={() => { if (!showSimpli) return; setShowSimpli(false); }}> */}
+                                                                                <iframe
+                                                                                    src={`http://192.168.214.229/rswb-e/index.php?r=sepGlobal/printSep&sep_id=${rowData.sep_id}`}
+                                                                                    width="100%"
+                                                                                    height="100%"
+                                                                                    style={{ border: "none" }}
+                                                                                ></iframe>
+                                                                            </Dialog>
+                                                                            {/* PrimeReact Tooltip */}
+                                                                        <span style={{fontSize:"13px",color:'#888'}}>{rowData.nokartuasuransi}</span>
+                                                                        <Tooltip target="#info-icon" />
+                                                                            
+                                                                        </>
+                                                                    )}  header="No SEP" style={{ alignItems: 'center', border:'1px solid #e5e7eb' }} align={'center'}  alignHeader={'center'}></Column>
                             <Column field="nama_pasien" header="Nama Pasien" ></Column>
 
                             <Column body={bodyTipe} header="Tipe " ></Column>
