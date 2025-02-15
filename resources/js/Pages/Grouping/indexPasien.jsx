@@ -1074,9 +1074,9 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
                             };
                         });
                         setNaikKelasData((prevDataFinal) => {
-                            console.log("Data Upgrade Class Flagg", response.data.getGrouping.data.data.upgrade_class_ind );
+                            // console.log("Data Upgrade Class Flagg", response.data.getGrouping.data.data.upgrade_class_ind );
 
-                            console.log("Data Upgrade Class", response.data.getGrouping.data.data.upgrade_class_class );
+                            // console.log("Data Upgrade Class", response.data.getGrouping.data.data.upgrade_class_class );
 
                             return {
                                 ...({}), // Jika response.data.inacbg ada, gunakan sebagai basis, jika tidak, gunakan objek kosong
@@ -1110,9 +1110,36 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
                             sistole: 0,
                             diastole: 0,
                         };
-                        setTarifs(response.data.tarif);
+                        let dataTarif = {
+                            total: 0,
+                            prosedurenonbedah: response.data.tarif.prosedurenonbedah || 0,
+                            prosedurebedah: response.data.tarif.prosedurebedah || 0,
+                            konsultasi: response.data.tarif.konsultasi || 0,
+                            tenagaahli: response.data.tarif.tenagaahli || 0,
+                            keperawatan: response.data.tarif.keperawatan || 0,
+                            penunjang: response.data.tarif.penunjang || 0,
+                            radiologi: response.data.tarif.radiologi || 0,
+                            laboratorium: response.data.tarif.laboratorium || 0,
+                            pelayanandarah: response.data.tarif.pelayanandarah || 0,
+                            rehabilitasi: response.data.tarif.rehabilitasi || 0,
+                            kamar_akomodasi: response.data.tarif.kamar_akomodasi || 0,
+                            rawatintensif: response.data.tarif.rawatintensif || 0,
+                            tarif_poli_eks: 0
+                        };
+                        setTarifs(dataTarif);
                         if (response.data.obat !== null) {
                             setObats(response.data.obat);
+                        }else{
+                            let dataObat = {
+                                total: 0,
+                                obat: 0,
+                                obatkronis:0,
+                                obatkemoterapi:  0,
+                                alkes:  0,
+                                bmhp: 0,
+                                sewaalat: 0,
+                            };
+                            setObats(dataObat);
                         }
                         setSistole(setKlinis);
                         setSistole(setKlinis.sistole);
@@ -1123,7 +1150,7 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
                         console.log("Sub 3");
                         //   if(response.data.inacbg !== null) { 
                         setHide(true);
-
+                        setDataFinalisasi([]);
                         //   }
                     }
                     else {
@@ -3773,7 +3800,7 @@ const noSepBody = (rowData) => {
                     >
                         {/* <Dialog header="File Simplifikasi" visible={showSimpli} maximizable style={{ width: '50vw', height: '50vw' }} onHide={() => { if (!showSimpli) return; setShowSimpli(false); }}> */}
                         <iframe
-                            src={`http://192.168.214.229/rswb-e/index.php?r=sepGlobal/printSep&sep_id=${rowData.sep_id}`}
+                            src={`http://192.168.214.229/rswb-e/index.php?r=sepGlobal/printSep&sep_id=${rowData.sep_id}&jkn=1&spri=${(rowData.jnsPelayanan==1)?1:0}`}
                             width="100%"
                             height="100%"
                             style={{ border: "none" }}
