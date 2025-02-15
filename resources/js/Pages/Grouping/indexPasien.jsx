@@ -169,7 +169,9 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
     });
     const [total, setTotal] = useState(0);
     const [totalGrouper, setTotalGrouper] = useState(0);
-    const [los , setLos]= useState(0);
+    const [los , setLos]= useState({
+        los:0
+    });
     const handleBackClick = () => {
         window.open(route('searchGroupper'), '_parent');
 
@@ -1213,7 +1215,7 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
 
 
                     }
-                    handleLOS();
+                    handleLOS(pendaftarans);
                     calculate_total();
 
 
@@ -1395,24 +1397,32 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
 
 
     const handleChange = (e) => {
-        setPendaftarans({
+        let newPendaftarans = {
             ...pendaftarans,
-            [e.target.name]: e.target.value, // Memastikan input bisa diubah oleh user
-        });
+            [e.target.name]: e.target.value,
+        };
         if (e.target.name === 'tanggal_masuk' || e.target.name === 'tanggal_pulang') {
-            if(pendaftarans.tanggal_masuk > pendaftarans.tanggal_pulang){
-                setPendaftarans({
-                    ...pendaftarans,
-                    ['tanggal_pulang']: e.target.value, // Memastikan input bisa diubah oleh user
-                });
-            }
-            handleLOS();
+            // if want to use when tanggal_masuk>tanggal_pulang then set tanggal_masuk 
+            // if (new Date(newPendaftarans.tanggal_masuk) > new Date(newPendaftarans.tanggal_pulang)) {
+            //     newPendaftarans.tanggal_pulang = newPendaftarans.tanggal_masuk; // ✅ Fix here
+            // }
+            handleLOS(newPendaftarans); // ✅ Pass the latest data
         }
+        setPendaftarans(newPendaftarans); // ✅ Update state
     };
 
-    const handleLOS = ()=>{
-        setLos(
-            pendaftarans.tanggal_masuk ===pendaftarans.tanggal_pulang ? 1 : Math.ceil((new Date(pendaftarans.tanggal_pulang) - new Date(pendaftarans.tanggal_masuk)) / (1000 * 3600 * 24)));
+    const handleLOS = (updatedPendaftarans)=>{
+        // setLos(
+        //     pendaftarans.tanggal_masuk ===pendaftarans.tanggal_pulang ? 1 : Math.ceil((new Date(pendaftarans.tanggal_pulang) - new Date(pendaftarans.tanggal_masuk)) / (1000 * 3600 * 24))
+        // );
+        const count = updatedPendaftarans.tanggal_masuk === updatedPendaftarans.tanggal_pulang 
+        ? 1 
+        : Math.ceil(((new Date(updatedPendaftarans.tanggal_pulang) - new Date(updatedPendaftarans.tanggal_masuk)) / (1000 * 3600 * 24) )+1);
+        setLos(prevState => {
+            const newState = { ...prevState, los: count };
+            console.log("State updated immediately inside setLos:", newState.los); // ✅ Correct place to log new state
+            return newState;
+        });
     }
 
 
@@ -1938,7 +1948,7 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
                                     <td colSpan={2} style={{ fontSize: '1rem' }}>
                                         <InputNumber
                                         
-                                            value={los}
+                                            value={los.los}
 
                                             onValueChange={handleValueChange}
                                             locale="id-ID" // Set the locale for Indonesia (Rupiah)
