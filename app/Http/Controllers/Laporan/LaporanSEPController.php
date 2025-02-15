@@ -22,7 +22,7 @@ class LaporanSEPController extends Controller
             'tgl_sep',
         ]);
        
-        return Inertia::render('Laporan/LaporanSEP/index');
+        return Inertia::render('Laporan/LaporanSep');
     }
 
     public function getData(Request $request)

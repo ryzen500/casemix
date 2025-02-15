@@ -5,7 +5,6 @@ import 'laravel-datatables-vite';
 import { createRoot } from 'react-dom/client';
 import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
-import LaporanSEP from './Pages/Laporan/LaporanSEP';
 import "primereact/resources/themes/lara-light-cyan/theme.css";
 import 'primereact/resources/themes/saga-blue/theme.css';  // Theme
 import 'primereact/resources/primereact.min.css';         // Core CSS
@@ -26,5 +25,5 @@ createInertiaApp({
     },
 });
 if (document.getElementById('datatable')) {
-    ReactDOM.render(<LaporanSEP />, document.getElementById('datatable'));
+    ReactDOM.render(<></>, document.getElementById('datatable'));
 }
