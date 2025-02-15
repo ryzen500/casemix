@@ -155,13 +155,18 @@ class SaveDataPasienicd9Service
     }
     public function removeDataPasienicd9T(array $dataDiagnosa = []){
         // $RegisterData2 = PasienmorbiditasT::where('pasienmorbiditas_id', $dataDiagnosa['pasienmorbiditas_id'])->first();
-        $RegisterData = DB::table('pasienicd9cm_t ')
-        ->select(
-            DB::raw('pasienicd9cm_t.*')
-        )
-        ->from('pasienicd9cm_t')
-        ->where('pasienicd9cm_t.pasienicd9cm_id','=', $dataDiagnosa['pasienicd9cm_id'])
-        ->first();
+        if(!empty($dataDiagnosa['pasienicd9cm_id'])){
+
+            $RegisterData = DB::table('pasienicd9cm_t ')
+            ->select(
+                DB::raw('pasienicd9cm_t.*')
+            )
+            ->from('pasienicd9cm_t')
+            ->where('pasienicd9cm_t.pasienicd9cm_id','=', $dataDiagnosa['pasienicd9cm_id'])
+            ->first();
+        }else{
+            $RegisterData=[];
+        }
 
         // dd($dataDiagnosa,$RegisterData);
 

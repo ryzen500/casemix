@@ -1415,7 +1415,24 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
                 if (response.data.success) {
                     toast.current.show({ severity: 'success', summary: `Success`, detail: response.data.message, life: 3000 });
                     const updatedRowDelete = dataDiagnosa.filter((_, i) => i !== index);
-                    setDiagnosa(updatedRowDelete);
+                    const deletedRows = dataDiagnosa.filter((_, i) => i === index);
+                    setDiagnosa(updatedRowDelete); // Remove row and update state
+                    // Proceed only if the deleted row's kelompokdiagnosa_id is 2
+                    if (deletedRows.length > 0 && deletedRows[0].kelompokdiagnosa_id === 2) {
+                        const updatedRowsNew = [...updatedRowDelete];  // Create a shallow copy of updatedRows
+        
+                        updatedRowsNew.forEach((row, i) => {
+                            // Make modifications to the first row that meets your condition
+                            if (i === 0) {
+                                console.log(i, "Modifying the first row");
+                                updatedRowsNew[i] = { ...row, kelompokdiagnosa_id: 2 };  // Update the field immutably
+                            }
+                        });
+                        // Sort the rows after modification (non-mutating sort)
+                        const sortedRows = updatedRowsNew.sort((a, b) => a.kelompokdiagnosa_id - b.kelompokdiagnosa_id);
+                        // Update state with the sorted rows
+                        setDiagnosa(sortedRows);
+                    }
 
                 } else {
                     toast.current.show({ severity: 'error', summary: 'Error', detail: response.data.message, life: 3000 });
@@ -1427,7 +1444,24 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
             // setDiagnosa(updatedRows); // Remove row and update state
         } else if (type === 'ina') {
             const updatedRows = dataDiagnosaINA.filter((_, i) => i !== index);
+            const deletedRows = dataDiagnosaINA.filter((_, i) => i === index);
             setDiagnosaINA(updatedRows); // Remove row and update state
+            // Proceed only if the deleted row's kelompokdiagnosa_id is 2
+            if (deletedRows.length > 0 && deletedRows[0].kelompokdiagnosa_id === 2) {
+                const updatedRowsNew = [...updatedRows];  // Create a shallow copy of updatedRows
+
+                updatedRowsNew.forEach((row, i) => {
+                    // Make modifications to the first row that meets your condition
+                    if (i === 0) {
+                        console.log(i, "Modifying the first row");
+                        updatedRowsNew[i] = { ...row, kelompokdiagnosa_id: 2 };  // Update the field immutably
+                    }
+                });
+                // Sort the rows after modification (non-mutating sort)
+                const sortedRows = updatedRowsNew.sort((a, b) => a.kelompokdiagnosa_id - b.kelompokdiagnosa_id);
+                // Update state with the sorted rows
+                setDiagnosaINA(sortedRows);
+            }
         }
     };
     const removeRowIX = async (index, type) => {
