@@ -169,7 +169,7 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
     });
     const [total, setTotal] = useState(0);
     const [totalGrouper, setTotalGrouper] = useState(0);
-
+    const [los , setLos]= useState(0);
     const handleBackClick = () => {
         window.open(route('searchGroupper'), '_parent');
 
@@ -1199,6 +1199,7 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
 
 
                     }
+                    handleLOS();
                     calculate_total();
 
 
@@ -1384,8 +1385,21 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
             ...pendaftarans,
             [e.target.name]: e.target.value, // Memastikan input bisa diubah oleh user
         });
+        if (e.target.name === 'tanggal_masuk' || e.target.name === 'tanggal_pulang') {
+            if(pendaftarans.tanggal_masuk > pendaftarans.tanggal_pulang){
+                setPendaftarans({
+                    ...pendaftarans,
+                    ['tanggal_pulang']: e.target.value, // Memastikan input bisa diubah oleh user
+                });
+            }
+            handleLOS();
+        }
     };
 
+    const handleLOS = ()=>{
+        setLos(
+            pendaftarans.tanggal_masuk ===pendaftarans.tanggal_pulang ? 1 : Math.ceil((new Date(pendaftarans.tanggal_pulang) - new Date(pendaftarans.tanggal_masuk)) / (1000 * 3600 * 24)));
+    }
 
 
     const handleChangeNaikKelas = (e) => {
@@ -1910,9 +1924,8 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
                                     <td className='pl-2' style={{ fontSize: '1rem' }}>LOS</td>
                                     <td colSpan={2} style={{ fontSize: '1rem' }}>
                                         <InputNumber
-                                            value={pendaftarans && dataGrouping ?
-                                                (dataGrouping.tanggal_masuk === dataGrouping.tanggal_pulang ? 1 : (dataGrouping.los ? parseFloat(dataGrouping.los) : Math.ceil((new Date(dataGrouping.tanggal_pulang) - new Date(dataGrouping.tanggal_masuk)) / (1000 * 3600 * 24))))
-                                                : Math.ceil((new Date(dataGrouping.tanggal_pulang) - new Date(dataGrouping.tanggal_masuk)) / (1000 * 3600 * 24))}
+                                        
+                                            value={los}
 
                                             onValueChange={handleValueChange}
                                             locale="id-ID" // Set the locale for Indonesia (Rupiah)
