@@ -968,11 +968,18 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
 
                     setTotalSimrs(response.data.total_simrs);
 
-                    const defaultDPJP = DPJP.find(
+                    let defaultDPJP = DPJP.find(
                         (dpjp) => dpjp.kdDPJP === response.data.model.response.dpjp.kdDPJP
                     );
-
+                    
+                    if (!defaultDPJP) {
+                        console.log("Kicik dpjp")
+                        defaultDPJP = DPJP.find(
+                            (dpjp) => dpjp.kdDPJP === response.data.pendaftaran.kode_dpjp
+                        );
+                    }
                     setDPJP(defaultDPJP || null);
+                    
 
                     setJaminan(response.data.pendaftaran.carabayar_id);
 
@@ -1064,7 +1071,7 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
                         setCaraPulang(response.data.inacbg.cara_pulang);
                         // setDPJP(response.data.inacbg.nama_dpjp);
                         setDataFinalisasi((prevDataFinal) => {
-                            console.log("Data FInal sat", response.data);
+                            // console.log("Data FInal sat", response.data);
 
                             return {
                                 ...({}), // Jika response.data.inacbg ada, gunakan sebagai basis, jika tidak, gunakan objek kosong
@@ -1216,7 +1223,7 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
 
             } catch (error) {
                 console.log("Kick 2")
-                console.log("Error", error)
+                // console.log("Error", error)
                 if (error.response && error.response.status === 401) {
                     toast.current.show({
                         severity: 'error',
@@ -1251,7 +1258,7 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
     }
     const handleNewClaim = async (data) => {
 
-        console.log("handle new klaim", data);
+        // console.log("handle new klaim", data);
         const payload = {
             no_rekam_medik: data.peserta.noMr,
             nama_pasien: data.peserta.nama,
@@ -1658,9 +1665,9 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
                                                                     value={String(naikKelasData.upgrade_class_class) === String(kelas.value)}
                                                                     className="mr-2"
                                                                     onChange={(e) => {
-                                                                        console.log("Upgrade Class Class:", naikKelasData.upgrade_class_class);
-                                                                        console.log("Kelas Value:", kelas.value);
-                                                                        console.log("Checked Condition:", String(naikKelasData.upgrade_class_class) === String(kelas.value));
+                                                                        // console.log("Upgrade Class Class:", naikKelasData.upgrade_class_class);
+                                                                        // console.log("Kelas Value:", kelas.value);
+                                                                        // console.log("Checked Condition:", String(naikKelasData.upgrade_class_class) === String(kelas.value));
                                                                         
                                                                         handleChangeNaikKelas(e);
                                                                     }}    
@@ -1777,7 +1784,6 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
                                                     </div>
 
 
-                                                    {console.log("")}
                                                     {/* Checklist Ventilator Ya Atau Tidak */}
 
 
@@ -1873,7 +1879,7 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
                                     </td>
                                 </tr>
                                 <tr>
-                                    {console.log("Masuk ", selectedCaraMasuk)}
+                                    {/* {console.log("Masuk ", selectedCaraMasuk)} */}
                                     <td className='pl-2' style={{ fontSize: '1rem' }}>Cara Masuk</td>
                                     <td style={{ maxHeight: '60px', fontSize: '1rem' }}>
                                         <div className="col-sm-12" style={{ borderBottomColor: 'white', height: '60px' }}>
@@ -1970,9 +1976,11 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
                                 <tr>
                                     <td className='pl-2' style={{ fontSize: '1rem' }}>DPJP</td>
                                     <td colSpan={2} style={{ fontSize: '1rem' }}>
+
+                                        {/* {console.log("DPJP ",DPJP)} */}
                                         <div className="col-sm-12" style={{ borderBottomColor: 'white', height: '60px' }}>
                                             <Dropdown
-                                                value={selectedDPJP}
+                                                value={(selectedDPJP)}
                                                 onChange={(e) => setDPJP(e.value)}
                                                 options={DPJP}
                                                 optionLabel="nmdpjp"
@@ -3119,7 +3127,6 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
 
                             {/*  Hasil Grouping */}
 
-                            {console.log("Data Finalisasi", dataFinalisasi.is_finalisasi)}
                             <div style={{ display: hide === true ? 'none' : 'block' }}>
                                 <table className='table table-bordered' style={{ border: ' 1px solid black', width: '100%' }}>
                                     <tbody>
@@ -3450,7 +3457,7 @@ const handleSimpanKlaim = (e) => {
         .then((response) => {
             // Handle the response from the backend
 
-            console.log("Responses ", typeof response.data.success);
+            // console.log("Responses ", typeof response.data.success);
             if (Boolean(response.data.success) === false) {
                 toast.current.show({ severity: 'error', summary: response.data.message, detail: datas.noSep, life: 3000 });
 
@@ -3601,7 +3608,7 @@ const handleCetakSimpli = (e) => {
 const handleCetak = (e) => {
     e.preventDefault(); // Prevent page reload
 
-    console.log("Auth", auth);
+    // console.log("Auth", auth);
 
     // Buat payload dengan noSep
     const payload = {
