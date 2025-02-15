@@ -243,7 +243,7 @@ export default function kirimDataOnline({ auth}) {
                                                     </div>
                                                 </div>
                                                 <div className="col-sm-3">
-                                                    <span style={{color:"black"}}>( {result} Klaim)</span>
+                                                    <span style={{color:"black"}} className='font-bold'>( {result} Klaim)</span>
 
                                                 </div>
                                                 <div className="col-sm-3">
@@ -272,7 +272,7 @@ export default function kirimDataOnline({ auth}) {
                                 <table className='table table-bordered' style={{ border: ' 1px solid black', width:'50%',margin:'0 auto'}}>
                                     <tbody>
                                         <tr>
-                                            <td colSpan={2} className='text-center'>Jumlah Klaim</td>
+                                            <td colSpan={2} className='text-center font-bold'>Jumlah Klaim</td>
                                         </tr>
                                         <tr>
                                             <td>Rawat Inap</td>
@@ -287,7 +287,7 @@ export default function kirimDataOnline({ auth}) {
                                             <td>{result}</td>
                                         </tr>
                                         <tr>
-                                            <td colSpan={2} className='text-center'>Status Pengiriman</td>
+                                            <td colSpan={2} className='text-center font-bold'>Status Pengiriman</td>
                                         </tr>
                                         <tr>
                                             <td>Belum Terkirim</td>
