@@ -1098,8 +1098,7 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
                                     (response.data.getGrouping.data.data.icu_los) : false,
                                 intubasi: (response.data.getGrouping.success !== false) ? response.data.getGrouping.data.data.start_dttm : "",
                                 exstabasi: (response.data.getGrouping.success !== false) ? response.data.getGrouping.data.data.stop_dttm : 0,
-                                use_ind: (response.data.getGrouping.success !== false) ?
-                                    (response.data.getGrouping.data.data.use_ind) : false,
+                            
                                 ventilator_hour: (response.data.getGrouping.success !== false) ? response.data.getGrouping.data.data.ventilator_hour : 0,
                                 // Perbarui is_finalisasi
                             };
@@ -1631,7 +1630,7 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
                                                                         
                                                                         handleChangeNaikKelas(e);
                                                                     }}    
-                                                                    disabled={kelas.name === datas.peserta.hakKelas} // Nonaktifkan jika sesuai dengan hakKelas
+                                                                    disabled={(datas.peserta.hakKelas === "Kelas 3") ? true : kelas.name === datas.peserta.hakKelas} // Nonaktifkan jika sesuai dengan hakKelas
                                                                 />
                                                                 <label>{kelas.name}</label>
                                                             </div>
@@ -3396,11 +3395,11 @@ const handleSimpanKlaim = (e) => {
         adl_chronic: dataGrouping.adl_chronic ? dataGrouping.adl_chronic : 0,
         los: dataGrouping.los ? dataGrouping.los : 0,
         jaminan_id: selectedJaminan,
-        use_ind: adaVentilator,
+        use_ind: (adaVentilator) ? adaVentilator : false,
         icu_indikator: adaRawatIntensif,
         ventilator_hour: (rawatIntensif.exstabasi) ? Math.ceil((new Date(rawatIntensif.exstabasi) - new Date(rawatIntensif.intubasi)) / (1000 * 60 * 60)).toFixed(2) : 0,
-        intubasi: (rawatIntensif.intubasi),
-        exstabasi: (rawatIntensif.exstabasi),
+        intubasi: (adaRawatIntensif === true) ?  (rawatIntensif.intubasi) : null,
+        exstabasi:(adaRawatIntensif === true) ? (rawatIntensif.exstabasi) : null,
         icu_los: rawatIntensif.icu_los,
         upgrade_class_ind: naikKelas,
         upgrade_class_class: naikKelasData.upgrade_class_class,
