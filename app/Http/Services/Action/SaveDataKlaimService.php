@@ -42,7 +42,7 @@ class SaveDataKlaimService
                 'is_naikkelas' => !empty($data['upgrade_class_ind']) ?(int) (boolean) $data['upgrade_class_ind'] : 0, 
                 'naik_kelasrawat_inacbg' => !empty($data['upgrade_class_class']) ? $data['upgrade_class_class'] : 0, 
                 'lamarawat_naikkelas' => !empty($data['upgrade_class_los']) ? $data['upgrade_class_los'] : 0, 
-                'is_rawatintensif' => !empty($data['use_ind']) ?(int) (boolean) $data['use_ind'] : 0, 
+                'is_rawatintesif' => !empty($data['use_ind']) ?(int) (boolean) $data['use_ind'] : 0, 
                 'ventilator_icu'=> !empty($data['use_ind']) ?(int) (boolean) $data['use_ind'] : 0, 
                 'tgl_intubasi'=> !empty($data['start_dttm']) ? $data['start_dttm'] : NULL,
                 'tgl_ekstubasi'=> !empty($data['stop_dttm']) ? $data['stop_dttm'] : NULL,
@@ -97,6 +97,7 @@ class SaveDataKlaimService
                 
                 \Log::info('Nilai akhir is_pasientb:', ['is_pasientb' => $inacbgData['is_pasientb']]);
 
+                // dd($inacbgData);
                 // Jika SEP ditemukan, lakukan update
                 $SEP->update($inacbgData);
              

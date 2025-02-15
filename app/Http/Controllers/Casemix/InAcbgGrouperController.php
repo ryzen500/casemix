@@ -262,10 +262,12 @@ class InAcbgGrouperController extends Controller
         $diastole = $request->input(key: "diastole") ?? "";
         $is_tb = $request->input(key: "is_tb");
         $nomor_register_sitb = $request->input('nomor_register_sitb') ?? null;
-        $start_dttm = Carbon::parse($request->input('intubasi'))->setTimezone("Asia/Jakarta") ?? null;
-        $stop_dttm = Carbon::parse($request->input('exstabasi'))->setTimezone("Asia/Jakarta") ?? null;
+        $start_dttm = $request->input('intubasi') ? Carbon::parse($request->input('intubasi'))->setTimezone("Asia/Jakarta")->format("Y-m-d H:i:s") : null;
+
+        // $start_dttm = Carbon::parse($request->input('intubasi'))->setTimezone("Asia/Jakarta") ?? null;
+        $stop_dttm = $request->input('exstabasi') ?  Carbon::parse($request->input('exstabasi'))->setTimezone("Asia/Jakarta")->format("Y-m-d H:i:s") :  null;
         $ventilator_hour = $request->input('ventilator_hour') ?? "";
-        $use_ind = $request->input('use_ind') ?? "";
+        $use_ind = $request->input('use_ind') ?? false;
 
         //Data DB
         $carabayar_id = $request->input(key: "carabayar_id") ?? "";
@@ -284,7 +286,7 @@ class InAcbgGrouperController extends Controller
         $jaminan_id = $request->input(key: "jaminan_id") ?? "";
         $carabayar = CarabayarM::getCarabayarById($jaminan_id);
 
-        // dd($years);
+        // dd($start_dttm);
         // Structur Payload 
         $data = [
             'nomor_kartu' => $nomor_kartu,
