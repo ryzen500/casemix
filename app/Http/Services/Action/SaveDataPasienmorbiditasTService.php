@@ -107,13 +107,18 @@ class SaveDataPasienmorbiditasTService
  
     public function addDataPasienMordibitasR(array $dataDiagnosa = []){
         // $RegisterData2 = PasienmorbiditasT::where('pasienmorbiditas_id', $dataDiagnosa['pasienmorbiditas_id'])->first();
-        $RegisterData = DB::table('pasienmorbiditas_t ')
-        ->select(
-            DB::raw('pasienmorbiditas_t.*')
-        )
-        ->from('pasienmorbiditas_t')
-        ->where('pasienmorbiditas_t.pasienmorbiditas_id','=', $dataDiagnosa['pasienmorbiditas_id'])
-        ->first();
+        if(!empty($dataDiagnosa['pasienmorbiditas_id'])){
+            $RegisterData = DB::table('pasienmorbiditas_t ')
+            ->select(
+                DB::raw('pasienmorbiditas_t.*')
+            )
+            ->from('pasienmorbiditas_t')
+            ->where('pasienmorbiditas_t.pasienmorbiditas_id','=', $dataDiagnosa['pasienmorbiditas_id'])
+            ->first();
+        }else{
+            $RegisterData =[];
+        }
+        
 
         // dd($dataDiagnosa,$RegisterData);
 
@@ -165,7 +170,7 @@ class SaveDataPasienmorbiditasTService
     }
     public function removeDataPasienMordibitas(array $dataDiagnosa = []){
         // $RegisterData2 = PasienmorbiditasT::where('pasienmorbiditas_id', $dataDiagnosa['pasienmorbiditas_id'])->first();
-        if($dataDiagnosa['pasienmorbiditas_id']){
+        if(!empty($dataDiagnosa['pasienmorbiditas_id'])){
             $RegisterData = DB::table('pasienmorbiditas_t ')
             ->select(
                 DB::raw('pasienmorbiditas_t.*')

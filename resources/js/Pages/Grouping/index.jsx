@@ -584,7 +584,7 @@ export default function CodingGrouping({ auth }) {
                                                             header="File Simplifikasi" 
                                                             visible={selectedDialog === rowData.sep_id} 
                                                             maximizable 
-                                                            style={{ width: '50vw', height: '50vw' }} 
+                                                            style={{ width: '70%', height: '50vw' }} 
                                                             onHide={closeDialog}
                                                             >
                                                         {/* <Dialog header="File Simplifikasi" visible={showSimpli} maximizable style={{ width: '50vw', height: '50vw' }} onHide={() => { if (!showSimpli) return; setShowSimpli(false); }}> */}
