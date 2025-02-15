@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Casemix\InAcbgGrouperController;
 use App\Http\Controllers\Casemix\SearchDiagnosaController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Laporan\LaporanKlaimController;
 use App\Http\Controllers\Laporan\LaporanSEPController;
 use App\Http\Controllers\Pasienicd9\Pasienicd9cmTController;
 use App\Http\Controllers\PasienmorbiditasT\PasienmorbiditasTController;
@@ -57,7 +58,12 @@ Route::middleware('auth')->group(function () {
     // laporan
     Route::get('/laporanSEP', action: [LaporanSEPController::class, 'index'])->name('laporanSEP');
     Route::get('/getLaporanSEP', action: [LaporanSEPController::class, 'getData'])->name('getLaporanSEP');
-    
+
+    // Laporan Klaim
+    Route::get('/laporanKlaim', action: [LaporanKlaimController::class, 'index'])->name('laporanKlaim');
+
+    Route::get('/getLaporanKlaim', action: [LaporanKlaimController::class, 'getData'])->name('getLaporanKlaim');
+
     // transaksi
     Route::post('newClaim', [InAcbgGrouperController::class, 'saveNewKlaim'])->name('newClaim');
     Route::post('updateNewKlaim', [InAcbgGrouperController::class, 'updateNewKlaim'])->name('updateNewKlaim');
