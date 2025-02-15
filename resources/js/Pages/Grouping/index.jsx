@@ -48,7 +48,10 @@ export default function CodingGrouping({ auth }) {
         sortOrder: null,
     });
     const [showSimpli, setShowSimpli] = useState(false);
-
+    const [isOpen, setIsOpen] = useState(false); // Track if OverlayPanel is open
+    const handleClose = () => {
+        setIsOpen(false); // Reset the open state when the panel closes
+    };
     const op = useRef(null);
     const toast = useRef(null);
     const isMounted = useRef(false);
@@ -172,13 +175,17 @@ export default function CodingGrouping({ auth }) {
     };
     const handleClick = (event) => {
         // Show the overlay relative to the clicked element
-        op.current.toggle(event, event.currentTarget);
+        // op.current.toggle(event, event.currentTarget);
+        if (!isOpen) {
+            op.current.toggle(event, event.currentTarget);
+            setIsOpen(true); // Set it as open
+        }
         setLazyParams((prevData) => ({
             ...prevData,
             ['page']: 1,
             ['first']:1
         }));
-        handleSearch();
+        // handleSearch();
     };
     // Handle form submission using axios
     const handleSearch = () => {
@@ -244,16 +251,19 @@ export default function CodingGrouping({ auth }) {
     };
     const handleKeyDown = (event) => {
         if (event.key === "Enter") {
-
-            op.current.toggle(event, event.currentTarget);
+            if (!isOpen) {
+                op.current.toggle(event, event.currentTarget);
+                setIsOpen(true); // Set it as open
+            }
+            // op.current.toggle(event, event.currentTarget);
             setLazyParams((prevData) => ({
                 ...prevData,
                 ['page']: 1,
                 ['first']:1
             }));
-            handleSearch();
+            // handleSearch();
         }
-      };
+    };
     // Handle form submission using axios
     const handleSave = (e) => {
         e.preventDefault(); // Prevent page reload
@@ -360,7 +370,7 @@ export default function CodingGrouping({ auth }) {
 
                                                     <Button type="button" label="Cari" onClick={handleClick} className="btn btn-secondary ml-2"  />
                                                     {/* <button className="btn btn-primary ml-2">Pasien Baru</button> */}
-                                                    <OverlayPanel ref={op} showCloseIcon closeOnEscape dismissable={false} style={{ width: '70%' }}>
+                                                    <OverlayPanel ref={op} showCloseIcon closeOnEscape dismissable={false} style={{ width: '70%' }} onHide={handleClose}>
                                                         <DataTable 
                                                             value={datas} 
                                                             selectionMode="single" 

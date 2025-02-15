@@ -1482,84 +1482,91 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
                                             Jenis Rawat
                                         </td>
 
-                                        <td width="20%" style={{ fontSize: '1rem' }}>
-                                            <div className="ml-2 mt-2 d-flex align-items-center">
-                                                {/* Rawat Jalan */}
-                                                <input
-                                                    type="radio"
-                                                    name="jnsPelayanan"
-                                                    value={"Rawat Jalan"} // ✅ Tambahkan ini
-                                                    checked={datas.jnsPelayanan === "Rawat Jalan"}
-                                                    onChange={handleJnsPelayananChange}
-                                                    className="mr-2"
-                                                />
-                                                <label>Rawat Jalan</label>
+                                        <td width="20%" style={{ fontSize: '1rem' }} colSpan={2}>
+                                            <div className="col-sm-12">
+                                                <div className="row">
+                                                    <div className="col-sm-6">
+                                                        <div className="ml-2 mt-2 d-flex align-items-center">
+                                                            {/* Rawat Jalan */}
+                                                            <input
+                                                                type="radio"
+                                                                name="jnsPelayanan"
+                                                                value={"Rawat Jalan"} // ✅ Tambahkan ini
+                                                                checked={datas.jnsPelayanan === "Rawat Jalan"}
+                                                                onChange={handleJnsPelayananChange}
+                                                                className="mr-2"
+                                                            />
+                                                            <label>Rawat Jalan</label>
 
-                                                {/* Spacer */}
-                                                <div style={{ width: '20px' }}></div>
+                                                            {/* Spacer */}
+                                                            <div style={{ width: '20px' }}></div>
 
-                                                {/* Rawat Inap */}
-                                                <input
-                                                    type="radio"
-                                                    name="jnsPelayanan"
-                                                    value={"Rawat Inap"} // ✅ Tambahkan ini
-                                                    checked={datas.jnsPelayanan === "Rawat Inap"}
-                                                    onChange={handleJnsPelayananChange}
-                                                    className="mr-2"
-                                                />
-                                                <label>Rawat Inap</label>
+                                                            {/* Rawat Inap */}
+                                                            <input
+                                                                type="radio"
+                                                                name="jnsPelayanan"
+                                                                value={"Rawat Inap"} // ✅ Tambahkan ini
+                                                                checked={datas.jnsPelayanan === "Rawat Inap"}
+                                                                onChange={handleJnsPelayananChange}
+                                                                className="mr-2"
+                                                            />
+                                                            <label>Rawat Inap</label>
+                                                        </div>
+                                                    </div>
+                                                    <div className="col-sm-6">
+                                                        {/* Input Checklist Naik/ Turun Kelas */}
+                                                        {datas.jnsPelayanan !== 'Rawat Jalan' && (
+                                                            <>
+                                                                <div className="col-sm-12">
+                                                                    <div className="row">
+                                                                        <div className="col-sm-6">
+                                                                            <Checkbox
+                                                                                value="true"
+                                                                                name="naik_turun_kelas"
+                                                                                checked={naikKelas}
+                                                                                onChange={handleCheckboxNaikKelasChange} />
+                                                                            <label htmlFor="ingredient1" className="ml-2">Naik/Turun Kelas</label>
+                                                                        </div>
+
+                                                                        <div className="col-sm-6">
+                                                                            <Checkbox
+                                                                                value="true"
+                                                                                name="naik_turun_kelas"
+                                                                                checked={adaRawatIntensif}
+                                                                                onChange={handleAdaRawatIntensif} />
+                                                                            <label htmlFor="ingredient1" className="ml-2">Ada Rawat Intensif</label>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                
+                                                            </>
+                                                        )}
+
+                                                        {/* Kelas Eksekutif */}
+
+                                                        {datas.jnsPelayanan === 'Rawat Jalan' && (
+                                                            <>
+
+                                                                <div className="col-sm-12">
+                                                                    <Checkbox
+                                                                        value="true"
+                                                                        name="kelas_eksekutif"
+                                                                        checked={kelasEksekutif}
+                                                                        onChange={handleCheckboxKelasEksekutifChange} />
+                                                                    <label htmlFor="ingredient1" className="ml-2">Kelas Eksekutif</label>
+                                                                </div>
+                                                            </>
+                                                        )}
+                                                    </div>
+                                                </div>
                                             </div>
 
 
-                                        </td>
-
-
-
-                                        <td width={"10%"} style={{ fontSize: '1rem' }}>
-                                            {/* Input Checklist Naik/ Turun Kelas */}
-                                            {datas.jnsPelayanan !== 'Rawat Jalan' && (
-                                                <>
-                                                    <div className="col-sm-1">
-                                                        <Checkbox
-                                                            value="true"
-                                                            name="naik_turun_kelas"
-                                                            checked={naikKelas}
-                                                            onChange={handleCheckboxNaikKelasChange} />
-                                                        <label htmlFor="ingredient1" className="ml-2">Naik/Turun Kelas</label>
-                                                    </div>
-
-                                                    <div className="col-sm-1">
-                                                        <Checkbox
-                                                            value="true"
-                                                            name="naik_turun_kelas"
-                                                            checked={adaRawatIntensif}
-                                                            onChange={handleAdaRawatIntensif} />
-                                                        <label htmlFor="ingredient1" className="ml-2">Ada Rawat Intensif</label>
-                                                    </div>
-                                                </>
-                                            )}
-
-                                            {/* Kelas Eksekutif */}
-
-                                            {datas.jnsPelayanan === 'Rawat Jalan' && (
-                                                <>
-
-                                                    <div className="col-sm-1">
-                                                        <Checkbox
-                                                            value="true"
-                                                            name="kelas_eksekutif"
-                                                            checked={kelasEksekutif}
-                                                            onChange={handleCheckboxKelasEksekutifChange} />
-                                                        <label htmlFor="ingredient1" className="ml-2">Kelas Eksekutif</label>
-                                                    </div>
-                                                </>
-                                            )}
-
 
                                         </td>
 
-                                        <td width={"10%"} style={{ textAlign: 'right', paddingRight: '15px', fontSize: '1rem' }}>Kelas Hak</td>
-                                        <td width={"15%"} style={{ fontSize: '1rem' }}>
+                                        <td width={"10%"} style={{ textAlign: 'right', paddingRight: '15px', fontSize: '1rem' }} >Kelas Hak</td>
+                                        <td width={"15%"} style={{ fontSize: '1rem' }} className='pt-1'>
                                             <input type="text" className="col-sm-11 ml-2 " name='hakKelas' value={datas.peserta.hakKelas} />
                                         </td>
                                     </tr>
@@ -1753,7 +1760,7 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
                                                 {/* Flatpci */}
 
                                                 <div className="col-sm-6">
-                                                    Masuk :
+                                                    Masuk <span className='ml-2'></span>
                                                     <Flatpickr
                                                         options={{
                                                             enableTime: true,
@@ -1773,7 +1780,7 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
                                                     />
                                                 </div>
                                                 <div className="col-sm-6">
-                                                    Pulang :
+                                                    Pulang <span className='ml-2'></span>
                                                     <Flatpickr
                                                         options={{
                                                             enableTime: true,
@@ -2044,7 +2051,7 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
 
 
                                             {/* Dialog */}
-                                            <Dialog header="Rincian Tagihan SIMRS" visible={visible} maximizable style={{ width: '50vw', height: '50vw' }} onHide={() => { if (!visible) return; setVisible(false); }}>
+                                            <Dialog header="Rincian Tagihan SIMRS" visible={visible} maximizable style={{ width: '70%', height: '50vw' }} onHide={() => { if (!visible) return; setVisible(false); }}>
                                                 <iframe
                                                     src={pembayaranPelayanans !== null ? `http://192.168.214.229/rswb/rswb_new/index.php?r=billingKasir/pembayaranTagihanPasien/cetakGabung&pembayaranpelayanan_id=${pembayaranPelayanans.pembayaranpelayanan_id}` : `http://192.168.214.229/rswb/rswb_new/index.php?r=billingKasir/PembayaranTagihanPasien/PrintRincianBelumBayar&instalasi_id=2&pendaftaran_id=${pendaftarans.pendaftaran_id}&pasienadmisi_id=&caraPrint=PRINT`}
                                                     width="100%"
@@ -3084,15 +3091,15 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
                                             </tr> */}
                                         <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff' }} >
                                             <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>Group</td>
-                                            <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
+                                            <td width="50%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
                                                 {dataGrouper.group_description !== "-" ? dataGrouper.group_description : (dataGrouping.grouper !== null) ? ((dataGrouping.grouper.response !== null) ? dataGrouping.grouper.response.cbg.description : '-') : '-'}
                                             </td>
-                                            <td width="30%" style={{ textAlign: 'center', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
+                                            <td width="15%" style={{ textAlign: 'center', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
                                                 {dataGrouper.group_code !== "-" ? dataGrouper.group_code : (dataGrouping.grouper !== null) ? ((dataGrouping.grouper.response !== null) ? dataGrouping.grouper.response.cbg.code : '-') : '-'}
 
                                                 {/* {dataGrouper.group_code} */}
                                             </td>
-                                            <td width="30%" style={{ textAlign: 'right', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
+                                            <td width="20%" style={{ textAlign: 'right', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
                                                 <FormatRupiah
                                                     value={dataGrouper.group_tarif
                                                         ? dataGrouper.group_tarif
@@ -3106,73 +3113,73 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
                                         </tr>
                                         <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff', fontWeight: 'bold' }} >
                                             <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>Sub Acute</td>
-                                            <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
+                                            <td width="50%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
                                                 {dataGrouper.sub_acute_description}
                                             </td>
-                                            <td width="30%" style={{ textAlign: 'center', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
+                                            <td width="15%" style={{ textAlign: 'center', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
                                                 {dataGrouper.sub_acute_code}
                                             </td>
-                                            <td width="30%" style={{ textAlign: 'right', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
+                                            <td width="20%" style={{ textAlign: 'right', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
                                                 <FormatRupiah value={dataGrouper.sub_acute_tarif} />
                                             </td>
                                         </tr>
                                         <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff', fontWeight: 'bold' }} >
                                             <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>Chronic</td>
-                                            <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
+                                            <td width="50%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
                                                 {dataGrouper.chronic_description}
                                             </td>
-                                            <td width="30%" style={{ textAlign: 'center', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
+                                            <td width="15%" style={{ textAlign: 'center', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
                                                 {dataGrouper.chronic_code}
                                             </td>
-                                            <td width="30%" style={{ textAlign: 'right', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
+                                            <td width="20%" style={{ textAlign: 'right', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
                                                 <FormatRupiah value={dataGrouper.chronic_tarif} />
                                             </td>
                                         </tr>
                                         <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff' }} >
                                             <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>Special Procedure</td>
-                                            <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
+                                            <td width="50%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
                                                 {dataGrouper.special_procedure_description}
                                             </td>
-                                            <td width="30%" style={{ textAlign: 'center', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
+                                            <td width="15%" style={{ textAlign: 'center', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
                                                 {dataGrouper.special_procedure_code}
                                             </td>
-                                            <td width="30%" style={{ textAlign: 'right', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
+                                            <td width="20%" style={{ textAlign: 'right', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
                                                 <FormatRupiah value={dataGrouper.special_procedure_tarif} />
                                             </td>
                                         </tr>
                                         <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff' }} >
                                             <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>Special Prosthesis</td>
-                                            <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
+                                            <td width="50%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
                                                 {dataGrouper.special_prosthesis_description}
                                             </td>
-                                            <td width="30%" style={{ textAlign: 'center', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
+                                            <td width="15%" style={{ textAlign: 'center', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
                                                 {dataGrouper.special_prosthesis_code}
                                             </td>
-                                            <td width="30%" style={{ textAlign: 'right', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
+                                            <td width="20%" style={{ textAlign: 'right', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
                                                 <FormatRupiah value={dataGrouper.special_prosthesis_tarif} />
                                             </td>
                                         </tr>
                                         <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff' }} >
                                             <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>Special Investigation</td>
-                                            <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
+                                            <td width="50%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
                                                 {dataGrouper.special_investigation_description}
                                             </td>
-                                            <td width="30%" style={{ textAlign: 'center', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
+                                            <td width="15%" style={{ textAlign: 'center', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
                                                 {dataGrouper.special_investigation_code}
                                             </td>
-                                            <td width="30%" style={{ textAlign: 'right', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
+                                            <td width="20%" style={{ textAlign: 'right', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
                                                 <FormatRupiah value={dataGrouper.special_investigation_tarif} />
                                             </td>
                                         </tr>
                                         <tr style={{ backgroundColor: dataFinalisasi.is_finalisasi ? '#fde1a8' : '#ffff' }} >
                                             <td width={"15%"} style={{ textAlign: 'right', paddingLeft: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>Special Drug</td>
-                                            <td width="35%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
+                                            <td width="50%" style={{ textAlign: 'left', paddingRight: '10px;', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
                                                 {dataGrouper.special_drug_description}
                                             </td>
-                                            <td width="30%" style={{ textAlign: 'center', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
+                                            <td width="15%" style={{ textAlign: 'center', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
                                                 {dataGrouper.special_drug_code}
                                             </td>
-                                            <td width="30%" style={{ textAlign: 'right', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
+                                            <td width="20%" style={{ textAlign: 'right', color: 'black', fontSize: '1rem', fontWeight: 'bold' }}>
                                                 <FormatRupiah value={dataGrouper.special_drug_tarif} />
                                             </td>
                                         </tr>
@@ -3761,7 +3768,7 @@ const noSepBody = (rowData) => {
                         header="File Simplifikasi"
                         visible={selectedDialog === rowData.sep_id}
                         maximizable
-                        style={{ width: '50vw', height: '50vw' }}
+                        style={{ width: '70%', height: '50vw' }}
                         onHide={closeDialog}
                     >
                         {/* <Dialog header="File Simplifikasi" visible={showSimpli} maximizable style={{ width: '50vw', height: '50vw' }} onHide={() => { if (!showSimpli) return; setShowSimpli(false); }}> */}
