@@ -1095,6 +1095,13 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
                                 // Perbarui is_finalisasi
                             };
                         });
+
+                        console.log("Hello ",(response.data.getGrouping.data.data.umur_hari))
+                        setPendaftarans((prevTotal) => ({
+                            ...prevTotal,
+                          
+                            umur: (response.data.getGrouping.data.data.umur_tahun !== 0 ) ? response.data.getGrouping.data.data.umur_tahun : parseInt(parseInt(response.data.getGrouping.data.data.umur_hari) / 30 ),
+                        }));
                         setRawatIntensif((prevDataFinal) => {
                             // console.log("Data FInal sat", response.data);
 
@@ -1192,8 +1199,8 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
                         setTarifs(setTarifGrouping);
                         setObats(setObatGrouping);
                         setDataFinalisasi((prevDataFinal) => {
-                            // console.log("Data FInal sat", response.data);
-
+                            // console.log("Data FInal sat", response.data.getGrouping.data.data.umur_hari);
+                           
                             return {
                                 ...({}), // Jika response.data.inacbg ada, gunakan sebagai basis, jika tidak, gunakan objek kosong
                                 // is_finalisasi: (response.data[1].data.data.klaim_status_cd === "final") ? response.data[1].data.data.klaim_status_cd : false// Perbarui is_finalisasi
@@ -1889,7 +1896,7 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
                                     <td width={"10%"} style={{ textAlign: 'right', paddingRight: '15px', fontSize: '1rem' }}>Umur</td>
                                     <td width={"20%"} style={{ fontSize: '1rem' }}>
                                         <InputText name='umur'
-                                            value={pendaftarans.umur} className='ml-2 col-sm-3' /> Tahun
+                                            value={pendaftarans.umur} className='ml-2 col-sm-3' /> {(dataGrouping.umur_tahun === 0 ) ? ` Bulan`  : `Tahun`}
                                     </td>
                                 </tr>
                                 <tr>
