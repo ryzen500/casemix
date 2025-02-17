@@ -548,10 +548,10 @@ class InAcbgGrouperController extends Controller
         $results = $this->inacbg->kirimOnlineKlaim($data, $key);
 
 
-        // if ($results['success'] === true) {
-        //     // $saveService = new SaveDataReeditKlaimService();
-        //     // $saveResult = $saveService->deleteFlagDataFinalisasi($data, $getLoginPemakai);
-        // }
+        if ($results['success'] === true) {
+            $saveService = new SaveDataReeditKlaimService();
+            $saveResult = $saveService->kirimOnlineFlagDataFinalisasi($data, $getLoginPemakai);
+        }
 
         // Kembalikan hasil sebagai JSON response
         return response()->json($results, 200);
