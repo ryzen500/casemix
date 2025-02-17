@@ -12,10 +12,10 @@ import { Dialog } from 'primereact/dialog';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFile } from '@fortawesome/free-solid-svg-icons';
 
-import jsPDF from "jspdf";
+// import jsPDF from "jspdf";
 
 import { FormatRupiah } from '@arismun/format-rupiah';
-import DateRangePicker from '@/Components/DateRangePicker';
+// import DateRangePicker from '@/Components/DateRangePicker';
 
 export default function LaporanKlaim({ auth, pagination, data }) {
     const [users, setUsers] = useState([]);
@@ -384,7 +384,7 @@ export default function LaporanKlaim({ auth, pagination, data }) {
                                                                         <>
                                                                         {rowData.nosep} <br /> 
                                                                             <span data-pr-tooltip="Klik Untuk Melihat File Simplifikasi" data-pr-position="bottom" id="info-icon" onClick={() => openDialog(rowData)}> 
-                                                                                <FontAwesomeIcon icon={faFile} style={{ color: (rowData.status === "final" || rowData.status === "Final") ? "#43A047" : "#D13232" }} />
+                                                                                <FontAwesomeIcon icon={faFile} style={{ color:  "#43A047" }} />
                                                                             </span>  {"\u00A0"}|{"\u00A0"}
                                                                             <Dialog 
                                                                                     header="File Simplifikasi" 
