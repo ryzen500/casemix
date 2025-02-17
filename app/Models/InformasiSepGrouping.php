@@ -45,8 +45,11 @@ class InformasiSepGrouping extends Model
         ->whereNull('pendaftaran_t.pasienadmisi_id')
         ->where('inacbg_t.is_finalisasi',true)
         ->where('inacbg_t.is_terkirim',true)
+        ->whereNull('pendaftaran_t.pasienbatalperiksa_id')
+        ->orderBy('sep_t.sep_id', 'desc');  // Added order by sep_id desc
 
-        ->whereNull('pendaftaran_t.pasienbatalperiksa_id');
+        ;
+
         return $query;
             
     }
