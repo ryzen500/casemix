@@ -162,8 +162,19 @@ export default function CodingGrouping({ auth }) {
                 })
                 .catch((error) => {
                     console.error("Error fetching data:", error);
+                    if (error.response && error.response.status === 401) {
+                        // Redirect to the login page using Inertia
+                        toast.current.show({
+                            severity: 'error',
+                            summary: 'Session Expired',
+                            detail: 'Your session has expired. Redirecting to login...',
+                            life: 3000
+                        });
+                        window.open(route('login'), '_parent');                        
+                    }
                     setLoading(false);
                 });
+
         }, Math.random() * 1000 + 250); // Simulate a delay
     };
     const onPageTable = (event) => {
@@ -187,24 +198,32 @@ export default function CodingGrouping({ auth }) {
         // handleSearch();
     };
     // Handle form submission using axios
-    const handleSearch = () => {
+    const handleSearch = async() => {
         setLoading(true);
-        // Perform API request with axios
-        axios.post(route('getSearchGroupperData'), {
-            ...formData,
-            page: lazyParams.page,
-        })
-            .then((response) => {
-                
-                setDatas(response.data.data); // The actual data from the API
-                setTotalRecords(response.data.pagination); // The actual data from the API
-
-                setLoading(false);
-                // Handle the response from the backend
-            })
-            .catch((error) => {
-                console.error('Error:', error);
+        try {
+            const response = await axios.post(route('getSearchGroupperData'), {
+                ...formData,
+                page: lazyParams.page,
             });
+                            
+            setDatas(response.data.data); // The actual data from the API
+            setTotalRecords(response.data.pagination); // The actual data from the API
+
+            setLoading(false);
+        } catch (error) {
+            if (error.response && error.response.status === 401) {
+                toast.current.show({
+                    severity: 'error',
+                    summary: 'Session Expired',
+                    detail: 'Your session has expired. Redirecting to login...',
+                    life: 3000
+                });
+                window.open(route('login'), '_parent');
+            } else {
+                console.error('Error:', error);
+            }
+        }
+
     };
     // Handle pagination event
     const onPage = (event) => {
