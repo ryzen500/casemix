@@ -116,7 +116,7 @@ export default function CodingGrouping({ auth }) {
     let networkTimeout = null;
 
     const tglMasukBody = (rowData) => {
-        console.log("Waktus masuk ", formatDateTime(rowData.tgl_masuk));
+        // console.log("Waktus masuk ", formatDateTime(rowData.tgl_masuk));
         return (
         <>
             <a   style={{ textDecoration: 'underline',color :'blue' }}  href={route('searchGroupperPasien',rowData.nokartuasuransi)} className="submenu-item">{rowData.tgl_masuk?formatDateTime(rowData.tgl_masuk):''} </a>
@@ -126,7 +126,7 @@ export default function CodingGrouping({ auth }) {
 
     const tglPulangBody = (rowData) => {
 
-        console.log("waktu ", formatDateTime(rowData.tgl_pulang));
+        // console.log("waktu ", formatDateTime(rowData.tgl_pulang));
         return rowData.tgl_pulang?formatDateTime(rowData.tgl_pulang):'';
     };
     
@@ -154,7 +154,6 @@ export default function CodingGrouping({ auth }) {
                 per_page: lazyState.rows,
                 ...formData // If you need to send more data
             })
-            axios.post(fetchUrl, formData)
                 .then((response) => {
                     setUsers(response.data.data); // The actual data from the API
                     setPaginations(response.data.pagination);
@@ -551,14 +550,16 @@ export default function CodingGrouping({ auth }) {
                     <div className="col-12">
                         <div className="card">
                             <div className="card-header">
-                                <h4 className="card-title">List Data</h4>
+                                <h4 className="card-title">List Data 
+                                    <span className='font-bold'> ( {paginations.total_items} )</span>
+                                </h4>
                             </div>
                             <div className="card-body">
                                 <div className="table-responsive">
                                     {/* <DataTable url="/getSearchGroupper" columns={columns} /> */}
                                     <DataTable
                                         paginator
-                                        dataKey="nosep"
+                                        dataKey="sep_id"
                                         first={lazyState.first}
                                         rows={parseInt(paginations.items_per_page)}
                                         totalRecords={paginations.total_items}

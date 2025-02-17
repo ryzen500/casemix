@@ -71,7 +71,8 @@ class SepT extends Model
                         END AS status"),
                 'inacbg_t.create_loginpemakai_id AS inacbg_loginpemakai_id',
                 'pegawai_m.nama_pegawai'
-            ); 
+            )
+            ->orderBy('pasien_m.nama_pasien'); 
 
         }else{
             
@@ -106,7 +107,8 @@ class SepT extends Model
                 'pegawai_m.nama_pegawai'
             )
             ->whereNull('pendaftaran_t.pasienadmisi_id')
-            ->whereNull('pendaftaran_t.pasienbatalperiksa_id');
+            ->whereNull('pendaftaran_t.pasienbatalperiksa_id')
+            ->orderBy('pasien_m.nama_pasien'); 
         }
 
         return $query;
