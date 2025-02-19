@@ -16,6 +16,7 @@ use App\Models\CaraKeluarM;
 use App\Models\DiagnosaicdixM;
 use App\Models\InasismdcT;
 use App\Models\KelasPelayananM;
+use App\Models\Konfigsystemk;
 use App\Models\LaporanresepR;
 use App\Models\ObatalkespasienT;
 use App\Models\PasienMordibitasR;
@@ -940,9 +941,18 @@ class InAcbgGrouperController extends Controller
         if($ObatalkesPasien >= 1){
 
             $total_simrs = ($tarifBelumBayar->tarif_tindakan ?? 0) + ($obatBelumBayar->hargajual_oa ?? 0);
-        }else{
+        }else if(!empty($PembayaranPelayananT) &&  $ObatalkesPasien == 0){
 
             $total_simrs = PembayaranPelayananT::getTarifSIMRS($PembayaranPelayananT->pembayaranpelayanan_id)->total_tarif;
+        }else{
+
+            $konfig =  Konfigsystemk::first();
+            // if(){
+
+            // }
+            $totaltagihan = ($tarifBelumBayar->tarif_tindakan ?? 0) + ($obatBelumBayar->hargajual_oa ?? 0);
+            $total_simrs = ceil($totaltagihan / $konfig->pembulatanhargakasir) *$konfig->pembulatanhargakasir;
+            // dd($total_simrs);
         }
 
 
