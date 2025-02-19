@@ -14,8 +14,8 @@ import { faFile } from '@fortawesome/free-solid-svg-icons';
 
 // import jsPDF from "jspdf";
 
-import { FormatRupiah } from '@arismun/format-rupiah';
-import DateRangePicker from '@/Components/DateRangePicker';
+// import { FormatRupiah } from '@arismun/format-rupiah';
+// import DateRangePicker from '@/Components/DateRangePicker';
 
 export default function LaporanBukuRegister({ auth, pagination, data }) {
     const [users, setUsers] = useState([]);
