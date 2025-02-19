@@ -17,6 +17,9 @@ class PasienM extends Model
             ->join('pasienadmisi_t', 'pendaftaran_t.pasien_id', '=', 'pasienadmisi_t.pendaftaran_id')
             ->join('propinsi_m', 'pasien_m.propinsi_id', '=', 'propinsi_m.propinsi_id')
             ->join('kabupaten_m', 'pasien_m.kabupaten_id', '=', 'kabupaten_m.kabupaten_id')
+            ->join('pegawai_m', 'pendaftaran_t.pegawai_id', '=', 'pegawai_m.pegawai_id')
+            ->leftJoin('gelarbelakang_m', 'pegawai_m.gelarbelakang_id', '=', 'gelarbelakang_m.gelarbelakang_id') // Adjust the join condition as per your database schema
+            ->leftJoin('sep_t', 'pendaftaran_t.sep_id', '=', 'sep_t.sep_id') // Adjust the join condition as per your database schema
             ->leftJoin('kelurahan_m', 'pasien_m.kelurahan_id', '=', 'kelurahan_m.kelurahan_id')
             ->leftJoin('asuransipasien_m', 'pendaftaran_t.asuransipasien_id', '=', 'asuransipasien_m.asuransipasien_id')
             ->leftJoin('caramasuk_m', 'pendaftaran_t.caramasuk_id', '=', 'caramasuk_m.caramasuk_id')
@@ -38,6 +41,7 @@ class PasienM extends Model
                 'pasien_m.jenisidentitas',
                 'pasien_m.no_identitas_pasien',
                 'pasien_m.namadepan',
+                'sep_t.nosep',
                 'pasien_m.nama_pasien',
                 'pasien_m.nama_bin',
                 'pasien_m.jeniskelamin',
@@ -126,8 +130,24 @@ class PasienM extends Model
                 'asuransipasien_m.tgl_konfirmasi',
                 'asuransipasien_m.asuransipasien_aktif',
                 'pendaftaran_t.sep_id',
-                'pasien_m.rhesus'
-            ])
+                'pasien_m.rhesus',
+                DB::raw('CASE WHEN pendaftaran_t.pasienadmisi_id IS NULL THEN pendaftaran_t.pegawai_id ELSE pasienadmisi_t.pegawai_id END AS pegawai_id'),
+                DB::raw("
+                CASE 
+                    WHEN pendaftaran_t.pasienadmisi_id IS NULL 
+                    THEN CONCAT(
+                        COALESCE(pegawai_m.gelardepan, ''), ' ', 
+                        pegawai_m.nama_pegawai, ' ', 
+                        COALESCE(gelarbelakang_m.gelarbelakang_nama, '')
+                    ) 
+                    ELSE CONCAT(
+                        COALESCE(pegawai_m.gelardepan, ''), ' ', 
+                        pegawai_m.nama_pegawai, ' ', 
+                        COALESCE(gelarbelakang_m.gelarbelakang_nama, '')
+                    ) 
+                END AS nama_pegawai
+            ")            
+                ])
             ->whereNull('pendaftaran_t.pasienbatalperiksa_id');
           
 

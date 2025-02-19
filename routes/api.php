@@ -82,7 +82,7 @@ Route::group(['prefix' => 'feature', 'middleware' => 'auth.jwt'], function () {
  Route::group(['prefix' => 'reporting', 'middleware' => 'auth.jwt'], function () {
     //POST 
     Route::post('DetailPasienPulang', [LaporandetailPasienpulangController::class, 'index'])->name('DetailPasienPulang');
-    Route::post('BukuRegister', [laporanBukuRegisterController::class, 'index'])->name('BukuRegister');
+    Route::post('BukuRegister', [laporanBukuRegisterController::class, 'getData'])->name('BukuRegister');
     Route::post('LaporanKlaimPiutang', [InAcbgGrouperController::class, 'listReportClaim'])->name('LaporanKlaimPiutang');
     Route::get('getData', [LaporanSEPController::class, 'getData'])->name('getData');
 

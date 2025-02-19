@@ -3676,27 +3676,27 @@ const handleKirimOnlineKlaim = (e) => {
     // console.log('Form Data Submitted:', datas);
 
     // Perform API request with axios
-    toast.current.show({ severity: 'success', summary: 'Comming Soon', detail: 'Silahkan Menunggu Fitur Ini Release', life: 3000 });
+    // toast.current.show({ severity: 'success', summary: 'Comming Soon', detail: 'Silahkan Menunggu Fitur Ini Release', life: 3000 });
 
-    // const payload = {
-    //     nomor_sep: datas.noSep,
-    //     coder_nik: auth.user.coder_nik
-    // };
-    // axios.post(route('kirimIndividualKlaim'), payload)
-    //     .then((response) => {
-    //         // setDataFinalisasi(response.data.data);
-    //         if (Boolean(response.data.success) === false) {
-    //             toast.current.show({ severity: 'error', summary: response.data.message, detail: datas.noSep, life: 3000 });
+    const payload = {
+        nomor_sep: datas.noSep,
+        coder_nik: auth.user.coder_nik
+    };
+    axios.post(route('kirimIndividualKlaim'), payload)
+        .then((response) => {
+            // setDataFinalisasi(response.data.data);
+            if (Boolean(response.data.success) === false) {
+                toast.current.show({ severity: 'error', summary: response.data.message, detail: datas.noSep, life: 3000 });
 
-    //         } else {
-    //             toast.current.show({ severity: 'success', summary: `Data  Berhasil Di edit ulang`, detail: datas.noSep, life: 3000 });
+            } else {
+                toast.current.show({ severity: 'success', summary: `Data  Berhasil Di edit ulang`, detail: datas.noSep, life: 3000 });
 
-    //         }
-    //         // Handle the response from the backend
-    //     })
-    //     .catch((error) => {
-    //         console.error('Error:', error);
-    //     });
+            }
+            // Handle the response from the backend
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
 }
 
 const handleEditUlangKlaim = (e) => {
