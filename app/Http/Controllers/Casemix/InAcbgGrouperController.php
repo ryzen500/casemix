@@ -821,8 +821,8 @@ class InAcbgGrouperController extends Controller
 
                   
                     if (!empty($getClaim['data']['data'])) {
-                        $data[$key]['tglSep'] = $getClaim['data']['data']['tgl_masuk'];
-                        $data[$key]['tglPlgSep'] = $getClaim['data']['data']['tgl_pulang'];
+                        $data[$key]['tglSep'] =$getClaim['data']['data']['tgl_masuk']!='00/00/0000'? Carbon::createFromFormat('d/m/Y', $getClaim['data']['data']['tgl_masuk'])->format('Y-m-d'):'0000-00-00';
+                        $data[$key]['tglPlgSep'] =$getClaim['data']['data']['tgl_pulang']!='00/00/0000'? Carbon::createFromFormat('d/m/Y', $getClaim['data']['data']['tgl_pulang'])->format('Y-m-d'):'0000-00-00';
                         $data[$key]['jaminan'] = $getClaim['data']['data']['payor_nm'];
                         $tipe = '-';
                         if ($getClaim['data']['data']['jenis_rawat'] == 1) {
@@ -896,6 +896,7 @@ class InAcbgGrouperController extends Controller
         $model = new SearchSepService();
         $getRiwayat = $model->getRiwayatData($noSep)->getOriginalContent();
         $pendaftaran = PendaftaranT::getDataGroup($pendaftaran_id);
+        $pendaftaran->umur = (int) $pendaftaran->umur; 
         $tarif = PendaftaranT::getTarif($pendaftaran_id);
         $tarifBelumBayar = PendaftaranT::getTarifTotal($pendaftaran_id);
 

@@ -22,7 +22,7 @@ import { Calendar } from 'primereact/calendar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Flatpickr from "react-flatpickr";
 import { Dialog } from 'primereact/dialog';
-import { faUser, faHome, faCog, faEllipsis, faQuestionCircle, faArrowLeft, faTrashCan, faFile, faFileLines } from "@fortawesome/free-solid-svg-icons";
+import { faUser, faHome, faCog, faEllipsis, faQuestionCircle, faArrowLeft, faTrashCan, faFile, faFileLines, faRotate } from "@fortawesome/free-solid-svg-icons";
 import { Tooltip } from 'primereact/tooltip';
 
 export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMasuk, Jaminan, DPJP, jenisKasus, pegawai, kelompokDiagnosa, COB, caraPulang }) {
@@ -50,6 +50,7 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
 
     const [dataDiagnosaINA, setDiagnosaINA] = useState([]);
     const [selectedDialog, setSelectedDialog] = useState(null);
+    const [selectedDialogSinkron, setSelectedDialogSinkron] = useState(null);
 
     // Intubasi dan extubasi 
     let emptyRawatIntensif = {
@@ -78,6 +79,13 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
 
     const closeDialog = () => {
         setSelectedDialog(null);
+    };
+    const openDialogSinkron = (rowData) => {
+        setSelectedDialogSinkron(rowData.sep_id);
+    };
+
+    const closeDialogSinkron = () => {
+        setSelectedDialogSinkron(null);
     };
     let emptyDiagnosa = {
         diagnosa_id: null,
@@ -1062,7 +1070,7 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
                             ...prevTotal,
                             tanggal_masuk: response.data.inacbg.tglrawat_masuk,
                             tanggal_pulang: response.data.inacbg.tglrawat_masuk,
-                            umur: response.data.inacbg.umur_pasien,
+                            umur: response.data.inacbg.umur_pasien==0?pendaftarans.umur:response.data.inacbg.umur_pasien,
                             pendaftaran_id: response.data.inacbg.pendaftaran_id,// Update the specific field dynamically
                         }));
                         setTarifs(setTarifInacbg);
@@ -1098,12 +1106,13 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
                             };
                         });
 
-                        console.log("Hello ",(response.data.getGrouping.data.data.umur_hari))
-                        setPendaftarans((prevTotal) => ({
-                            ...prevTotal,
-                          
-                            umur: (response.data.getGrouping.data.data.umur_tahun !== 0 ) ? response.data.getGrouping.data.data.umur_tahun : parseInt(parseInt(response.data.getGrouping.data.data.umur_hari) / 30 ),
-                        }));
+                        if(response.data.getGrouping.data.data.grouper.response!==null){
+                            setPendaftarans((prevTotal) => ({
+                                ...prevTotal,
+                            
+                                umur: (response.data.getGrouping.data.data.umur_tahun !== 0 ) ? response.data.getGrouping.data.data.umur_tahun : parseInt(parseInt(response.data.getGrouping.data.data.umur_hari) / 30 ),
+                            }));
+                        }
                         setRawatIntensif((prevDataFinal) => {
                             // console.log("Data FInal sat", response.data);
 
@@ -1906,7 +1915,7 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
                                     <td width={"10%"} style={{ textAlign: 'right', paddingRight: '15px', fontSize: '1rem' }}>Umur</td>
                                     <td width={"20%"} style={{ fontSize: '1rem' }}>
                                         <InputText name='umur'
-                                            value={pendaftarans.umur} className='ml-2 col-sm-3' /> {(dataGrouping.umur_tahun === 0 ) ? ` Bulan`  : `Tahun`}
+                                            value={pendaftarans.umur} className='ml-2 col-sm-3' /> {(dataGrouping.grouper.response!==null)?(dataGrouping.umur_tahun === 0 ) ? ` Bulan`  : `Tahun`:`Tahun`}
                                     </td>
                                 </tr>
                                 <tr>
@@ -3782,7 +3791,7 @@ const tglSepBody = (rowData) => {
     // console.log("Waktus masuk ", formatDate(rowData.tglSep));
     return (
         <>
-            {rowData.tglSep ? formatDate(rowData.tglSep) : '-'}
+            {rowData.tglSep ? (rowData.tglSep) : '-'}
 
         </>);
 
@@ -3792,7 +3801,7 @@ const tglPlgSepBody = (rowData) => {
     // console.log("Data", rowData);
     return (
         <>
-            {rowData.tglPlgSep ? formatDate(rowData.tglPlgSep) : '-'}
+            {rowData.tglPlgSep ? (rowData.tglPlgSep) : '-'}
         </>);
 
 };
@@ -3854,7 +3863,12 @@ const noSepBody = (rowData) => {
     return (
         <div>
             {rowData.pendaftaran_id == null ? (
-                <div>{rowData.noSep}<br /> <span style={{ color: 'red' }}> ( No SEP belum di sinkron )</span> </div> // Show message if pendaftaran_id is null
+                <div>{rowData.noSep} {"\u00A0"}
+                    <span data-pr-tooltip="Klik Untuk Sinkron SEP" data-pr-position="bottom" id="info-icon" onClick={() => openDialogSinkron(rowData)}>
+                        <FontAwesomeIcon icon={faRotate} />
+                        {/* Dialog */}
+                    </span>
+                <br /> <span style={{ color: 'red' }}> ( No SEP belum di sinkron )</span> </div> // Show message if pendaftaran_id is null
             ) : (
                 <div>
                     <span data-pr-tooltip="Klik Untuk Melihat File Simplifikasi" data-pr-position="bottom" id="info-icon" onClick={() => openDialog(rowData)}>
