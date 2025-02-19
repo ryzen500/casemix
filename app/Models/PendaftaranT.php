@@ -183,14 +183,14 @@ class PendaftaranT extends Model
                 // 'obatalkespasien_t.hargajual_oa',
                 DB::raw("
                 CASE 
-    WHEN obatalkespasien_t.is_obatkronis = FALSE THEN 
-        (obatalkespasien_t.hargasatuan_oa + obatalkespasien_t.ppnperobat) * obatalkespasien_t.qty_oa  
-    WHEN obatalkespasien_t.is_obatkronis = TRUE THEN 
-        formulaobatkronis_m.jumlahobat_minimal::double precision * 
-        (obatalkespasien_t.hargasatuan_oa + obatalkespasien_t.ppnperobat) 
-    ELSE 
-        0::double precision  
-END
+        WHEN obatalkespasien_t.is_obatkronis = FALSE THEN 
+            (obatalkespasien_t.hargasatuan_oa + obatalkespasien_t.ppnperobat) * obatalkespasien_t.qty_oa  
+        WHEN obatalkespasien_t.is_obatkronis = TRUE THEN 
+            formulaobatkronis_m.jumlahobat_minimal::double precision * 
+            (obatalkespasien_t.hargasatuan_oa + obatalkespasien_t.ppnperobat) 
+        ELSE 
+            0::double precision  
+    END
 
                 AS hargajual_oa"),
             )

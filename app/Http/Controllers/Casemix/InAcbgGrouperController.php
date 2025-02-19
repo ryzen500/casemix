@@ -17,6 +17,7 @@ use App\Models\DiagnosaicdixM;
 use App\Models\InasismdcT;
 use App\Models\KelasPelayananM;
 use App\Models\LaporanresepR;
+use App\Models\ObatalkespasienT;
 use App\Models\PasienMordibitasR;
 use App\Models\PegawaiM;
 use App\Models\PembayaranPelayananT;
@@ -909,7 +910,14 @@ class InAcbgGrouperController extends Controller
         $PembayaranPelayananT = PembayaranPelayananT::where('pendaftaran_id', $pendaftaran_id)->first();
         // var_dump($PembayaranPelayananT->pembayaranpelayanan_id);die;
        $total_simrs = 0 ;
-        // if(!empty($PembayaranPelayananT)){
+        
+       $ObatalkesPasien = ObatalkespasienT::where([
+        'pendaftaran_id' => $pendaftaran_id,
+        'is_obatkronis' => true
+    ])->count();
+    
+        // dd(($ObatalkesPasien));
+       // if(!empty($PembayaranPelayananT)){
 
 
         //     $TandabuktiBayarT = TandaBuktiBayarT::where('pembayaranpelayanan_id', $PembayaranPelayananT->pembayaranpelayanan_id)->first();
@@ -928,9 +936,15 @@ class InAcbgGrouperController extends Controller
             //     'obatkronis' => floatval($obatBelumBayar->hargajual_oa),
             //     'hasil' => floatval($tarifBelumBayar->tarif_tindakan) + floatval($obatBelumBayar->hargajual_oa)
             // ]);
-        $total_simrs = ($tarifBelumBayar->tarif_tindakan ?? 0) + ($obatBelumBayar->hargajual_oa ?? 0);
 
-        // }
+        if($ObatalkesPasien >= 1){
+
+            $total_simrs = ($tarifBelumBayar->tarif_tindakan ?? 0) + ($obatBelumBayar->hargajual_oa ?? 0);
+        }else{
+
+            $total_simrs = PembayaranPelayananT::getTarifSIMRS($PembayaranPelayananT->pembayaranpelayanan_id)->total_tarif;
+        }
+
 
 
         $serviceGrouping = new groupingService($this->inacbg);
