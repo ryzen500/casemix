@@ -22,7 +22,7 @@ import { Calendar } from 'primereact/calendar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Flatpickr from "react-flatpickr";
 import { Dialog } from 'primereact/dialog';
-import { faUser, faHome, faCog, faEllipsis, faQuestionCircle, faArrowLeft, faTrashCan, faFile, faFileLines, faRotate } from "@fortawesome/free-solid-svg-icons";
+import { faUser, faHome, faCog, faEllipsis, faQuestionCircle, faArrowLeft, faTrashCan, faFile, faCheck, faRotate } from "@fortawesome/free-solid-svg-icons";
 import { Tooltip } from 'primereact/tooltip';
 
 export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMasuk, Jaminan, DPJP, jenisKasus, pegawai, kelompokDiagnosa, COB, caraPulang }) {
@@ -38,7 +38,8 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
     const [beratLahir, setBeratLahir] = useState('');
     const [sistole, setSistole] = useState('');
     const [total_simrs, setTotalSimrs] = useState('');
-
+    const [sinkronDataPasien, setSinkronDataPasien] = useState([]);
+    const [dataSinkron, setDataSinkron] = useState([]);
     const [diastole, setDiastole] = useState('');
     const [upgrade_class_los, setUpgradeKelasLos] = useState('');
 
@@ -82,9 +83,84 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
         setSelectedDialog(null);
     };
     const openDialogSinkron = (rowData) => {
-        setSelectedDialogSinkron(rowData.sep_id);
-    };
+        setSelectedDialogSinkron(rowData.noSep);
+        // Perform API request with axios
+        const payload = {
+            noKartu: rowData.noKartu,
+            noSep: rowData.noSep,
+        };
+        axios.post(route('sinkronSep'), payload)
+        .then((response) => {
+            // Handle the response from the backend
+            
+            setDataSinkron(response.data.getData);
+            setSinkronDataPasien(response.data.pendaftaran);
+            // {console.log("Display 2", hide)}
 
+        })
+        .catch((error) => {
+            if (error.response && error.response.status === 401) {
+                // Redirect to the login page using Inertia
+                toast.current.show({
+                    severity: 'error',
+                    summary: 'Session Expired',
+                    detail: 'Your session has expired. Redirecting to login...',
+                    life: 3000
+                });
+                window.open(route('login'), '_parent');                        
+            }
+            console.error('Error:', error);
+        });
+    };
+    const rowNumberTemplateSinkron = (rowData, { rowIndex }) => {
+        // console.log(rowData,'<<<<<<<<<<<<<<<')
+        return <>
+        <span data-pr-tooltip="Klik Untuk Pilih data sinkron" data-pr-position="bottom" id="info-icon" onClick={() => submitSinkron(rowData)}>
+
+            <FontAwesomeIcon
+                icon={faCheck}
+                style={{ fontSize: "20px", color: 'green', cursor: 'pointer', marginLeft: '10px' }}
+            />
+        </span>
+        </>; // rowIndex is 0-based, so we add 1 to start from 1
+    };
+    const submitSinkron = (rowData)=>{
+        const payload = {
+            dataSinkron: dataSinkron,
+            pendaftaran_id: rowData.pendaftaran_id,
+            auth : auth
+        };
+        axios.post(route('submitSinkron'), payload)
+        .then((response) => {
+            // Handle the response from the backend
+            updateRowSinkron(selectedDialogSinkron,rowData.pendaftaran_id,response.sep_id);
+            // {console.log("Display 2", hide)}
+
+        })
+        .catch((error) => {
+            if (error.response && error.response.status === 401) {
+                // Redirect to the login page using Inertia
+                toast.current.show({
+                    severity: 'error',
+                    summary: 'Session Expired',
+                    detail: 'Your session has expired. Redirecting to login...',
+                    life: 3000
+                });
+                window.open(route('login'), '_parent');                        
+            }
+            console.error('Error:', error);
+        });
+    } 
+    const updateRowSinkron = async(noSep,pendaftaran_id,sep_id)=>{
+        const updatedModel = await models.map((item) => {
+            if (item.noSep === noSep) {
+                return { ...item, pendaftaran_id:pendaftaran_id, sep_id:sep_id }; // Update the tglSep for the matching row
+            }
+            return item; // Leave the rest unchanged
+        });
+        // Update the model state with the modified array
+        setModels(updatedModel);
+    }
     const closeDialogSinkron = () => {
         setSelectedDialogSinkron(null);
     };
@@ -2657,7 +2733,7 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
                                                 <div className="col-sm-6">
                                                 </div>
                                                 <div className="col-sm-6">
-                                                    <button className="btn btn-primary "   style={{ float: 'right' }} onClick={handleExport} >Expot Coding Ke-INA</button>
+                                                    <button className="btn btn-primary "   style={{ float: 'right', marginTop:'-10px' }} onClick={handleExport} >Expot Coding Ke-INA</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -3886,6 +3962,25 @@ const noSepBody = (rowData) => {
                         <FontAwesomeIcon icon={faRotate} />
                         {/* Dialog */}
                     </span>
+                    <Dialog
+                        header="Sinkron SEP"
+                        visible={selectedDialogSinkron === rowData.noSep}
+                        maximizable
+                        style={{ width: '70%', height: '50vw' }}
+                        onHide={closeDialogSinkron}
+                    >
+                        <DataTable
+                            dataKey="pendaftaran_id"
+                            showGridlines 
+                            value={sinkronDataPasien}
+                            loading={loading}
+                            stripedRows
+                        >
+                            <Column body={rowNumberTemplateSinkron} header="" style={{ width: '50px', alignItems: 'center' , border:'1px solid #e5e7eb'}} />
+                            <Column field="nama_pasien" header="Nama Pasien" body={(rowData)=>(<>{rowData.nama_pasien || '-'}</>)} style={{ alignItems: 'center', border:'1px solid #e5e7eb' }} ></Column>
+                            <Column field="no_pendaftaran" header="No Pendaftaran" body={(rowData)=>(<>{rowData.no_pendaftaran || '-'}</>)} style={{ alignItems: 'center', border:'1px solid #e5e7eb' }} ></Column>                            
+                        </DataTable>
+                </Dialog>
                 <br /> <span style={{ color: 'red' }}> ( No SEP belum di sinkron )</span> </div> // Show message if pendaftaran_id is null
             ) : (
                 <div>

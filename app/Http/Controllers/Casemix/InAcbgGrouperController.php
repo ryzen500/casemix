@@ -9,6 +9,7 @@ use App\Http\Services\Action\SaveDataReeditKlaimService;
 use App\Http\Services\groupingService;
 use App\Http\Services\MonitoringHistoryService;
 use App\Http\Services\Action\SaveDataKlaimService;
+use App\Http\Services\Action\SaveSepTService;
 
 use App\Http\Services\SearchSepService;
 use App\Models\CarabayarM;
@@ -36,6 +37,7 @@ use App\Models\PasienmorbiditasT;
 use App\Models\PendaftaranT;
 use App\Models\ProfilrumahsakitM;
 use App\Models\SepT;
+use App\Models\AsuransipasienM;
 use PaginationLibrary\Pagination;
 use Inertia\Inertia;
 use App\Services\DataService;
@@ -1196,6 +1198,100 @@ class InAcbgGrouperController extends Controller
             'total_simrs'=> $total_simrs,
             'getGrouping' => $getGrouping,
             'konfig' =>$konfig
+        ]);
+    }
+
+    public function sinkronSep(Request $request){
+        $noKartu = $request->input('noKartu');
+        $noSep = $request->input('noSep');
+
+        $asuransi = AsuransipasienM::getByNoka($noKartu);
+        $model = new SearchSepService();
+        $getData = $model->getRiwayatData($noSep)->getOriginalContent();
+        $pendaftaran = [];
+        if(!empty($asuransi)){
+            $pendaftaran = PendaftaranT::getByPasienId($asuransi->pasien_id);
+        }
+        return response()->json([
+            'getData' => $getData,
+            'pendaftaran' => $pendaftaran
+        ]);
+    }
+    public function submitSinkron(Request $request){
+        $dataSinkron = $request->input('dataSinkron');
+        $pendaftaran_id = $request->input('pendaftaran_id');
+        $auth = $request->input('auth');
+
+        $model = new SearchSepService();
+        $getDataRujukan = $model->getRujukan($dataSinkron['response']['noRujukan'])->getOriginalContent();
+        $getDataRujukanRs = $model->getRujukanRs($dataSinkron['response']['noRujukan'])->getOriginalContent();
+
+        if(!empty($getDataRujukanRs['response'])){
+            $jenisrujukan_nama = 2;
+            $tglrujukan = $getDataRujukanRs['response']['rujukan']['tglKunjungan'];
+
+            $ppkrujukan = $getDataRujukanRs['response']['rujukan']['peserta']['provUmum']['kdProvider'];
+            $ppkpelayanan = $getDataRujukanRs['response']['rujukan']['peserta']['provUmum']['nmProvider'];
+            $diagnosaawal = $getDataRujukanRs['response']['rujukan']['diagnosa']['kode'];
+            $nama_diagnosaawal = $getDataRujukanRs['response']['rujukan']['diagnosa']['nama'];
+
+        }else{
+            $jenisrujukan_nama = 1;
+            $tglrujukan = $getDataRujukan['response']['rujukan']['tglKunjungan'];
+            $ppkrujukan = $getDataRujukan['response']['rujukan']['peserta']['provUmum']['kdProvider'];
+            $ppkpelayanan = $getDataRujukan['response']['rujukan']['peserta']['provUmum']['nmProvider'];
+            $diagnosaawal = $getDataRujukan['response']['rujukan']['diagnosa']['kode'];
+            $nama_diagnosaawal = $getDataRujukan['response']['rujukan']['diagnosa']['nama'];
+
+        }
+        $klsrawat = (explode(" ",$dataSinkron['response']['kelasRawat']));
+        $data = [
+            'tglsep'=>$dataSinkron['response']['tglSep'],
+            'nosep'=>$dataSinkron['response']['noSep'],
+            'nokartuasuransi'=>$dataSinkron['response']['peserta']['noKartu'],
+            'tglrujukan'=>$tglrujukan,
+            'norujukan'=>$dataSinkron['response']['noRujukan'],
+            'ppkrujukan'=>$ppkrujukan,
+            'ppkpelayanan'=>$ppkpelayanan,
+            'jnspelayanan'=>($dataSinkron['response']['jnsPelayanan']=='Rawat Inap')?1:2,
+            'catatansep'=>$dataSinkron['response']['catatan'],
+            'diagnosaawal'=>$diagnosaawal,
+            'politujuan'=>$dataSinkron['response']['poli'],
+            'klsrawat'=>$klsrawat[1],
+            'penjamin_lakalantas'=>$dataSinkron['response']['penjamin'],
+            'lokasi_lakalantas'=>$dataSinkron['response']['lokasiKejadian']['lokasi'],
+            'poli_eksekutif'=>$dataSinkron['response']['poliEksekutif'],
+            'cob'=>$dataSinkron['response']['cob'],
+            'jenisrujukan_nama'=>$jenisrujukan_nama,
+            'kelasrawat_kode'=>$klsrawat[1],
+            'hakkelas_kode'=>$dataSinkron['response']['klsRawat']['klsRawatHak'],
+            'nama_diagnosaawal'=>$nama_diagnosaawal,
+            'no_surat'=>$dataSinkron['response']['kontrol']['noSurat'],
+            'kode_dpjp'=>$dataSinkron['response']['kontrol']['kdDokter'],
+            'nama_dpjp'=>$dataSinkron['response']['kontrol']['nmDokter'],
+            'keterangan_kejadian'=>$dataSinkron['response']['lokasiKejadian']['ketKejadian'],
+            'tanggal_kejadian'=>$dataSinkron['response']['lokasiKejadian']['tglKejadian'],
+            'propinsi_lakalantas_id'=>$dataSinkron['response']['lokasiKejadian']['kdProp'],
+            'kabupaten_lakalantas_id'=>$dataSinkron['response']['lokasiKejadian']['kdKab'],
+            'kecamatan_lakalantas_id'=>$dataSinkron['response']['lokasiKejadian']['kdKec'],
+            'katarak'=>$dataSinkron['response']['katarak'],
+            'jenis_kunjungan'=>$dataSinkron['response']['tujuanKunj']['kode'],
+            'flag_procedure'=>$dataSinkron['response']['flagProcedure']['kode'],
+            'kode_penunjang'=>$dataSinkron['response']['kdPenunjang']['kode'],
+            'asesmen_pelayanan'=>$dataSinkron['response']['assestmenPel']['kode'],
+            'statuskecelakaan_kode'=>$dataSinkron['response']['kdStatusKecelakaan'],
+            'statuskecelakaan_nama'=>$dataSinkron['response']['nmstatusKecelakaan'],
+            'penanggungjwb_naikkls_id'=>$dataSinkron['response']['klsRawat']['penanggungJawab'],
+            'issinkron'=>true,
+            'create_time' => date('Y-m-d H:i:s'),
+            'create_loginpemakai_id' => $auth['user']['loginpemakai_id'], // Tambahkan tanggal saat ini
+            'create_ruangan' => 429,
+        ];
+        $serviceSep = new SaveSepTService();
+        $getGrouping = $serviceSep->saveSinkronSep($data,$pendaftaran_id);
+        return response()->json([
+            'pendaftaran_id' => $pendaftaran_id,
+            'sep_id' => $getGrouping['sep_id']
         ]);
     }
     public function getClaimData(Request $request){

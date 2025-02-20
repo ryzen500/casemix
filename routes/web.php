@@ -86,6 +86,8 @@ Route::middleware('auth')->group(function () {
     Route::post('deleteKlaim', [InAcbgGrouperController::class, 'deleteKlaim'])->name('deleteKlaim');
     Route::post('validateSITB', [InAcbgGrouperController::class, 'validateSITB'])->name('validateSITB');
 
+    Route::post('sinkronSep', [InAcbgGrouperController::class, 'sinkronSep'])->name('sinkronSep');
+    Route::post('submitSinkron', [InAcbgGrouperController::class, 'submitSinkron'])->name('submitSinkron');
     // kirim data online
     Route::get('kirimDataOnline', [InAcbgGrouperController::class, 'kirimDataOnline'])->name('kirimDataOnline');
     Route::post('kirimDataOnlineSearch', [InAcbgGrouperController::class, 'kirimDataOnlineSearch'])->name('kirimDataOnlineSearch');
