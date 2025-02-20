@@ -2651,17 +2651,6 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
                             <div className='text-center' style={{ fontSize: '1rem' }}><Checkbox defaultChecked></Checkbox> Menyatakan benar bahwa data tarif yang tersebut di atas adalah benar sesuai dengan kondisi yang sesungguhnya.</div>
                             <TabView>
                                 <TabPanel header="Coding UNU Grouper">
-                                    <div className='col-sm-12'>
-                                        <div className="row">
-                                            <div className="col-sm-6">
-
-                                            </div>
-                                            <div className="col-sm-6">
-
-                                            </div>
-                                        </div>
-
-                                    </div>
                                     <div className="p-datatable-header">
                                         <div className='col-sm-12 pb-2'>
                                             <div className="row">
