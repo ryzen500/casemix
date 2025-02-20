@@ -238,6 +238,18 @@ class PendaftaranT extends Model
         $query->where('laporan.pendaftaran_id', '=', $pendaftaran_id);
         return $query->first();
     }
+    public static function getByPasienId(int $pasien_id)
+    {
+        $results = DB::table('pendaftaran_t')
+            ->select('pendaftaran_t.*', 'pasien_m.nama_pasien')
+             ->where('pendaftaran_t.pasien_id', $pasien_id)
+             ->whereIn('pendaftaran_t.penjamin_id', [511,67,2])
+             ->whereNull('pendaftaran_t.sep_id')
+             ->join('pasien_m', 'pendaftaran_t.pasien_id', '=', 'pasien_m.pasien_id')
+             ->orderBy('pendaftaran_t.tgl_pendaftaran', 'desc')
+             ->get();
+        return ($results);
+    }
     public static function getDataGroup(int $pendaftaran_id)
     {
         $query = DB::table('pendaftaran_t as p')

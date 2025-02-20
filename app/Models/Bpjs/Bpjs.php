@@ -172,6 +172,8 @@ class Bpjs extends Model
             'monitoring_kunjungan' => 'Monitoring/Kunjungan',
             'monitoring_klaim' => 'Monitoring/Klaim',
             'riwayat_pelayanan' => 'monitoring/HistoriPelayanan',
+            'rujukan' => 'rujukan',
+            'rujukan_rs' => 'rujukan/RS',
 
 
             // Tambahkan endpoint lain sesuai kebutuhan...
