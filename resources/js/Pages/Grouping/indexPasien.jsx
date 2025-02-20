@@ -1915,7 +1915,7 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
                                     <td width={"10%"} style={{ textAlign: 'right', paddingRight: '15px', fontSize: '1rem' }}>Umur</td>
                                     <td width={"20%"} style={{ fontSize: '1rem' }}>
                                         <InputText name='umur'
-                                            value={pendaftarans.umur} className='ml-2 col-sm-3' /> {(dataGrouping.grouper.response!==null)?(dataGrouping.umur_tahun === 0 ) ? ` Bulan`  : `Tahun`:`Tahun`}
+                                            value={pendaftarans.umur} className='ml-2 col-sm-3' /> {(dataGrouping.grouper!=null)?(dataGrouping.grouper.response!==null)?(dataGrouping.umur_tahun === 0 ) ? ` Bulan`  : `Tahun`:`Tahun`:`Tahun`}
                                     </td>
                                 </tr>
                                 <tr>
