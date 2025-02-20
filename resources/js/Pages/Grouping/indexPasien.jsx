@@ -2657,13 +2657,22 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
 
                                             </div>
                                             <div className="col-sm-6">
-                                            <button className="btn btn-primary"   style={{ float: 'right' }} onClick={handleExport} >Expot Coding Ke-INA</button>
 
                                             </div>
                                         </div>
 
                                     </div>
                                     <div className="p-datatable-header">
+                                        <div className='col-sm-12 pb-2'>
+                                            <div className="row">
+                                                <div className="col-sm-6">
+                                                </div>
+                                                <div className="col-sm-6">
+                                                    <button className="btn btn-primary "   style={{ float: 'right' }} onClick={handleExport} >Expot Coding Ke-INA</button>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                         {
                                             header
                                         }
