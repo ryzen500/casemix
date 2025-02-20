@@ -28,6 +28,7 @@ import { Tooltip } from 'primereact/tooltip';
 export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMasuk, Jaminan, DPJP, jenisKasus, pegawai, kelompokDiagnosa, COB, caraPulang }) {
     const [datas, setDatas] = useState([]);
     const [jnsPelayanan, setJnsPelayanan] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);  // Manages the button state
 
     const [dataGrouping, setDataGrouping] = useState({
         los: 0,
@@ -369,6 +370,12 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
             console.error('Error fetching data:', error);
         }
     };
+    const handleExport = () =>{
+        setDiagnosaINA(dataDiagnosa);
+        setDataIcd9cmINA(dataIcd9cm);
+        toast.current.show({ severity: 'success', summary: `Success`, detail: `Berhasil Expot Coding Ke-INA`, life: 3000 });
+
+    }
     // Handle input changes
     const handleInputChangeAutocompleteRow = (index, field, value, type) => {
         if (type === 'unu') {
@@ -2644,6 +2651,18 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
                             <div className='text-center' style={{ fontSize: '1rem' }}><Checkbox defaultChecked></Checkbox> Menyatakan benar bahwa data tarif yang tersebut di atas adalah benar sesuai dengan kondisi yang sesungguhnya.</div>
                             <TabView>
                                 <TabPanel header="Coding UNU Grouper">
+                                    <div className='col-sm-12'>
+                                        <div className="row">
+                                            <div className="col-sm-6">
+
+                                            </div>
+                                            <div className="col-sm-6">
+                                            <button className="btn btn-primary"   style={{ float: 'right' }} onClick={handleExport} >Expot Coding Ke-INA</button>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
                                     <div className="p-datatable-header">
                                         {
                                             header
@@ -3150,7 +3169,7 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
                             <div className="col-md-6 d-flex mb-3 mt-5">
                                 {!dataFinalisasi.is_finalisasi && (
                                     <>
-                                        <button className="btn btn-primary" style={{ float: 'right' }} onClick={handleSimpanKlaim}>
+                                        <button className="btn btn-primary" style={{ float: 'right' }} onClick={handleSimpanKlaim} disabled={isSubmitting}>
                                             Simpan
                                         </button>
                                         <button className="btn btn-primary ml-2" style={{ float: 'right' }} onClick={handleSimpanGroupingStage1}>
@@ -3410,7 +3429,7 @@ const headerTemplate = (data) => {
 /**Simpan Klaim */
 const handleSimpanKlaim = (e) => {
     e.preventDefault(); // Prevent page reload
-
+    setIsSubmitting(true);
     // console.log("upgrade_class_class" , KelasPelayananM);
 
     // Perform API request with axios
@@ -3509,10 +3528,11 @@ const handleSimpanKlaim = (e) => {
 
             }
             // {console.log("Display 2", hide)}
-
+            setIsSubmitting(false);
         })
         .catch((error) => {
             console.error('Error:', error);
+            setIsSubmitting(false);
         });
 };
 
