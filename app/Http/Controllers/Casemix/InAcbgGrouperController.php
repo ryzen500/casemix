@@ -904,8 +904,6 @@ class InAcbgGrouperController extends Controller
         $tarif = PendaftaranT::getTarif($pendaftaran_id);
         $tarifBelumBayar = PendaftaranT::getTarifTotal($pendaftaran_id);
 
-        $obat = PendaftaranT::getGroupping($pendaftaran_id);
-        $obatBelumBayar = PendaftaranT::getGrouppingBelumBayar($pendaftaran_id);
 
         $profil = ProfilrumahsakitM::getProfilRS();
         $SEP = Inacbg::where('inacbg_nosep', $noSep)->first();
@@ -915,9 +913,9 @@ class InAcbgGrouperController extends Controller
        $total_simrs = 0 ;
         
        $ObatalkesPasien = ObatalkespasienT::where([
-        'pendaftaran_id' => $pendaftaran_id,
-        'is_obatkronis' => true
-    ])->count();
+            'pendaftaran_id' => $pendaftaran_id,
+            'is_obatkronis' => true
+        ])->count();
     
         // dd(($ObatalkesPasien));
        // if(!empty($PembayaranPelayananT)){
@@ -941,12 +939,22 @@ class InAcbgGrouperController extends Controller
             // ]);
 
         if($ObatalkesPasien >= 1){
+            $obat = PendaftaranT::getGroupping($pendaftaran_id,true);
+            $tarif->kamar_akomodasi = $tarif->kamar_akomodasi +  (!empty($obat)?(!empty($obat->embalase)?$obat->embalase:0):0);
 
-            $total_simrs = ($tarifBelumBayar->tarif_tindakan ?? 0) + ($obatBelumBayar->hargajual_oa ?? 0);
+            $obatBelumBayar = PendaftaranT::getGrouppingBelumBayar($pendaftaran_id,true);
+            $total_simrs = ($tarifBelumBayar->tarif_tindakan ?? 0) + ($obatBelumBayar->hargajual_oa ?? 0)+ ($obatBelumBayar->embalase ?? 0);
         }else if(!empty($PembayaranPelayananT) &&  $ObatalkesPasien == 0){
+            $obatBelumBayar = PendaftaranT::getGrouppingBelumBayar($pendaftaran_id,true);
+            $buktiBayarT = PembayaranPelayananT::getTarifSIMRS($PembayaranPelayananT->pembayaranpelayanan_id);
+            $total_simrs = $buktiBayarT->total_tarif;
+            // pembulatan +
+            $obat = PendaftaranT::getGroupping($pendaftaran_id,true);
+            $tarif->kamar_akomodasi = $tarif->kamar_akomodasi + $buktiBayarT->jmlpembulatanasuransi +  (!empty($obat)?(!empty($obat->embalase)?$obat->embalase:0):0);
 
-            $total_simrs = PembayaranPelayananT::getTarifSIMRS($PembayaranPelayananT->pembayaranpelayanan_id)->total_tarif;
         }else{
+            $obat = PendaftaranT::getGroupping($pendaftaran_id,false);
+            $obatBelumBayar = PendaftaranT::getGrouppingBelumBayar($pendaftaran_id,false);
 
             $konfig =  Konfigsystemk::first();
             // if(){

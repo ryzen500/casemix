@@ -114,11 +114,12 @@ class PendaftaranT extends Model
 
         return $query;
     }
-    private static function buildBaseQueryGrouping()
+    private static function buildBaseQueryGrouping($is_bayar)
     {
         $laporan = DB::table(function ($query) {
             $query->select(
                 'pendaftaran_t.pendaftaran_id',
+                'obatalkespasien_t.oasudahbayar_id',
                 'sep_t.sep_id',
                 DB::raw("CASE 
                     WHEN pembayaranpelayanan_t.jasaembalase IS NOT NULL THEN pembayaranpelayanan_t.jasaembalase
@@ -157,18 +158,35 @@ class PendaftaranT extends Model
                 ->leftJoin('pembayaranpelayanan_t', 'pembayaranpelayanan_t.pendaftaran_id', '=', 'pendaftaran_t.pendaftaran_id')
                 ->leftJoin('tandabuktibayar_t', 'pembayaranpelayanan_t.tandabuktibayar_id', '=', 'tandabuktibayar_t.tandabuktibayar_id')
                 ->leftJoin('formulaobatkronis_m', 'formulaobatkronis_m.formulaobatkronis_id', '=', 'obatalkespasien_t.formulaobatkronis_id');
-        }, 'laporan')
-            ->select(
-                'laporan.pendaftaran_id',
-                'laporan.sep_id',
-                DB::raw('SUM(laporan.obat + laporan.embalase) AS obat'),
-                DB::raw('SUM(laporan.alkes) AS alkes'),
-                DB::raw('SUM(laporan.bmhp) AS bmhp'),
-                DB::raw('SUM(laporan.obat_kemoterapi) AS obatkemoterapi'),
-                DB::raw('SUM(laporan.obat_kronis) AS obatkronis'),
-                DB::raw('SUM(laporan.obat + laporan.alkes + laporan.bmhp + laporan.obat_kemoterapi + laporan.obat_kronis) AS total')
-            )
-            ->groupBy('laporan.pendaftaran_id', 'laporan.sep_id');
+        }, 'laporan');
+            if($is_bayar==true){
+                $laporan->select(
+                    'laporan.pendaftaran_id',
+                    'laporan.sep_id',
+                    DB::raw('SUM(laporan.obat ) AS obat'),
+                    DB::raw('laporan.embalase AS embalase'),
+                    DB::raw('SUM(laporan.alkes) AS alkes'),
+                    DB::raw('SUM(laporan.bmhp) AS bmhp'),
+                    DB::raw('SUM(laporan.obat_kemoterapi) AS obatkemoterapi'),
+                    DB::raw('SUM(laporan.obat_kronis) AS obatkronis'),
+                    DB::raw('SUM(laporan.obat + laporan.alkes + laporan.bmhp + laporan.obat_kemoterapi + laporan.obat_kronis) AS total')
+                )
+                ->groupBy('laporan.pendaftaran_id', 'laporan.sep_id','laporan.embalase');
+            }else{
+                $laporan->select(
+                    'laporan.pendaftaran_id',
+                    'laporan.sep_id',
+                    DB::raw('SUM(laporan.obat + laporan.embalase) AS obat'),
+                    DB::raw('laporan.embalase AS embalase'),
+                    DB::raw('SUM(laporan.alkes) AS alkes'),
+                    DB::raw('SUM(laporan.bmhp) AS bmhp'),
+                    DB::raw('SUM(laporan.obat_kemoterapi) AS obatkemoterapi'),
+                    DB::raw('SUM(laporan.obat_kronis) AS obatkronis'),
+                    DB::raw('SUM(laporan.obat + laporan.alkes + laporan.bmhp + laporan.obat_kemoterapi + laporan.obat_kronis) AS total')
+                )
+                ->groupBy('laporan.pendaftaran_id', 'laporan.sep_id','laporan.embalase');
+            }
+
 
         return $laporan
         ;
@@ -183,16 +201,20 @@ class PendaftaranT extends Model
                 // 'obatalkespasien_t.hargajual_oa',
                 DB::raw("
                 CASE 
-        WHEN obatalkespasien_t.is_obatkronis = FALSE THEN 
-            (obatalkespasien_t.hargasatuan_oa + obatalkespasien_t.ppnperobat) * obatalkespasien_t.qty_oa  
-        WHEN obatalkespasien_t.is_obatkronis = TRUE THEN 
-            formulaobatkronis_m.jumlahobat_minimal::double precision * 
-            (obatalkespasien_t.hargasatuan_oa + obatalkespasien_t.ppnperobat) 
-        ELSE 
-            0::double precision  
-    END
+                    WHEN obatalkespasien_t.is_obatkronis = FALSE THEN 
+                        (obatalkespasien_t.hargasatuan_oa + obatalkespasien_t.ppnperobat) * obatalkespasien_t.qty_oa  
+                    WHEN obatalkespasien_t.is_obatkronis = TRUE THEN 
+                        formulaobatkronis_m.jumlahobat_minimal::double precision * 
+                        (obatalkespasien_t.hargasatuan_oa + obatalkespasien_t.ppnperobat) 
+                    ELSE 
+                        0::double precision  
+                END
 
                 AS hargajual_oa"),
+                DB::raw("CASE 
+                    WHEN pembayaranpelayanan_t.jasaembalase IS NOT NULL THEN pembayaranpelayanan_t.jasaembalase
+                    ELSE 0::double precision 
+                END AS embalase"),
             )
                 ->from('pendaftaran_t')
                 ->join('obatalkespasien_t', 'obatalkespasien_t.pendaftaran_id', '=', 'pendaftaran_t.pendaftaran_id')
@@ -206,10 +228,11 @@ class PendaftaranT extends Model
             ->select(
                 'laporan.pendaftaran_id',
                 'laporan.sep_id',
+                'laporan.embalase',
                 DB::raw('SUM(laporan.hargajual_oa) AS hargajual_oa'),
 
             )
-            ->groupBy('laporan.pendaftaran_id', 'laporan.sep_id');
+            ->groupBy('laporan.pendaftaran_id', 'laporan.sep_id', 'laporan.embalase');
         $demos = $laporan->toRawSql();
         Log::info($laporan->toRawSql());
         return $laporan;
@@ -225,14 +248,18 @@ class PendaftaranT extends Model
         return $query->union($query2)->get();
 
     }
-    public static function getGroupping(int $pendaftaran_id)
+    public static function getGroupping(int $pendaftaran_id, $is_bayar)
     {
-        $query = self::buildBaseQueryGrouping();
+
+        $query = self::buildBaseQueryGrouping($is_bayar);
+        if($is_bayar==true){
+            $query->whereNotNull('oasudahbayar_id');
+        }
         $query->where('laporan.pendaftaran_id', '=', $pendaftaran_id);
         return $query->first();
     }
 
-    public static function getGrouppingBelumBayar(int $pendaftaran_id)
+    public static function getGrouppingBelumBayar(int $pendaftaran_id, $is_bayar)
     {
         $query = self::buildBaseQueryBelumBayar();
         $query->where('laporan.pendaftaran_id', '=', $pendaftaran_id);
