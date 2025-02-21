@@ -252,6 +252,11 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
         bmhp: 0,
         sewaalat: 0,
     });
+
+    const getIntegerFromKelas = (kelasRawat) => {
+        const match = kelasRawat.match(/\d+/); // Cari angka dalam string
+        return match ? parseInt(match[0], 10) : null;
+    };
     const [total, setTotal] = useState(0);
     const [totalGrouper, setTotalGrouper] = useState(0);
     const [los , setLos]= useState({
@@ -3527,7 +3532,7 @@ const handleSimpanKlaim = (e) => {
         tgl_pulang: pendaftarans.tanggal_pulang,
         tgl_masuk: pendaftarans.tanggal_masuk,
         jenis_rawat: pendaftarans.jnspelayanan,
-        kelas_rawat: datas.klsRawat.klsRawatHak,
+        kelas_rawat: (kelasEksekutif) ? "1" :  getIntegerFromKelas(datas.kelasRawat),
         gender: datas.peserta.tglLahir,
         coder_nik: auth.user.coder_nik,
         nama_dokter: datas.dpjp.nmDPJP,
