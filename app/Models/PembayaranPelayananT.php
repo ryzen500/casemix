@@ -23,7 +23,7 @@ class PembayaranPelayananT extends Model
     {
         $laporan = DB::table('tandabuktibayar_t')
             ->selectRaw(
-                'tandabuktibayar_t.jmlpembayaran - pembayaranpelayanan_t.selisihuntungrugibpjs + tandabuktibayar_t.jmlpembulatanasuransi AS total_tarif'
+                'tandabuktibayar_t.jmlpembayaran - pembayaranpelayanan_t.selisihuntungrugibpjs + tandabuktibayar_t.jmlpembulatanasuransi AS total_tarif, tandabuktibayar_t.jmlpembulatanasuransi'
             )
             ->join('pembayaranpelayanan_t', 'tandabuktibayar_t.pembayaranpelayanan_id', '=', 'pembayaranpelayanan_t.pembayaranpelayanan_id')
             ->join('pendaftaran_t', 'pembayaranpelayanan_t.pendaftaran_id', '=', 'pendaftaran_t.pendaftaran_id')
