@@ -2,7 +2,7 @@ import Card from '@/Components/Card';
 // import DataTable from '@/Components/DataTable';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, usePage } from '@inertiajs/react';
-import { useEffect, useState , useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { ChakraProvider } from "@chakra-ui/react";
 import { Column } from 'primereact/column';
@@ -42,7 +42,7 @@ export default function LaporanKlaim({ auth, pagination, data }) {
     const openDialog = (rowData) => {
         setSelectedDialog(rowData.sep_id);
     };
-    
+
     const closeDialog = () => {
         setSelectedDialog(null);
     };
@@ -107,10 +107,20 @@ export default function LaporanKlaim({ auth, pagination, data }) {
     };
 
     const header = (
-        <div className="flex align-items-center justify-content-end gap-2">
-            <Button type="button" icon="pi pi-file-excel" severity="success" rounded onClick={exportExcel} data-pr-tooltip="XLS" label="Export ke Excel" />
-            <Button type="button" icon="pi pi-file-pdf" severity="warning" rounded onClick={exportPdf} data-pr-tooltip="PDF"  label="Export ke PDF"/>
-        </div>
+        <>
+            <div>
+                <h4 className="card-title">Laporan Data Validasi
+                    <span className='font-bold'> ( {paginations.total_items} )</span>
+                </h4>
+            </div>
+
+            <div className="flex align-items-center justify-content-end gap-2">
+
+                <Button type="button" icon="pi pi-file-excel" severity="success" rounded onClick={exportExcel} data-pr-tooltip="XLS" label="Export ke Excel" />
+                <Button type="button" icon="pi pi-file-pdf" severity="warning" rounded onClick={exportPdf} data-pr-tooltip="PDF" label="Export ke PDF" />
+            </div>
+        </>
+
     );
 
 
@@ -129,13 +139,13 @@ export default function LaporanKlaim({ auth, pagination, data }) {
         loadLazyData();
     }, [lazyState]);
 
-    
+
     const cols = [
         { field: 'tglsep', header: 'Tanggal Masuk' },
         { field: 'tglpulang', header: 'Tanggal Pulang' },
         { field: 'nama_pasien', header: 'Nama Pasien' },
         { field: 'nosep', header: 'No SEP' },
-        { field: 'jnspelayanan', header: 'Tipe'},
+        { field: 'jnspelayanan', header: 'Tipe' },
         { field: 'klsrawat', header: 'Kelas Pelayanan' },
         { field: 'status', header: 'Status' },
         { field: 'inacbg_loginpemakai_id', header: 'Petugas' },
@@ -156,7 +166,7 @@ export default function LaporanKlaim({ auth, pagination, data }) {
             console.log(parseInt(lazyState.page + 1))
             axios.get(fetchUrl).then(
                 (response) => {
-                    console.log("response" , response.data.data)
+                    console.log("response", response.data.data)
                     console.log(response.data.pagination)
                     console.log(lazyState)
                     setUsers(response.data.data); // The actual data from the API
@@ -258,6 +268,7 @@ export default function LaporanKlaim({ auth, pagination, data }) {
                             <div className="card-body">
                                 <div className="row">
                                     {/* Periode */}
+
                                     <div className="col-md-6">
                                         <div className="form-group">
                                             <label>Periode:</label>
@@ -347,7 +358,7 @@ export default function LaporanKlaim({ auth, pagination, data }) {
                                     <div className="col-md-6 d-flex align-items-end">
                                         <button className="btn btn-primary" onClick={handleSave}>Cari</button>
                                         <button className="btn btn-secondary ml-2" onClick={toggleCriteria}>Tutup</button>
-                                     
+
                                     </div>
                                 </div>
 
@@ -380,33 +391,33 @@ export default function LaporanKlaim({ auth, pagination, data }) {
                             <Column body={rowNumberTemplate} header="No." />
                             <Column body={bodyTanggalMasuk} header="Tanggal Masuk" ></Column>
                             <Column body={bodyTanggalPulang} header="Tanggal Pulang" ></Column>
-                             <Column field="nosep"    body={(rowData) => (
-                                                                        <>
-                                                                        {rowData.nosep} <br /> 
-                                                                            <span data-pr-tooltip="Klik Untuk Melihat File Simplifikasi" data-pr-position="bottom" id="info-icon" onClick={() => openDialog(rowData)}> 
-                                                                                <FontAwesomeIcon icon={faFile} style={{ color:  "#43A047" }} />
-                                                                            </span>  {"\u00A0"}|{"\u00A0"}
-                                                                            <Dialog 
-                                                                                    header="File Simplifikasi" 
-                                                                                    visible={selectedDialog === rowData.sep_id} 
-                                                                                    maximizable 
-                                                                                    style={{ width: '50vw', height: '50vw' }} 
-                                                                                    onHide={closeDialog}
-                                                                                    >
-                                                                                {/* <Dialog header="File Simplifikasi" visible={showSimpli} maximizable style={{ width: '50vw', height: '50vw' }} onHide={() => { if (!showSimpli) return; setShowSimpli(false); }}> */}
-                                                                                <iframe
-                                                                                    src={`http://192.168.214.229/rswb-e/index.php?r=sepGlobal/printSep&sep_id=${rowData.sep_id}`}
-                                                                                    width="100%"
-                                                                                    height="100%"
-                                                                                    style={{ border: "none" }}
-                                                                                ></iframe>
-                                                                            </Dialog>
-                                                                            {/* PrimeReact Tooltip */}
-                                                                        <span style={{fontSize:"13px",color:'#888'}}>{rowData.nokartuasuransi}</span>
-                                                                        <Tooltip target="#info-icon" />
-                                                                            
-                                                                        </>
-                                                                    )}  header="No SEP" style={{ alignItems: 'center', border:'1px solid #e5e7eb' }} align={'center'}  alignHeader={'center'}></Column>
+                            <Column field="nosep" body={(rowData) => (
+                                <>
+                                    {rowData.nosep} <br />
+                                    <span data-pr-tooltip="Klik Untuk Melihat File Simplifikasi" data-pr-position="bottom" id="info-icon" onClick={() => openDialog(rowData)}>
+                                        <FontAwesomeIcon icon={faFile} style={{ color: "#43A047" }} />
+                                    </span>  {"\u00A0"}|{"\u00A0"}
+                                    <Dialog
+                                        header="File Simplifikasi"
+                                        visible={selectedDialog === rowData.sep_id}
+                                        maximizable
+                                        style={{ width: '50vw', height: '50vw' }}
+                                        onHide={closeDialog}
+                                    >
+                                        {/* <Dialog header="File Simplifikasi" visible={showSimpli} maximizable style={{ width: '50vw', height: '50vw' }} onHide={() => { if (!showSimpli) return; setShowSimpli(false); }}> */}
+                                        <iframe
+                                            src={`http://192.168.214.229/rswb-e/index.php?r=sepGlobal/printSep&sep_id=${rowData.sep_id}`}
+                                            width="100%"
+                                            height="100%"
+                                            style={{ border: "none" }}
+                                        ></iframe>
+                                    </Dialog>
+                                    {/* PrimeReact Tooltip */}
+                                    <span style={{ fontSize: "13px", color: '#888' }}>{rowData.nokartuasuransi}</span>
+                                    <Tooltip target="#info-icon" />
+
+                                </>
+                            )} header="No SEP" style={{ alignItems: 'center', border: '1px solid #e5e7eb' }} align={'center'} alignHeader={'center'}></Column>
                             <Column field="nama_pasien" header="Nama Pasien" ></Column>
 
                             <Column body={bodyTipe} header="Tipe " ></Column>
