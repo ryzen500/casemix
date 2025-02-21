@@ -1235,7 +1235,18 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
                         };
                         setTarifs(dataTarif);
                         if (response.data.obat !== null) {
-                            setObats(response.data.obat);
+                            // setObats(response.data.obat);
+                            let dataObat = {
+                                total: response.data.obat.total,
+                                obat: response.data.obat.obat,
+                                obatkronis: response.data.obat.obatkronis,
+                                obatkemoterapi: response.data.obat.obatkemoterapi,
+                                alkes:  response.data.obat.alkes,
+                                bmhp: response.data.obat.bmhp,
+                                sewaalat: response.data.tarif.sewaalat || 0,
+                            };
+                            setObats(dataObat);
+
                         }else{
                             let dataObat = {
                                 total: 0,
