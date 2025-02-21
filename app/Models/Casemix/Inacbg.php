@@ -557,6 +557,7 @@ class Inacbg extends Model
             $this->validateDataKlaimUpdate($data);
             $payload = $this->preparePayloadUpdateKlaim($data);
 
+            // echo "<pre>";
             // dd($payload);
             $encryptedPayload = $this->inacbg_encrypt($payload, $key); // Tambahkan parameter $key
 
@@ -829,11 +830,11 @@ class Inacbg extends Model
         return json_encode([
             'metadata' => ['method' => 'set_claim_data', 'nomor_sep' => $data['nomor_sep'] ?? null],
             'data' => [
-                'nomor_sep' => $data['nomor_sep'] ?? "",
-                'nomor_kartu' => $data['nomor_kartu'] ?? "",
-                'tgl_masuk' => $data['tgl_masuk'] ?? "",
-                'cara_masuk' => $data['cara_masuk'] ?? "",
-                'tgl_pulang' => $data['tgl_pulang'] ?? "",
+                'nomor_sep' => $data['nomor_sep'] ?? "", // nomor_sep
+                'nomor_kartu' => $data['nomor_kartu'] ?? "", // nomor kartu
+                'tgl_masuk' => $data['tgl_masuk'] ?? "", // tgl masuk
+                'cara_masuk' => $data['cara_masuk'] ?? "", //cara masuk
+                'tgl_pulang' => $data['tgl_pulang'] ?? "", // tgl pulang
                 'jenis_rawat' => $data['jenis_rawat'] ?? "",
                 'kelas_rawat' => $data['kelas_rawat'] ?? "",
                 'adl_sub_acute' => $data['adl_sub_acute'] ?? "",
@@ -842,7 +843,7 @@ class Inacbg extends Model
                 'icu_los' => $data['icu_los'] ?? null,
                 'ventilator_hour' => $data['ventilator_hour'] ?? null,
                 'ventilator'=>[
-                    'use_ind'=>$data['use_ind'] ?? null,
+                    'use_ind'=>!empty($data['use_ind']) ? true  : false,
                     'start_dttm'=>$data['start_dttm'] ?? null,
                     'stop_dttm'=>$data['stop_dttm'] ?? null
                 ],

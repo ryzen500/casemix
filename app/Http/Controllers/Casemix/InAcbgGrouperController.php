@@ -221,7 +221,6 @@ class InAcbgGrouperController extends Controller
 
 
         $birth_weight = $request->input("birth_weight") ?? "";
-        $discharge_status = $request->input("discharge_status") ?? "";
         $diagnosa = $request->input("diagnosa") ?? "";
         $diagnosa_inagrouper = $request->input("diagnosa_inagrouper") ?? "";
         
@@ -278,7 +277,7 @@ class InAcbgGrouperController extends Controller
         $carabayar_nama = $request->input(key: "carabayar_nama") ?? "";
 
         $caramasuk_id = $request->input(key: "caramasuk_id") ?? "";
-        $carakeluar_id = $request->input(key: "carakeluar_id") ?? "";
+        $carakeluar_id = $discharge_status =  $request->input(key: "carakeluar_id") ?? "";
         $umur_pasien = $request->input(key: "umur_pasien") ?? "";
 
         $loginpemakai_id = $request->input(key: "loginpemakai_id") ?? "";
@@ -393,7 +392,7 @@ class InAcbgGrouperController extends Controller
 
         //refactor code 
 
-
+// dd($data);
 
         // Endpoint
         $results = $this->inacbg->updateDataKlaim($data, $key);
