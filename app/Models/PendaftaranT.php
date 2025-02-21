@@ -347,6 +347,7 @@ class PendaftaranT extends Model
                 'laporan.no_rekam_medik',
                 'laporan.nama_pasien',
 
+                DB::raw(' sum(laporan.sewaalat) AS sewaalat'),
                 DB::raw(' sum(laporan.prosedurenonbedah) AS prosedurenonbedah'),
                 DB::raw(' sum(laporan.prosedurebedah) AS prosedurebedah'),
                 DB::raw('sum(laporan.konsultasi) AS konsultasi'),
