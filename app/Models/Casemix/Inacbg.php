@@ -906,10 +906,9 @@ class Inacbg extends Model
     private function preparePayloadKirimIndividuClaim(array $data): string
     {
         return json_encode([
-            'metadata' => ['method' => 'send_claim_invidual'],
+            'metadata' => ['method' => 'send_claim_individual'],
             'data' => [
                 'nomor_sep' => $data['nomor_sep'] ?? ""
-
             ],
         ]);
     }
