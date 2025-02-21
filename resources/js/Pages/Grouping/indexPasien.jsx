@@ -4062,6 +4062,7 @@ return (
                     <Column body={tglPlgSepBody} header="Tanggal Pulang" align={'center'} alignHeader={'center'}></Column>
                     <Column field="jaminan" header="Jaminan" body={"JKN"} align={'center'} alignHeader={'center'}></Column>
                     <Column field="noSep" header="No. SEP" body={noSepBody} align={'center'} alignHeader={'center'}></Column>
+                    <Column field="poli" header="Poli" align={'center'} alignHeader={'center'}></Column>
                     <Column field="tipe" header="Tipe" align={'center'} alignHeader={'center'}></Column>
                     <Column field="cbg" header="CBG" align={'center'} alignHeader={'center'}></Column>
                     <Column body={statusBody} header="Status" align={'center'} alignHeader={'center'}></Column>

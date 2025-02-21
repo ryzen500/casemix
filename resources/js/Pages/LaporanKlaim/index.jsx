@@ -247,7 +247,7 @@ export default function LaporanKlaim({ auth, pagination, data }) {
             pagination={pagination}
             data={data}
         >
-            <Head title="Laporan Klaim" />
+            <Head title="Laporan Validasi" />
             <section className="section col-sm-12">
                 <div className="row">
                     <div className="col-12">

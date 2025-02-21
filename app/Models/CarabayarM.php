@@ -37,4 +37,15 @@ class CarabayarM extends Model
         return $query->first();
 
     }
+
+    public static function getCarabayarByAll()
+    {
+        // $query = self::buildBaseQueryGrouping();
+        $query = DB::table('carabayar_m')
+                ->select('carabayar_id', 'carabayar_nama')
+                ->where('carabayar_aktif', true); // Ensuring that the diagnosa is active
+                // ->where('s.nosep', '=', "'".$nosep."'");
+        return $query->get();
+
+    }
 }

@@ -79,7 +79,7 @@ export default function Authenticated({ user, header, children }) {
                             {[
                                 { id: 2, label: "Laporan", submenu: [
                                     // {label:"Laporan SEP Peserta (BPJS) ",link:route('laporanSEP')},
-                                    {label:"Laporan Klaim ",link:route('laporanKlaim')},
+                                    {label:"Laporan Validasi ",link:route('laporanKlaim')},
                                     {label:"Laporan Buku Register ",link:route('laporanBukuRegister')}
 
 

@@ -24,4 +24,15 @@ class PenjaminPasien extends Model
 
             return $data;
     }
+    
+    public static function getPenjaminPasien()
+    {
+        // $query = self::buildBaseQueryGrouping();
+        $query = DB::table('penjaminpasien_m')
+                ->select('penjamin_id', 'penjamin_nama')
+                ->where('penjamin_aktif', true); // Ensuring that the diagnosa is active
+                // ->where('s.nosep', '=', "'".$nosep."'");
+        return $query->get();
+
+    }
 }

@@ -838,9 +838,10 @@ class InAcbgGrouperController extends Controller
                         }
                         $data[$key]['tipe'] = $tipe;
 
+                        $data[$key]['poli'] = $row['poli'];
+
                         $data[$key]['cbg'] = !empty($getClaim['data']['data']['grouper']['response']) ? $getClaim['data']['data']['grouper']['response']['cbg']['code'] : "-";
-                        // echo "<pre>";
-                        // var_dump($getClaim['data']['data']['kemenkes_dc_status_cd']);
+                  
                         if($getClaim['data']['data']['klaim_status_cd'] == "final" && $getClaim['data']['data']['kemenkes_dc_status_cd'] !== "unsent"){
                             $data[$key]['status'] = !empty($getClaim['data']['data']['klaim_status_cd']) ? "Terkirim": "-";
                         }else{
@@ -860,7 +861,6 @@ class InAcbgGrouperController extends Controller
                 }
             }
         }
-        // die;
         // for dropdown
         $caraMasuk = LookupM::getLookupType('inacbgs_caramasuk');
         $caraPulang = CaraKeluarM::getDataListKeluar();
