@@ -276,6 +276,7 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
     const [selectedDPJP, setDPJP] = useState({});
     const [expandedRows, setExpandedRows] = useState(null);
     const [loading, setLoading] = useState(false); // Loading state for expanded row
+    const [isDownloading, setIsDownloading] = useState(false);
     const [hide, setHide] = useState(false); // Loading state for expanded row
     // const [hid, setHide] = useState(false); // Loading state for expanded row
 
@@ -3507,9 +3508,10 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
                                                 <button className="btn btn-secondary ml-2" onClick={handleCetak}>
                                                     Cetak Klaim
                                                 </button>
-                                                <button className="btn btn-secondary ml-2" onClick={handleCetakSimpli}>
-                                                    Cetak Simplifikasi
+                                                <button className="btn btn-secondary ml-2" onClick={handleCetakSimpli} disabled={isDownloading}>
+                                                    {isDownloading ? <ProgressSpinner style={{ width: "50px", height: "20px" }} strokeWidth="8" /> : "Cetak Simplifikasi"}
                                                 </button>
+
                                                 <button className="btn btn-secondary ml-2 " onClick={handleKirimOnlineKlaim}>
                                                     Kirim Online
                                                 </button>
@@ -3719,10 +3721,10 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
         // Map through the model and update the tglSep where noSep matches
         const updatedModel = await models.map((item) => {
             if (item.noSep === noSep) {
-                console.log("Status Kicik ",status);
-                if(status == "sent"){
+                console.log("Status Kicik ", status);
+                if (status == "sent") {
                     status = "Terkirim";
-                }else{
+                } else {
                     status = status;
                 }
                 return { ...item, tglSep, tglPlgSep: tglPlgSep, tipe: tipe == "2" ? "RJ" : tipe, cbg: cbg, status: status, nama_pegawai: petugas }; // Update the tglSep for the matching row
@@ -3781,12 +3783,45 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
         setModels(updatedModel);
         // Show a success toast
     };
-    /**handleCetak */
+    const handleDownloadPDF = async (url, filename = "document.pdf") => {
+        setIsDownloading(true); // Mulai loading
+
+        try {
+            const response = await fetch(url, { method: "GET" });
+
+            if (!response.ok) {
+                throw new Error("Gagal mengunduh file");
+            }
+
+            const blob = await response.blob();
+            const blobUrl = window.URL.createObjectURL(blob);
+
+            const link = document.createElement("a");
+            link.href = blobUrl;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            // Hapus blob URL setelah unduhan selesai
+            setTimeout(() => window.URL.revokeObjectURL(blobUrl), 100);
+        } catch (error) {
+            console.error("Gagal mengunduh PDF:", error);
+        } finally {
+            setIsDownloading(false); // Matikan loading
+        }
+    };
+
     const handleCetakSimpli = (e) => {
-        // openDialog(pendaftarans)
         e.preventDefault(); // Prevent page reload
-        openDialog(pendaftarans);
-    }
+
+        const url = `http://192.168.214.229/rswb-e/index.php?r=sepGlobal/printSep&sep_id=${pendaftarans.sep_id}&jkn=1&spri=${pendaftarans.jnsPelayanan === 1 ? 1 : 0}`;
+
+        setTimeout(() => {
+            handleDownloadPDF(url, "Simplifikasi.pdf");
+        }, 500);
+    };
+
     const handleCetak = (e) => {
         e.preventDefault(); // Prevent page reload
 
@@ -3849,11 +3884,11 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
                     toast.current.show({ severity: 'error', summary: response.data[0].message, detail: datas.noSep, life: 3000 });
 
                 } else {
-                    console.log("Response ",response.data)
+                    console.log("Response ", response.data)
                     toast.current.show({ severity: 'success', summary: `Data  Berhasil Di kirim Online`, detail: datas.noSep, life: 3000 });
                     updateRowData(datas.noSep, response.data[1].data.data.tgl_masuk, response.data[1].data.data.tgl_pulang, response.data[1].data.data.jenis_rawat, response.data[1].data.data.grouper.response.cbg.code, response.data[1].data.data.kemenkes_dc_status_cd, response.data[1].data.data.coder_nm);
                     //    console.log("Edit Ulang Klaim ", response.data[1].data.data.klaim_status_cd);
-                  
+
                     // setExpandedRows(null);
                     // 
                     // console.log("dataGrouping", dataGrouping)
