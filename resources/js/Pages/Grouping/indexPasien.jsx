@@ -3818,7 +3818,7 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
         const url = `http://192.168.214.229/rswb-e/index.php?r=sepGlobal/printSep&sep_id=${pendaftarans.sep_id}&jkn=1&spri=${pendaftarans.jnsPelayanan === 1 ? 1 : 0}`;
 
         setTimeout(() => {
-            handleDownloadPDF(url, "Simplifikasi.pdf");
+            handleDownloadPDF(url, `${datas.noSep}.pdf`);
         }, 500);
     };
 
