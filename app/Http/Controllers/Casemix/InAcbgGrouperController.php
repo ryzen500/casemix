@@ -908,7 +908,7 @@ class InAcbgGrouperController extends Controller
         $profil = ProfilrumahsakitM::getProfilRS();
         $SEP = Inacbg::where('inacbg_nosep', $noSep)->first();
         $Inasismdc = InasismdcT::where('pendaftaran_id', $pendaftaran_id)->first();
-        $PembayaranPelayananT = PembayaranPelayananT::where('pendaftaran_id', $pendaftaran_id)->first();
+        $PembayaranPelayananT = PembayaranPelayananT::where('pendaftaran_id', $pendaftaran_id)->orderBy('pembayaranpelayanan_id', 'desc')->first();
         // var_dump($PembayaranPelayananT->pembayaranpelayanan_id);die;
        $total_simrs = 0 ;
         

@@ -117,6 +117,11 @@ class PendaftaranT extends Model
     private static function buildBaseQueryGrouping($is_bayar)
     {
         $laporan = DB::table(function ($query) {
+            $subQuery = DB::table('pembayaranpelayanan_t')
+            ->selectRaw('DISTINCT ON (pembayaranpelayanan_id) pembayaranpelayanan_id, pendaftaran_id, tandabuktibayar_id, jasaembalase')
+            ->orderBy('pembayaranpelayanan_id')
+            ->orderByDesc('pendaftaran_id')
+            ->limit(1);
             $query->select(
                 'pendaftaran_t.pendaftaran_id',
                 'obatalkespasien_t.oasudahbayar_id',
@@ -155,7 +160,9 @@ class PendaftaranT extends Model
                 ->join('pasien_m', 'pendaftaran_t.pasien_id', '=', 'pasien_m.pasien_id')
                 ->join('obatalkes_m', 'obatalkespasien_t.obatalkes_id', '=', 'obatalkes_m.obatalkes_id')
                 ->join('sep_t', 'pendaftaran_t.sep_id', '=', 'sep_t.sep_id')
-                ->leftJoin('pembayaranpelayanan_t', 'pembayaranpelayanan_t.pendaftaran_id', '=', 'pendaftaran_t.pendaftaran_id')
+                ->leftJoinSub($subQuery, 'pembayaranpelayanan_t', function($join) {
+                    $join->on('pendaftaran_t.pendaftaran_id', '=', 'pembayaranpelayanan_t.pendaftaran_id');
+                })
                 ->leftJoin('tandabuktibayar_t', 'pembayaranpelayanan_t.tandabuktibayar_id', '=', 'tandabuktibayar_t.tandabuktibayar_id')
                 ->leftJoin('formulaobatkronis_m', 'formulaobatkronis_m.formulaobatkronis_id', '=', 'obatalkespasien_t.formulaobatkronis_id');
         }, 'laporan');
@@ -311,6 +318,11 @@ class PendaftaranT extends Model
     public static function getTarif($pendaftaran_id)
     {
         $laporan = DB::table(function ($query) {
+            $subQuery = DB::table('pembayaranpelayanan_t')
+            ->selectRaw('DISTINCT ON (pembayaranpelayanan_id) pembayaranpelayanan_id, pendaftaran_id, tandabuktibayar_id, jasaembalase')
+            ->orderBy('pembayaranpelayanan_id')
+            ->orderByDesc('pendaftaran_id')
+            ->limit(1);
             $query->select(
                 'sep_t.sep_id',
                 'sep_t.nosep',
@@ -347,7 +359,19 @@ class PendaftaranT extends Model
 
             )
                 ->from('pendaftaran_t')
-                ->join('tindakanpelayanan_t', 'tindakanpelayanan_t.pendaftaran_id', '=', 'pendaftaran_t.pendaftaran_id')
+                // ->leftJoinSub($subQuery, 'pembayaranpelayanan_t', function($join) {
+                //     $join->on('pendaftaran_t.pendaftaran_id', '=', 'pembayaranpelayanan_t.pendaftaran_id');
+                // })
+                ->leftJoin(
+                    DB::raw('(
+                        SELECT DISTINCT ON (pendaftaran_id) pembayaranpelayanan_id, pendaftaran_id, jasaembalase
+                        FROM pembayaranpelayanan_t
+                        ORDER BY pendaftaran_id, pembayaranpelayanan_id DESC
+                    ) as pembayaranpelayanan_t'), 'pendaftaran_t.pendaftaran_id', '=', 'pembayaranpelayanan_t.pendaftaran_id')
+
+                ->leftJoin('tindakansudahbayar_t', 'tindakansudahbayar_t.pembayaranpelayanan_id', '=', 'pembayaranpelayanan_t.pembayaranpelayanan_id')
+                ->leftJoin('tindakanpelayanan_t', 'tindakansudahbayar_t.tindakansudahbayar_id', '=', 'tindakanpelayanan_t.tindakansudahbayar_id')
+
                 ->join('pasien_m', 'pendaftaran_t.pasien_id', '=', 'pasien_m.pasien_id')
                 ->join('daftartindakan_m', 'tindakanpelayanan_t.daftartindakan_id', '=', 'daftartindakan_m.daftartindakan_id')
                 ->leftJoin('kelompoktindakanbpjs_m', 'kelompoktindakanbpjs_m.kelompoktindakanbpjs_id', '=', 'daftartindakan_m.kelompoktindakanbpjs_id')
@@ -356,8 +380,8 @@ class PendaftaranT extends Model
                 ->join('carabayar_m', 'pendaftaran_t.carabayar_id', '=', 'carabayar_m.carabayar_id')
                 ->leftJoin('pasienpulang_t', 'pendaftaran_t.pasienpulang_id', '=', 'pasienpulang_t.pasienpulang_id')
                 ->leftJoin('carakeluar_m', 'pasienpulang_t.carakeluar_id', '=', 'carakeluar_m.carakeluar_id')
-                ->leftJoin('pembayaranpelayanan_t', 'pendaftaran_t.pendaftaran_id', '=', 'pembayaranpelayanan_t.pendaftaran_id')
-                ->leftJoin('tandabuktibayar_t', 'pembayaranpelayanan_t.tandabuktibayar_id', '=', 'tandabuktibayar_t.tandabuktibayar_id')
+
+                ->leftJoin('tandabuktibayar_t', 'pembayaranpelayanan_t.pembayaranpelayanan_id', '=', 'tandabuktibayar_t.pembayaranpelayanan_id')
                 ->leftJoin('inacbg_t', 'inacbg_t.sep_id', '=', 'sep_t.sep_id')
                 ->leftJoin('inasiscbg_t', 'inasiscbg_t.inacbg_id', '=', 'inacbg_t.inacbg_id');
 
@@ -380,18 +404,18 @@ class PendaftaranT extends Model
                 DB::raw('sum(laporan.konsultasi) AS konsultasi'),
                 DB::raw('sum(laporan.tenagaahli) AS tenagaahli'),
                 DB::raw('  sum(laporan.keperawatan) AS keperawatan, 
-  sum(laporan.penunjang_ekg_echo) AS penunjang, 
-  sum(laporan.radiologi) AS radiologi, 
-  sum(laporan.laboratorium) AS laboratorium, 
-  sum(laporan.pelayanandarah) AS pelayanandarah, 
-  sum(laporan.rehabilitasi) AS rehabilitasi, 
-  sum(
-    laporan.kamar_akomodasi + laporan.biayaadmin
-  ) AS kamar_akomodasi, 
-  sum(laporan.rawatintensif) AS rawatintensif, 
-  sum(
-    laporan.prosedurenonbedah + laporan.prosedurebedah + laporan.konsultasi + laporan.tenagaahli + laporan.keperawatan + laporan.penunjang_ekg_echo + laporan.radiologi + laporan.laboratorium + laporan.pelayanandarah + laporan.rehabilitasi + laporan.kamar_akomodasi + laporan.rawatintensif
-  ) AS total '),
+                    sum(laporan.penunjang_ekg_echo) AS penunjang, 
+                    sum(laporan.radiologi) AS radiologi, 
+                    sum(laporan.laboratorium) AS laboratorium, 
+                    sum(laporan.pelayanandarah) AS pelayanandarah, 
+                    sum(laporan.rehabilitasi) AS rehabilitasi, 
+                    sum(
+                        laporan.kamar_akomodasi + laporan.biayaadmin
+                    ) AS kamar_akomodasi, 
+                    sum(laporan.rawatintensif) AS rawatintensif, 
+                    sum(
+                        laporan.prosedurenonbedah + laporan.prosedurebedah + laporan.konsultasi + laporan.tenagaahli + laporan.keperawatan + laporan.penunjang_ekg_echo + laporan.radiologi + laporan.laboratorium + laporan.pelayanandarah + laporan.rehabilitasi + laporan.kamar_akomodasi + laporan.rawatintensif
+                    ) AS total '),
             )
             ->where('laporan.pendaftaran_id', $pendaftaran_id)
             ->groupBy('laporan.pendaftaran_id', 'laporan.sep_id', 'laporan.nosep', 'laporan.nokartuasuransi', 'laporan.namaasuransi_cob', 'laporan.no_pendaftaran', 'laporan.pasien_id', 'laporan.no_rekam_medik', 'laporan.klsrawat', 'laporan.nama_pasien');
