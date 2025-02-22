@@ -918,6 +918,8 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
                 <AutoComplete
                     value={searchText}
                     suggestions={suggestions}
+                    autoFocus
+                    autoHighlight
                     completeMethod={onSearchChange}  // Trigger search on typing
                     field="search-icdx"  // Field to display in the suggestion (adjust based on your API response)
                     onSelect={(e) => addRowDiagnosaX(e.value)}  // Update input field
@@ -938,6 +940,8 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
                 <AutoComplete
                     value={searchText}
                     suggestions={suggestions}
+                    autoFocus
+                    autoHighlight
                     completeMethod={onSearchChange}  // Trigger search on typing
                     field="search-icdx"  // Field to display in the suggestion (adjust based on your API response)
                     onSelect={(e) => addRowDiagnosaINAX(e.value)}  // Update input field
@@ -958,6 +962,8 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
                 <AutoComplete
                     value={searchTextIX}
                     suggestions={suggestions}
+                    autoFocus
+                    autoHighlight
                     completeMethod={onSearchChangeIX}  // Trigger search on typing
                     field="search-icdix"  // Field to display in the suggestion (adjust based on your API response)
                     onSelect={(e) => addRowDiagnosaIX(e.value, 'unu')}  // Update input field
@@ -978,6 +984,8 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
                 <AutoComplete
                     value={searchTextIX}
                     suggestions={suggestions}
+                    autoFocus
+                    autoHighlight
                     completeMethod={onSearchChangeIX}  // Trigger search on typing
                     field="search-icdix"  // Field to display in the suggestion (adjust based on your API response)
                     onSelect={(e) => addRowDiagnosaIX(e.value, 'ina')}  // Update input field
@@ -2814,6 +2822,8 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
                                                             value={row.diagnosa_nama}
                                                             suggestions={suggestions}
                                                             completeMethod={fetchSuggestionsCode}
+                                                            autoFocus
+                                                            autoHighlight
                                                             field="name"
                                                             onChange={(e) => handleInputChangeAutocompleteRow(index, 'diagnosa_nama', e.value, 'unu')}
                                                             name={`[PasienmorbiditasT][${index}][diagnosa_nama]`}
@@ -2849,6 +2859,8 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
                                                             value={row.diagnosa_kode}
                                                             suggestions={suggestions}
                                                             completeMethod={fetchSuggestionsCode}
+                                                            autoFocus
+                                                            autoHighlight
                                                             field="name"
                                                             onChange={(e) => handleInputChangeAutocompleteRow(index, 'diagnosa_kode', e.value, 'unu')}
                                                             name={`[PasienmorbiditasT][${index}][diagnosa_kode]`}
@@ -2913,6 +2925,8 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
                                                             value={row.diagnosaicdix_nama}
                                                             suggestions={suggestions}
                                                             completeMethod={fetchSuggestionsIX}
+                                                            autoFocus
+                                                            autoHighlight
                                                             field="name"
                                                             onChange={(e) => handleInputChangeAutocompleteIXRow(index, 'diagnosaicdix_nama', e.value, 'icdixunu')}
                                                             name={`[Pasienicd9cmT][${index}][diagnosaicdix_nama]`}
@@ -2949,6 +2963,8 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
                                                             value={row.diagnosaicdix_kode}
                                                             suggestions={suggestions}
                                                             completeMethod={fetchSuggestionsCodeIX}
+                                                            autoFocus
+                                                            autoHighlight
                                                             field="name"
                                                             onChange={(e) => handleInputChangeAutocompleteIXRow(index, 'diagnosaicdix_kode', e.value, 'icdixunu')}
                                                             name={`[Pasienicd9cmT][${index}][diagnosaicdix_kode]`}
@@ -3048,6 +3064,8 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
                                                             value={row.diagnosa_nama}
                                                             suggestions={suggestions}
                                                             completeMethod={fetchSuggestionsCode}
+                                                            autoFocus
+                                                            autoHighlight
                                                             field="name"
                                                             onChange={(e) => handleInputChangeAutocompleteRow(index, 'diagnosa_nama', e.value, 'ina')}
                                                             name={`[PasienmorbiditasTINA][${index}][diagnosa_nama]`}
@@ -3077,6 +3095,8 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
                                                             value={row.diagnosa_kode}
                                                             suggestions={suggestions}
                                                             completeMethod={fetchSuggestionsCode}
+                                                            autoFocus
+                                                            autoHighlight
                                                             field="name"
                                                             onChange={(e) => handleInputChangeAutocompleteRow(index, 'diagnosa_kode', e.value, 'ina')}
                                                             name={`[PasienmorbiditasTINA][${index}][diagnosa_kode]`}
@@ -3141,6 +3161,8 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
                                                             value={row.diagnosaicdix_nama}
                                                             suggestions={suggestions}
                                                             completeMethod={fetchSuggestionsIX}
+                                                            autoFocus
+                                                            autoHighlight
                                                             field="name"
                                                             onChange={(e) => handleInputChangeAutocompleteIXRow(index, 'diagnosaicdix_nama', e.value, 'icdixina')}
                                                             name={`[Pasienicd9cmTINA][${index}][diagnosaicdix_nama]`}
@@ -3176,6 +3198,8 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
                                                             value={row.diagnosaicdix_kode}
                                                             suggestions={suggestions}
                                                             completeMethod={fetchSuggestionsCodeIX}
+                                                            autoFocus
+                                                            autoHighlight
                                                             field="name"
                                                             onChange={(e) => handleInputChangeAutocompleteIXRow(index, 'diagnosaicdix_kode', e.value, 'icdixina')}
                                                             name={`[Pasienicd9cmTINA][${index}][diagnosaicdix_kode]`}
