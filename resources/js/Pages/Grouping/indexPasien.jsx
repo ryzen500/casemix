@@ -1500,12 +1500,12 @@ export default function Dashboard({ auth, model, pasien, KelasPelayananM, caraMa
         const { value, name } = e.target; // Get name and value from the event
         setTarifs((prevTarifs) => ({
             ...prevTarifs,
-            [name]: (value), // Update the specific field dynamically
+            [name]: (value!==null?value:0), // Update the specific field dynamically
         }));
 
         setObats((prevObats) => ({
             ...prevObats,
-            [name]: (value), // Update the specific field dynamically
+            [name]: (value!==null?value:0), // Update the specific field dynamically
         }));
 
         calculate_total();
