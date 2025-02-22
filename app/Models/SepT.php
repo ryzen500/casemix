@@ -164,7 +164,15 @@ class SepT extends Model
                             date('Y-m-d', strtotime($filters['tanggal_selesai'])) // Convert to 'YYYY-MM-DD' format
                         ]
                     );
-                } 
+                } else{
+                    $query1->whereBetween(
+                        DB::raw('DATE(inacbg_t.inacbg_tgl)'), // Use DATE() for ensuring the format is consistent
+                        [
+                            date('Y-m-d', strtotime($filters['tanggal_mulai'])), // Convert to 'YYYY-MM-DD' format
+                            date('Y-m-d', strtotime($filters['tanggal_selesai'])) // Convert to 'YYYY-MM-DD' format
+                        ]
+                    );
+                }
             } else {
                 if (isset($filters['query'])) {
                     $value = $filters['query'];
@@ -222,7 +230,15 @@ class SepT extends Model
                             date('Y-m-d', strtotime($filters['tanggal_selesai'])) // Convert to 'YYYY-MM-DD' format
                         ]
                     );
-                } 
+                } else{
+                    $query2->whereBetween(
+                        DB::raw('DATE(inacbg_t.inacbg_tgl)'), // Use DATE() for ensuring the format is consistent
+                        [
+                            date('Y-m-d', strtotime($filters['tanggal_mulai'])), // Convert to 'YYYY-MM-DD' format
+                            date('Y-m-d', strtotime($filters['tanggal_selesai'])) // Convert to 'YYYY-MM-DD' format
+                        ]
+                    );
+                }
             } else {
                 if (isset($filters['query'])) {
                     $value = $filters['query'];
@@ -291,7 +307,15 @@ class SepT extends Model
                             date('Y-m-d', strtotime($filters['tanggal_selesai'])) // Convert to 'YYYY-MM-DD' format
                         ]
                     );
-                } 
+                } else{
+                    $query1->whereBetween(
+                        DB::raw('DATE(inacbg_t.inacbg_tgl)'), // Use DATE() for ensuring the format is consistent
+                        [
+                            date('Y-m-d', strtotime($filters['tanggal_mulai'])), // Convert to 'YYYY-MM-DD' format
+                            date('Y-m-d', strtotime($filters['tanggal_selesai'])) // Convert to 'YYYY-MM-DD' format
+                        ]
+                    );
+                }
             } else {
                 if (isset($filters['query'])) {
                     $value = $filters['query'];
@@ -349,7 +373,15 @@ class SepT extends Model
                             date('Y-m-d', strtotime($filters['tanggal_selesai'])) // Convert to 'YYYY-MM-DD' format
                         ]
                     );
-                } 
+                } else{
+                    $query2->whereBetween(
+                        DB::raw('DATE(inacbg_t.inacbg_tgl)'), // Use DATE() for ensuring the format is consistent
+                        [
+                            date('Y-m-d', strtotime($filters['tanggal_mulai'])), // Convert to 'YYYY-MM-DD' format
+                            date('Y-m-d', strtotime($filters['tanggal_selesai'])) // Convert to 'YYYY-MM-DD' format
+                        ]
+                    );
+                }
             } else {
                 if (isset($filters['query'])) {
                     $value = $filters['query'];
