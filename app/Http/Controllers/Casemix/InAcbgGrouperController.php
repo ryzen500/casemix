@@ -549,6 +549,7 @@ class InAcbgGrouperController extends Controller
 
         // result kirim claim
         $results = $this->inacbg->kirimOnlineKlaim($data, $key);
+        $getClaim = $this->getKlaim($data['nomor_sep']);
 
 
         if ($results['success'] === true) {
@@ -557,7 +558,7 @@ class InAcbgGrouperController extends Controller
         }
 
         // Kembalikan hasil sebagai JSON response
-        return response()->json($results, 200);
+        return response()->json([$results,$getClaim], 200);
     }
 
     public function EditUlangKlaim(Request $request)
